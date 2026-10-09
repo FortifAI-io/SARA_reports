@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tender &middot; Pre-Award Bid Integrity &middot; Holcim GHBS Philippines</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#6699CC;--deep:#2E5A8A;--steel:#99AFBC;
+  --crit:#C62828;--crit-lt:#FDECEC;--crit-dk:#8B1A1A;
+  --high:#E65100;--high-lt:#FFF3E0;--high-dk:#6D3B00;
+  --med:#98AA3A;--med-lt:#F5F7DC;--med-dk:#3A4400;
+  --low:#6699CC;--low-lt:#E8F0F8;--low-dk:#1A3A5C;
+  --norisk:#6B7280;--norisk-lt:#F2F4F7;
+  --navy:#0D1520;--page:#F2F4F7;--white:#FFFFFF;
+  --charcoal:#333333;--t-body:#374151;--t-sec:#6B7280;--t-cap:#9CA3AF;
+  --border:#E5E7EB;--border-md:#D1D5DB;
+  --teal:#0D9488;--teal-lt:#CCFBF1;--teal-dk:#134E4A;
+  --gold:#C89B3C;--gold-lt:#FDF6E3;
+  --r:6px;
+  --font:'DM Sans',-apple-system,sans-serif;--mono:'DM Mono','Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:var(--font);background:var(--page);color:var(--t-body);font-size:14px;line-height:1.5}
+.priv-banner{background:linear-gradient(90deg,#7B1A1A,#9E2A2A);color:#fff;text-align:center;padding:7px 32px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;font-family:var(--mono);display:flex;align-items:center;justify-content:center;gap:12px}
+.topbar{background:var(--navy);color:#fff;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--teal)}
+.topbar-l{display:flex;align-items:center;gap:14px}
+.brand-mark{width:38px;height:38px;border-radius:8px;background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dk) 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:17px;font-family:var(--mono);letter-spacing:-1px}
+.product-name{font-size:18px;font-weight:600;letter-spacing:.3px}
+.product-sub{font-size:11px;color:rgba(255,255,255,.55);letter-spacing:.4px;text-transform:uppercase;font-family:var(--mono)}
+.topbar-r{display:flex;align-items:center;gap:24px;font-size:11px;color:rgba(255,255,255,.6);font-family:var(--mono)}
+.meta-item{display:flex;flex-direction:column;text-align:right}
+.meta-label{font-size:9px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.meta-val{font-weight:600;color:rgba(255,255,255,.85)}
+.tab-bar{background:var(--white);border-bottom:1px solid var(--border);display:flex;padding:0 32px;overflow-x:auto}
+.tab-bar-wrap {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.tab-bar {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  padding: 0 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.tab-arrow {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 42px;
+  border: 0;
+  background: var(--white);
+  color: var(--text, #1f2937);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.tab-arrow:hover {
+  background: var(--hover, #f3f4f6);
+}
+
+.tab-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.tab{padding:14px 22px;background:transparent;border:none;border-bottom:3px solid transparent;font-size:12.5px;font-weight:500;color:var(--t-sec);cursor:pointer;font-family:var(--font);white-space:nowrap;transition:.15s}
+.tab:hover{color:var(--teal-dk)}
+.tab.active{color:var(--teal-dk);border-bottom-color:var(--teal);font-weight:600}
+.tab-num{display:inline-flex;min-width:20px;padding:0 5px;height:18px;border-radius:9px;background:var(--norisk-lt);color:var(--t-sec);font-size:10px;font-weight:700;margin-left:6px;align-items:center;justify-content:center;font-family:var(--mono)}
+.tab.active .tab-num{background:var(--teal);color:#fff}
+.pane{display:none;padding:28px 32px;max-width:1480px;margin:0 auto}
+.pane.active{display:block}
+h1.page-title{font-size:24px;font-weight:600;color:var(--charcoal);margin-bottom:4px;letter-spacing:-.3px}
+.page-sub{color:var(--t-sec);font-size:13px;margin-bottom:24px}
+h2.sec{font-size:16px;font-weight:600;color:var(--charcoal);margin:28px 0 12px;display:flex;align-items:center;gap:10px}
+h2.sec::before{content:'';width:3px;height:14px;background:var(--teal);border-radius:2px}
+.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.kpi-card{background:#fff;border-left:4px solid var(--teal);border-radius:var(--r);padding:14px 16px;border-top:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.kpi-card.crit{border-left-color:var(--crit)}.kpi-card.high{border-left-color:var(--high)}.kpi-card.warn{border-left-color:var(--gold)}.kpi-card.good{border-left-color:var(--teal)}
+.kpi-label{font-size:10px;font-weight:600;color:var(--t-sec);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.kpi-val{font-size:24px;font-weight:700;color:var(--charcoal);font-family:var(--mono);line-height:1.1}
+.kpi-meta{font-size:11px;color:var(--t-cap);margin-top:4px}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r);background:#fff}
+table.dt{width:100%;border-collapse:collapse;font-size:12.5px}
+table.dt th{background:#F8F9FB;color:var(--t-body);font-weight:600;padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+table.dt td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+table.dt tr:hover{background:#FAFBFC}
+table.dt tr.detail-row:hover{background:transparent}
+.res-badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.res-BLOCKED{background:var(--crit-lt);color:var(--crit-dk);border:1px solid var(--crit)}
+.res-HELD{background:var(--high-lt);color:var(--high-dk);border:1px solid var(--high)}
+.res-FLAGGED{background:var(--gold-lt);color:#6D3B00;border:1px solid var(--gold)}
+.res-CLEARED{background:var(--teal-lt);color:var(--teal-dk);border:1px solid var(--teal)}
+.sev-badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+.sev-Critical{background:var(--crit-lt);color:var(--crit-dk);border:1px solid var(--crit)}
+.sev-High{background:var(--high-lt);color:var(--high-dk);border:1px solid var(--high)}
+.sev-Medium{background:var(--med-lt);color:var(--med-dk);border:1px solid var(--med)}
+.sev-Low{background:var(--low-lt);color:var(--low-dk);border:1px solid var(--low)}
+.ai-block{background:linear-gradient(135deg,#F0FDFB 0%,#F4F8FD 100%);border:1px solid #B2DFDB;border-radius:var(--r);padding:14px 16px;margin:8px 0;position:relative}
+.ai-block::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--teal) 0%,var(--teal-dk) 100%);border-radius:var(--r) 0 0 var(--r)}
+.ai-block-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:10.5px;font-weight:700;color:var(--teal-dk);text-transform:uppercase;letter-spacing:.5px}
+.ai-icon{display:inline-flex;width:18px;height:18px;border-radius:4px;background:linear-gradient(135deg,var(--teal) 0%,var(--teal-dk) 100%);color:#fff;font-size:11px;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700}
+.ai-block-body{font-size:13px;color:var(--t-body);line-height:1.65}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r);margin-bottom:18px;overflow:hidden}
+.card-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,#FAFBFC,#fff)}
+.card-title{font-size:14px;font-weight:600;color:var(--charcoal)}
+.card-body{padding:18px}
+.detail-inner{padding:18px 20px;background:#FCFCFD;border-top:2px solid var(--teal)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:14px}
+.detail-section{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.detail-label{font-size:10px;font-weight:700;color:var(--t-sec);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.evidence-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:12px}
+.evidence-grid .ek{font-weight:600;color:var(--t-sec);font-size:11px;font-family:var(--mono)}
+.evidence-grid .ev{color:var(--charcoal);font-family:var(--mono);font-size:11.5px;word-break:break-word}
+.d7-score-strip{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#fff;border:1px solid var(--border);border-radius:var(--r);margin:10px 0}
+.d7-score-circle{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:16px;flex-shrink:0}
+.d7-score-low{background:var(--teal-lt);color:var(--teal-dk);border:2px solid var(--teal)}
+.d7-score-med{background:var(--gold-lt);color:#6D3B00;border:2px solid var(--gold)}
+.d7-score-high{background:var(--high-lt);color:var(--high-dk);border:2px solid var(--high)}
+.d7-score-crit{background:var(--crit-lt);color:var(--crit-dk);border:2px solid var(--crit)}
+.d7-score-na{background:var(--norisk-lt);color:var(--t-sec);border:2px solid var(--border-md)}
+.d7-score-info{flex:1}
+.d7-score-label{font-size:10px;font-weight:700;color:var(--t-sec);text-transform:uppercase;letter-spacing:.4px}
+.d7-score-val{font-size:14px;font-weight:700;color:var(--charcoal)}
+.d7-dim-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;margin-top:8px}
+.d7-dim{padding:4px 8px;background:#FAFBFC;border:1px solid var(--border);border-radius:3px;font-size:10.5px}
+.d7-dim-k{font-weight:600;color:var(--t-sec);font-family:var(--mono);font-size:9px;text-transform:uppercase}
+.d7-dim-v{color:var(--charcoal);font-weight:500}
+.d7-compare{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin:10px 0}
+.d7-compare-hdr{display:grid;grid-template-columns:160px 1fr 1fr;background:var(--navy);color:#fff;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;font-family:var(--mono)}
+.d7-compare-hdr>div{padding:8px 12px}
+.d7-compare-row{display:grid;grid-template-columns:160px 1fr 1fr;border-bottom:1px solid var(--border);font-size:12px}
+.d7-compare-row:last-child{border-bottom:none}
+.d7-compare-row>div{padding:8px 12px;line-height:1.5}
+.d7-compare-row>div:first-child{font-weight:600;color:var(--t-sec);font-size:11px;text-transform:uppercase;letter-spacing:.3px;background:#FAFBFC}
+.d7-compare-row .doc-col{color:var(--charcoal)}
+.d7-compare-row .d7-col{color:var(--charcoal)}
+.d7-compare-row .d7-mismatch{color:var(--crit);font-weight:600}
+.d7-compare-row .d7-match{color:var(--teal-dk);font-weight:600}
+.callout{padding:12px 14px;border-radius:var(--r);font-size:12px;line-height:1.6;display:flex;gap:10px;margin:10px 0}
+.callout-info{background:#E0F2F1;border:1px solid #B2DFDB;color:var(--teal-dk)}
+.callout-warn{background:#FFF8E1;border:1px solid #F4D788;color:#6D3B00}
+.callout-crit{background:var(--crit-lt);border:1px solid var(--crit);color:var(--crit-dk)}
+.callout-icon{flex-shrink:0;font-size:14px;font-weight:700}
+.actions-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.btn{padding:7px 14px;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:.3px;border:1px solid;transition:.15s}
+.btn-p{background:var(--teal-dk);color:#fff;border-color:var(--teal-dk)}.btn-p:hover{background:var(--navy)}
+.btn-g{background:#fff;color:var(--t-body);border-color:var(--border-md)}.btn-g:hover{background:#F0FDFB;border-color:var(--teal)}
+.btn-crit{background:var(--crit);color:#fff;border-color:var(--crit)}.btn-crit:hover{background:var(--crit-dk)}
+.filter-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;padding:12px 14px;background:#fff;border:1px solid var(--border);border-radius:var(--r);align-items:center}
+.filter-label{font-size:11px;font-weight:600;color:var(--t-sec);margin-right:6px;text-transform:uppercase;letter-spacing:.3px}
+.filter-pill{padding:5px 12px;background:#fff;border:1px solid var(--border);border-radius:14px;font-size:11px;font-weight:500;color:var(--t-body);cursor:pointer;font-family:var(--font);transition:.15s}
+.filter-pill:hover{border-color:var(--teal);color:var(--teal-dk)}
+.filter-pill.on{background:var(--teal-dk);color:#fff;border-color:var(--teal-dk)}
+.dist-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.dist-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.dist-card-hdr{padding:12px 16px;background:linear-gradient(180deg,#FAFBFC,#fff);border-bottom:1px solid var(--border)}
+.dist-card-title{font-size:13px;font-weight:600;color:var(--charcoal)}
+.dist-card-sub{font-size:10.5px;color:var(--t-sec);font-family:var(--mono)}
+.dist-card-body{padding:14px 16px}
+.dist-bars{display:flex;flex-direction:column;gap:8px}
+.dist-row{display:grid;grid-template-columns:140px 1fr 70px;gap:10px;align-items:center;font-size:11.5px}
+.dist-label{font-weight:500;color:var(--t-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dist-bar-track{height:18px;background:#F0FDFB;border-radius:3px;overflow:hidden}
+.dist-bar-fill{height:100%;border-radius:3px}
+.dist-val{font-family:var(--mono);font-weight:700;color:var(--charcoal);text-align:right;font-size:11.5px}
+.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.config-block{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:16px 18px}
+.config-block h4{font-size:12px;font-weight:600;color:var(--teal-dk);margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px}
+.method-list{list-style:none;font-size:12.5px}
+.method-list li{padding:6px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.method-list li:last-child{border-bottom:none}
+.method-list .lk{font-weight:500;color:var(--t-body)}.method-list .lv{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--charcoal)}
+.report-stamp{margin-top:20px;padding:14px 20px;background:#fff;border:1px solid var(--border);border-radius:var(--r);display:flex;justify-content:space-between;font-size:11px;color:var(--t-sec);font-family:var(--mono)}
+.report-stamp strong{color:var(--charcoal)}
+.tab-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.tab-tag{display:inline-block;padding:2px 7px;background:var(--teal-lt);color:var(--teal-dk);border:1px solid #B2DFDB;border-radius:3px;font-size:10px;font-weight:600;font-family:var(--mono)}
+
+/* TENDER-SPECIFIC: Recon result badges */
+.recon-badge{display:inline-block;padding:3px 10px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;font-family:var(--mono)}
+.recon-Aligned{background:var(--teal-lt);color:var(--teal-dk);border:1px solid var(--teal)}
+.recon-Deviation{background:var(--high-lt);color:var(--high-dk);border:1px solid var(--high)}
+.recon-Override{background:var(--crit-lt);color:var(--crit-dk);border:1px solid var(--crit)}
+.recon-Pending{background:var(--norisk-lt);color:var(--t-sec);border:1px solid var(--border-md)}
+
+/* D7 verdict badges */
+.d7-verdict{display:inline-block;padding:3px 10px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;font-family:var(--mono)}
+.d7-Pass{background:var(--teal-lt);color:var(--teal-dk);border:1px solid var(--teal)}
+.d7-Warn{background:var(--gold-lt);color:#6D3B00;border:1px solid var(--gold)}
+.d7-Fail{background:var(--crit-lt);color:var(--crit-dk);border:1px solid var(--crit)}
+
+/* Bid comparison bar */
+.bid-bar{height:22px;border-radius:3px;position:relative;font-family:var(--mono);font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;padding-left:8px;margin:3px 0}
+.bid-bar-label{position:absolute;right:8px;font-size:10px}
+
+/* JSON expandable */
+.json-toggle{font-size:10px;font-weight:600;color:var(--teal-dk);cursor:pointer;font-family:var(--mono);text-transform:uppercase;letter-spacing:.3px;padding:6px 0;display:inline-block}
+.json-toggle:hover{color:var(--teal)}
+.json-block{display:none;background:var(--navy);color:#A3E4D7;padding:14px;border-radius:var(--r);font-family:var(--mono);font-size:11px;line-height:1.5;overflow-x:auto;white-space:pre;margin:8px 0}
+.json-block.open{display:block}
+
+/* Cluster expand */
+.cluster-expand{cursor:pointer}
+.cluster-detail{display:none}
+.cluster-detail.open{display:table-row}
+
+/* Responsive */
+@media(max-width:900px){
+  .detail-grid,.dist-grid,.config-grid{grid-template-columns:1fr}
+  .topbar{flex-direction:column;gap:10px;text-align:center}
+  .topbar-r{justify-content:center}
+}
+
+.ccy-toggle{display:inline-flex;border:1px solid rgba(255,255,255,.25);border-radius:4px;overflow:hidden;margin-right:4px}
+.ccy-btn{padding:5px 12px;background:transparent;color:rgba(255,255,255,.6);border:none;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.4px;cursor:pointer;transition:.15s}
+.ccy-btn:hover{color:#fff;background:rgba(255,255,255,.08)}
+.ccy-btn.ccy-on{background:var(--teal);color:#fff}
+
+/* TOPBAR v2 - country/period/search */
+.topbar{flex-wrap:wrap;gap:14px}
+.topbar-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ctl-group{display:flex;align-items:center;gap:6px}
+.ctl-label{font-size:9px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;font-family:var(--mono);margin-right:2px}
+.ctl-select{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:5px 10px;font-family:var(--mono);font-size:11px;font-weight:600;cursor:pointer;outline:none;min-width:90px}
+.ctl-select:hover{background:rgba(255,255,255,.14);border-color:var(--teal)}
+.ctl-select:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(13,148,136,.3)}
+.ctl-select option{background:var(--navy);color:#fff}
+.ctl-date{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:5px 8px;font-family:var(--mono);font-size:10.5px;font-weight:500;outline:none;color-scheme:dark}
+.ctl-date:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(13,148,136,.3)}
+.ctl-search{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:6px 10px 6px 28px;font-family:var(--font);font-size:11.5px;outline:none;width:200px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff80' stroke-width='2'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16.5' y2='16.5'/></svg>");background-repeat:no-repeat;background-position:8px center;background-size:13px 13px}
+.ctl-search:focus{border-color:var(--teal);box-shadow:0 0 0 2px rgba(13,148,136,.3);background-color:rgba(255,255,255,.14)}
+.ctl-search::placeholder{color:rgba(255,255,255,.4);font-size:11px}
+.ccy-btn:disabled{opacity:.35;cursor:not-allowed;background:transparent !important;color:rgba(255,255,255,.3) !important}
+
+/* SEARCH STATUS PILL (below topbar when active) */
+.search-status{background:#0F2A26;color:#5EEAD4;padding:8px 32px;font-size:11.5px;font-family:var(--mono);display:none;align-items:center;justify-content:space-between;border-bottom:1px solid var(--teal-dk)}
+.search-status.active{display:flex}
+.search-clear{background:var(--teal-dk);color:#fff;border:none;border-radius:3px;padding:3px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:var(--mono);text-transform:uppercase;letter-spacing:.3px}
+.search-clear:hover{background:var(--teal)}
+
+/* COUNTRY BANNER (below topbar when filtered) */
+.country-banner{background:#FFF8E1;color:#6D3B00;padding:8px 32px;font-size:11.5px;font-family:var(--mono);border-bottom:1px solid #F4D788;display:none;align-items:center;gap:10px}
+.country-banner.active{display:flex}
+
+/* DOWNLOAD BUTTON (in tab headers) */
+.tab-toolbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:14px;flex-wrap:wrap}
+.tab-toolbar-l{flex:1;min-width:300px}
+.tab-toolbar-r{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn-dl{background:#fff;color:var(--teal-dk);border:1px solid var(--teal);padding:7px 14px;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:.3px;display:inline-flex;align-items:center;gap:6px;transition:.15s}
+.btn-dl:hover{background:var(--teal);color:#fff}
+.btn-dl::before{content:'\2193';font-size:13px;font-weight:700}
+
+/* REF PRICE CELL STYLING */
+.ref-delta-good{color:var(--teal-dk);font-weight:600}
+.ref-delta-warn{color:#B45309;font-weight:600}
+.ref-delta-bad{color:var(--crit);font-weight:700}
+.ref-delta-na{color:var(--t-cap);font-style:italic;font-size:10.5px}
+
+/* UNIT PRICE SUB-TEXT */
+.unit-sub{font-size:10.5px;color:var(--t-sec);font-family:var(--mono);font-weight:400;margin-top:2px;line-height:1.3}
+.qty-block{font-family:var(--mono);font-size:11px;color:var(--t-body);white-space:nowrap}
+
+/* SAP PO STATUS BADGES */
+.po-status{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;font-family:var(--mono)}
+.po-status-Created{background:#E0F2F1;color:var(--teal-dk);border:1px solid #B2DFDB}
+.po-status-Released{background:var(--teal-lt);color:var(--teal-dk);border:1px solid var(--teal)}
+.po-status-Partially-Delivered{background:#FFF8E1;color:#6D3B00;border:1px solid #F4D788}
+.po-status-Fully-Delivered{background:#E8F5E9;color:#1B5E20;border:1px solid #66BB6A}
+.po-status-Partially-Invoiced{background:#FFF3E0;color:#6D3B00;border:1px solid #FFB74D}
+.po-status-Fully-Invoiced{background:#E1F5FE;color:#01579B;border:1px solid #4FC3F7}
+.po-status-Paid{background:var(--teal-lt);color:var(--teal-dk);border:1px solid var(--teal);font-weight:800}
+.po-status-Blocked{background:var(--crit-lt);color:var(--crit-dk);border:1px solid var(--crit)}
+.po-status-Cancelled{background:var(--norisk-lt);color:var(--t-sec);border:1px solid var(--border-md);text-decoration:line-through}
+
+/* SEARCH HIT HIGHLIGHTING */
+.search-hide{display:none !important}
+.search-hit{background:#FEF9C3 !important}
+
+/* PR REFERENCE CELL */
+.pr-cell{font-family:var(--mono);font-size:10.5px;color:var(--t-sec);line-height:1.4}
+.pr-cell .pr-num{color:var(--teal-dk);font-weight:600;display:block}
+.pr-cell .pr-meta{font-size:9.5px;color:var(--t-cap)}
+</style>
+</head>
+<body>
+<div class="priv-banner">&#x1F512; Privileged &amp; Confidential &mdash; Holcim GHBS Internal Use Only &mdash; Do Not Distribute</div>
+<div class="topbar">
+  <div class="topbar-l">
+    <div class="brand-mark">F</div>
+    <div><div class="product-name">Tender</div><div class="product-sub">Pre-Award Bid Integrity &middot; Holcim GHBS</div></div>
+  </div>
+  <div class="topbar-controls">
+    <div class="ctl-group">
+      <span class="ctl-label">Country</span>
+      <select class="ctl-select" id="country-select" onchange="setCountry(this.value)">
+        <option value="ALL" selected>All Countries</option>
+        <option value="PH">Philippines</option>
+        <option value="VN" disabled>Vietnam (not onboarded)</option>
+        <option value="ID" disabled>Indonesia (not onboarded)</option>
+        <option value="MY" disabled>Malaysia (not onboarded)</option>
+        <option value="IN" disabled>India (not onboarded)</option>
+      </select>
+    </div>
+    <div class="ctl-group">
+      <span class="ctl-label">Period</span>
+      <select class="ctl-select" id="period-select" onchange="setPeriod(this.value)">
+        <option value="Q1FY26" selected>Q1 FY26</option>
+        <option value="Q2FY26">Q2 FY26</option>
+        <option value="Q3FY26">Q3 FY26</option>
+        <option value="Q4FY26">Q4 FY26</option>
+        <option value="Q1FY27">Q1 FY27</option>
+        <option value="CUSTOM">Custom Range</option>
+      </select>
+      <input type="date" class="ctl-date" id="period-from" style="display:none" value="2026-01-01" onchange="setPeriodCustom()">
+      <input type="date" class="ctl-date" id="period-to" style="display:none" value="2026-03-31" onchange="setPeriodCustom()">
+    </div>
+    <div class="ctl-group">
+      <input type="text" class="ctl-search" id="search-input" placeholder="Search PR / RFQ / Vendor / PO..." oninput="doSearch(this.value)">
+    </div>
+    <div class="ccy-toggle">
+      <button class="ccy-btn ccy-on" id="ccy-usd" onclick="setCurrency('USD')">USD</button>
+      <button class="ccy-btn" id="ccy-php" onclick="setCurrency('PHP')" disabled title="Multi-country view: USD only">PHP</button>
+    </div>
+  </div>
+  <div class="topbar-r">
+    <div class="meta-item"><span class="meta-label">Report ID</span><span class="meta-val">TNDR-HGBS-PH-Q1FY26-001</span></div>
+    <div class="meta-item"><span class="meta-label">Generated</span><span class="meta-val">23-May-2026 14:30 PHT</span></div>
+  </div>
+</div>
+<div class="country-banner" id="country-banner">
+  <span style="font-weight:700">&#9888;</span>
+  <span id="country-banner-text">Showing 1 of 5 GHBS countries (Philippines). Vietnam, Indonesia, Malaysia, India not yet onboarded.</span>
+</div>
+<div class="search-status" id="search-status">
+  <span><strong>Search active:</strong> <span id="search-term"></span> &middot; <span id="search-count">0 matches</span></span>
+  <button class="search-clear" onclick="clearSearch()">Clear</button>
+</div>
+<div class="tab-bar-wrap">
+  <button class="tab-arrow left" onclick="scrollTabs(-1)">‹</button>
+
+  <div class="tab-bar" id="tabBar">
+    <button class="tab active" onclick="switchTab('dash')">Dashboard</button>
+    <button class="tab" onclick="switchTab('queue')">RFQ Cluster Queue <span class="tab-num">5</span></button>
+    <button class="tab" onclick="switchTab('signal')">Signal Analysis <span class="tab-num">17</span></button>
+    <button class="tab" onclick="switchTab('entity')">Bidder Verification <span class="tab-num">19</span></button>
+    <button class="tab" onclick="switchTab('recon')">PO Reconciliation <span class="tab-num">4</span></button>
+    <button class="tab" onclick="switchTab('config')">Configuration</button>
+    <button class="tab" onclick="switchTab('register')">Bid Register <span class="tab-num">19</span></button>
+    <button class="tab" onclick="switchTab('audit')">Audit Trail</button>
+  </div>
+
+  <button class="tab-arrow right" onclick="scrollTabs(1)">›</button>
+</div>
+<div id="pane-dash" class="pane active">
+  <h1 class="page-title">Dashboard &middot; Tender Screening Overview</h1>
+  <div class="page-sub">Pre-award bid integrity screening for Holcim GHBS Philippines. Q1 FY2026 reporting period (January &ndash; March 2026). 5 RFQ clusters processed, 19 bids screened, 19 bidder entities verified.</div>
+
+  <div class="kpi-strip">
+    <div class="kpi-card good"><div class="kpi-label">RFQ Clusters Screened</div><div class="kpi-val">5</div><div class="kpi-meta">Jan &ndash; Mar 2026</div></div>
+    <div class="kpi-card good"><div class="kpi-label">Bids Analysed</div><div class="kpi-val">19</div><div class="kpi-meta">Across 5 clusters</div></div>
+    <div class="kpi-card crit"><div class="kpi-label">Signals Fired</div><div class="kpi-val">17</div><div class="kpi-meta">10 confirmed &middot; 4 open &middot; 3 new (email forensic)</div></div>
+    <div class="kpi-card high"><div class="kpi-label">Clusters Held</div><div class="kpi-val">1</div><div class="kpi-meta">RFQ-003 &middot; Pricing anomalies</div></div>
+    <div class="kpi-card warn"><div class="kpi-label">D7 Fail / Warn</div><div class="kpi-val">1 / 2</div><div class="kpi-meta">1 entity blocked &middot; 2 under review</div></div>
+    <div class="kpi-card good"><div class="kpi-label">Reco Compliance</div><div class="kpi-val">50%</div><div class="kpi-meta">2 of 4 POs aligned with GHBS recommendation</div></div>
+  </div>
+
+  <div class="dist-grid">
+    <div class="dist-card">
+      <div class="dist-card-hdr"><div class="dist-card-title">Cluster Screening Results</div><div class="dist-card-sub">5 clusters</div></div>
+      <div class="dist-card-body"><div class="dist-bars">
+        <div class="dist-row"><div class="dist-label">Cleared</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:20%;background:var(--teal)"></div></div><div class="dist-val">1</div></div>
+        <div class="dist-row"><div class="dist-label">Flagged (resolved)</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:40%;background:var(--gold)"></div></div><div class="dist-val">2</div></div>
+        <div class="dist-row"><div class="dist-label">Held (open)</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:20%;background:var(--high)"></div></div><div class="dist-val">1</div></div>
+        <div class="dist-row"><div class="dist-label">Blocked</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:20%;background:var(--crit)"></div></div><div class="dist-val">1</div></div>
+      </div></div>
+    </div>
+    <div class="dist-card">
+      <div class="dist-card-hdr"><div class="dist-card-title">Signals by Layer</div><div class="dist-card-sub">17 signals across 4 layers + D7</div></div>
+      <div class="dist-card-body"><div class="dist-bars">
+        <div class="dist-row"><div class="dist-label">L1 Cross-Bid</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:23.5%;background:linear-gradient(90deg,var(--crit),#FF6B6B)"></div></div><div class="dist-val">4</div></div>
+        <div class="dist-row"><div class="dist-label">L2 Pricing</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:17.6%;background:linear-gradient(90deg,var(--high),#FFB74D)"></div></div><div class="dist-val">3</div></div>
+        <div class="dist-row"><div class="dist-label">L3 Process</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:29.4%;background:linear-gradient(90deg,var(--med),#C5D85A)"></div></div><div class="dist-val">5</div></div>
+        <div class="dist-row"><div class="dist-label">L4 Vendor</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:11.8%;background:linear-gradient(90deg,var(--brand),#99C2E8)"></div></div><div class="dist-val">2</div></div>
+        <div class="dist-row"><div class="dist-label">D7 Entity</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:17.6%;background:linear-gradient(90deg,var(--teal),var(--teal-dk))"></div></div><div class="dist-val">3</div></div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="dist-grid">
+    <div class="dist-card">
+      <div class="dist-card-hdr"><div class="dist-card-title">PO Reconciliation Outcomes</div><div class="dist-card-sub">4 POs issued against 4 recommended clusters</div></div>
+      <div class="dist-card-body"><div class="dist-bars">
+        <div class="dist-row"><div class="dist-label">Aligned</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:50%;background:var(--teal)"></div></div><div class="dist-val">2</div></div>
+        <div class="dist-row"><div class="dist-label">Deviation</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:25%;background:var(--high)"></div></div><div class="dist-val">1</div></div>
+        <div class="dist-row"><div class="dist-label">Override</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:25%;background:var(--crit)"></div></div><div class="dist-val">1</div></div>
+      </div></div>
+    </div>
+    <div class="dist-card">
+      <div class="dist-card-hdr"><div class="dist-card-title">Severity Distribution</div><div class="dist-card-sub">17 signals by severity</div></div>
+      <div class="dist-card-body"><div class="dist-bars">
+        <div class="dist-row"><div class="dist-label">Critical</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:41.2%;background:var(--crit)"></div></div><div class="dist-val">7</div></div>
+        <div class="dist-row"><div class="dist-label">High</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:35.3%;background:var(--high)"></div></div><div class="dist-val">6</div></div>
+        <div class="dist-row"><div class="dist-label">Medium</div><div class="dist-bar-track"><div class="dist-bar-fill" style="width:23.5%;background:var(--med)"></div></div><div class="dist-val">4</div></div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="ai-block">
+    <div class="ai-block-hdr"><span class="ai-icon">Xa</span> Cluster Risk Summary &middot; Tender Q1 FY2026</div>
+    <div class="ai-block-body">
+      <p>Five RFQ clusters were screened during the Q1 FY2026 period. Two clusters (RFQ-001, RFQ-005) showed strong collusion indicators including shared PDF metadata, cover-bid pricing, and related-entity bidders, with one shell entity blocked by D7 verification. One cluster (RFQ-002) involved a late tender with a post-deadline price amendment. One cluster (RFQ-003) remains held with narrow-band pricing, arithmetic progression, and a zero-history bidder whose director overlaps with the incumbent.</p>
+      <p>Post-award reconciliation revealed that only 50% of POs aligned with GHBS recommendations. The refractory lining PO (RFQ-002) was issued to a late bidder who amended their price after the deadline, overriding the GHBS recommendation for the on-time, highest-scoring bidder. The transformer PO (RFQ-004) went to the recommended vendor but at 8% above the recommended price.</p>
+      <p>The email forensic analysis (raw .eml ingestion) identified three IP-matching bidder groups, adding network-level evidence to the document-level and pricing-level collusion signals. The Calamba Industrial Estate haulage cluster (RFQ-003) is the highest-priority investigation target, with three of five bidders sharing the same /24 subnet, the same industrial estate address, and Villanueva-surnamed UBOs.</p>
+    </div>
+  </div>
+
+  <div class="report-stamp">
+    <span><strong>Tender</strong> &middot; Dashboard &middot; TNDR-HGBS-PH-Q1FY26-001</span>
+    <span>5 clusters &middot; 19 bids &middot; 17 signals &middot; Period: 2026-01-01 &rarr; 2026-03-31</span>
+  </div>
+</div>
+<div id="pane-queue" class="pane">
+  <div class="tab-toolbar">
+    <div class="tab-toolbar-l">
+      <h1 class="page-title">RFQ Cluster Queue</h1>
+      <div class="page-sub">Each row represents one RFQ cluster. Click to expand and view bid comparison, screening signals, and D7 verification results. Clusters in Held state require reviewer action before recommendation can be issued.</div>
+    </div>
+    <div class="tab-toolbar-r">
+      <button class="btn-dl" onclick="downloadTab('RFQ_Clusters')">Export to Excel</button>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Filter:</span>
+    <span class="filter-pill on" onclick="filterCluster('res','All')">All (5)</span>
+    <span class="filter-pill" onclick="filterCluster('res','CLEARED')">Cleared (1)</span>
+    <span class="filter-pill" onclick="filterCluster('res','HELD')">Held (1)</span>
+    <span class="filter-pill" onclick="filterCluster('res','BLOCKED')">Blocked (1)</span>
+  </div>
+
+  <div class="table-wrap">
+  <table class="dt" id="cluster-table"><thead><tr>
+    <th>RFQ Reference</th><th>PR / Purch.Org / Creator</th><th>Description &amp; Material</th><th>Qty &amp; Unit Price</th><th>Total Value</th><th>Bids</th><th>Signals</th><th>Max Sev</th><th>D7</th><th>Status</th><th>Eval Lead</th>
+  </tr></thead><tbody>
+
+  <!-- RFQ-001: Collusion -->
+  <tr id="rfq001" class="cluster-expand" onclick="toggleCluster('rfq001')" style="cursor:pointer">
+    <td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">RFQ-PH-2026-001</td>
+    <td><div class="pr-cell"><span class="pr-num">PR-PH-2026-00142</span><span class="pr-meta">PH01 &middot; Maria S. Cruz</span></div></td>
+    <td><div>Cement Grinding Media &mdash; High Chrome Cast Balls</div><div class="unit-sub">Material: GRMD-HCB-50</div></td>
+    <td><div class="qty-block">500 MT<div class="unit-sub">@ <span class="ccy" data-php="29000" data-usd="$471.54" data-php-fmt="&#8369;29K">$471.54</span>/MT</div></div></td>
+    <td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="14500000" data-usd="$235,772" data-php-fmt="&#8369;14.50M">$235,772</span></td>
+    <td style="text-align:center;font-family:var(--mono);font-weight:700">4</td>
+    <td style="text-align:center;font-family:var(--mono);font-weight:700;color:var(--crit)">4</td>
+    <td><span class="sev-badge sev-Critical">Critical</span></td>
+    <td><span class="d7-verdict d7-Fail">1 FAIL</span></td>
+    <td><span class="res-badge res-BLOCKED">BLOCKED</span></td>
+    <td>E. Vasquez</td>
+  </tr>
+  <tr id="cluster-det-rfq001" class="cluster-detail"><td colspan="11">
+    <div class="detail-inner">
+      <div class="callout callout-crit"><span class="callout-icon">&#9888;</span><div><strong>Collusion detected.</strong> Two bidders share identical PDF metadata, cover-bid pricing, and the same registered address. One bidder is a confirmed shell entity (D7 Fail). Three of four bids are compromised. Only Cebu Heavy Industries (BID-001-C) is clean.</div></div>
+
+      <h2 class="sec">Bid Comparison</h2>
+      <div class="table-wrap"><table class="dt"><thead><tr>
+        <th>Bid</th><th>Bidder</th><th>Amount</th><th>Qty</th><th>Unit Price</th><th>Ref Price (6M)</th><th>Tech /100</th><th>Screening</th><th>D7</th><th>Key Finding</th>
+      </tr></thead><tbody>
+        <tr><td style="font-family:var(--mono);font-size:10.5px">BID-001-A</td><td>Pacific Alloy Industries</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="13890000" data-usd="$225,854" data-php-fmt="&#8369;13.89M">$225,854</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">500 MT</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="27780" data-usd="$451.71" data-php-fmt="&#8369;28K">$451.71</span><span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$458<span style="color:var(--t-cap);font-size:9.5px"> /MT</span><div class="ref-delta-good" style="font-size:10.5px">-1.4%</div></td><td style="text-align:center">82</td><td><span class="res-badge res-HELD">HELD</span></td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-size:11px">Shared PDF metadata with Manila Steelcast. Cover-bid pair.</td></tr>
+        <tr><td style="font-family:var(--mono);font-size:10.5px">BID-001-B</td><td>Manila Steelcast Corp.</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="14310000" data-usd="$232,683" data-php-fmt="&#8369;14.31M">$232,683</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">500 MT</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="28620" data-usd="$465.37" data-php-fmt="&#8369;29K">$465.37</span><span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$458<span style="color:var(--t-cap);font-size:9.5px"> /MT</span><div class="ref-delta-good" style="font-size:10.5px">+1.6%</div></td><td style="text-align:center">78</td><td><span class="res-badge res-HELD">HELD</span></td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-size:11px">3.0% above Pacific Alloy. Same /Creator, same compound.</td></tr>
+        <tr style="background:#E8F5E9"><td style="font-family:var(--mono);font-size:10.5px">BID-001-C</td><td><strong>Cebu Heavy Industries</strong></td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="15250000" data-usd="$247,967" data-php-fmt="&#8369;15.25M">$247,967</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">500 MT</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="30500" data-usd="$495.93" data-php-fmt="&#8369;30K">$495.93</span><span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$458<span style="color:var(--t-cap);font-size:9.5px"> /MT</span><div class="ref-delta-warn" style="font-size:10.5px">+8.3%</div></td><td style="text-align:center">85</td><td><span class="res-badge res-CLEARED">CLEARED</span></td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-size:11px">Clean. No anomalies. Strongest technical.</td></tr>
+        <tr><td style="font-family:var(--mono);font-size:10.5px">BID-001-D</td><td>Luzon Metalworks Trading</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="14620000" data-usd="$237,724" data-php-fmt="&#8369;14.62M">$237,724</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">500 MT</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="29240" data-usd="$475.45" data-php-fmt="&#8369;29K">$475.45</span><span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$458<span style="color:var(--t-cap);font-size:9.5px"> /MT</span><div class="ref-delta-warn" style="font-size:10.5px">+3.8%</div></td><td style="text-align:center">45</td><td><span class="res-badge res-BLOCKED">BLOCKED</span></td><td><span class="d7-verdict d7-Fail">Fail</span></td><td style="font-size:11px">D7: Entity not found. TIN unregistered. Shell.</td></tr>
+      </tbody></table></div>
+
+      <h2 class="sec">Signals Fired (4)</h2>
+      <div class="card" style="border-left:4px solid var(--crit)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-Critical" style="margin-right:8px">Critical</span> TNDR0001 &mdash; Identical PDF Metadata</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L1 Cross-Bid</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">/Creator</span><span class="ev">Microsoft Word 16.0 (identical on both)</span><span class="ek">/Producer</span><span class="ev">Microsoft: Print To PDF (identical)</span><span class="ek">XMP DocumentID</span><span class="ev">4A2F8C91-E3B7-4D01... (sequential, last byte differs)</span><span class="ek">Font hashes</span><span class="ev">4f2a91e8:7b3c22d1:9e5f44a3 (identical)</span><span class="ek">Creation gap</span><span class="ev">27 minutes (Pacific Alloy 08:48, Manila Steelcast 09:15)</span></div><div style="margin-top:8px;font-size:11px;color:var(--t-sec)"><strong>Status:</strong> Confirmed &middot; E. Vasquez &middot; 03-Feb-2026</div></div></div>
+
+      <div class="card" style="border-left:4px solid var(--crit)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-Critical" style="margin-right:8px">Critical</span> TNDR0019 &mdash; Common Originating IP</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L3 Email Forensic</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">IP Address</span><span class="ev">103.24.77.142 (both emails)</span><span class="ek">Geolocation</span><span class="ev">PLDT Business, Paranaque, Metro Manila</span><span class="ek">X-Mailer</span><span class="ev">Microsoft Outlook 16.0.18730.20236 (identical)</span><span class="ek">Pacific Alloy</span><span class="ev">EM-001, sent 09:15:22 +0800</span><span class="ek">Manila Steelcast</span><span class="ev">EM-002, sent 09:42:15 +0800 (27 min later)</span></div><div style="margin-top:8px;font-size:11px;color:var(--t-sec)"><strong>Status:</strong> Confirmed &middot; E. Vasquez &middot; 03-Feb-2026</div></div></div>
+
+      <div class="card" style="border-left:4px solid var(--high)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-High" style="margin-right:8px">High</span> TNDR0015 &mdash; Shared Vendor Master</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L4 Vendor</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">Address</span><span class="ev">Units 5A &amp; 5B, Mabini Industrial Compound, Paranaque</span><span class="ek">Bank</span><span class="ev">BDO Unibank, same branch (accts ending 7821, 7835)</span><span class="ek">SAP Setup</span><span class="ev">V200110 (15-Mar-2018) &amp; V200111 (18-Mar-2018), 3 days apart</span></div><div style="margin-top:8px;font-size:11px;color:var(--t-sec)"><strong>Status:</strong> Confirmed &middot; E. Vasquez &middot; 03-Feb-2026</div></div></div>
+
+      <div class="card" style="border-left:4px solid var(--med)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-Medium" style="margin-right:8px">Medium</span> TNDR0005 &mdash; Cover-Bid Pricing</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L2 Pricing</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">Spread</span><span class="ev">Manila Steelcast at <span class="ccy" data-php="14310000" data-usd="$232,683" data-php-fmt="&#8369;14.31M">$232,683</span> is 3.0% above Pacific Alloy at <span class="ccy" data-php="13890000" data-usd="$225,854" data-php-fmt="&#8369;13.89M">$225,854</span></span><span class="ek">Band</span><span class="ev">Within 2&ndash;7% cover-bid detection range</span></div><div style="margin-top:8px;font-size:11px;color:var(--t-sec)"><strong>Status:</strong> Confirmed &middot; E. Vasquez &middot; 03-Feb-2026</div></div></div>
+
+      <h2 class="sec">AI Cluster Assessment</h2>
+      <div class="ai-block"><div class="ai-block-hdr"><span class="ai-icon">Xa</span> Risk Explanation &middot; RFQ-PH-2026-001</div><div class="ai-block-body">This cluster shows a textbook collusion pattern. Pacific Alloy Industries and Manila Steelcast Corporation share identical PDF authorship metadata (/Creator, /Producer, XMP DocumentID prefix, and font subset fingerprints), indicating both bid documents were created on the same machine within 27 minutes. The two companies are registered at adjacent units in the same industrial compound, were created in SAP within 3 days of each other, bank at the same BDO Unibank branch, and submitted their bids from the same IP address (103.24.77.142). Manila Steelcast priced 3.0% above Pacific Alloy, consistent with a cover-bid arrangement where the designated loser bids just above the designated winner. A fourth bidder, Luzon Metalworks Trading, is a confirmed shell entity (D7 Fail: TIN unregistered, entity not found in SEC, co-working space address). Cebu Heavy Industries is the only legitimate, independent bidder in this cluster. GHBS recommended Cebu Heavy, and the PO was issued accordingly.</div></div>
+
+      <h2 class="sec">Recommendation</h2>
+      <div class="callout callout-info"><span class="callout-icon">&#10003;</span><div><strong>Cebu Heavy Industries Co.</strong> at <span class="ccy" data-php="15250000" data-usd="$247,967" data-php-fmt="&#8369;15.25M">$247,967</span>. Issued 05-Feb-2026 by E. Vasquez. PO 4500089001 &mdash; <span class="recon-badge recon-Aligned">Aligned</span></div></div>
+    </div>
+  </td></tr>
+
+  <!-- RFQ-002: Late Tender -->
+  <tr id="rfq002" class="cluster-expand" onclick="toggleCluster('rfq002')" style="cursor:pointer">
+    <td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">RFQ-PH-2026-002</td>
+    <td><div class="pr-cell"><span class="pr-num">PR-PH-2026-00198</span><span class="pr-meta">PH01 &middot; Antonio R. Reyes</span></div></td>
+    <td><div>Kiln Refractory Lining &mdash; Magnesia-Chrome Bricks</div><div class="unit-sub">Material: REFR-MCB-280</div></td>
+    <td><div class="qty-block">350 MT<div class="unit-sub">@ <span class="ccy" data-php="82142" data-usd="$1,336" data-php-fmt="&#8369;82K">$1,336</span>/MT</div></div></td>
+    <td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="28750000" data-usd="$467,480" data-php-fmt="&#8369;28.75M">$467,480</span></td>
+    <td style="text-align:center;font-family:var(--mono);font-weight:700">3</td>
+    <td style="text-align:center;font-family:var(--mono);font-weight:700;color:var(--high)">2</td>
+    <td><span class="sev-badge sev-High">High</span></td>
+    <td style="font-size:11px;color:var(--teal-dk)">All Pass</td>
+    <td><span class="res-badge res-HELD">HELD</span></td>
+    <td>C. Mendoza</td>
+  </tr>
+  <tr id="cluster-det-rfq002" class="cluster-detail"><td colspan="11">
+    <div class="detail-inner">
+      <div class="callout callout-crit"><span class="callout-icon">&#9888;</span><div><strong>PO Override detected.</strong> Country procurement selected Visayas Thermal Solutions (the late bidder) instead of Shinagawa Refractories (GHBS recommendation). Visayas Thermal submitted 15 hours after deadline, then amended their price down 10.9%.</div></div>
+
+      <h2 class="sec">Bid Comparison</h2>
+      <div class="table-wrap"><table class="dt"><thead><tr><th>Bid</th><th>Bidder</th><th>Amount</th><th>Qty</th><th>Unit Price</th><th>Ref Price (6M)</th><th>Tech /100</th><th>On Time</th><th>Screening</th><th>Key Finding</th></tr></thead><tbody>
+        <tr style="background:#E8F5E9"><td style="font-family:var(--mono);font-size:10.5px">BID-002-A</td><td><strong>Shinagawa Refractories PH</strong></td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="27800000" data-usd="$452,033" data-php-fmt="&#8369;27.80M">$452,033</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">350 MT</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="79429" data-usd="$1,292" data-php-fmt="&#8369;79K">$1,292</span><span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$1,290<span style="color:var(--t-cap);font-size:9.5px"> /MT</span><div class="ref-delta-good" style="font-size:10.5px">+0.1%</div></td><td style="text-align:center">92</td><td>Yes</td><td><span class="res-badge res-CLEARED">CLEARED</span></td><td style="font-size:11px">GHBS recommended. On-time, strongest technical.</td></tr>
+        <tr><td style="font-family:var(--mono);font-size:10.5px">BID-002-B</td><td>RHI Magnesita Asia Pacific</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="29100000" data-usd="$473,171" data-php-fmt="&#8369;29.10M">$473,171</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">350 MT</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="83143" data-usd="$1,352" data-php-fmt="&#8369;83K">$1,352</span><span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$1,290<span style="color:var(--t-cap);font-size:9.5px"> /MT</span><div class="ref-delta-warn" style="font-size:10.5px">+4.8%</div></td><td style="text-align:center">88</td><td>Yes</td><td><span class="res-badge res-FLAGGED">FLAGGED</span></td><td style="font-size:11px">Above estimate. No anomalies.</td></tr>
+        <tr style="background:var(--crit-lt)"><td style="font-family:var(--mono);font-size:10.5px">BID-002-C</td><td>Visayas Thermal Solutions</td><td style="font-family:var(--mono);text-align:right"><s><span class="ccy" data-php="30200000" data-usd="$491,057" data-php-fmt="&#8369;30.20M">$491,057</span></s> <span class="ccy" data-php="26900000" data-usd="$437,398" data-php-fmt="&#8369;26.90M">$437,398</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">350 MT</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="76857" data-usd="$1,250" data-php-fmt="&#8369;77K">$1,250</span><span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$1,290<span style="color:var(--t-cap);font-size:9.5px"> /MT</span><div class="ref-delta-warn" style="font-size:10.5px">-3.1%</div></td><td style="text-align:center">75</td><td style="color:var(--crit);font-weight:700">No</td><td><span class="res-badge res-HELD">HELD</span></td><td style="font-size:11px">LATE (15h10m). Amended price -10.9% after deadline. <strong>PO issued to this bidder.</strong></td></tr>
+      </tbody></table></div>
+
+      <h2 class="sec">Signals Fired (2)</h2>
+      <div class="card" style="border-left:4px solid var(--high)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-High" style="margin-right:8px">High</span> TNDR0010 &mdash; Late Tender Accepted</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L3 Process</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">Deadline</span><span class="ev">03-Feb-2026 17:00 PHT</span><span class="ek">Submission</span><span class="ev">04-Feb-2026 08:10 PHT</span><span class="ek">Late by</span><span class="ev">15 hours 10 minutes</span></div></div></div>
+
+      <div class="card" style="border-left:4px solid var(--high)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-High" style="margin-right:8px">High</span> TNDR0011 &mdash; Post-Deadline Amendment</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L3 Process</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">Original</span><span class="ev"><span class="ccy" data-php="30200000" data-usd="$491,057" data-php-fmt="&#8369;30.20M">$491,057</span></span><span class="ek">Amended</span><span class="ev"><span class="ccy" data-php="26900000" data-usd="$437,398" data-php-fmt="&#8369;26.90M">$437,398</span></span><span class="ek">Change</span><span class="ev">-10.9% (threshold: 2%)</span></div></div></div>
+
+      <h2 class="sec">AI Cluster Assessment</h2>
+      <div class="ai-block"><div class="ai-block-hdr"><span class="ai-icon">Xa</span> Risk Explanation &middot; RFQ-PH-2026-002</div><div class="ai-block-body">Visayas Thermal Solutions submitted their bid 15 hours and 10 minutes after the RFQ deadline, then amended their price downward by 10.9% (from <span class="ccy" data-php="30200000" data-usd="$491,057" data-php-fmt="&#8369;30.20M">$491,057</span> to <span class="ccy" data-php="26900000" data-usd="$437,398" data-php-fmt="&#8369;26.90M">$437,398</span>) via a "clarification" email. The amended price is lower than all on-time bids, including Shinagawa Refractories at <span class="ccy" data-php="27800000" data-usd="$452,033" data-php-fmt="&#8369;27.80M">$452,033</span> (the GHBS recommendation). The late submission combined with a significant price reduction suggests the bidder may have had visibility into competing bids before adjusting their own. Despite GHBS recommending Shinagawa, the country procurement team issued the PO to Visayas Thermal at the amended price, resulting in a PO Override. The kiln shutdown window is fixed, creating schedule pressure that may have influenced the override decision, but the process integrity concerns remain.</div></div>
+
+      <h2 class="sec">Recommendation &amp; PO</h2>
+      <div class="callout callout-crit"><span class="callout-icon">&#9888;</span><div><strong>OVERRIDE.</strong> GHBS recommended <strong>Shinagawa Refractories</strong> at <span class="ccy" data-php="27800000" data-usd="$452,033" data-php-fmt="&#8369;27.80M">$452,033</span>. PO 4500089002 issued to <strong>Visayas Thermal Solutions</strong> at <span class="ccy" data-php="26900000" data-usd="$437,398" data-php-fmt="&#8369;26.90M">$437,398</span> (-3.2%). <span class="recon-badge recon-Override">Override</span></div></div>
+    </div>
+  </td></tr>
+
+  <!-- RFQ-003: Narrow Band + Round Robin (HELD) -->
+  <tr id="rfq003" class="cluster-expand" onclick="toggleCluster('rfq003')" style="cursor:pointer;background:var(--high-lt)">
+    <td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">RFQ-PH-2026-003</td>
+    <td><div class="pr-cell"><span class="pr-num">PR-PH-2026-00211</span><span class="pr-meta">PH02 &middot; Reynaldo M. Aquino</span></div></td>
+    <td><div>Bulk Limestone Haulage &mdash; 12-Month Contract</div><div class="unit-sub">Material: HAUL-LST-MT (monthly contract rate)</div></td>
+    <td><div class="qty-block">5,000 MT/mo<div class="unit-sub">@ <span class="ccy" data-php="1500" data-usd="$24.39" data-php-fmt="&#8369;2K">$24.39</span>/MT/mo</div></div></td>
+    <td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="42000000" data-usd="$682,927" data-php-fmt="&#8369;42.00M">$682,927</span></td>
+    <td style="text-align:center;font-family:var(--mono);font-weight:700">5</td>
+    <td style="text-align:center;font-family:var(--mono);font-weight:700;color:var(--crit)">5</td>
+    <td><span class="sev-badge sev-Critical">Critical</span></td>
+    <td><span class="d7-verdict d7-Warn">1 WARN</span></td>
+    <td><span class="res-badge res-HELD">HELD</span></td>
+    <td>E. Vasquez</td>
+  </tr>
+  <tr id="cluster-det-rfq003" class="cluster-detail"><td colspan="11">
+    <div class="detail-inner">
+      <div class="callout callout-warn"><span class="callout-icon">&#9888;</span><div><strong>Cluster HELD &mdash; awaiting resolution.</strong> Five signals open: narrow-band pricing compression (4.2%), arithmetic progression in bid steps, zero-history bidder with director overlap to incumbent, and common originating IP across three bidders. This cluster cannot proceed to recommendation until all signals are resolved.</div></div>
+
+      <h2 class="sec">Bid Comparison</h2>
+      <div class="table-wrap"><table class="dt"><thead><tr><th>Bid</th><th>Bidder</th><th>Amount</th><th>Qty</th><th>Unit Price</th><th>Ref Price (6M)</th><th>Tech /100</th><th>Screening</th><th>D7</th><th>Key Finding</th></tr></thead><tbody>
+        <tr><td style="font-family:var(--mono);font-size:10.5px">BID-003-A</td><td>TransHaul Logistics</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="6850000" data-usd="$111,382" data-php-fmt="&#8369;6.85M">$111,382</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">5,000 MT/mo</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="1370" data-usd="$22.28" data-php-fmt="&#8369;1K">$22.28</span><span style="color:var(--t-cap);font-size:9.5px"> /MT/mo</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$23<span style="color:var(--t-cap);font-size:9.5px"> /MT/mo</span><div class="ref-delta-warn" style="font-size:10.5px">-3.9%</div></td><td style="text-align:center">80</td><td><span class="res-badge res-HELD">HELD</span></td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-size:11px">Lowest. Incumbent. IP subnet match with 2 others.</td></tr>
+        <tr><td style="font-family:var(--mono);font-size:10.5px">BID-003-B</td><td>Mindanao Freight Services</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="6960000" data-usd="$113,171" data-php-fmt="&#8369;6.96M">$113,171</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">5,000 MT/mo</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="1392" data-usd="$22.63" data-php-fmt="&#8369;1K">$22.63</span><span style="color:var(--t-cap);font-size:9.5px"> /MT/mo</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$23<span style="color:var(--t-cap);font-size:9.5px"> /MT/mo</span><div class="ref-delta-good" style="font-size:10.5px">-2.3%</div></td><td style="text-align:center">78</td><td><span class="res-badge res-HELD">HELD</span></td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-size:11px">+1.6%. Same /24 subnet. Same estate.</td></tr>
+        <tr><td style="font-family:var(--mono);font-size:10.5px">BID-003-C</td><td>Island Cargo Movers</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="7075000" data-usd="$115,041" data-php-fmt="&#8369;7.08M">$115,041</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">5,000 MT/mo</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="1415" data-usd="$23.01" data-php-fmt="&#8369;1K">$23.01</span><span style="color:var(--t-cap);font-size:9.5px"> /MT/mo</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$23<span style="color:var(--t-cap);font-size:9.5px"> /MT/mo</span><div class="ref-delta-good" style="font-size:10.5px">-0.7%</div></td><td style="text-align:center">76</td><td><span class="res-badge res-HELD">HELD</span></td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-size:11px">+3.3%. Step ~<span class="ccy" data-php="113000" data-usd="$1,837" data-php-fmt="&#8369;113K">$1,837</span>. Different address/IP.</td></tr>
+        <tr><td style="font-family:var(--mono);font-size:10.5px">BID-003-D</td><td>Archipelago Transport</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="7185000" data-usd="$116,829" data-php-fmt="&#8369;7.18M">$116,829</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">5,000 MT/mo</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="1437" data-usd="$23.37" data-php-fmt="&#8369;1K">$23.37</span><span style="color:var(--t-cap);font-size:9.5px"> /MT/mo</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$23<span style="color:var(--t-cap);font-size:9.5px"> /MT/mo</span><div class="ref-delta-good" style="font-size:10.5px">+0.8%</div></td><td style="text-align:center">74</td><td><span class="res-badge res-HELD">HELD</span></td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-size:11px">+4.9%. Same /24 subnet. Same estate.</td></tr>
+        <tr style="background:var(--gold-lt)"><td style="font-family:var(--mono);font-size:10.5px">BID-003-E</td><td>NewRoute Haulers PH</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="7138000" data-usd="$116,065" data-php-fmt="&#8369;7.14M">$116,065</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">5,000 MT/mo</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="1428" data-usd="$23.22" data-php-fmt="&#8369;1K">$23.22</span><span style="color:var(--t-cap);font-size:9.5px"> /MT/mo</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$23<span style="color:var(--t-cap);font-size:9.5px"> /MT/mo</span><div class="ref-delta-good" style="font-size:10.5px">+0.2%</div></td><td style="text-align:center">50</td><td><span class="res-badge res-HELD">HELD</span></td><td><span class="d7-verdict d7-Warn">Warn</span></td><td style="font-size:11px">Zero history. Inc Dec 2025. Director = TransHaul board.</td></tr>
+      </tbody></table></div>
+
+      <h2 class="sec">Pricing Pattern Visualisation</h2>
+      <div style="padding:12px;background:#fff;border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px">
+        <div style="font-size:10px;font-weight:700;color:var(--t-sec);text-transform:uppercase;margin-bottom:10px">Bid Amount Distribution &middot; Spread: 4.2% (threshold: 5%)</div>
+        <div class="bid-bar" style="width:90%;background:linear-gradient(90deg,var(--high),#FFB74D)">TransHaul <span class="ccy" data-php="6850000" data-usd="$111,382" data-php-fmt="&#8369;6.85M">$111,382</span><span class="bid-bar-label">Lowest</span></div>
+        <div class="bid-bar" style="width:92%;background:linear-gradient(90deg,var(--high),#FFB74D)">Mindanao <span class="ccy" data-php="6960000" data-usd="$113,171" data-php-fmt="&#8369;6.96M">$113,171</span><span class="bid-bar-label">+1.6%</span></div>
+        <div class="bid-bar" style="width:93.5%;background:linear-gradient(90deg,var(--high),#FFB74D)">Island <span class="ccy" data-php="7075000" data-usd="$115,041" data-php-fmt="&#8369;7.08M">$115,041</span><span class="bid-bar-label">+3.3%</span></div>
+        <div class="bid-bar" style="width:94%;background:linear-gradient(90deg,var(--gold),#F4D788);color:#6D3B00">NewRoute <span class="ccy" data-php="7138000" data-usd="$116,065" data-php-fmt="&#8369;7.14M">$116,065</span><span class="bid-bar-label">+4.2%</span></div>
+        <div class="bid-bar" style="width:94.8%;background:linear-gradient(90deg,var(--high),#FFB74D)">Archipelago <span class="ccy" data-php="7185000" data-usd="$116,829" data-php-fmt="&#8369;7.18M">$116,829</span><span class="bid-bar-label">+4.9%</span></div>
+        <div style="font-size:10px;color:var(--t-cap);margin-top:8px;font-family:var(--mono)">Arithmetic step: <span class="ccy" data-php="110000" data-usd="$1,789" data-php-fmt="&#8369;110K">$1,789</span> &rarr; <span class="ccy" data-php="115000" data-usd="$1,870" data-php-fmt="&#8369;115K">$1,870</span> &rarr; <span class="ccy" data-php="63000" data-usd="$1,024" data-php-fmt="&#8369;63K">$1,024</span> &rarr; <span class="ccy" data-php="47000" data-usd="$764.23" data-php-fmt="&#8369;47K">$764.23</span> &middot; First 3 steps variance: 2.3%</div>
+      </div>
+
+      <h2 class="sec">Signals Fired (5)</h2>
+      <div class="card" style="border-left:4px solid var(--crit)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-Critical" style="margin-right:8px">Critical</span> TNDR0019 &mdash; Common Originating IP</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L3 Email</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">Subnet</span><span class="ev">180.191.64.x/24 (PLDT Business, Calamba, Laguna)</span><span class="ek">TransHaul</span><span class="ev">180.191.64.51 (Bldg C, Calamba Industrial Estate)</span><span class="ek">Mindanao</span><span class="ev">180.191.64.78 (Bldg D, same estate)</span><span class="ek">Archipelago</span><span class="ev">180.191.64.92 (Bldg E, same estate)</span><span class="ek">Outlook</span><span class="ev">All three: MS Outlook 16.0.18525.20160 (identical version)</span></div><div style="margin-top:8px;font-size:11px;color:var(--crit);font-weight:600">Status: Open &middot; Awaiting reviewer action</div></div></div>
+
+      <div class="card" style="border-left:4px solid var(--high)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-High" style="margin-right:8px">High</span> TNDR0008 &mdash; Narrow-Band Compression</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L2 Pricing</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">Spread</span><span class="ev"><span class="ccy" data-php="6850000" data-usd="$111,382" data-php-fmt="&#8369;6.85M">$111,382</span> to <span class="ccy" data-php="7185000" data-usd="$116,829" data-php-fmt="&#8369;7.18M">$116,829</span> = 4.2%</span><span class="ek">Threshold</span><span class="ev">5% (this cluster is below threshold)</span></div><div style="margin-top:8px;font-size:11px;color:var(--crit);font-weight:600">Status: Open</div></div></div>
+
+      <div class="card" style="border-left:4px solid var(--med)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-Medium" style="margin-right:8px">Medium</span> TNDR0007 &mdash; Arithmetic Progression</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L2 Pricing</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">Steps</span><span class="ev"><span class="ccy" data-php="110000" data-usd="$1,789" data-php-fmt="&#8369;110K">$1,789</span> &rarr; <span class="ccy" data-php="115000" data-usd="$1,870" data-php-fmt="&#8369;115K">$1,870</span> &rarr; <span class="ccy" data-php="110000" data-usd="$1,789" data-php-fmt="&#8369;110K">$1,789</span> (first 4 bidders)</span><span class="ek">Variance</span><span class="ev">2.3% (threshold: 5%)</span></div><div style="margin-top:8px;font-size:11px;color:var(--crit);font-weight:600">Status: Open</div></div></div>
+
+      <div class="card" style="border-left:4px solid var(--med)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-Medium" style="margin-right:8px">Medium</span> TNDR0017 &mdash; Zero-History Bidder</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L4 Vendor</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">Bidder</span><span class="ev">NewRoute Haulers PH &mdash; zero PO history, inc Dec 2025</span><span class="ek">Incumbent</span><span class="ev">TransHaul Logistics &mdash; <span class="ccy" data-php="28000000" data-usd="$455,285" data-php-fmt="&#8369;28.00M">$455,285</span> in last 12 months</span><span class="ek">Director</span><span class="ev">Roberto M. Villanueva: sole director of NewRoute AND board member of TransHaul</span></div><div style="margin-top:8px;font-size:11px;color:var(--crit);font-weight:600">Status: Open</div></div></div>
+
+      <div class="card" style="border-left:4px solid var(--med)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-Medium" style="margin-right:8px">Medium</span> D7-WARN &mdash; Entity Warning (NewRoute)</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">D7</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">Score</span><span class="ev">5.8 / 10 (Warn threshold: 4.0)</span><span class="ek">Registration</span><span class="ev">Warn &mdash; 2.5 months old, virtual office</span><span class="ek">Directors</span><span class="ev">Warn &mdash; Roberto M. Villanueva = TransHaul board member</span><span class="ek">Financial</span><span class="ev">Warn &mdash; No filings, no credit, no revenue</span></div><div style="margin-top:8px;font-size:11px;color:var(--crit);font-weight:600">Status: Open</div></div></div>
+
+      <h2 class="sec">AI Cluster Assessment</h2>
+      <div class="ai-block"><div class="ai-block-hdr"><span class="ai-icon">Xa</span> Risk Explanation &middot; RFQ-PH-2026-003</div><div class="ai-block-body">This cluster presents the strongest bid-rigging indicators in the Q1 period. Five bidders submitted prices within a 4.2% band with near-arithmetic step sizes, a classic signature of coordinated pricing. Three of the five bidders (TransHaul, Mindanao Freight, and Archipelago Transport) operate from adjacent buildings at Calamba Industrial Estate, share the same PLDT Business /24 subnet, use identical Outlook versions, and have Villanueva-surnamed UBOs. The D7 cross-bidder analysis confirms: Ernesto R. Villanueva (TransHaul UBO), Patricia L. Villanueva (Mindanao Freight UBO), and Miguel R. Villanueva (Archipelago UBO) appear to be family members controlling three separate corporate entities. A fifth bidder, NewRoute Haulers, was incorporated in December 2025 (2.5 months old), operates from a virtual office, has zero transaction history, and its sole director Roberto M. Villanueva is also a TransHaul board member. NewRoute appears to have been created specifically as a cover bidder. Island Cargo Movers is the only potentially independent bidder, though its participation in the pricing pattern warrants further investigation. This cluster should not proceed to recommendation until a full investigation is completed.</div></div>
+
+      <h2 class="sec">Recommendation</h2>
+      <div class="callout callout-warn"><span class="callout-icon">&#9203;</span><div><strong>Pending.</strong> Cluster is HELD. Cannot issue recommendation until all 5 signals are resolved. No PO issued.</div></div>
+
+      <div class="actions-row">
+        <button class="btn btn-p">Confirm All Anomalies</button>
+        <button class="btn btn-g">Request More Information</button>
+        <button class="btn btn-crit">Escalate to Category Manager</button>
+      </div>
+    </div>
+  </td></tr>
+
+  <!-- RFQ-004: Clean -->
+  <tr id="rfq004" class="cluster-expand" onclick="toggleCluster('rfq004')" style="cursor:pointer">
+    <td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">RFQ-PH-2026-004</td>
+    <td><div class="pr-cell"><span class="pr-num">PR-PH-2026-00224</span><span class="pr-meta">PH01 &middot; Lourdes P. Garcia</span></div></td>
+    <td><div>Power Transformer &mdash; 10MVA 69kV/13.8kV</div><div class="unit-sub">Material: TRFM-10MVA-69</div></td>
+    <td><div class="qty-block">2 EA<div class="unit-sub">@ <span class="ccy" data-php="9100000" data-usd="$147,967" data-php-fmt="&#8369;9.10M">$147,967</span>/EA</div></div></td>
+    <td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="18200000" data-usd="$295,935" data-php-fmt="&#8369;18.20M">$295,935</span></td>
+    <td style="text-align:center;font-family:var(--mono);font-weight:700">3</td>
+    <td style="text-align:center;font-family:var(--mono);font-weight:700;color:var(--teal)">0</td>
+    <td style="font-size:11px;color:var(--t-sec)">None</td>
+    <td style="font-size:11px;color:var(--teal-dk)">All Pass</td>
+    <td><span class="res-badge res-CLEARED">CLEARED</span></td>
+    <td>C. Mendoza</td>
+  </tr>
+  <tr id="cluster-det-rfq004" class="cluster-detail"><td colspan="11">
+    <div class="detail-inner">
+      <div class="callout callout-info"><span class="callout-icon">&#10003;</span><div><strong>Clean cluster.</strong> No signals fired. All three bidders are established MNCs with D7 Pass. However, the PO shows a price deviation of +8.0% from the recommended price.</div></div>
+      <h2 class="sec">Bid Comparison</h2>
+      <div class="table-wrap"><table class="dt"><thead><tr><th>Bid</th><th>Bidder</th><th>Amount</th><th>Qty</th><th>Unit Price</th><th>Ref Price (6M)</th><th>Tech /100</th><th>Screening</th><th>D7</th></tr></thead><tbody>
+        <tr><td style="font-family:var(--mono);font-size:10.5px">BID-004-A</td><td>ABB Power Philippines</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="9450000" data-usd="$153,659" data-php-fmt="&#8369;9.45M">$153,659</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">2 EA</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="4725000" data-usd="$76,829" data-php-fmt="&#8369;4.72M">$76,829</span><span style="color:var(--t-cap);font-size:9.5px"> /EA</span></td><td style="font-family:var(--mono);text-align:right;font-size:10.5px"><span class="ref-delta-na">N/A</span><div style="font-size:9px;color:var(--t-cap)">first procurement</div></td><td style="text-align:center">90</td><td><span class="res-badge res-CLEARED">CLEARED</span></td><td><span class="d7-verdict d7-Pass">Pass (1.0)</span></td></tr>
+        <tr style="background:#E8F5E9"><td style="font-family:var(--mono);font-size:10.5px">BID-004-B</td><td><strong>Schneider Electric PH</strong></td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="8980000" data-usd="$146,016" data-php-fmt="&#8369;8.98M">$146,016</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">2 EA</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="4490000" data-usd="$73,008" data-php-fmt="&#8369;4.49M">$73,008</span><span style="color:var(--t-cap);font-size:9.5px"> /EA</span></td><td style="font-family:var(--mono);text-align:right;font-size:10.5px"><span class="ref-delta-na">N/A</span><div style="font-size:9px;color:var(--t-cap)">first procurement</div></td><td style="text-align:center">88</td><td><span class="res-badge res-CLEARED">CLEARED</span></td><td><span class="d7-verdict d7-Pass">Pass (1.1)</span></td></tr>
+        <tr><td style="font-family:var(--mono);font-size:10.5px">BID-004-C</td><td>Hyundai Electric PH</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="9820000" data-usd="$159,675" data-php-fmt="&#8369;9.82M">$159,675</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">2 EA</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="4910000" data-usd="$79,837" data-php-fmt="&#8369;4.91M">$79,837</span><span style="color:var(--t-cap);font-size:9.5px"> /EA</span></td><td style="font-family:var(--mono);text-align:right;font-size:10.5px"><span class="ref-delta-na">N/A</span><div style="font-size:9px;color:var(--t-cap)">first procurement</div></td><td style="text-align:center">82</td><td><span class="res-badge res-CLEARED">CLEARED</span></td><td><span class="d7-verdict d7-Pass">Pass (1.3)</span></td></tr>
+      </tbody></table></div>
+      <h2 class="sec">Recommendation &amp; PO</h2>
+      <div class="callout callout-warn"><span class="callout-icon">&#9888;</span><div><strong>Schneider Electric Philippines</strong> recommended at <span class="ccy" data-php="8980000" data-usd="$146,016" data-php-fmt="&#8369;8.98M">$146,016</span>. PO 4500089003 issued to Schneider Electric at <span class="ccy" data-php="9700000" data-usd="$157,724" data-php-fmt="&#8369;9.70M">$157,724</span> (+8.0%). <span class="recon-badge recon-Deviation">Deviation</span> &mdash; correct vendor but price exceeds recommendation by <span class="ccy" data-php="720000" data-usd="$11,707" data-php-fmt="&#8369;720,000">$11,707</span>.</div></div>
+    </div>
+  </td></tr>
+
+  <!-- RFQ-005: Pre-Issuance + Shared Template -->
+  <tr id="rfq005" class="cluster-expand" onclick="toggleCluster('rfq005')" style="cursor:pointer">
+    <td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">RFQ-PH-2026-005</td>
+    <td><div class="pr-cell"><span class="pr-num">PR-PH-2026-00256</span><span class="pr-meta">PH02 &middot; Felicidad B. Tanco</span></div></td>
+    <td><div>Quarry Explosives &mdash; ANFO + Boosters, 12-Month</div><div class="unit-sub">Material: EXPL-ANFO-1200</div></td>
+    <td><div class="qty-block">1,200 MT<div class="unit-sub">@ <span class="ccy" data-php="28000" data-usd="$455.28" data-php-fmt="&#8369;28K">$455.28</span>/MT</div></div></td>
+    <td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="33600000" data-usd="$546,341" data-php-fmt="&#8369;33.60M">$546,341</span></td>
+    <td style="text-align:center;font-family:var(--mono);font-weight:700">4</td>
+    <td style="text-align:center;font-family:var(--mono);font-weight:700;color:var(--crit)">5</td>
+    <td><span class="sev-badge sev-Critical">Critical</span></td>
+    <td><span class="d7-verdict d7-Warn">1 WARN</span></td>
+    <td><span class="res-badge res-HELD">HELD</span></td>
+    <td>E. Vasquez</td>
+  </tr>
+  <tr id="cluster-det-rfq005" class="cluster-detail"><td colspan="11">
+    <div class="detail-inner">
+      <div class="callout callout-crit"><span class="callout-icon">&#9888;</span><div><strong>Pre-issuance knowledge detected.</strong> Dyno Nobel's bid PDF was created 3 days before the RFQ was issued. Their director Jose P. Ramirez is a Holcim Philippines employee (quarry operations supervisor). PhilBlast and Visayas Blasting share identical document templates, font subsets, and originating IP subnet.</div></div>
+
+      <h2 class="sec">Bid Comparison</h2>
+      <div class="table-wrap"><table class="dt"><thead><tr><th>Bid</th><th>Bidder</th><th>Amount</th><th>Qty</th><th>Unit Price</th><th>Ref Price (6M)</th><th>Tech /100</th><th>Screening</th><th>D7</th><th>Key Finding</th></tr></thead><tbody>
+        <tr style="background:#E8F5E9"><td style="font-family:var(--mono);font-size:10.5px">BID-005-A</td><td><strong>Orica Philippines</strong></td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="34200000" data-usd="$556,098" data-php-fmt="&#8369;34.20M">$556,098</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">1,200 MT</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="28500" data-usd="$463.41" data-php-fmt="&#8369;28K">$463.41</span><span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$445<span style="color:var(--t-cap);font-size:9.5px"> /MT</span><div class="ref-delta-warn" style="font-size:10.5px">+4.1%</div></td><td style="text-align:center">90</td><td><span class="res-badge res-CLEARED">CLEARED</span></td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-size:11px">Clean. Recommended.</td></tr>
+        <tr style="background:var(--crit-lt)"><td style="font-family:var(--mono);font-size:10.5px">BID-005-B</td><td>Dyno Nobel Asia Pacific</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="32800000" data-usd="$533,333" data-php-fmt="&#8369;32.80M">$533,333</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">1,200 MT</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="27333" data-usd="$444.44" data-php-fmt="&#8369;27K">$444.44</span><span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$445<span style="color:var(--t-cap);font-size:9.5px"> /MT</span><div class="ref-delta-good" style="font-size:10.5px">-0.1%</div></td><td style="text-align:center">85</td><td><span class="res-badge res-HELD">HELD</span></td><td><span class="d7-verdict d7-Warn">Warn</span></td><td style="font-size:11px">PDF created 21-Feb, RFQ issued 24-Feb. Director = Holcim employee.</td></tr>
+        <tr><td style="font-family:var(--mono);font-size:10.5px">BID-005-C</td><td>PhilBlast Mining Supplies</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="35100000" data-usd="$570,732" data-php-fmt="&#8369;35.10M">$570,732</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">1,200 MT</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="29250" data-usd="$475.61" data-php-fmt="&#8369;29K">$475.61</span><span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$445<span style="color:var(--t-cap);font-size:9.5px"> /MT</span><div class="ref-delta-warn" style="font-size:10.5px">+6.9%</div></td><td style="text-align:center">72</td><td><span class="res-badge res-HELD">HELD</span></td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-size:11px">Shared template + fonts with Visayas Blasting. Same /24 subnet.</td></tr>
+        <tr><td style="font-family:var(--mono);font-size:10.5px">BID-005-D</td><td>Visayas Blasting Solutions</td><td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="36500000" data-usd="$593,496" data-php-fmt="&#8369;36.50M">$593,496</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">1,200 MT</td><td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ccy" data-php="30417" data-usd="$494.59" data-php-fmt="&#8369;30K">$494.59</span><span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td><td style="font-family:var(--mono);text-align:right;font-size:11px">$445<span style="color:var(--t-cap);font-size:9.5px"> /MT</span><div class="ref-delta-bad" style="font-size:10.5px">+11.1%</div></td><td style="text-align:center">68</td><td><span class="res-badge res-HELD">HELD</span></td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-size:11px">Shared template + fonts with PhilBlast. Same bldg, 3 days apart.</td></tr>
+      </tbody></table></div>
+
+      <h2 class="sec">Signals Fired (5)</h2>
+      <div class="card" style="border-left:4px solid var(--crit)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-Critical" style="margin-right:8px">Critical</span> TNDR0014 &mdash; Pre-Issuance RFQ Knowledge</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L3 Process</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">PDF Created</span><span class="ev">21-Feb-2026 14:30 (from /CreationDate)</span><span class="ek">RFQ Issued</span><span class="ev">24-Feb-2026</span><span class="ek">Gap</span><span class="ev">3 days BEFORE RFQ existed</span><span class="ek">Channel</span><span class="ev">D7: Director Jose P. Ramirez is Holcim PH quarry operations supervisor</span></div><div style="margin-top:8px;font-size:11px;color:var(--t-sec)"><strong>Status:</strong> Confirmed &middot; E. Vasquez &middot; 16-Mar-2026</div></div></div>
+
+      <div class="card" style="border-left:4px solid var(--crit)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-Critical" style="margin-right:8px">Critical</span> TNDR0019 &mdash; Common Originating IP</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L3 Email</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">Subnet</span><span class="ev">120.28.192.x/24 (Globe Business, Pasig)</span><span class="ek">PhilBlast</span><span class="ev">120.28.192.44 (Suite 401, Mining Tower)</span><span class="ek">Visayas Blasting</span><span class="ev">120.28.192.51 (Suite 403, Mining Tower)</span></div><div style="margin-top:8px;font-size:11px;color:var(--t-sec)"><strong>Status:</strong> Confirmed &middot; E. Vasquez &middot; 16-Mar-2026</div></div></div>
+
+      <div class="card" style="border-left:4px solid var(--high)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-High" style="margin-right:8px">High</span> TNDR0003 &mdash; Shared Font Subsets</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L1 Cross-Bid</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">Fonts</span><span class="ev">AAAAAB+Calibri, AAAAAC+Arial, AAAAAD+Arial-Bold</span><span class="ek">Hash</span><span class="ev">4f2a91e8:7b3c22d1:9e5f44a3 (identical)</span></div><div style="margin-top:8px;font-size:11px;color:var(--t-sec)"><strong>Status:</strong> Confirmed &middot; E. Vasquez &middot; 16-Mar-2026</div></div></div>
+
+      <div class="card" style="border-left:4px solid var(--high)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-High" style="margin-right:8px">High</span> TNDR0004 &mdash; Identical Template</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">L1 Cross-Bid</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">Layout</span><span class="ev">3-column, 14-row table, 2.54cm margins, A4</span><span class="ek">Template hash</span><span class="ev">b4c5d6e7f8a901234567bcde (identical)</span><span class="ek">Buyer template?</span><span class="ev">No &mdash; not an RFQ response template issued by GHBS</span></div></div></div>
+
+      <div class="card" style="border-left:4px solid var(--high)"><div class="card-hdr"><div class="card-title"><span class="sev-badge sev-High" style="margin-right:8px">High</span> D7-WARN &mdash; Director Cross-Match (Dyno Nobel)</div><div style="font-family:var(--mono);font-size:10px;color:var(--t-sec)">D7</div></div><div class="card-body"><div class="evidence-grid"><span class="ek">Director</span><span class="ev">Jose P. Ramirez</span><span class="ek">Buyer role</span><span class="ev">Holcim Philippines, Quarry Operations Supervisor</span><span class="ek">Conflict</span><span class="ev">Buyer employee sits on bidding entity board &mdash; direct conflict of interest</span></div><div style="margin-top:8px;font-size:11px;color:var(--t-sec)"><strong>Status:</strong> Confirmed &middot; Escalated to Compliance &middot; E. Vasquez &middot; 16-Mar-2026</div></div></div>
+
+      <h2 class="sec">AI Cluster Assessment</h2>
+      <div class="ai-block"><div class="ai-block-hdr"><span class="ai-icon">Xa</span> Risk Explanation &middot; RFQ-PH-2026-005</div><div class="ai-block-body">This cluster contains two distinct integrity issues. First, Dyno Nobel Asia Pacific submitted a bid whose PDF was created on 21 February 2026, three days before the RFQ was issued on 24 February. The D7 verification reveals the channel: Dyno Nobel director Jose P. Ramirez is concurrently a Holcim Philippines quarry operations supervisor with direct access to upcoming procurement requirements. This is a textbook insider-information scenario with an identified conflict-of-interest channel. Second, PhilBlast Mining Supplies and Visayas Blasting Solutions share identical font subset fingerprints, identical document templates (same table structure, margins, and layout), are located on the same floor of the same building (Suites 401 and 403, Mining Tower, Ortigas), were incorporated 3 days apart, bank at the same RCBC branch, submit from the same /24 IP subnet, and have Lim-surnamed UBOs (Eduardo T. Lim and Fernando T. Lim). This pattern closely mirrors the Pacific Alloy/Manila Steelcast collusion pair in RFQ-001. Orica Philippines is the only independent, clean bidder.</div></div>
+
+      <h2 class="sec">Recommendation &amp; PO</h2>
+      <div class="callout callout-info"><span class="callout-icon">&#10003;</span><div><strong>Orica Philippines Inc.</strong> recommended at <span class="ccy" data-php="34200000" data-usd="$556,098" data-php-fmt="&#8369;34.20M">$556,098</span>. PO 4500089004 issued to Orica. <span class="recon-badge recon-Aligned">Aligned</span></div></div>
+    </div>
+  </td></tr>
+
+  </tbody></table>
+  </div>
+
+  <div class="report-stamp">
+    <span><strong>Tender</strong> &middot; RFQ Cluster Queue &middot; TNDR-HGBS-PH-Q1FY26-001</span>
+    <span>5 clusters &middot; 19 bids &middot; Period: 2026-01-01 &rarr; 2026-03-31</span>
+  </div>
+</div>
+<div id="pane-signal" class="pane">
+  <div class="tab-toolbar">
+    <div class="tab-toolbar-l">
+      <h1 class="page-title">Signal Analysis</h1>
+      <div class="page-sub">17 signals fired across 4 layers and D7. Analysis of signal frequency, severity distribution, and cross-cluster patterns.</div>
+    </div>
+    <div class="tab-toolbar-r">
+      <button class="btn-dl" onclick="downloadTab('Signals')">Export to Excel</button>
+    </div>
+  </div>
+
+  <div class="kpi-strip">
+    <div class="kpi-card crit"><div class="kpi-label">Critical Signals</div><div class="kpi-val">7</div><div class="kpi-meta">TNDR0001(1) &middot; TNDR0014(1) &middot; TNDR0019(3) &middot; D7-FAIL(1) &middot; D7-COI(1)</div></div>
+    <div class="kpi-card high"><div class="kpi-label">High Signals</div><div class="kpi-val">6</div><div class="kpi-meta">TNDR0003(1) &middot; TNDR0004(1) &middot; TNDR0010(1) &middot; TNDR0011(1) &middot; TNDR0015(1) &middot; D7-WARN-NR(1)</div></div>
+    <div class="kpi-card warn"><div class="kpi-label">Medium Signals</div><div class="kpi-val">4</div><div class="kpi-meta">TNDR0005(1) &middot; TNDR0007(1) &middot; TNDR0008(1) &middot; TNDR0017(1)</div></div>
+    <div class="kpi-card good"><div class="kpi-label">False Positive Rate</div><div class="kpi-val">0%</div><div class="kpi-meta">0 dispelled out of 13 resolved</div></div>
+  </div>
+
+  <h2 class="sec">Signal Frequency by Rule</h2>
+  <div class="table-wrap"><table class="dt"><thead><tr>
+    <th>Rule Code</th><th>Rule Name</th><th>Layer</th><th>Severity</th><th>Fires</th><th>Clusters</th><th>Confirmed</th><th>Open</th>
+  </tr></thead><tbody>
+    <tr><td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">TNDR0019</td><td>Common Originating IP</td><td style="font-family:var(--mono);font-size:10.5px">L3 Email</td><td><span class="sev-badge sev-Critical">Critical</span></td><td style="text-align:center;font-family:var(--mono);font-weight:700">3</td><td style="font-family:var(--mono);font-size:10.5px">001, 003, 005</td><td style="text-align:center">2</td><td style="text-align:center;color:var(--crit);font-weight:600">1</td></tr>
+    <tr><td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">TNDR0001</td><td>Identical PDF Metadata</td><td style="font-family:var(--mono);font-size:10.5px">L1 Cross-Bid</td><td><span class="sev-badge sev-Critical">Critical</span></td><td style="text-align:center;font-family:var(--mono);font-weight:700">1</td><td style="font-family:var(--mono);font-size:10.5px">001</td><td style="text-align:center">1</td><td style="text-align:center">0</td></tr>
+    <tr><td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">TNDR0014</td><td>Pre-Issuance RFQ Knowledge</td><td style="font-family:var(--mono);font-size:10.5px">L3 Process</td><td><span class="sev-badge sev-Critical">Critical</span></td><td style="text-align:center;font-family:var(--mono);font-weight:700">1</td><td style="font-family:var(--mono);font-size:10.5px">005</td><td style="text-align:center">1</td><td style="text-align:center">0</td></tr>
+    <tr><td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">TNDR0003</td><td>Shared Font Subsets</td><td style="font-family:var(--mono);font-size:10.5px">L1 Cross-Bid</td><td><span class="sev-badge sev-High">High</span></td><td style="text-align:center;font-family:var(--mono);font-weight:700">1</td><td style="font-family:var(--mono);font-size:10.5px">005</td><td style="text-align:center">1</td><td style="text-align:center">0</td></tr>
+    <tr><td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">TNDR0004</td><td>Identical Template Structure</td><td style="font-family:var(--mono);font-size:10.5px">L1 Cross-Bid</td><td><span class="sev-badge sev-High">High</span></td><td style="text-align:center;font-family:var(--mono);font-weight:700">1</td><td style="font-family:var(--mono);font-size:10.5px">005</td><td style="text-align:center">1</td><td style="text-align:center">0</td></tr>
+    <tr><td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">TNDR0010</td><td>Late Tender Accepted</td><td style="font-family:var(--mono);font-size:10.5px">L3 Process</td><td><span class="sev-badge sev-High">High</span></td><td style="text-align:center;font-family:var(--mono);font-weight:700">1</td><td style="font-family:var(--mono);font-size:10.5px">002</td><td style="text-align:center">1</td><td style="text-align:center">0</td></tr>
+    <tr><td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">TNDR0011</td><td>Post-Deadline Amendment</td><td style="font-family:var(--mono);font-size:10.5px">L3 Process</td><td><span class="sev-badge sev-High">High</span></td><td style="text-align:center;font-family:var(--mono);font-weight:700">1</td><td style="font-family:var(--mono);font-size:10.5px">002</td><td style="text-align:center">1</td><td style="text-align:center">0</td></tr>
+    <tr><td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">TNDR0015</td><td>Shared Vendor Master Data</td><td style="font-family:var(--mono);font-size:10.5px">L4 Vendor</td><td><span class="sev-badge sev-High">High</span></td><td style="text-align:center;font-family:var(--mono);font-weight:700">1</td><td style="font-family:var(--mono);font-size:10.5px">001</td><td style="text-align:center">1</td><td style="text-align:center">0</td></tr>
+    <tr><td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">TNDR0005</td><td>Cover-Bid Pricing</td><td style="font-family:var(--mono);font-size:10.5px">L2 Pricing</td><td><span class="sev-badge sev-Medium">Medium</span></td><td style="text-align:center;font-family:var(--mono);font-weight:700">1</td><td style="font-family:var(--mono);font-size:10.5px">001</td><td style="text-align:center">1</td><td style="text-align:center">0</td></tr>
+    <tr><td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">TNDR0007</td><td>Arithmetic Progression</td><td style="font-family:var(--mono);font-size:10.5px">L2 Pricing</td><td><span class="sev-badge sev-Medium">Medium</span></td><td style="text-align:center;font-family:var(--mono);font-weight:700">1</td><td style="font-family:var(--mono);font-size:10.5px">003</td><td style="text-align:center">0</td><td style="text-align:center;color:var(--crit);font-weight:600">1</td></tr>
+    <tr><td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">TNDR0008</td><td>Narrow-Band Compression</td><td style="font-family:var(--mono);font-size:10.5px">L2 Pricing</td><td><span class="sev-badge sev-Medium">Medium</span></td><td style="text-align:center;font-family:var(--mono);font-weight:700">1</td><td style="font-family:var(--mono);font-size:10.5px">003</td><td style="text-align:center">0</td><td style="text-align:center;color:var(--crit);font-weight:600">1</td></tr>
+    <tr><td style="font-family:var(--mono);font-weight:600;color:var(--teal-dk)">TNDR0017</td><td>Zero-History Bidder</td><td style="font-family:var(--mono);font-size:10.5px">L4 Vendor</td><td><span class="sev-badge sev-Medium">Medium</span></td><td style="text-align:center;font-family:var(--mono);font-weight:700">1</td><td style="font-family:var(--mono);font-size:10.5px">003</td><td style="text-align:center">0</td><td style="text-align:center;color:var(--crit);font-weight:600">1</td></tr>
+  </tbody></table></div>
+
+  <h2 class="sec">D7 Entity Signals</h2>
+  <div class="table-wrap"><table class="dt"><thead><tr>
+    <th>Entity</th><th>D7 Verdict</th><th>Score</th><th>Key Finding</th><th>Cluster</th><th>Status</th>
+  </tr></thead><tbody>
+    <tr><td>Luzon Metalworks Trading</td><td><span class="d7-verdict d7-Fail">Fail</span></td><td style="font-family:var(--mono);font-weight:700;color:var(--crit)">N/A</td><td>Entity not found in SEC, DTI, or BIR. TIN unregistered. Shell entity.</td><td style="font-family:var(--mono)">001</td><td style="font-size:11px;color:var(--t-sec)">Confirmed &middot; Bid blocked</td></tr>
+    <tr><td>NewRoute Haulers PH</td><td><span class="d7-verdict d7-Warn">Warn</span></td><td style="font-family:var(--mono);font-weight:700;color:#B45309">5.8</td><td>Inc Dec 2025, virtual office, zero revenue. Sole director = TransHaul board member.</td><td style="font-family:var(--mono)">003</td><td style="font-size:11px;color:var(--crit);font-weight:600">Open</td></tr>
+    <tr><td>Dyno Nobel Asia Pacific</td><td><span class="d7-verdict d7-Warn">Warn</span></td><td style="font-family:var(--mono);font-weight:700;color:#B45309">4.5</td><td>Director Jose P. Ramirez is Holcim PH employee. Conflict of interest.</td><td style="font-family:var(--mono)">005</td><td style="font-size:11px;color:var(--t-sec)">Confirmed &middot; Escalated to Compliance</td></tr>
+  </tbody></table></div>
+
+  <h2 class="sec">Cross-Cluster Patterns</h2>
+  <div class="ai-block"><div class="ai-block-hdr"><span class="ai-icon">Xa</span> Cross-Cluster Intelligence</div><div class="ai-block-body">
+    <p><strong>Email forensic convergence (TNDR0019):</strong> Three of five clusters (001, 003, 005) show common originating IP within bidder groups. This signal fires at the highest rate (3/5 = 60%), validating the decision to ingest raw .eml files for full header extraction. The IP-matching evidence independently corroborates the document-level forensic findings (shared PDF metadata, shared templates) and the entity-level findings (shared addresses, related UBOs).</p>
+    <p><strong>Family-controlled bidder networks:</strong> Two distinct family networks identified. The Villanueva family controls three bidding entities in RFQ-003 (TransHaul, Mindanao Freight, Archipelago Transport) through separate UBOs at the same industrial estate, plus a fourth entity (NewRoute Haulers) through a shared director. The Lim family controls two entities in RFQ-005 (PhilBlast, Visayas Blasting) through related UBOs in the same building. These patterns are invisible to individual-signal analysis and only emerge through cross-bidder D7 verification.</p>
+    <p><strong>Insider channel (TNDR0014 + D7-COI):</strong> The pre-issuance knowledge signal is the only instance where Tender can identify not just the anomaly but the specific mechanism of information leakage: a Holcim employee sitting on a supplier board. This compounding of L3 and D7 evidence is a Tender differentiator.</p>
+  </div></div>
+
+  <div class="report-stamp">
+    <span><strong>Tender</strong> &middot; Signal Analysis &middot; TNDR-HGBS-PH-Q1FY26-001</span>
+    <span>17 signals &middot; 12 rules + 3 D7 &middot; 0% false positive rate</span>
+  </div>
+</div>
+<div id="pane-entity" class="pane">
+  <div class="tab-toolbar">
+    <div class="tab-toolbar-l">
+      <h1 class="page-title">Bidder Verification</h1>
+      <div class="page-sub">D7 entity verification results for all 19 bidders across 5 RFQ clusters. Each bidder receives an automated D7 check at bid ingestion. Results show entity registration, UBO analysis, director cross-match, sanctions screening, and financial health.</div>
+    </div>
+    <div class="tab-toolbar-r">
+      <button class="btn-dl" onclick="downloadTab('Bidders_D7')">Export to Excel</button>
+    </div>
+  </div>
+
+  <div class="kpi-strip">
+    <div class="kpi-card good"><div class="kpi-label">Bidders Verified</div><div class="kpi-val">19</div><div class="kpi-meta">Automated D7 check at ingestion</div></div>
+    <div class="kpi-card good"><div class="kpi-label">D7 Pass</div><div class="kpi-val">16</div><div class="kpi-meta">Score &lt; 4.0</div></div>
+    <div class="kpi-card warn"><div class="kpi-label">D7 Warn</div><div class="kpi-val">2</div><div class="kpi-meta">NewRoute (5.8) &middot; Dyno Nobel (4.5)</div></div>
+    <div class="kpi-card crit"><div class="kpi-label">D7 Fail</div><div class="kpi-val">1</div><div class="kpi-meta">Luzon Metalworks (entity not found)</div></div>
+  </div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Verdict:</span>
+    <span class="filter-pill on" onclick="filterEntity('verdict','All')">All (19)</span>
+    <span class="filter-pill" onclick="filterEntity('verdict','Fail')">Fail (1)</span>
+    <span class="filter-pill" onclick="filterEntity('verdict','Warn')">Warn (2)</span>
+    <span class="filter-pill" onclick="filterEntity('verdict','Pass')">Pass (16)</span>
+  </div>
+
+  <!-- D7 FAIL: Luzon Metalworks -->
+  <div class="card entity-card" data-verdict="Fail" style="border-left:4px solid var(--crit)">
+    <div class="card-hdr">
+      <div><div class="card-title">Luzon Metalworks Trading</div><div style="font-size:11px;font-family:var(--mono);color:var(--t-sec)">D7-ENT-PH-2026-00104 &middot; RFQ-001 &middot; BID-001-D</div></div>
+      <span class="d7-verdict d7-Fail">Fail</span>
+    </div>
+    <div class="card-body">
+      <div class="d7-score-strip">
+        <div class="d7-score-circle d7-score-na">N/A</div>
+        <div class="d7-score-info">
+          <div class="d7-score-label">D7 Risk Score</div>
+          <div class="d7-score-val" style="color:var(--crit)">Entity Not Found</div>
+          <div class="d7-dim-grid">
+            <div class="d7-dim"><div class="d7-dim-k">registration</div><div class="d7-dim-v" style="color:var(--crit)">FAIL &mdash; Not in SEC, DTI, or BIR</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">TIN</div><div class="d7-dim-v" style="color:var(--crit)">000-000-000 &mdash; Unregistered</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">address</div><div class="d7-dim-v" style="color:var(--crit)">Co-working space, no tenancy record</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">financial</div><div class="d7-dim-v">N/A &mdash; No entity records</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">sanctions</div><div class="d7-dim-v">N/A &mdash; Cannot screen</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ai-block"><div class="ai-block-hdr"><span class="ai-icon">Xa</span> D7 Narrative</div><div class="ai-block-body">Entity does not exist in any Philippine corporate registry. The TIN provided (000-000-000) is not registered with BIR. The address (Room 302, Pacific Tower, Taft Avenue, Manila) is a co-working space with no permanent tenancy records for this entity name. No financial filings, no credit record, no corporate officers on file. This entity cannot be verified and should be treated as fictitious. Bid blocked.</div></div>
+      <div class="callout callout-crit"><span class="callout-icon">&#9888;</span><div><strong>Bid automatically blocked.</strong> D7 Fail triggers automatic block. Cluster placed in Held state pending evaluation team review.</div></div>
+      <span class="json-toggle" onclick="toggleJson('ent-lmt')">&#9654; View Raw D7 JSON</span>
+      <div id="json-ent-lmt" class="json-block">{"entity_id":"D7-ENT-PH-2026-00104","entity_found":false,"composite_score":null,"verdict":"Fail","dimensions":{"registration":{"status":"Fail","score":null,"findings":["Entity not found in SEC","Entity not found in DTI","TIN 000-000-000 not registered with BIR"]},"ubo":{"status":"N/A"},"directors":{"status":"N/A"},"sanctions":{"status":"N/A"},"financial":{"status":"N/A","filings_found":false},"adverse_media":{"status":"N/A"},"geopolitical":{"status":"N/A"}}}</div>
+    </div>
+  </div>
+
+  <!-- D7 WARN: NewRoute Haulers -->
+  <div class="card entity-card" data-verdict="Warn" style="border-left:4px solid var(--gold)">
+    <div class="card-hdr">
+      <div><div class="card-title">NewRoute Haulers PH</div><div style="font-size:11px;font-family:var(--mono);color:var(--t-sec)">D7-ENT-PH-2026-00305 &middot; RFQ-003 &middot; BID-003-E</div></div>
+      <span class="d7-verdict d7-Warn">Warn</span>
+    </div>
+    <div class="card-body">
+      <div class="d7-score-strip">
+        <div class="d7-score-circle d7-score-med">5.8</div>
+        <div class="d7-score-info">
+          <div class="d7-score-label">D7 Risk Score</div>
+          <div class="d7-score-val">Medium-High &mdash; Elevated Risk</div>
+          <div class="d7-dim-grid">
+            <div class="d7-dim"><div class="d7-dim-k">registration</div><div class="d7-dim-v" style="color:#B45309">WARN &mdash; Inc Dec 2025, 2.5 months old</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">UBO</div><div class="d7-dim-v" style="color:#B45309">WARN &mdash; Roberto M. Villanueva, 100% owner</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">directors</div><div class="d7-dim-v" style="color:var(--crit)">WARN &mdash; Cross-match: TransHaul board member</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">sanctions</div><div class="d7-dim-v" style="color:var(--teal-dk)">CLEAR</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">financial</div><div class="d7-dim-v" style="color:#B45309">WARN &mdash; No filings, no revenue, virtual office</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">adverse media</div><div class="d7-dim-v">CLEAR &mdash; Entity too new</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="d7-compare"><div class="d7-compare-hdr"><div>Attribute</div><div>Bid Document Claims</div><div>D7 Registry Findings</div></div>
+        <div class="d7-compare-row"><div>Entity Name</div><div class="doc-col">NewRoute Haulers PH</div><div class="d7-col d7-match">NewRoute Haulers PH (SEC active)</div></div>
+        <div class="d7-compare-row"><div>Address</div><div class="doc-col">Regus Virtual Office, BGC</div><div class="d7-col d7-mismatch">Virtual office &mdash; no physical operations</div></div>
+        <div class="d7-compare-row"><div>Incorporation</div><div class="doc-col">Not stated</div><div class="d7-col d7-mismatch">05-Dec-2025 (2.5 months ago)</div></div>
+        <div class="d7-compare-row"><div>Operating History</div><div class="doc-col">"Experienced logistics provider"</div><div class="d7-col d7-mismatch">Zero revenue &middot; Zero PO history &middot; No fleet records</div></div>
+        <div class="d7-compare-row"><div>Key Person</div><div class="doc-col">Roberto M. Villanueva (Director)</div><div class="d7-col d7-mismatch">Also board member of TransHaul Logistics Corp</div></div>
+      </div>
+      <div class="ai-block"><div class="ai-block-hdr"><span class="ai-icon">Xa</span> D7 Narrative</div><div class="ai-block-body">Newly incorporated entity (Dec 2025, 2.5 months old) with zero operating history, virtual office address, no financial filings, and no credit record. Sole director and 100% owner Roberto M. Villanueva is also a board member of TransHaul Logistics Corp, the incumbent hauler and lowest bidder in this cluster. This director overlap strongly suggests NewRoute was created as a cover bidder to create the appearance of competition for the haulage contract.</div></div>
+      <span class="json-toggle" onclick="toggleJson('ent-nrh')">&#9654; View Raw D7 JSON</span>
+      <div id="json-ent-nrh" class="json-block">{"entity_id":"D7-ENT-PH-2026-00305","entity_found":true,"composite_score":5.8,"verdict":"Warn","dimensions":{"registration":{"status":"Warn","score":3.0,"registration_date":"2025-12-05"},"ubo":{"status":"Warn","score":4.0,"ubo_name":"Roberto M. Villanueva","ownership_pct":100},"directors":{"status":"Warn","score":5.0,"cross_bidder_match":true,"findings":["Roberto M. Villanueva also board member of TransHaul Logistics (D7-ENT-PH-2026-00301)"]},"sanctions":{"status":"Clear","score":0.0},"financial":{"status":"Warn","score":6.0,"filings_found":false}}}</div>
+    </div>
+  </div>
+
+  <!-- D7 WARN: Dyno Nobel -->
+  <div class="card entity-card" data-verdict="Warn" style="border-left:4px solid var(--gold)">
+    <div class="card-hdr">
+      <div><div class="card-title">Dyno Nobel Asia Pacific Ltd.</div><div style="font-size:11px;font-family:var(--mono);color:var(--t-sec)">D7-ENT-PH-2026-00502 &middot; RFQ-005 &middot; BID-005-B</div></div>
+      <span class="d7-verdict d7-Warn">Warn</span>
+    </div>
+    <div class="card-body">
+      <div class="d7-score-strip">
+        <div class="d7-score-circle d7-score-med">4.5</div>
+        <div class="d7-score-info">
+          <div class="d7-score-label">D7 Risk Score</div>
+          <div class="d7-score-val">Medium &mdash; Conflict of Interest</div>
+          <div class="d7-dim-grid">
+            <div class="d7-dim"><div class="d7-dim-k">registration</div><div class="d7-dim-v" style="color:var(--teal-dk)">PASS &mdash; SEC active, ASX parent</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">UBO</div><div class="d7-dim-v" style="color:var(--teal-dk)">PASS &mdash; Incitec Pivot Ltd (ASX: IPL)</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">directors</div><div class="d7-dim-v" style="color:var(--crit)">WARN &mdash; Jose P. Ramirez = Holcim PH employee</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">sanctions</div><div class="d7-dim-v" style="color:var(--teal-dk)">CLEAR</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">financial</div><div class="d7-dim-v" style="color:var(--teal-dk)">PASS &mdash; Parent AUD 4.2B revenue</div></div>
+            <div class="d7-dim"><div class="d7-dim-k">adverse media</div><div class="d7-dim-v" style="color:var(--teal-dk)">CLEAR</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="callout callout-crit"><span class="callout-icon">&#9888;</span><div><strong>Buyer-employee conflict of interest.</strong> Director Jose P. Ramirez is concurrently employed as Holcim Philippines Quarry Operations Supervisor. This match triggers automatic Warn (minimum) regardless of composite score, with mandatory escalation to Compliance. Combined with TNDR0014 (pre-issuance knowledge), this identifies both the anomaly and the mechanism of information leakage.</div></div>
+      <div class="ai-block"><div class="ai-block-hdr"><span class="ai-icon">Xa</span> D7 Narrative</div><div class="ai-block-body">Legitimate MNC subsidiary (ASX-listed parent). Clean financials and sanctions. However, director Jose P. Ramirez is concurrently employed as a Holcim Philippines quarry operations supervisor. This is a direct conflict of interest: a buyer employee sits on the board of a bidding entity. Combined with the pre-issuance knowledge signal (TNDR0014, bid PDF created 3 days before RFQ issuance), the conflict-of-interest channel through which RFQ details could have been leaked is clear. Escalated to Compliance.</div></div>
+      <span class="json-toggle" onclick="toggleJson('ent-dna')">&#9654; View Raw D7 JSON</span>
+      <div id="json-ent-dna" class="json-block">{"entity_id":"D7-ENT-PH-2026-00502","entity_found":true,"composite_score":4.5,"verdict":"Warn","dimensions":{"registration":{"status":"Pass","score":1.0},"ubo":{"status":"Pass","score":1.5,"ubo_name":"Incitec Pivot Ltd"},"directors":{"status":"Warn","score":5.0,"buyer_employee_match":true,"findings":["Jose P. Ramirez is Holcim Philippines quarry operations supervisor"]},"sanctions":{"status":"Clear","score":0.0},"financial":{"status":"Pass","score":1.5}}}</div>
+    </div>
+  </div>
+
+  <h2 class="sec">Cross-Bidder Analysis &mdash; Related Entity Networks</h2>
+
+  <div class="card" style="border-left:4px solid var(--crit)"><div class="card-hdr"><div class="card-title">Villanueva Network (RFQ-003)</div><div style="font-size:11px;font-family:var(--mono);color:var(--t-sec)">3 entities + 1 shell &middot; Calamba Industrial Estate</div></div><div class="card-body">
+    <div class="evidence-grid">
+      <span class="ek">TransHaul</span><span class="ev">UBO: Ernesto R. Villanueva &middot; Bldg C, Calamba Estate &middot; BPI</span>
+      <span class="ek">Mindanao Freight</span><span class="ev">UBO: Patricia L. Villanueva &middot; Bldg D, Calamba Estate &middot; BPI</span>
+      <span class="ek">Archipelago</span><span class="ev">UBO: Miguel R. Villanueva &middot; Bldg E, Calamba Estate &middot; BPI</span>
+      <span class="ek">NewRoute</span><span class="ev">Director: Roberto M. Villanueva (also TransHaul board) &middot; Virtual office &middot; Inc Dec 2025</span>
+      <span class="ek">Linkage</span><span class="ev">Surname, address proximity, same /24 IP subnet, same bank branch, sequential incorporation</span>
+    </div>
+  </div></div>
+
+  <div class="card" style="border-left:4px solid var(--high)"><div class="card-hdr"><div class="card-title">Lim Network (RFQ-005)</div><div style="font-size:11px;font-family:var(--mono);color:var(--t-sec)">2 entities &middot; Mining Tower, Ortigas</div></div><div class="card-body">
+    <div class="evidence-grid">
+      <span class="ek">PhilBlast</span><span class="ev">UBO: Eduardo T. Lim &middot; Suite 401, Mining Tower &middot; RCBC &middot; Inc 15-Apr-2019</span>
+      <span class="ek">Visayas Blasting</span><span class="ev">UBO: Fernando T. Lim &middot; Suite 403, Mining Tower &middot; RCBC &middot; Inc 18-Apr-2019</span>
+      <span class="ek">Linkage</span><span class="ev">Surname + middle initial, same building, same bank, 3-day inc gap, shared fonts + template</span>
+    </div>
+  </div></div>
+
+  <div class="card" style="border-left:4px solid var(--high)"><div class="card-hdr"><div class="card-title">Santos Pair (RFQ-001)</div><div style="font-size:11px;font-family:var(--mono);color:var(--t-sec)">2 entities &middot; Mabini Industrial Compound, Paranaque</div></div><div class="card-body">
+    <div class="evidence-grid">
+      <span class="ek">Pacific Alloy</span><span class="ev">UBO: Ricardo M. Santos &middot; Unit 5B &middot; BDO &middot; Inc 15-Mar-2018</span>
+      <span class="ek">Manila Steelcast</span><span class="ev">UBO: Marco A. Santos &middot; Unit 5A &middot; BDO &middot; Inc 18-Mar-2018</span>
+      <span class="ek">Linkage</span><span class="ev">Surname, adjacent units, same bank, 3-day inc gap, identical PDF metadata, same IP</span>
+    </div>
+  </div></div>
+
+  <h2 class="sec">All Bidders Summary</h2>
+  <div class="table-wrap"><table class="dt"><thead><tr>
+    <th>Bidder</th><th>D7 ID</th><th>Verdict</th><th>Score</th><th>Reg</th><th>UBO</th><th>Dir</th><th>Sanctions</th><th>Fin</th><th>Cluster</th>
+  </tr></thead><tbody>
+    <tr><td>Pacific Alloy Industries</td><td style="font-family:var(--mono);font-size:10px">00101</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">2.1</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">001</td></tr>
+    <tr><td>Manila Steelcast Corp.</td><td style="font-family:var(--mono);font-size:10px">00102</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">2.8</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">001</td></tr>
+    <tr><td>Cebu Heavy Industries</td><td style="font-family:var(--mono);font-size:10px">00103</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">1.4</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">001</td></tr>
+    <tr style="background:var(--crit-lt)"><td><strong>Luzon Metalworks Trading</strong></td><td style="font-family:var(--mono);font-size:10px">00104</td><td><span class="d7-verdict d7-Fail">Fail</span></td><td style="font-family:var(--mono)">N/A</td><td style="color:var(--crit);font-weight:600">Fail</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td style="font-family:var(--mono)">001</td></tr>
+    <tr><td>Shinagawa Refractories PH</td><td style="font-family:var(--mono);font-size:10px">00201</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">1.2</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">002</td></tr>
+    <tr><td>RHI Magnesita Asia Pacific</td><td style="font-family:var(--mono);font-size:10px">00202</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">1.5</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">002</td></tr>
+    <tr><td>Visayas Thermal Solutions</td><td style="font-family:var(--mono);font-size:10px">00203</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">3.1</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">002</td></tr>
+    <tr><td>TransHaul Logistics</td><td style="font-family:var(--mono);font-size:10px">00301</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">2.0</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:#B45309">X-match</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">003</td></tr>
+    <tr><td>Mindanao Freight Services</td><td style="font-family:var(--mono);font-size:10px">00302</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">2.2</td><td style="color:var(--teal-dk)">Pass</td><td style="color:#B45309">X-match</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">003</td></tr>
+    <tr><td>Island Cargo Movers</td><td style="font-family:var(--mono);font-size:10px">00303</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">1.8</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">003</td></tr>
+    <tr><td>Archipelago Transport</td><td style="font-family:var(--mono);font-size:10px">00304</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">2.5</td><td style="color:var(--teal-dk)">Pass</td><td style="color:#B45309">X-match</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">003</td></tr>
+    <tr style="background:var(--gold-lt)"><td><strong>NewRoute Haulers PH</strong></td><td style="font-family:var(--mono);font-size:10px">00305</td><td><span class="d7-verdict d7-Warn">Warn</span></td><td style="font-family:var(--mono);font-weight:700">5.8</td><td style="color:#B45309;font-weight:600">Warn</td><td style="color:#B45309;font-weight:600">Warn</td><td style="color:var(--crit);font-weight:600">X-match</td><td style="color:var(--teal-dk)">Clear</td><td style="color:#B45309;font-weight:600">Warn</td><td style="font-family:var(--mono)">003</td></tr>
+    <tr><td>ABB Power Philippines</td><td style="font-family:var(--mono);font-size:10px">00401</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">1.0</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">004</td></tr>
+    <tr><td>Schneider Electric PH</td><td style="font-family:var(--mono);font-size:10px">00402</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">1.1</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">004</td></tr>
+    <tr><td>Hyundai Electric PH</td><td style="font-family:var(--mono);font-size:10px">00403</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">1.3</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">004</td></tr>
+    <tr><td>Orica Philippines</td><td style="font-family:var(--mono);font-size:10px">00501</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">1.0</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">005</td></tr>
+    <tr style="background:var(--gold-lt)"><td><strong>Dyno Nobel Asia Pacific</strong></td><td style="font-family:var(--mono);font-size:10px">00502</td><td><span class="d7-verdict d7-Warn">Warn</span></td><td style="font-family:var(--mono);font-weight:700">4.5</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--crit);font-weight:600">COI</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">005</td></tr>
+    <tr><td>PhilBlast Mining Supplies</td><td style="font-family:var(--mono);font-size:10px">00503</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">2.4</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">005</td></tr>
+    <tr><td>Visayas Blasting Solutions</td><td style="font-family:var(--mono);font-size:10px">00504</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono)">2.6</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Pass</td><td style="color:var(--teal-dk)">Clear</td><td style="color:var(--teal-dk)">Pass</td><td style="font-family:var(--mono)">005</td></tr>
+  </tbody></table></div>
+
+  <div class="report-stamp">
+    <span><strong>Tender</strong> &middot; Bidder Verification &middot; TNDR-HGBS-PH-Q1FY26-001</span>
+    <span>19 bidders &middot; 16 Pass &middot; 2 Warn &middot; 1 Fail &middot; D7 auto-ping at ingestion</span>
+  </div>
+</div>
+<div id="pane-recon" class="pane">
+  <div class="tab-toolbar">
+    <div class="tab-toolbar-l">
+      <h1 class="page-title">PO Reconciliation</h1>
+      <div class="page-sub">Comparison of GHBS recommendations against actual Purchase Orders issued by country procurement. 4 of 5 clusters have progressed to PO (RFQ-003 remains Held).</div>
+    </div>
+    <div class="tab-toolbar-r">
+      <button class="btn-dl" onclick="downloadTab('PO_Reconciliation')">Export to Excel</button>
+    </div>
+  </div>
+
+  <div class="kpi-strip">
+    <div class="kpi-card good"><div class="kpi-label">POs Issued</div><div class="kpi-val">4</div><div class="kpi-meta">Of 5 clusters (1 Held)</div></div>
+    <div class="kpi-card good"><div class="kpi-label">Aligned</div><div class="kpi-val">2</div><div class="kpi-meta">50% &middot; Correct vendor at recommended price</div></div>
+    <div class="kpi-card high"><div class="kpi-label">Deviation</div><div class="kpi-val">1</div><div class="kpi-meta">Correct vendor, price +8.0%</div></div>
+    <div class="kpi-card crit"><div class="kpi-label">Override</div><div class="kpi-val">1</div><div class="kpi-meta">Different vendor selected</div></div>
+  </div>
+
+  <div class="table-wrap"><table class="dt"><thead><tr>
+    <th>RFQ / PR</th><th>Material</th><th>Reco Vendor</th><th>Reco Amount</th><th>Qty &amp; Unit</th><th>Ref Price (6M)</th><th>PO #</th><th>PO Vendor</th><th>PO Amount</th><th>&Delta;</th><th>Result</th><th>SAP Status</th>
+  </tr></thead><tbody>
+    <tr style="">
+      <td><div class="pr-cell"><span class="pr-num">RFQ-001</span><span class="pr-meta">PR-PH-2026-00142</span></div></td>
+      <td style="font-family:var(--mono);font-size:11px">GRMD-HCB-50</td>
+      <td>Cebu Heavy Industries Co.</td>
+      <td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="15250000" data-usd="$247,967" data-php-fmt="&#8369;15.25M">$247,967</span></td>
+      <td style="font-family:var(--mono);text-align:right;font-size:11px">500 MT<div class="unit-sub">@ <span class="ccy" data-php="30500" data-usd="$495.93" data-php-fmt="&#8369;30K">$495.93</span>/MT</div></td>
+      <td style="font-family:var(--mono);text-align:right;font-size:11px">$458<span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td>
+      <td style="font-family:var(--mono);font-size:11px">4500089001</td>
+      <td>Cebu Heavy Industries Co.</td>
+      <td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="15250000" data-usd="$247,967" data-php-fmt="&#8369;15.25M">$247,967</span></td>
+      <td style="font-family:var(--mono);text-align:right;color:var(--teal-dk)">0.0%</td>
+      <td><span class="recon-badge recon-Aligned">Aligned</span></td>
+      <td><span class="po-status po-status-Fully-Delivered">Fully Delivered</span></td>
+    </tr>
+    <tr style="background:var(--crit-lt);">
+      <td><div class="pr-cell"><span class="pr-num">RFQ-002</span><span class="pr-meta">PR-PH-2026-00198</span></div></td>
+      <td style="font-family:var(--mono);font-size:11px">REFR-MCB-280</td>
+      <td>Shinagawa Refractories PH</td>
+      <td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="27800000" data-usd="$452,033" data-php-fmt="&#8369;27.80M">$452,033</span></td>
+      <td style="font-family:var(--mono);text-align:right;font-size:11px">350 MT<div class="unit-sub">@ <span class="ccy" data-php="79429" data-usd="$1,292" data-php-fmt="&#8369;79K">$1,292</span>/MT</div></td>
+      <td style="font-family:var(--mono);text-align:right;font-size:11px">$1,290<span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td>
+      <td style="font-family:var(--mono);font-size:11px">4500089002</td>
+      <td style="font-weight:700;color:var(--crit)">Visayas Thermal Solutions</td>
+      <td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="26900000" data-usd="$437,398" data-php-fmt="&#8369;26.90M">$437,398</span></td>
+      <td style="font-family:var(--mono);text-align:right;color:var(--crit)">-3.2%</td>
+      <td><span class="recon-badge recon-Override">Override</span></td>
+      <td><span class="po-status po-status-Partially-Delivered">Partially Delivered</span></td>
+    </tr>
+    <tr style="">
+      <td><div class="pr-cell"><span class="pr-num">RFQ-003</span><span class="pr-meta">PR-PH-2026-00211</span></div></td>
+      <td style="font-family:var(--mono);font-size:11px">HAUL-LST-MT</td>
+      <td colspan="7" style="color:var(--t-sec);font-style:italic;font-size:11.5px">Cluster HELD &mdash; no recommendation issued. Pending resolution of 5 open signals.</td>
+      <td><span class="recon-badge recon-Pending">Pending</span></td>
+      <td><span style="color:var(--t-cap)">-</span></td>
+    </tr>
+    <tr style="background:var(--high-lt);">
+      <td><div class="pr-cell"><span class="pr-num">RFQ-004</span><span class="pr-meta">PR-PH-2026-00224</span></div></td>
+      <td style="font-family:var(--mono);font-size:11px">TRFM-10MVA-69</td>
+      <td>Schneider Electric PH</td>
+      <td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="8980000" data-usd="$146,016" data-php-fmt="&#8369;8.98M">$146,016</span></td>
+      <td style="font-family:var(--mono);text-align:right;font-size:11px">2 EA<div class="unit-sub">@ <span class="ccy" data-php="4490000" data-usd="$73,008" data-php-fmt="&#8369;4.49M">$73,008</span>/EA</div></td>
+      <td style="font-family:var(--mono);text-align:right;font-size:11px"><span class="ref-delta-na">N/A</span><div style="font-size:9px;color:var(--t-cap)">first procurement</div></td>
+      <td style="font-family:var(--mono);font-size:11px">4500089003</td>
+      <td>Schneider Electric PH</td>
+      <td style="font-family:var(--mono);text-align:right;font-weight:700;color:var(--high)"><span class="ccy" data-php="9700000" data-usd="$157,724" data-php-fmt="&#8369;9.70M">$157,724</span></td>
+      <td style="font-family:var(--mono);text-align:right;color:var(--high);font-weight:700">+8.0%</td>
+      <td><span class="recon-badge recon-Deviation">Deviation</span></td>
+      <td><span class="po-status po-status-Created">Created</span></td>
+    </tr>
+    <tr style="">
+      <td><div class="pr-cell"><span class="pr-num">RFQ-005</span><span class="pr-meta">PR-PH-2026-00256</span></div></td>
+      <td style="font-family:var(--mono);font-size:11px">EXPL-ANFO-1200</td>
+      <td>Orica Philippines</td>
+      <td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="34200000" data-usd="$556,098" data-php-fmt="&#8369;34.20M">$556,098</span></td>
+      <td style="font-family:var(--mono);text-align:right;font-size:11px">1,200 MT<div class="unit-sub">@ <span class="ccy" data-php="28500" data-usd="$463.41" data-php-fmt="&#8369;28K">$463.41</span>/MT</div></td>
+      <td style="font-family:var(--mono);text-align:right;font-size:11px">$445<span style="color:var(--t-cap);font-size:9.5px"> /MT</span></td>
+      <td style="font-family:var(--mono);font-size:11px">4500089004</td>
+      <td>Orica Philippines</td>
+      <td style="font-family:var(--mono);text-align:right"><span class="ccy" data-php="34200000" data-usd="$556,098" data-php-fmt="&#8369;34.20M">$556,098</span></td>
+      <td style="font-family:var(--mono);text-align:right;color:var(--teal-dk)">0.0%</td>
+      <td><span class="recon-badge recon-Aligned">Aligned</span></td>
+      <td><span class="po-status po-status-Partially-Invoiced">Partially Invoiced</span></td>
+    </tr>
+  </tbody></table></div>
+
+  <h2 class="sec">Override Detail &mdash; RFQ-002</h2>
+  <div class="card" style="border-left:4px solid var(--crit)"><div class="card-body">
+    <div class="callout callout-crit"><span class="callout-icon">&#9888;</span><div><strong>GHBS recommendation overridden.</strong> Country procurement selected <strong>Visayas Thermal Solutions</strong> (the late bidder who amended price by -10.9% post-deadline) over the recommended <strong>Shinagawa Refractories</strong>. Justification cited: "kiln shutdown window cannot be extended; Visayas Thermal offers faster delivery."</div></div>
+    <div class="evidence-grid" style="margin-top:12px">
+      <span class="ek">PO Approver</span><span class="ev">Santos, Maria C. (Country Procurement Head, PH)</span>
+      <span class="ek">Approval Date</span><span class="ev">10-Feb-2026</span>
+      <span class="ek">Override Reason</span><span class="ev">"Kiln shutdown window fixed; Visayas Thermal commits to 14-day delivery vs Shinagawa 21-day"</span>
+      <span class="ek">Price Impact</span><span class="ev"><span class="ccy" data-php="900000" data-usd="$14,634" data-php-fmt="&#8369;900,000">$14,634</span> savings vs recommendation (but process integrity compromised)</span>
+    </div>
+    <div class="ai-block" style="margin-top:12px"><div class="ai-block-hdr"><span class="ai-icon">Xa</span> Reconciliation Analysis</div><div class="ai-block-body">The override rationale cites delivery speed, which is operationally valid but does not address the process integrity concerns: Visayas Thermal submitted 15 hours late and reduced their price by 10.9% after the deadline, suggesting possible visibility into competing bids. The GHBS recommendation was based on Shinagawa's superior technical score (92 vs 75), on-time submission, and clean screening. This override should be flagged for pattern monitoring across future periods to determine whether overrides consistently favour the same vendor or approver.</div></div>
+  </div></div>
+
+  <h2 class="sec">Deviation Detail &mdash; RFQ-004</h2>
+  <div class="card" style="border-left:4px solid var(--high)"><div class="card-body">
+    <div class="evidence-grid">
+      <span class="ek">Recommended</span><span class="ev">Schneider Electric at <span class="ccy" data-php="8980000" data-usd="$146,016" data-php-fmt="&#8369;8.98M">$146,016</span></span>
+      <span class="ek">PO Issued</span><span class="ev">Schneider Electric at <span class="ccy" data-php="9700000" data-usd="$157,724" data-php-fmt="&#8369;9.70M">$157,724</span></span>
+      <span class="ek">Delta</span><span class="ev">+<span class="ccy" data-php="720000" data-usd="$11,707" data-php-fmt="&#8369;720,000">$11,707</span> (+8.0%)</span>
+      <span class="ek">Reason</span><span class="ev">Scope change: additional protection relay package added post-evaluation</span>
+    </div>
+    <div class="callout callout-info" style="margin-top:10px"><span class="callout-icon">&#8505;</span><div>Price deviation is explained by a scope change (protection relay package added after GHBS evaluation). The correct vendor was selected. This is a documentation gap, not an integrity concern, but scope changes after evaluation should be formally documented in the RFQ amendment register.</div></div>
+  </div></div>
+
+  <div class="report-stamp">
+    <span><strong>Tender</strong> &middot; PO Reconciliation &middot; TNDR-HGBS-PH-Q1FY26-001</span>
+    <span>4 POs &middot; 2 Aligned &middot; 1 Deviation &middot; 1 Override &middot; 1 Pending</span>
+  </div>
+</div>
+<div id="pane-config" class="pane">
+  <h1 class="page-title">Configuration</h1>
+  <div class="page-sub">Tender screening thresholds and parameters as configured for Holcim GHBS Philippines. All values are configurable per deployment.</div>
+
+  <div class="config-grid">
+    <div class="config-block"><h4>L1 Cross-Bid Forensic Thresholds</h4><ul class="method-list">
+      <li><span class="lk">Metadata field match count</span><span class="lv">&ge; 3 of 5</span></li>
+      <li><span class="lk">XMP DocumentID prefix match length</span><span class="lv">&ge; 24 chars</span></li>
+      <li><span class="lk">Font subset hash match</span><span class="lv">Exact</span></li>
+      <li><span class="lk">Template structural similarity</span><span class="lv">&ge; 95%</span></li>
+      <li><span class="lk">Creation time proximity window</span><span class="lv">&le; 60 min</span></li>
+    </ul></div>
+    <div class="config-block"><h4>L2 Pricing Pattern Thresholds</h4><ul class="method-list">
+      <li><span class="lk">Cover-bid price spread</span><span class="lv">2% &ndash; 7%</span></li>
+      <li><span class="lk">Narrow-band compression</span><span class="lv">&le; 5%</span></li>
+      <li><span class="lk">Arithmetic step variance</span><span class="lv">&le; 5%</span></li>
+      <li><span class="lk">Minimum bids for pattern</span><span class="lv">&ge; 3</span></li>
+      <li><span class="lk">Round-robin lookback</span><span class="lv">12 months</span></li>
+    </ul></div>
+    <div class="config-block"><h4>L3 Process &amp; Email Forensics</h4><ul class="method-list">
+      <li><span class="lk">Late tender grace period</span><span class="lv">0 min</span></li>
+      <li><span class="lk">Amendment materiality threshold</span><span class="lv">&ge; 2%</span></li>
+      <li><span class="lk">Pre-issuance creation window</span><span class="lv">&gt; 0 days before RFQ</span></li>
+      <li><span class="lk">IP match subnet mask</span><span class="lv">/24</span></li>
+      <li><span class="lk">Send-time cluster window</span><span class="lv">15 min</span></li>
+      <li><span class="lk">Relay IP whitelist</span><span class="lv">Google, Microsoft, Proofpoint</span></li>
+    </ul></div>
+    <div class="config-block"><h4>L4 Vendor Relationship</h4><ul class="method-list">
+      <li><span class="lk">Address proximity match</span><span class="lv">Same building / unit</span></li>
+      <li><span class="lk">Bank account distance</span><span class="lv">Same branch</span></li>
+      <li><span class="lk">Zero-history PO lookback</span><span class="lv">24 months</span></li>
+      <li><span class="lk">Vendor creation proximity</span><span class="lv">&le; 7 days</span></li>
+    </ul></div>
+    <div class="config-block"><h4>D7 Entity Verification</h4><ul class="method-list">
+      <li><span class="lk">Cache recency window</span><span class="lv">90 days</span></li>
+      <li><span class="lk">Fail threshold (composite)</span><span class="lv">&ge; 7.0</span></li>
+      <li><span class="lk">Warn threshold (composite)</span><span class="lv">&ge; 4.0</span></li>
+      <li><span class="lk">Entity not found action</span><span class="lv">Auto Fail</span></li>
+      <li><span class="lk">Sanctions hit action</span><span class="lv">Auto Fail</span></li>
+      <li><span class="lk">Buyer employee match</span><span class="lv">Warn (min) + Compliance</span></li>
+    </ul></div>
+    <div class="config-block"><h4>Composite Score Weights</h4><ul class="method-list">
+      <li><span class="lk">Registration</span><span class="lv">15%</span></li>
+      <li><span class="lk">UBO</span><span class="lv">20%</span></li>
+      <li><span class="lk">Directors</span><span class="lv">15%</span></li>
+      <li><span class="lk">Sanctions</span><span class="lv">20% (override)</span></li>
+      <li><span class="lk">Financial</span><span class="lv">10%</span></li>
+      <li><span class="lk">Adverse Media</span><span class="lv">10%</span></li>
+      <li><span class="lk">Geopolitical</span><span class="lv">10%</span></li>
+    </ul></div>
+  </div>
+
+  <div class="report-stamp">
+    <span><strong>Tender</strong> &middot; Configuration &middot; TNDR-HGBS-PH-Q1FY26-001</span>
+    <span>19 threshold parameters &middot; 7 D7 dimension weights &middot; Active deployment</span>
+  </div>
+</div>
+<div id="pane-register" class="pane">
+  <div class="tab-toolbar">
+    <div class="tab-toolbar-l">
+      <h1 class="page-title">Bid Register</h1>
+      <div class="page-sub">Complete register of all 19 bids received across 5 RFQ clusters during Q1 FY2026.</div>
+    </div>
+    <div class="tab-toolbar-r">
+      <button class="btn-dl" onclick="downloadTab('Bid_Register')">Export to Excel</button>
+    </div>
+  </div>
+
+  <div class="table-wrap"><table class="dt"><thead><tr>
+    <th>Bid ID</th><th>RFQ</th><th>Bidder</th><th><span class="amt-hdr">Amount (USD)</span></th><th>Tech Score</th><th>On Time</th><th>D7</th><th>Signals</th><th>Screening</th>
+  </tr></thead><tbody>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-001-A</td><td style="font-family:var(--mono)">001</td><td>Pacific Alloy Industries</td><td style="font-family:var(--mono);text-align:right">13,890,000</td><td style="text-align:center">82</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">TNDR0001,0005,0015,0019</td><td><span class="res-badge res-HELD">HELD</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-001-B</td><td style="font-family:var(--mono)">001</td><td>Manila Steelcast Corp.</td><td style="font-family:var(--mono);text-align:right">14,310,000</td><td style="text-align:center">78</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">TNDR0001,0005,0015,0019</td><td><span class="res-badge res-HELD">HELD</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-001-C</td><td style="font-family:var(--mono)">001</td><td>Cebu Heavy Industries Co.</td><td style="font-family:var(--mono);text-align:right">15,250,000</td><td style="text-align:center">85</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">None</td><td><span class="res-badge res-CLEARED">CLEARED</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-001-D</td><td style="font-family:var(--mono)">001</td><td>Luzon Metalworks Trading</td><td style="font-family:var(--mono);text-align:right">14,620,000</td><td style="text-align:center">45</td><td>Yes</td><td><span class="d7-verdict d7-Fail">Fail</span></td><td style="font-family:var(--mono);font-size:10px">D7-FAIL</td><td><span class="res-badge res-BLOCKED">BLOCKED</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-002-A</td><td style="font-family:var(--mono)">002</td><td>Shinagawa Refractories PH</td><td style="font-family:var(--mono);text-align:right">27,800,000</td><td style="text-align:center">92</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">None</td><td><span class="res-badge res-CLEARED">CLEARED</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-002-B</td><td style="font-family:var(--mono)">002</td><td>RHI Magnesita Asia Pacific</td><td style="font-family:var(--mono);text-align:right">29,100,000</td><td style="text-align:center">88</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">None</td><td><span class="res-badge res-FLAGGED">FLAGGED</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-002-C</td><td style="font-family:var(--mono)">002</td><td>Visayas Thermal Solutions</td><td style="font-family:var(--mono);text-align:right">26,900,000</td><td style="text-align:center">75</td><td style="color:var(--crit);font-weight:700">Late</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">TNDR0010,0011</td><td><span class="res-badge res-HELD">HELD</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-003-A</td><td style="font-family:var(--mono)">003</td><td>TransHaul Logistics</td><td style="font-family:var(--mono);text-align:right">6,850,000</td><td style="text-align:center">80</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">TNDR0008,0019</td><td><span class="res-badge res-HELD">HELD</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-003-B</td><td style="font-family:var(--mono)">003</td><td>Mindanao Freight Services</td><td style="font-family:var(--mono);text-align:right">6,960,000</td><td style="text-align:center">78</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">TNDR0008,0019</td><td><span class="res-badge res-HELD">HELD</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-003-C</td><td style="font-family:var(--mono)">003</td><td>Island Cargo Movers</td><td style="font-family:var(--mono);text-align:right">7,075,000</td><td style="text-align:center">76</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">TNDR0007,0008</td><td><span class="res-badge res-HELD">HELD</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-003-D</td><td style="font-family:var(--mono)">003</td><td>Archipelago Transport</td><td style="font-family:var(--mono);text-align:right">7,185,000</td><td style="text-align:center">74</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">TNDR0008,0019</td><td><span class="res-badge res-HELD">HELD</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-003-E</td><td style="font-family:var(--mono)">003</td><td>NewRoute Haulers PH</td><td style="font-family:var(--mono);text-align:right">7,138,000</td><td style="text-align:center">50</td><td>Yes</td><td><span class="d7-verdict d7-Warn">Warn</span></td><td style="font-family:var(--mono);font-size:10px">TNDR0017,D7-WARN</td><td><span class="res-badge res-HELD">HELD</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-004-A</td><td style="font-family:var(--mono)">004</td><td>ABB Power Philippines</td><td style="font-family:var(--mono);text-align:right">9,450,000</td><td style="text-align:center">90</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">None</td><td><span class="res-badge res-CLEARED">CLEARED</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-004-B</td><td style="font-family:var(--mono)">004</td><td>Schneider Electric PH</td><td style="font-family:var(--mono);text-align:right">8,980,000</td><td style="text-align:center">88</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">None</td><td><span class="res-badge res-CLEARED">CLEARED</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-004-C</td><td style="font-family:var(--mono)">004</td><td>Hyundai Electric PH</td><td style="font-family:var(--mono);text-align:right">9,820,000</td><td style="text-align:center">82</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">None</td><td><span class="res-badge res-CLEARED">CLEARED</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-005-A</td><td style="font-family:var(--mono)">005</td><td>Orica Philippines</td><td style="font-family:var(--mono);text-align:right">34,200,000</td><td style="text-align:center">90</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">None</td><td><span class="res-badge res-CLEARED">CLEARED</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-005-B</td><td style="font-family:var(--mono)">005</td><td>Dyno Nobel Asia Pacific</td><td style="font-family:var(--mono);text-align:right">32,800,000</td><td style="text-align:center">85</td><td>Yes</td><td><span class="d7-verdict d7-Warn">Warn</span></td><td style="font-family:var(--mono);font-size:10px">TNDR0014,D7-COI</td><td><span class="res-badge res-HELD">HELD</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-005-C</td><td style="font-family:var(--mono)">005</td><td>PhilBlast Mining Supplies</td><td style="font-family:var(--mono);text-align:right">35,100,000</td><td style="text-align:center">72</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">TNDR0003,0004,0019</td><td><span class="res-badge res-HELD">HELD</span></td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">BID-005-D</td><td style="font-family:var(--mono)">005</td><td>Visayas Blasting Solutions</td><td style="font-family:var(--mono);text-align:right">36,500,000</td><td style="text-align:center">68</td><td>Yes</td><td><span class="d7-verdict d7-Pass">Pass</span></td><td style="font-family:var(--mono);font-size:10px">TNDR0003,0004,0019</td><td><span class="res-badge res-HELD">HELD</span></td></tr>
+  </tbody></table></div>
+
+  <div class="report-stamp">
+    <span><strong>Tender</strong> &middot; Bid Register &middot; TNDR-HGBS-PH-Q1FY26-001</span>
+    <span>19 bids &middot; 7 Cleared &middot; 1 Flagged &middot; 10 Held &middot; 1 Blocked</span>
+  </div>
+</div>
+<div id="pane-audit" class="pane">
+  <div class="tab-toolbar">
+    <div class="tab-toolbar-l">
+      <h1 class="page-title">Audit Trail</h1>
+      <div class="page-sub">Append-only log of all screening actions, state transitions, signal evaluations, recommendations, and PO reconciliation events. This log is immutable and cannot be edited or deleted.</div>
+    </div>
+    <div class="tab-toolbar-r">
+      <button class="btn-dl" onclick="downloadTab('Audit_Trail')">Export to Excel</button>
+    </div>
+  </div>
+
+  <div class="table-wrap"><table class="dt"><thead><tr>
+    <th>Timestamp</th><th>Event</th><th>Cluster</th><th>Detail</th><th>Actor</th>
+  </tr></thead><tbody>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-01-24 09:15</td><td>CLUSTER_CREATED</td><td style="font-family:var(--mono)">001</td><td>4 bids ingested. D7 auto-ping initiated for 4 bidders.</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-01-24 09:16</td><td>D7_VERIFIED</td><td style="font-family:var(--mono)">001</td><td>Pacific Alloy: Pass (2.1). Manila Steelcast: Pass (2.8). Cebu Heavy: Pass (1.4).</td><td>D7</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-01-24 09:17</td><td style="color:var(--crit);font-weight:600">D7_FAIL</td><td style="font-family:var(--mono)">001</td><td>Luzon Metalworks: FAIL. Entity not found. Bid auto-blocked.</td><td>D7</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-01-24 09:20</td><td>SIGNALS_FIRED</td><td style="font-family:var(--mono)">001</td><td>4 signals: TNDR0001 (Critical), TNDR0019 (Critical), TNDR0015 (High), TNDR0005 (Medium)</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-01-24 09:22</td><td>STATE_CHANGE</td><td style="font-family:var(--mono)">001</td><td>SCREENING &rarr; HELD (D7 Fail + 4 signals)</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-03 10:30</td><td>SIGNAL_CONFIRMED</td><td style="font-family:var(--mono)">001</td><td>All 4 signals confirmed. Xa narrative generated.</td><td>E. Vasquez</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-03 11:00</td><td>RECOMMENDATION</td><td style="font-family:var(--mono)">001</td><td>Cebu Heavy Industries recommended at <span class="ccy" data-php="15250000" data-usd="$247,967" data-php-fmt="&#8369;15.25M">$247,967</span></td><td>E. Vasquez</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-05 14:20</td><td>PO_RECONCILED</td><td style="font-family:var(--mono)">001</td><td>PO 4500089001 &rarr; Cebu Heavy at <span class="ccy" data-php="15250000" data-usd="$247,967" data-php-fmt="&#8369;15.25M">$247,967</span> Result: ALIGNED.</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-03 08:45</td><td>CLUSTER_CREATED</td><td style="font-family:var(--mono)">002</td><td>3 bids ingested (2 on-time, 1 late). D7 auto-ping: all Pass.</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-03 08:50</td><td>SIGNALS_FIRED</td><td style="font-family:var(--mono)">002</td><td>2 signals: TNDR0010 (High, late tender), TNDR0011 (High, price amendment -10.9%)</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-05 09:00</td><td>SIGNAL_CONFIRMED</td><td style="font-family:var(--mono)">002</td><td>Both signals confirmed. Xa narrative generated.</td><td>C. Mendoza</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-05 09:30</td><td>RECOMMENDATION</td><td style="font-family:var(--mono)">002</td><td>Shinagawa Refractories recommended at <span class="ccy" data-php="27800000" data-usd="$452,033" data-php-fmt="&#8369;27.80M">$452,033</span></td><td>C. Mendoza</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-10 16:00</td><td style="color:var(--crit);font-weight:600">PO_OVERRIDE</td><td style="font-family:var(--mono)">002</td><td>PO 4500089002 &rarr; Visayas Thermal at <span class="ccy" data-php="26900000" data-usd="$437,398" data-php-fmt="&#8369;26.90M">$437,398</span> Overrides GHBS reco. Approver: M.C. Santos.</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-15 10:00</td><td>CLUSTER_CREATED</td><td style="font-family:var(--mono)">003</td><td>5 bids ingested. D7: 4 Pass, 1 Warn (NewRoute, 5.8).</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-15 10:10</td><td>SIGNALS_FIRED</td><td style="font-family:var(--mono)">003</td><td>5 signals: TNDR0019 (Crit), TNDR0008 (High), TNDR0007 (Med), TNDR0017 (Med), D7-WARN</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-15 10:12</td><td>STATE_CHANGE</td><td style="font-family:var(--mono)">003</td><td>SCREENING &rarr; HELD (5 signals, D7 Warn)</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-20 11:00</td><td>CLUSTER_CREATED</td><td style="font-family:var(--mono)">004</td><td>3 bids ingested. D7: all Pass. 0 signals. Auto-cleared.</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-20 11:05</td><td>STATE_CHANGE</td><td style="font-family:var(--mono)">004</td><td>SCREENING &rarr; CLEARED (0 signals)</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-22 09:00</td><td>RECOMMENDATION</td><td style="font-family:var(--mono)">004</td><td>Schneider Electric recommended at <span class="ccy" data-php="8980000" data-usd="$146,016" data-php-fmt="&#8369;8.98M">$146,016</span></td><td>C. Mendoza</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-03-01 14:00</td><td>PO_DEVIATION</td><td style="font-family:var(--mono)">004</td><td>PO 4500089003 &rarr; Schneider at <span class="ccy" data-php="9700000" data-usd="$157,724" data-php-fmt="&#8369;9.70M">$157,724</span> (+8.0%). Scope change noted.</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-24 09:00</td><td>CLUSTER_CREATED</td><td style="font-family:var(--mono)">005</td><td>4 bids ingested. D7: 3 Pass, 1 Warn (Dyno Nobel, 4.5 COI).</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-02-24 09:10</td><td>SIGNALS_FIRED</td><td style="font-family:var(--mono)">005</td><td>5 signals: TNDR0014 (Crit), TNDR0019 (Crit), TNDR0003 (High), TNDR0004 (High), D7-COI (High)</td><td>System</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-03-16 15:00</td><td>SIGNAL_CONFIRMED</td><td style="font-family:var(--mono)">005</td><td>All 5 signals confirmed. Dyno Nobel COI escalated to Compliance.</td><td>E. Vasquez</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-03-16 16:00</td><td>RECOMMENDATION</td><td style="font-family:var(--mono)">005</td><td>Orica Philippines recommended at <span class="ccy" data-php="34200000" data-usd="$556,098" data-php-fmt="&#8369;34.20M">$556,098</span></td><td>E. Vasquez</td></tr>
+    <tr><td style="font-family:var(--mono);font-size:10.5px">2026-03-20 10:00</td><td>PO_RECONCILED</td><td style="font-family:var(--mono)">005</td><td>PO 4500089004 &rarr; Orica at <span class="ccy" data-php="34200000" data-usd="$556,098" data-php-fmt="&#8369;34.20M">$556,098</span> Result: ALIGNED.</td><td>System</td></tr>
+  </tbody></table></div>
+
+  <div class="callout callout-info"><span class="callout-icon">&#128274;</span><div><strong>Immutability guarantee.</strong> This audit trail is stored in the <code>investigation_thread</code> table with UPDATE and DELETE revoked at the database role level. Records can only be appended. This log constitutes the evidentiary chain for regulatory and internal audit purposes.</div></div>
+
+  <div class="report-stamp">
+    <span><strong>Tender</strong> &middot; Audit Trail &middot; TNDR-HGBS-PH-Q1FY26-001</span>
+    <span>25 events &middot; Period: 2026-01-24 &rarr; 2026-03-20 &middot; Append-only</span>
+  </div>
+</div>
+<script>
+
+window.TENDER_DATA = {
+  meta: {
+    client: "Holcim GHBS Philippines",
+    period: "Q1 FY26",
+    reportId: "TNDR-HGBS-PH-Q1FY26-001",
+    country: "PH",
+    fxRate: 61.50
+  },
+  clusters: [
+    {rfq:"RFQ-PH-2026-001", pr:"PR-PH-2026-00142", purchOrg:"PH01", prCreator:"Maria S. Cruz", description:"Cement Grinding Media - High Chrome Cast Balls 50mm", materialCode:"GRMD-HCB-50", qty:500, uom:"MT", estValuePHP:14500000, refPriceUSD:458.00, bids:4, signals:4, maxSev:"Critical", d7:"1 Fail", status:"Blocked", evalLead:"E. Vasquez"},
+    {rfq:"RFQ-PH-2026-002", pr:"PR-PH-2026-00198", purchOrg:"PH01", prCreator:"Antonio R. Reyes", description:"Kiln Refractory Lining - Magnesia-Chrome Bricks", materialCode:"REFR-MCB-280", qty:350, uom:"MT", estValuePHP:28750000, refPriceUSD:1290.00, bids:3, signals:2, maxSev:"High", d7:"All Pass", status:"Held", evalLead:"C. Mendoza"},
+    {rfq:"RFQ-PH-2026-003", pr:"PR-PH-2026-00211", purchOrg:"PH02", prCreator:"Reynaldo M. Aquino", description:"Bulk Limestone Haulage - 12-Month Contract", materialCode:"HAUL-LST-MT", qty:5000, uom:"MT/mo", estValuePHP:7500000, refPriceUSD:23.17, bids:5, signals:5, maxSev:"Critical", d7:"1 Warn", status:"Held", evalLead:"E. Vasquez"},
+    {rfq:"RFQ-PH-2026-004", pr:"PR-PH-2026-00224", purchOrg:"PH01", prCreator:"Lourdes P. Garcia", description:"Power Transformer - 10MVA 69kV/13.8kV", materialCode:"TRFM-10MVA-69", qty:2, uom:"EA", estValuePHP:18200000, refPriceUSD:null, bids:3, signals:0, maxSev:"None", d7:"All Pass", status:"Cleared", evalLead:"C. Mendoza"},
+    {rfq:"RFQ-PH-2026-005", pr:"PR-PH-2026-00256", purchOrg:"PH02", prCreator:"Felicidad B. Tanco", description:"Quarry Explosives - ANFO + Boosters, 12-Month", materialCode:"EXPL-ANFO-1200", qty:1200, uom:"MT", estValuePHP:33600000, refPriceUSD:445.00, bids:4, signals:5, maxSev:"Critical", d7:"1 Warn", status:"Held", evalLead:"E. Vasquez"}
+  ],
+  bids: [
+    {bidId:"BID-001-A", rfq:"RFQ-PH-2026-001", bidder:"Pacific Alloy Industries", amountPHP:13890000, qty:500, uom:"MT", unitPHP:27780, tech:82, onTime:"Yes", d7:"Pass", screening:"Held", signals:"TNDR0001,0005,0015,0019"},
+    {bidId:"BID-001-B", rfq:"RFQ-PH-2026-001", bidder:"Manila Steelcast Corp.", amountPHP:14310000, qty:500, uom:"MT", unitPHP:28620, tech:78, onTime:"Yes", d7:"Pass", screening:"Held", signals:"TNDR0001,0005,0015,0019"},
+    {bidId:"BID-001-C", rfq:"RFQ-PH-2026-001", bidder:"Cebu Heavy Industries Co.", amountPHP:15250000, qty:500, uom:"MT", unitPHP:30500, tech:85, onTime:"Yes", d7:"Pass", screening:"Cleared", signals:""},
+    {bidId:"BID-001-D", rfq:"RFQ-PH-2026-001", bidder:"Luzon Metalworks Trading", amountPHP:14620000, qty:500, uom:"MT", unitPHP:29240, tech:45, onTime:"Yes", d7:"Fail", screening:"Blocked", signals:"D7-FAIL"},
+    {bidId:"BID-002-A", rfq:"RFQ-PH-2026-002", bidder:"Shinagawa Refractories PH", amountPHP:27800000, qty:350, uom:"MT", unitPHP:79429, tech:92, onTime:"Yes", d7:"Pass", screening:"Cleared", signals:""},
+    {bidId:"BID-002-B", rfq:"RFQ-PH-2026-002", bidder:"RHI Magnesita Asia Pacific", amountPHP:29100000, qty:350, uom:"MT", unitPHP:83143, tech:88, onTime:"Yes", d7:"Pass", screening:"Flagged", signals:""},
+    {bidId:"BID-002-C", rfq:"RFQ-PH-2026-002", bidder:"Visayas Thermal Solutions", amountPHP:26900000, qty:350, uom:"MT", unitPHP:76857, tech:75, onTime:"No", d7:"Pass", screening:"Held", signals:"TNDR0010,0011"},
+    {bidId:"BID-003-A", rfq:"RFQ-PH-2026-003", bidder:"TransHaul Logistics", amountPHP:6850000, qty:5000, uom:"MT/mo", unitPHP:1370, tech:80, onTime:"Yes", d7:"Pass", screening:"Held", signals:"TNDR0008,0019"},
+    {bidId:"BID-003-B", rfq:"RFQ-PH-2026-003", bidder:"Mindanao Freight Services", amountPHP:6960000, qty:5000, uom:"MT/mo", unitPHP:1392, tech:78, onTime:"Yes", d7:"Pass", screening:"Held", signals:"TNDR0008,0019"},
+    {bidId:"BID-003-C", rfq:"RFQ-PH-2026-003", bidder:"Island Cargo Movers", amountPHP:7075000, qty:5000, uom:"MT/mo", unitPHP:1415, tech:76, onTime:"Yes", d7:"Pass", screening:"Held", signals:"TNDR0007,0008"},
+    {bidId:"BID-003-D", rfq:"RFQ-PH-2026-003", bidder:"Archipelago Transport", amountPHP:7185000, qty:5000, uom:"MT/mo", unitPHP:1437, tech:74, onTime:"Yes", d7:"Pass", screening:"Held", signals:"TNDR0008,0019"},
+    {bidId:"BID-003-E", rfq:"RFQ-PH-2026-003", bidder:"NewRoute Haulers PH", amountPHP:7138000, qty:5000, uom:"MT/mo", unitPHP:1428, tech:50, onTime:"Yes", d7:"Warn", screening:"Held", signals:"TNDR0017,D7-WARN"},
+    {bidId:"BID-004-A", rfq:"RFQ-PH-2026-004", bidder:"ABB Power Philippines", amountPHP:9450000, qty:2, uom:"EA", unitPHP:4725000, tech:90, onTime:"Yes", d7:"Pass", screening:"Cleared", signals:""},
+    {bidId:"BID-004-B", rfq:"RFQ-PH-2026-004", bidder:"Schneider Electric PH", amountPHP:8980000, qty:2, uom:"EA", unitPHP:4490000, tech:88, onTime:"Yes", d7:"Pass", screening:"Cleared", signals:""},
+    {bidId:"BID-004-C", rfq:"RFQ-PH-2026-004", bidder:"Hyundai Electric PH", amountPHP:9820000, qty:2, uom:"EA", unitPHP:4910000, tech:82, onTime:"Yes", d7:"Pass", screening:"Cleared", signals:""},
+    {bidId:"BID-005-A", rfq:"RFQ-PH-2026-005", bidder:"Orica Philippines", amountPHP:34200000, qty:1200, uom:"MT", unitPHP:28500, tech:90, onTime:"Yes", d7:"Pass", screening:"Cleared", signals:""},
+    {bidId:"BID-005-B", rfq:"RFQ-PH-2026-005", bidder:"Dyno Nobel Asia Pacific", amountPHP:32800000, qty:1200, uom:"MT", unitPHP:27333, tech:85, onTime:"Yes", d7:"Warn", screening:"Held", signals:"TNDR0014,D7-COI"},
+    {bidId:"BID-005-C", rfq:"RFQ-PH-2026-005", bidder:"PhilBlast Mining Supplies", amountPHP:35100000, qty:1200, uom:"MT", unitPHP:29250, tech:72, onTime:"Yes", d7:"Pass", screening:"Held", signals:"TNDR0003,0004,0019"},
+    {bidId:"BID-005-D", rfq:"RFQ-PH-2026-005", bidder:"Visayas Blasting Solutions", amountPHP:36500000, qty:1200, uom:"MT", unitPHP:30417, tech:68, onTime:"Yes", d7:"Pass", screening:"Held", signals:"TNDR0003,0004,0019"}
+  ],
+  signals: [
+    {code:"TNDR0019", name:"Common Originating IP", layer:"L3 Email", severity:"Critical", fires:3, clusters:"001,003,005", confirmed:2, open:1},
+    {code:"TNDR0001", name:"Identical PDF Metadata", layer:"L1 Cross-Bid", severity:"Critical", fires:1, clusters:"001", confirmed:1, open:0},
+    {code:"TNDR0014", name:"Pre-Issuance RFQ Knowledge", layer:"L3 Process", severity:"Critical", fires:1, clusters:"005", confirmed:1, open:0},
+    {code:"TNDR0003", name:"Shared Font Subsets", layer:"L1 Cross-Bid", severity:"High", fires:1, clusters:"005", confirmed:1, open:0},
+    {code:"TNDR0004", name:"Identical Template Structure", layer:"L1 Cross-Bid", severity:"High", fires:1, clusters:"005", confirmed:1, open:0},
+    {code:"TNDR0010", name:"Late Tender Accepted", layer:"L3 Process", severity:"High", fires:1, clusters:"002", confirmed:1, open:0},
+    {code:"TNDR0011", name:"Post-Deadline Amendment", layer:"L3 Process", severity:"High", fires:1, clusters:"002", confirmed:1, open:0},
+    {code:"TNDR0015", name:"Shared Vendor Master Data", layer:"L4 Vendor", severity:"High", fires:1, clusters:"001", confirmed:1, open:0},
+    {code:"TNDR0005", name:"Cover-Bid Pricing", layer:"L2 Pricing", severity:"Medium", fires:1, clusters:"001", confirmed:1, open:0},
+    {code:"TNDR0007", name:"Arithmetic Progression", layer:"L2 Pricing", severity:"Medium", fires:1, clusters:"003", confirmed:0, open:1},
+    {code:"TNDR0008", name:"Narrow-Band Compression", layer:"L2 Pricing", severity:"Medium", fires:1, clusters:"003", confirmed:0, open:1},
+    {code:"TNDR0017", name:"Zero-History Bidder", layer:"L4 Vendor", severity:"Medium", fires:1, clusters:"003", confirmed:0, open:1}
+  ],
+  bidders: [
+    {bidder:"Pacific Alloy Industries", d7Id:"D7-ENT-PH-2026-00101", verdict:"Pass", score:2.1, registration:"Pass", ubo:"Pass", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"001"},
+    {bidder:"Manila Steelcast Corp.", d7Id:"D7-ENT-PH-2026-00102", verdict:"Pass", score:2.8, registration:"Pass", ubo:"Pass", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"001"},
+    {bidder:"Cebu Heavy Industries Co.", d7Id:"D7-ENT-PH-2026-00103", verdict:"Pass", score:1.4, registration:"Pass", ubo:"Pass", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"001"},
+    {bidder:"Luzon Metalworks Trading", d7Id:"D7-ENT-PH-2026-00104", verdict:"Fail", score:null, registration:"Fail", ubo:"N/A", directors:"N/A", sanctions:"N/A", financial:"N/A", cluster:"001"},
+    {bidder:"Shinagawa Refractories PH", d7Id:"D7-ENT-PH-2026-00201", verdict:"Pass", score:1.2, registration:"Pass", ubo:"Pass", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"002"},
+    {bidder:"RHI Magnesita Asia Pacific", d7Id:"D7-ENT-PH-2026-00202", verdict:"Pass", score:1.5, registration:"Pass", ubo:"Pass", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"002"},
+    {bidder:"Visayas Thermal Solutions", d7Id:"D7-ENT-PH-2026-00203", verdict:"Pass", score:3.1, registration:"Pass", ubo:"Pass", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"002"},
+    {bidder:"TransHaul Logistics", d7Id:"D7-ENT-PH-2026-00301", verdict:"Pass", score:2.0, registration:"Pass", ubo:"Pass", directors:"X-match", sanctions:"Clear", financial:"Pass", cluster:"003"},
+    {bidder:"Mindanao Freight Services", d7Id:"D7-ENT-PH-2026-00302", verdict:"Pass", score:2.2, registration:"Pass", ubo:"X-match", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"003"},
+    {bidder:"Island Cargo Movers", d7Id:"D7-ENT-PH-2026-00303", verdict:"Pass", score:1.8, registration:"Pass", ubo:"Pass", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"003"},
+    {bidder:"Archipelago Transport", d7Id:"D7-ENT-PH-2026-00304", verdict:"Pass", score:2.5, registration:"Pass", ubo:"X-match", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"003"},
+    {bidder:"NewRoute Haulers PH", d7Id:"D7-ENT-PH-2026-00305", verdict:"Warn", score:5.8, registration:"Warn", ubo:"Warn", directors:"X-match", sanctions:"Clear", financial:"Warn", cluster:"003"},
+    {bidder:"ABB Power Philippines", d7Id:"D7-ENT-PH-2026-00401", verdict:"Pass", score:1.0, registration:"Pass", ubo:"Pass", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"004"},
+    {bidder:"Schneider Electric PH", d7Id:"D7-ENT-PH-2026-00402", verdict:"Pass", score:1.1, registration:"Pass", ubo:"Pass", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"004"},
+    {bidder:"Hyundai Electric PH", d7Id:"D7-ENT-PH-2026-00403", verdict:"Pass", score:1.3, registration:"Pass", ubo:"Pass", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"004"},
+    {bidder:"Orica Philippines", d7Id:"D7-ENT-PH-2026-00501", verdict:"Pass", score:1.0, registration:"Pass", ubo:"Pass", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"005"},
+    {bidder:"Dyno Nobel Asia Pacific", d7Id:"D7-ENT-PH-2026-00502", verdict:"Warn", score:4.5, registration:"Pass", ubo:"Pass", directors:"COI", sanctions:"Clear", financial:"Pass", cluster:"005"},
+    {bidder:"PhilBlast Mining Supplies", d7Id:"D7-ENT-PH-2026-00503", verdict:"Pass", score:2.4, registration:"Pass", ubo:"Pass", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"005"},
+    {bidder:"Visayas Blasting Solutions", d7Id:"D7-ENT-PH-2026-00504", verdict:"Pass", score:2.6, registration:"Pass", ubo:"Pass", directors:"Pass", sanctions:"Clear", financial:"Pass", cluster:"005"}
+  ],
+  poRecon: [
+    {rfq:"RFQ-PH-2026-001", pr:"PR-PH-2026-00142", materialCode:"GRMD-HCB-50", recoVendor:"Cebu Heavy Industries Co.", recoAmountPHP:15250000, qty:500, uom:"MT", unitPHP:30500, refPriceUSD:458.00, poNumber:"4500089001", poVendor:"Cebu Heavy Industries Co.", poAmountPHP:15250000, deltaPct:0.0, result:"Aligned", sapStatus:"Fully Delivered"},
+    {rfq:"RFQ-PH-2026-002", pr:"PR-PH-2026-00198", materialCode:"REFR-MCB-280", recoVendor:"Shinagawa Refractories PH", recoAmountPHP:27800000, qty:350, uom:"MT", unitPHP:79429, refPriceUSD:1290.00, poNumber:"4500089002", poVendor:"Visayas Thermal Solutions", poAmountPHP:26900000, deltaPct:-3.2, result:"Override", sapStatus:"Partially Delivered"},
+    {rfq:"RFQ-PH-2026-003", pr:"PR-PH-2026-00211", materialCode:"HAUL-LST-MT", recoVendor:"PENDING", recoAmountPHP:null, qty:5000, uom:"MT/mo", unitPHP:null, refPriceUSD:23.17, poNumber:null, poVendor:null, poAmountPHP:null, deltaPct:null, result:"Pending", sapStatus:null},
+    {rfq:"RFQ-PH-2026-004", pr:"PR-PH-2026-00224", materialCode:"TRFM-10MVA-69", recoVendor:"Schneider Electric PH", recoAmountPHP:8980000, qty:2, uom:"EA", unitPHP:4490000, refPriceUSD:null, poNumber:"4500089003", poVendor:"Schneider Electric PH", poAmountPHP:9700000, deltaPct:8.0, result:"Deviation", sapStatus:"Created"},
+    {rfq:"RFQ-PH-2026-005", pr:"PR-PH-2026-00256", materialCode:"EXPL-ANFO-1200", recoVendor:"Orica Philippines", recoAmountPHP:34200000, qty:1200, uom:"MT", unitPHP:28500, refPriceUSD:445.00, poNumber:"4500089004", poVendor:"Orica Philippines", poAmountPHP:34200000, deltaPct:0.0, result:"Aligned", sapStatus:"Partially Invoiced"}
+  ],
+  auditEvents: [
+    {ts:"2026-01-24 09:15", event:"CLUSTER_CREATED", cluster:"001", detail:"4 bids ingested. D7 auto-ping initiated for 4 bidders.", actor:"System"},
+    {ts:"2026-01-24 09:16", event:"D7_VERIFIED", cluster:"001", detail:"Pacific Alloy: Pass (2.1). Manila Steelcast: Pass (2.8). Cebu Heavy: Pass (1.4).", actor:"D7"},
+    {ts:"2026-01-24 09:17", event:"D7_FAIL", cluster:"001", detail:"Luzon Metalworks: FAIL. Entity not found. Bid auto-blocked.", actor:"D7"},
+    {ts:"2026-01-24 09:20", event:"SIGNALS_FIRED", cluster:"001", detail:"4 signals fired", actor:"System"},
+    {ts:"2026-02-03 11:00", event:"RECOMMENDATION", cluster:"001", detail:"Cebu Heavy Industries recommended at PHP 15,250,000.", actor:"E. Vasquez"},
+    {ts:"2026-02-05 14:20", event:"PO_RECONCILED", cluster:"001", detail:"PO 4500089001 -> Cebu Heavy. Result: ALIGNED.", actor:"System"},
+    {ts:"2026-02-03 08:45", event:"CLUSTER_CREATED", cluster:"002", detail:"3 bids ingested (2 on-time, 1 late).", actor:"System"},
+    {ts:"2026-02-10 16:00", event:"PO_OVERRIDE", cluster:"002", detail:"PO 4500089002 -> Visayas Thermal. Override.", actor:"System"},
+    {ts:"2026-02-15 10:00", event:"CLUSTER_CREATED", cluster:"003", detail:"5 bids ingested. D7: 4 Pass, 1 Warn.", actor:"System"},
+    {ts:"2026-02-20 11:00", event:"CLUSTER_CREATED", cluster:"004", detail:"3 bids ingested. D7: all Pass. 0 signals.", actor:"System"},
+    {ts:"2026-03-01 14:00", event:"PO_DEVIATION", cluster:"004", detail:"PO 4500089003 -> Schneider at PHP 9,700,000 (+8.0%).", actor:"System"},
+    {ts:"2026-02-24 09:00", event:"CLUSTER_CREATED", cluster:"005", detail:"4 bids ingested. D7: 3 Pass, 1 Warn (Dyno Nobel, COI).", actor:"System"},
+    {ts:"2026-03-20 10:00", event:"PO_RECONCILED", cluster:"005", detail:"PO 4500089004 -> Orica. ALIGNED.", actor:"System"}
+  ]
+};
+
+function setCurrency(c){
+  document.getElementById('ccy-usd').classList.toggle('ccy-on',c==='USD');
+  document.getElementById('ccy-php').classList.toggle('ccy-on',c==='PHP');
+  document.querySelectorAll('.ccy').forEach(function(s){
+    s.innerHTML=(c==='USD'?s.getAttribute('data-usd'):s.getAttribute('data-php-fmt'));
+  });
+  document.querySelectorAll('.amt-hdr').forEach(function(h){
+    h.innerHTML='Amount ('+c+')';
+  });
+  window.currentCurrency=c;
+}
+window.currentCurrency='USD';
+
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active')});
+  document.querySelectorAll('.pane').forEach(function(p){p.classList.remove('active')});
+  var btn=document.querySelector('button.tab[onclick*="'+t+'"]');
+  if(btn)btn.classList.add('active');
+  var pane=document.getElementById('pane-'+t);
+  if(pane)pane.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleCluster(id){
+  var det=document.getElementById('cluster-det-'+id);
+  if(!det)return;
+  var isOpen=det.classList.contains('open');
+  document.querySelectorAll('.cluster-detail').forEach(function(d){d.classList.remove('open')});
+  if(!isOpen)det.classList.add('open');
+}
+function toggleJson(id){
+  var el=document.getElementById('json-'+id);
+  if(el)el.classList.toggle('open');
+}
+function filterCluster(ft,val){
+  if(!window.clusterFilters)window.clusterFilters={res:'All'};
+  window.clusterFilters[ft]=val;
+  document.querySelectorAll('.filter-pill').forEach(function(p){
+    var oc=p.getAttribute('onclick')||'';
+    if(oc.indexOf("'"+ft+"'")>0)p.classList.remove('on');
+  });
+  event.target.classList.add('on');
+  var rows=document.querySelectorAll('#cluster-table tbody tr:not(.cluster-detail)');
+  rows.forEach(function(r){
+    var show=true;
+    var f=window.clusterFilters;
+    if(f.res!=='All'){var rb=r.querySelector('.res-badge');if(rb&&rb.textContent!==f.res)show=false;}
+    r.style.display=show?'':'none';
+    var det=document.getElementById('cluster-det-'+r.id);
+    if(det&&!show)det.classList.remove('open');
+  });
+}
+
+function filterEntity(ft,val){
+  if(!window.entityFilters)window.entityFilters={verdict:'All'};
+  window.entityFilters[ft]=val;
+  document.querySelectorAll('#pane-entity .filter-pill').forEach(function(p){
+    var oc=p.getAttribute('onclick')||'';
+    if(oc.indexOf("'"+ft+"'")>0)p.classList.remove('on');
+  });
+  event.target.classList.add('on');
+  var cards=document.querySelectorAll('.entity-card');
+  cards.forEach(function(c){
+    var v=c.getAttribute('data-verdict');
+    var show=(val==='All'||v===val);
+    c.style.display=show?'':'none';
+  });
+  var rows=document.querySelectorAll('#pane-entity table.dt:last-of-type tbody tr');
+  rows.forEach(function(r){
+    if(val==='All'){r.style.display='';return;}
+    var badge=r.querySelector('.d7-verdict');
+    if(badge){
+      var txt=badge.textContent.trim();
+      r.style.display=(txt===val)?'':'none';
+    }
+  });
+}
+
+
+/* ============ COUNTRY SELECTOR ============ */
+function setCountry(c){
+  window.currentCountry=c;
+  var banner=document.getElementById('country-banner');
+  var bannerText=document.getElementById('country-banner-text');
+  var phpBtn=document.getElementById('ccy-php');
+  if(c==='ALL'){
+    bannerText.textContent='Showing 1 of 5 GHBS countries (Philippines). Vietnam, Indonesia, Malaysia, India not yet onboarded.';
+    banner.classList.add('active');
+    if(phpBtn){phpBtn.disabled=true; phpBtn.title='Multi-country view: USD only'; setCurrency('USD');}
+  } else if(c==='PH'){
+    banner.classList.remove('active');
+    if(phpBtn){phpBtn.disabled=false; phpBtn.title='';}
+  } else {
+    bannerText.textContent='Country '+c+' is not yet onboarded. No data available.';
+    banner.classList.add('active');
+    if(phpBtn){phpBtn.disabled=true;}
+  }
+}
+
+/* ============ PERIOD SELECTOR ============ */
+function setPeriod(p){
+  window.currentPeriod=p;
+  var fromInput=document.getElementById('period-from');
+  var toInput=document.getElementById('period-to');
+  if(p==='CUSTOM'){
+    fromInput.style.display='inline-block';
+    toInput.style.display='inline-block';
+  } else {
+    fromInput.style.display='none';
+    toInput.style.display='none';
+  }
+  if(p!=='Q1FY26' && p!=='CUSTOM'){
+    /* Show empty state for other quarters */
+    showPeriodEmpty(p);
+  } else {
+    hidePeriodEmpty();
+  }
+}
+function setPeriodCustom(){
+  var from=document.getElementById('period-from').value;
+  var to=document.getElementById('period-to').value;
+  var fromDate=new Date(from);
+  var toDate=new Date(to);
+  var q1Start=new Date('2026-01-01');
+  var q1End=new Date('2026-03-31');
+  if(toDate<q1Start || fromDate>q1End){
+    showPeriodEmpty('CUSTOM');
+  } else {
+    hidePeriodEmpty();
+  }
+}
+function showPeriodEmpty(p){
+  document.querySelectorAll('.pane').forEach(function(pane){
+    if(!pane.querySelector('.period-empty-notice')){
+      var notice=document.createElement('div');
+      notice.className='period-empty-notice callout callout-warn';
+      notice.innerHTML='<span class="callout-icon">&#9203;</span><div><strong>No data for selected period.</strong> Q1 FY26 (January - March 2026) is the only period with sample data in this demonstration. Please switch to Q1 FY26 to view the full dataset.</div>';
+      pane.insertBefore(notice, pane.firstChild.nextSibling);
+    }
+  });
+}
+function hidePeriodEmpty(){
+  document.querySelectorAll('.period-empty-notice').forEach(function(n){n.remove()});
+}
+
+/* ============ GLOBAL SEARCH ============ */
+function doSearch(term){
+  term=(term||'').trim().toLowerCase();
+  var statusBar=document.getElementById('search-status');
+  var termEl=document.getElementById('search-term');
+  var countEl=document.getElementById('search-count');
+  
+  if(!term){
+    clearSearch();
+    return;
+  }
+  
+  termEl.textContent='"'+term+'"';
+  statusBar.classList.add('active');
+  
+  /* Clear previous hits */
+  document.querySelectorAll('.search-hit').forEach(function(el){el.classList.remove('search-hit')});
+  document.querySelectorAll('.search-hide').forEach(function(el){el.classList.remove('search-hide')});
+  
+  /* Search across all table rows */
+  var totalHits=0;
+  document.querySelectorAll('table.dt tbody tr').forEach(function(row){
+    if(row.classList.contains('cluster-detail')){return;}  /* expand panels handled separately */
+    var text=(row.textContent||'').toLowerCase();
+    if(text.indexOf(term)>=0){
+      row.classList.add('search-hit');
+      totalHits++;
+    } else {
+      row.classList.add('search-hide');
+      /* Also hide the matching expand if collapsed */
+      var detRow=document.getElementById('cluster-det-'+row.id);
+      if(detRow){detRow.classList.add('search-hide');}
+    }
+  });
+  
+  /* Search entity cards */
+  document.querySelectorAll('.entity-card').forEach(function(card){
+    var text=(card.textContent||'').toLowerCase();
+    if(text.indexOf(term)>=0){
+      card.classList.add('search-hit');
+      totalHits++;
+    } else {
+      card.classList.add('search-hide');
+    }
+  });
+  
+  countEl.textContent=totalHits+' '+(totalHits===1?'match':'matches');
+}
+function clearSearch(){
+  document.getElementById('search-input').value='';
+  document.getElementById('search-status').classList.remove('active');
+  document.querySelectorAll('.search-hit').forEach(function(el){el.classList.remove('search-hit')});
+  document.querySelectorAll('.search-hide').forEach(function(el){el.classList.remove('search-hide')});
+}
+
+/* ============ EXCEL DOWNLOAD ============ */
+function downloadTab(tabName){
+  if(typeof XLSX==='undefined'){
+    alert('Excel library not loaded. Please refresh and try again.');
+    return;
+  }
+  var d=window.TENDER_DATA;
+  var fxRate=d.meta.fxRate;
+  var currentCcy=window.currentCurrency||'USD';
+  var fmt=function(php){
+    if(php===null||php===undefined)return null;
+    return currentCcy==='USD'?Math.round(php/fxRate*100)/100:php;
+  };
+  
+  var wb=XLSX.utils.book_new();
+  var period=d.meta.period.replace(/[\s]/g,'_');
+  var fileName='Tender_'+tabName+'_'+period+'.xlsx';
+  var sheetName='', rows=[];
+  
+  if(tabName==='RFQ_Clusters'){
+    sheetName='RFQ Clusters';
+    rows=d.clusters.map(function(c){
+      var r={};
+      r['RFQ Reference']=c.rfq;
+      r['PR Number']=c.pr;
+      r['Purch. Org']=c.purchOrg;
+      r['PR Creator']=c.prCreator;
+      r['Description']=c.description;
+      r['Material Code']=c.materialCode;
+      r['Quantity']=c.qty;
+      r['UoM']=c.uom;
+      r['Est. Value ('+currentCcy+')']=fmt(c.estValuePHP);
+      r['Unit Price ('+currentCcy+')']=fmt(c.estValuePHP/c.qty);
+      r['Ref Price 6M (USD)']=c.refPriceUSD;
+      r['Bids']=c.bids;
+      r['Signals']=c.signals;
+      r['Max Severity']=c.maxSev;
+      r['D7']=c.d7;
+      r['Status']=c.status;
+      r['Eval Lead']=c.evalLead;
+      return r;
+    });
+  } else if(tabName==='Signals'){
+    sheetName='Signals';
+    rows=d.signals.map(function(s){return {
+      'Rule Code':s.code, 'Rule Name':s.name, 'Layer':s.layer, 'Severity':s.severity,
+      'Fires':s.fires, 'Clusters':s.clusters, 'Confirmed':s.confirmed, 'Open':s.open
+    };});
+  } else if(tabName==='Bidders_D7'){
+    sheetName='Bidder D7 Verification';
+    rows=d.bidders.map(function(b){return {
+      'Bidder':b.bidder, 'D7 Entity ID':b.d7Id, 'Verdict':b.verdict, 'Composite Score':b.score,
+      'Registration':b.registration, 'UBO':b.ubo, 'Directors':b.directors,
+      'Sanctions':b.sanctions, 'Financial':b.financial, 'Cluster':b.cluster
+    };});
+  } else if(tabName==='PO_Reconciliation'){
+    sheetName='PO Reconciliation';
+    rows=d.poRecon.map(function(p){
+      var r={};
+      r['RFQ']=p.rfq;
+      r['PR']=p.pr;
+      r['Material Code']=p.materialCode;
+      r['Reco Vendor']=p.recoVendor;
+      r['Reco Amount ('+currentCcy+')']=fmt(p.recoAmountPHP);
+      r['Quantity']=p.qty;
+      r['UoM']=p.uom;
+      r['Unit Price ('+currentCcy+')']=fmt(p.unitPHP);
+      r['Ref Price 6M (USD)']=p.refPriceUSD;
+      r['PO Number']=p.poNumber;
+      r['PO Vendor']=p.poVendor;
+      r['PO Amount ('+currentCcy+')']=fmt(p.poAmountPHP);
+      r['Delta %']=p.deltaPct;
+      r['Result']=p.result;
+      r['SAP Status']=p.sapStatus;
+      return r;
+    });
+  } else if(tabName==='Bid_Register'){
+    sheetName='Bid Register';
+    rows=d.bids.map(function(b){
+      var r={};
+      r['Bid ID']=b.bidId;
+      r['RFQ']=b.rfq;
+      r['Bidder']=b.bidder;
+      r['Amount ('+currentCcy+')']=fmt(b.amountPHP);
+      r['Quantity']=b.qty;
+      r['UoM']=b.uom;
+      r['Unit Price ('+currentCcy+')']=fmt(b.unitPHP);
+      r['Tech /100']=b.tech;
+      r['On Time']=b.onTime;
+      r['D7']=b.d7;
+      r['Screening']=b.screening;
+      r['Signals']=b.signals;
+      return r;
+    });
+  } else if(tabName==='Audit_Trail'){
+    sheetName='Audit Trail';
+    rows=d.auditEvents.map(function(e){return {
+      'Timestamp':e.ts, 'Event':e.event, 'Cluster':e.cluster, 'Detail':e.detail, 'Actor':e.actor
+    };});
+  } else {
+    alert('Unknown tab: '+tabName);
+    return;
+  }
+  
+  /* Add metadata header rows */
+  var metaSheet=[
+    ['FortifAI Tender - Pre-Award Bid Integrity'],
+    ['Client', d.meta.client],
+    ['Period', d.meta.period],
+    ['Report ID', d.meta.reportId],
+    ['Currency', currentCcy],
+    ['FX Rate', currentCcy==='USD'?(fxRate+' PHP = 1 USD'):'1.00'],
+    ['Generated', new Date().toISOString().substring(0,19).replace('T',' ')],
+    [],
+    ['Sheet', sheetName],
+    []
+  ];
+  var ws=XLSX.utils.aoa_to_sheet(metaSheet);
+  XLSX.utils.sheet_add_json(ws, rows, {origin:'A11'});
+  
+  /* Style headers - autofilter, column widths */
+  var range=XLSX.utils.decode_range(ws['!ref']);
+  ws['!cols']=[];
+  for(var c=range.s.c;c<=range.e.c;c++){
+    ws['!cols'].push({wch:18});
+  }
+  ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:10,c:0},e:{r:range.e.r,c:range.e.c}})};
+  ws['!freeze']={xSplit:0,ySplit:11};
+  
+  XLSX.utils.book_append_sheet(wb, ws, sheetName.substring(0,31));
+  XLSX.writeFile(wb, fileName);
+}
+
+/* Init defaults */
+window.currentCountry='ALL';
+window.currentPeriod='Q1FY26';
+window.currentCurrency='USD';
+
+</script>
+</body>
+</html>

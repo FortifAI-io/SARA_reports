@@ -1,0 +1,581 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>fortifai — Executive Risk Summary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0D1520;--deep:#2E5A8A;--brand:#6699CC;--ink:#0D1520;--mut:#5B6B7E;--line:#E3E8EF;--bg:#F5F7FA;--card:#fff;
+--crit:#C0392B;--high:#E67E22;--med:#E0A800;--low:#4A9D6E;--gain:#2E7D5B;--loss:#C0392B}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.4}
+.mono{font-family:'DM Mono',monospace}
+.wrap{max-width:1440px;margin:0 auto;padding:0 28px 60px}
+header{background:var(--navy);color:#fff;padding:18px 28px;position:sticky;top:0;z-index:30}
+.hbar{max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+.logo{display:flex;align-items:center;gap:10px}.logo .mark{width:20px;height:20px;background:linear-gradient(135deg,var(--brand),var(--deep));border-radius:3px;transform:rotate(45deg)}
+.logo b{font-weight:700;font-size:17px;letter-spacing:-.3px}
+.ctrls{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.sel,.toggle{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;padding:8px 12px;border-radius:7px;font-family:inherit;font-size:13px;cursor:pointer;max-width:230px}
+.sel.rule{border-color:var(--brand);background:rgba(102,153,204,.16)}
+.toggle.on{background:var(--brand);border-color:var(--brand);color:var(--navy);font-weight:600}
+.scope-tag{display:none;align-items:center;gap:8px;background:rgba(102,153,204,.18);border:1px solid var(--brand);color:#CFE0F0;padding:5px 10px;border-radius:20px;font-size:12px}
+.scope-tag.on{display:inline-flex}
+.scope-tag button{background:none;border:none;color:#CFE0F0;cursor:pointer;font-size:14px;padding:0 2px}
+
+.hero{background:linear-gradient(135deg,#0D1520 0%,#16283D 55%,#1E3A57 100%);color:#fff;border-radius:16px;margin-top:20px;padding:32px 34px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-80px;top:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(102,153,204,.22),transparent 70%)}
+.hero-eyebrow{font-size:12px;color:#9DB2C9;letter-spacing:.4px;margin-bottom:14px}
+.hero-main{display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;position:relative;z-index:1;margin-top:22px}
+.hero-fig .n{font-size:38px;font-weight:500;letter-spacing:-.5px;line-height:1}
+.hero-fig .n.big{font-family:'DM Sans';font-weight:500;letter-spacing:-.5px;font-size:38px}
+.hero-figs{display:flex;align-items:center;gap:clamp(40px,8vw,110px)}
+.hero-fig .cap{font-size:13px;color:#B9C9DB;margin-top:8px}
+.hero-fig.stoppable .n{color:var(--brand);font-weight:500}
+.hero-div{width:1px;align-self:stretch;background:rgba(255,255,255,.14)}
+.hero-hook{margin-left:auto;max-width:280px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:16px 18px}
+.hero-hook .big{font-size:32px;font-weight:700;line-height:1}.hero-hook .big em{font-style:normal;color:var(--high)}
+.hero-hook p{font-size:12px;color:#B9C9DB;margin-top:9px;line-height:1.5}
+.hero-action{display:flex;flex-direction:column;gap:12px;align-items:flex-start;position:relative;z-index:1}
+.hero-action button{background:var(--brand);color:var(--navy);border:none;padding:10px 17px;border-radius:8px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;transition:transform .12s,box-shadow .12s}
+.hero-action button:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(102,153,204,.3)}
+.hero-delta{display:inline-flex;gap:6px;font-size:12px;color:#B9C9DB}
+.hero-delta b.up{color:#FF9B8B}.hero-delta b.down{color:#7FC79E}
+
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 16px}
+.kpi.accent{border-color:var(--brand);box-shadow:0 0 0 1px var(--brand) inset}
+.kpi .lbl{font-size:11px;color:var(--mut);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.kpi .tagp{background:var(--brand);color:#fff;font-size:9px;font-weight:600;padding:1px 5px;border-radius:8px}
+.kpi .val{font-size:24px;font-weight:700;letter-spacing:-.4px;line-height:1}
+.kpi .sub{font-size:11px;color:var(--mut);margin-top:5px}
+.kpi .d{font-size:10.5px;font-weight:600;margin-top:5px}.kpi .d.up{color:var(--crit)}.kpi .d.down{color:var(--low)}
+
+.band{margin-top:28px}
+.band-h{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.band-h h2{font-size:14px;font-weight:600}.band-h .hint{font-size:12px;color:var(--mut)}
+.grid{display:grid;gap:16px}.r2{grid-template-columns:1fr 1fr}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.panel.click{cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.panel.click:hover{border-color:var(--brand);box-shadow:0 4px 16px rgba(46,90,138,.1)}
+.panel h3{font-size:13px;font-weight:600;margin-bottom:2px}.panel .psub{font-size:11.5px;color:var(--mut);margin-bottom:15px}
+.stack{display:flex;flex-direction:column;gap:14px}
+.stack-row .top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px}
+.stack-row .top .amt{font-family:'DM Mono';color:var(--mut);font-size:12px}
+.bar{height:22px;border-radius:5px;overflow:hidden;display:flex;background:#EEF2F6}.seg{height:100%}
+.seg.Critical{background:var(--crit)}.seg.High{background:var(--high)}.seg.Medium{background:var(--med)}.seg.Low{background:var(--low)}
+.legend{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap}.legend span{font-size:11.5px;color:var(--mut);display:flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:2px;display:inline-block}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;color:var(--mut);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid #F0F3F7;font-size:13px}td.num{text-align:right;font-family:'DM Mono'}
+tr:last-child td{border-bottom:none}
+.chart{width:100%;height:230px}.axis-note{font-size:11px;color:var(--mut);margin-top:8px;font-style:italic}
+.cf-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}.cf-row .name{width:110px;font-size:12.5px;font-weight:500}
+.cf-track{flex:1;height:20px;background:#EEF2F6;border-radius:5px;overflow:hidden}.cf-fill{height:100%;border-radius:5px}
+.cf-row .n{width:130px;text-align:right;font-family:'DM Mono';font-size:12px;color:var(--mut)}
+.warnbox{background:#FBF6E9;border:1px solid #EFE2BC;border-radius:8px;padding:10px 13px;font-size:11.5px;color:#7A6413;margin-top:12px;line-height:1.5}
+.rowlist{display:flex;flex-direction:column}
+.li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F0F3F7}.li:last-child{border-bottom:none}
+.li .rank{width:18px;color:var(--mut);font-family:'DM Mono';font-size:12px}
+.li .lname{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.li.clk{cursor:pointer}.li.clk:hover .lname{color:var(--deep);text-decoration:underline}
+.li.hot .lname{font-weight:600}
+.li .ltag{font-size:10px;color:var(--mut);background:#EEF2F6;padding:1px 7px;border-radius:10px;white-space:nowrap}
+.li .lct{font-size:10.5px;color:var(--mut);font-family:'DM Mono';width:72px;text-align:right}
+.li .lbar{width:60px;height:6px;background:#EEF2F6;border-radius:3px;overflow:hidden}.li .lbar i{display:block;height:100%;background:var(--brand)}
+.li.hot .lbar i{background:var(--high)}
+.li .lval{font-family:'DM Mono';font-size:12.5px;font-weight:500;color:var(--deep);width:56px;text-align:right}
+.geo-wrap{display:flex;flex-direction:column;gap:15px}
+.geo-r{display:flex;align-items:center;gap:14px}.geo-r .flag{font-size:23px;width:28px}
+.geo-r .gm{flex:1}.geo-r .gm .gn{font-size:13px;font-weight:600;margin-bottom:5px;display:flex;justify-content:space-between}
+.geo-r .gm .gn .gv{font-family:'DM Mono';color:var(--deep)}
+.geo-track{height:8px;background:#EEF2F6;border-radius:4px;overflow:hidden}.geo-track i{display:block;height:100%;background:linear-gradient(90deg,var(--deep),var(--brand))}
+.geo-r .gsub{font-size:10.5px;color:var(--mut);margin-top:4px;font-family:'DM Mono'}
+/* P&L waterfall */
+.pnl-wrap{display:flex;flex-direction:column;gap:11px;margin-top:4px}
+.pnl-r{display:flex;align-items:center;gap:12px}
+.pnl-r .pn{width:200px;font-size:12.5px}.pnl-r .pn small{color:var(--mut);font-size:10.5px;display:block}
+.pnl-track{flex:1;height:26px;background:#F4EBEA;border-radius:5px;overflow:hidden;position:relative}
+.pnl-track i{display:block;height:100%;background:linear-gradient(90deg,#C0392B,#E05B4C)}
+.pnl-r .pv{width:64px;text-align:right;font-family:'DM Mono';font-size:12.5px;color:var(--loss);font-weight:500}
+.pnl-total{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:13px;border-top:2px solid var(--line)}
+.pnl-total .pt-l{font-size:13px;font-weight:600}.pnl-total .pt-v{font-family:'Bebas Neue';font-size:30px;color:var(--loss)}
+.funnel{display:flex;flex-direction:column;gap:9px}.fstep{display:flex;align-items:center;gap:10px}
+.fstep .fl{width:76px;font-size:12px;color:var(--mut)}.fstep .ft{flex:1;height:24px;background:#EEF2F6;border-radius:5px;overflow:hidden}
+.fstep .ft i{display:block;height:100%;background:linear-gradient(90deg,var(--deep),var(--brand))}.fstep .fn{width:52px;text-align:right;font-family:'DM Mono';font-size:12px}
+.donut-wrap{display:flex;align-items:center;gap:16px}.mini{font-size:11.5px;color:var(--mut)}.mini b{color:var(--ink);font-weight:600}
+.agebars{display:flex;flex-direction:column;gap:9px}.age-r{display:flex;align-items:center;gap:10px;font-size:12px}
+.age-r .al{width:50px;color:var(--mut)}.age-r .at{flex:1;height:16px;background:#EEF2F6;border-radius:4px;overflow:hidden}.age-r .at i{display:block;height:100%;background:var(--deep)}
+.age-r .an{width:50px;text-align:right;font-family:'DM Mono';color:var(--mut)}
+.drawer-bg{position:fixed;inset:0;background:rgba(13,21,32,.5);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+.drawer-bg.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100%;width:440px;max-width:92vw;background:#fff;box-shadow:-8px 0 40px rgba(0,0,0,.2);transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);z-index:41;overflow-y:auto}
+.drawer.open{transform:translateX(0)}
+.drawer-h{background:var(--navy);color:#fff;padding:22px 24px;position:relative}
+.drawer-h .dt{font-family:'Bebas Neue';font-size:24px;letter-spacing:.5px}.drawer-h .dn{font-size:34px;font-weight:700;margin-top:6px}.drawer-h .ds{font-size:12px;color:#9DB2C9;margin-top:4px}
+.drawer-close{position:absolute;top:20px;right:22px;color:#fff;background:rgba(255,255,255,.12);border:none;width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:16px}
+.drawer-body{padding:22px 24px}.dbreak{margin-bottom:22px}.dbreak h4{font-size:12px;color:var(--mut);font-weight:600;margin-bottom:10px}
+.dbrow{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:12.5px}.dbrow .dbn{flex:1}
+.dbrow .dbt{width:90px;height:7px;background:#EEF2F6;border-radius:4px;overflow:hidden}.dbrow .dbt i{display:block;height:100%;background:var(--deep)}
+.dbrow .dbv{width:56px;text-align:right;font-family:'DM Mono';color:var(--deep)}
+
+.ai-band{background:linear-gradient(135deg,#111C2B,#1A2E45);border-radius:14px;padding:24px 26px;margin-top:28px;color:#fff;position:relative;overflow:hidden}
+.ai-band::before{content:"";position:absolute;left:-60px;bottom:-60px;width:220px;height:220px;background:radial-gradient(circle,rgba(102,153,204,.18),transparent 70%)}
+.ai-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px;position:relative;z-index:1;flex-wrap:wrap}
+.ai-head .lft{display:flex;align-items:center;gap:10px}
+.ai-spark{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--brand),var(--deep));display:flex;align-items:center;justify-content:center;font-size:14px}
+.ai-head h2{font-size:16px;font-weight:600}
+.ai-regen{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:7px 13px;border-radius:7px;font-family:inherit;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.ai-regen:hover{background:rgba(255,255,255,.18)}
+.ai-regen:disabled{opacity:.5;cursor:default}
+.ai-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:18px;margin-top:18px;position:relative;z-index:1}
+.ai-col h3{font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#8FA8C4;margin-bottom:12px;font-weight:600}
+.ai-ins{margin-bottom:14px;padding-left:14px;border-left:2px solid var(--brand)}
+.ai-ins{margin-bottom:12px;padding-left:14px;border-left:2px solid var(--brand)}
+.ai-ins.expandable{cursor:pointer}
+.ai-ins .it{font-size:13.5px;font-weight:600;line-height:1.4;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+.ai-ins .theme{font-size:9.5px;letter-spacing:.4px;text-transform:uppercase;color:var(--brand);background:rgba(102,153,204,.15);padding:2px 7px;border-radius:10px;font-weight:600}
+.ai-ins .chev{margin-left:auto;color:#8FA8C4;font-size:10px;transition:transform .2s}
+.ai-ins.open .chev{transform:rotate(180deg)}
+.ai-ins .ib{font-size:12px;color:#C3D2E2;line-height:1.5;margin-top:7px;max-height:0;overflow:hidden;transition:max-height .25s;padding-left:0}
+.ai-ins.open .ib{max-height:200px}
+.ai-ins .ib{font-size:12px;color:#C3D2E2;line-height:1.5}
+.ai-urg{display:flex;gap:10px;margin-bottom:11px;align-items:flex-start}
+.ai-urg .un{width:20px;height:20px;border-radius:50%;background:rgba(192,57,43,.25);border:1px solid #C0392B;color:#FF9B8B;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:600}
+.ai-urg{align-items:center}.ai-urg .ut{font-size:13px;font-weight:600;flex:1}.ai-urg .uv{font-family:'DM Mono';font-size:12.5px;color:#FF9B8B;margin-left:auto}
+.ai-act{display:flex;gap:9px;margin-bottom:12px}
+.ai-act .ac{color:var(--brand);flex-shrink:0;font-size:13px}
+.ai-act{align-items:center}.ai-act .at{font-size:12.5px;font-weight:600;line-height:1.35}
+.ai-foot{font-size:10.5px;color:#7E93AC;margin-top:6px;position:relative;z-index:1;font-style:italic}
+.ai-loading{opacity:.4}
+@media(max-width:1100px){.ai-grid{grid-template-columns:1fr}}
+
+.assur{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-top:16px;overflow:hidden}
+.assur-h{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none}
+.assur-h . chevlbl{flex:1}
+.assur-h h3{font-size:13px;font-weight:600;display:flex;align-items:center;gap:9px}
+.assur-badge{font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;background:#E7F3EC;color:#2E7D5B}
+.assur-sub{font-size:11.5px;color:var(--mut);margin-left:auto;margin-right:10px}
+.assur-chev{transition:transform .2s;color:var(--mut);font-size:13px}
+.assur.open .assur-chev{transform:rotate(180deg)}
+.assur-body{display:none;padding:4px 18px 18px;border-top:1px solid var(--line)}
+.assur.open .assur-body{display:block}
+.assur-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px}
+.at-tile{background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:13px 14px}
+.at-tile .atl{font-size:10.5px;color:var(--mut);margin-bottom:6px}
+.at-tile .atv{font-size:19px;font-weight:700;letter-spacing:-.3px}
+.at-tile .ats{font-size:10.5px;color:var(--mut);margin-top:4px}
+.assur-break{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.ab-item{flex:1;min-width:130px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.ab-item .abn{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:6px}.ab-item .abn b{font-weight:600}
+.ab-item .abt{height:6px;background:#E3E8EF;border-radius:3px;overflow:hidden}.ab-item .abt i{display:block;height:100%}
+.assur-disc{margin-top:14px;background:#FBF6E9;border:1px solid #EFE2BC;border-radius:8px;padding:11px 13px;font-size:11.5px;color:#7A6413;line-height:1.55}
+@media(max-width:1100px){.assur-tiles{grid-template-columns:1fr 1fr 1fr}}
+@media(max-width:680px){.assur-tiles{grid-template-columns:1fr 1fr}}
+
+.seg-toggle{display:inline-flex;background:#EEF2F6;border-radius:8px;padding:3px}
+.seg-btn{border:none;background:none;padding:6px 12px;border-radius:6px;font-family:inherit;font-size:12px;cursor:pointer;color:var(--mut)}
+.seg-btn.on{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.mv-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #F0F3F7}.mv-row:last-child{border-bottom:none}
+.mv-rank{width:18px;color:var(--mut);font-family:'DM Mono';font-size:12px}
+.mv-name{width:210px;font-size:12.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mv-badge{background:var(--deep);color:#fff;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:11px;white-space:nowrap}
+.mv-chips{flex:1;display:flex;gap:3px;flex-wrap:wrap}
+.mv-chip{width:9px;height:9px;border-radius:2px;background:var(--brand);opacity:.85}
+.mv-val{width:56px;text-align:right;font-family:'DM Mono';font-size:12.5px;color:var(--deep);font-weight:500}
+.mv-score{width:44px;text-align:right;font-family:'DM Mono';font-size:12px;color:var(--high)}
+.footnote{margin-top:26px;font-size:11px;color:var(--mut);border-top:1px solid var(--line);padding-top:14px;line-height:1.7}
+@media(max-width:1100px){.kpis{grid-template-columns:1fr 1fr 1fr}.r2{grid-template-columns:1fr}.hero-hook{margin-left:0}}
+@media(max-width:900px){.hero-main{align-items:flex-start}.hero-action{margin-top:8px}}
+@media(max-width:680px){.kpis,.r2{grid-template-columns:1fr}.hero-fig .n{font-size:32px}.hero-figs{gap:32px}}
+</style></head><body>
+<header><div class="hbar">
+  <div class="logo"><span class="mark"></span><b>fortifai</b></div>
+  <div class="ctrls">
+    <span class="scope-tag" id="scopeTag"><span id="scopeName"></span><button onclick="clearRule()">&times;</button></span>
+    <select class="sel rule" id="ruleSel" onchange="onRule()"><option value="">All risk rules</option></select>
+    <select class="sel" id="entSel" onchange="render()"><option>All entities</option><option>Mexico</option><option>USA</option><option>India</option></select>
+    <select class="sel" id="perSel" onchange="render()"><option>Previous Year</option><option>Previous Quarter</option><option>Previous 2 Quarters</option><option>Trailing 12 Months</option></select>
+    <button class="toggle" id="coToggle" onclick="toggleCO()">Cash Out only</button>
+  </div>
+</div></header>
+<div class="wrap">
+<div class="hero">
+  <div class="hero-eyebrow">Executive risk summary &nbsp;&middot;&nbsp; P2P &nbsp;&middot;&nbsp; <span id="perLabel">previous year</span> &nbsp;&middot;&nbsp; <span id="scopeLbl">all rules</span> &nbsp;&middot;&nbsp; USD</div>
+  <div class="hero-main">
+    <div class="hero-figs">
+      <div class="hero-fig"><div class="n" id="h-identified"></div><div class="cap">Potential loss identified</div></div>
+      <div class="hero-div"></div>
+      <div class="hero-fig stoppable"><div class="n" id="h-stoppable"></div><div class="cap">Still stoppable exposure</div></div>
+    </div>
+    <div class="hero-action">
+      <button onclick="openDrawer('cashout')">Break down Cash Out &rarr;</button>
+      <div class="hero-delta">Cash Out <b class="up" id="h-codelta"></b> vs baseline</div>
+    </div>
+  </div>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="lbl">Cash Out &mdash; realised</div><div class="val" id="k-cashout"></div><div class="sub">Already paid</div><div class="d up" id="k-codelta"></div></div>
+  <div class="kpi accent"><div class="lbl">Preventable leakage <span class="tagp">SAVE</span></div><div class="val" id="k-unpaid" style="color:var(--deep)"></div><div class="sub">Unpaid &mdash; still stoppable</div><div class="d down" id="k-updelta"></div></div>
+  <div class="kpi"><div class="lbl">Open Critical + High</div><div class="val" id="k-ch"></div><div class="sub">Unresolved</div><div class="d down" id="k-chdelta"></div></div>
+  <div class="kpi"><div class="lbl">Vendors flagged</div><div class="val" id="k-vend"></div><div class="sub">Distinct, &#8805;1 anomaly</div><div class="d up" id="k-vdelta"></div></div>
+  <div class="kpi"><div class="lbl">Data quality</div><div class="val" style="color:var(--high)">88.6%</div><div class="sub">18 Mar 2026</div></div>
+</div>
+
+
+<div class="ai-band" id="aiBand">
+  <div class="ai-head">
+    <div class="lft"><div class="ai-spark">&#10022;</div><div><h2>Key Insights</h2></div></div>
+    <button class="ai-regen" id="aiRegen" onclick="genAI()"><span id="aiRegenIcon">&#8635;</span> <span id="aiRegenTxt">Regenerate</span></button>
+  </div>
+  <div class="ai-grid" id="aiGrid">
+    <div class="ai-col"><h3>Key insights</h3><div id="aiInsights"></div></div>
+    <div class="ai-col"><h3>Most urgent</h3><div id="aiUrgent"></div></div>
+    <div class="ai-col"><h3>Suggested actions</h3><div id="aiActions"></div></div>
+  </div>
+  <div class="ai-foot" id="aiFoot">Showing pre-computed analysis. Click Regenerate for live AI inference.</div>
+</div>
+
+
+<div class="assur open" id="assurBand">
+  <div class="assur-h" onclick="document.getElementById('assurBand').classList.toggle('open')">
+    <h3>Data assurance <span class="assur-badge" id="asRating"></span></h3>
+    <span class="assur-sub" id="asSub"></span>
+    <span class="assur-chev">&#9660;</span>
+  </div>
+  <div class="assur-body">
+    <div class="assur-tiles" id="asTiles"></div>
+    <div class="assur-break" id="asBreak"></div>
+    <div class="assur-disc" id="asDisc"></div>
+  </div>
+</div>
+
+<div class="band"><div class="band-h"><h2>Preventable leakage &amp; P&amp;L impact</h2><span class="hint">where the money can still be saved, and what actually hits profit</span></div>
+<div class="grid r2">
+  <div class="panel"><h3>Highest-impact unpaid anomalies</h3><div class="psub">Not yet paid &mdash; top candidates for leakage prevention. Click a rule to scope the dashboard.</div><div class="rowlist" id="leaklist"></div></div>
+  <div class="panel"><h3>Indicative net P&amp;L impact</h3><div class="psub">Only rules that change profit: overpayment, duplicate, tax-credit and withholding. Excludes timing / control-only rules.</div>
+    <div class="pnl-wrap" id="pnlwrap"></div>
+    <div class="pnl-total"><span class="pt-l">Net P&amp;L exposure</span><span class="pt-v" id="pnltotal"></span></div>
+    <div class="warnbox"><b>Indicative:</b> derived from impact_value on profit-affecting rules, not audited GL postings. Directional for prioritisation.</div>
+  </div>
+</div></div>
+
+<div class="band"><div class="band-h"><h2>Where the risk sits</h2><span class="hint">impact-weighted, split by severity</span></div>
+<div class="grid r2">
+  <div class="panel"><h3>Risk by family</h3><div class="psub">Mapped to the fortifai anomaly taxonomy. All live anomalies are P2P.</div><div class="stack" id="famstack"></div>
+    <div class="legend"><span><i class="dot" style="background:var(--crit)"></i>Critical</span><span><i class="dot" style="background:var(--high)"></i>High</span><span><i class="dot" style="background:var(--med)"></i>Medium</span><span><i class="dot" style="background:var(--low)"></i>Low</span></div></div>
+  <div class="panel click" onclick="openDrawer('entity')"><h3>Entity league table &rarr;</h3><div class="psub">Company codes ranked by total impact. Click for detail.</div>
+    <table><thead><tr><th>Entity</th><th class="num">Cash Out</th><th class="num">Open</th><th class="num">Anomalies</th></tr></thead><tbody id="enttbl"></tbody></table></div>
+</div></div>
+
+<div class="band"><div class="band-h"><h2>By geography &amp; cost center</h2><span class="hint">where exposure concentrates</span></div>
+<div class="grid r2">
+  <div class="panel"><h3>Geographic exposure</h3><div class="psub">Total identified risk by region.</div><div class="geo-wrap" id="geowrap"></div></div>
+  <div class="panel"><h3>Top cost centers by impact</h3><div class="psub">Ranked by identified risk.</div><div class="rowlist" id="cclist"></div></div>
+</div></div>
+
+<div class="band"><div class="band-h"><h2>Direction over time</h2><span class="hint">keyed on transaction date</span></div>
+<div class="panel"><h3>Impact trend</h3><div class="psub">Cash Out vs open exposure by month of transaction.</div>
+  <svg class="chart" id="trendchart" viewBox="0 0 1000 230" preserveAspectRatio="none"></svg>
+  <div class="axis-note">Recent months read low until detection catches up &mdash; a dip here is detection lag.</div></div></div>
+
+<div class="band"><div class="band-h"><h2>Top offenders</h2><span class="hint">what drives the money &mdash; one row per rule, click to scope</span></div>
+<div class="grid r2">
+  <div class="panel"><h3>Top rules by impact</h3><div class="psub">Aggregated per rule. Item count reveals value concentration.</div><div class="rowlist" id="rules"></div></div>
+  <div class="panel"><h3>Top vendors by exposure</h3><div class="psub">Concentration % shown when populated in TRAE.</div><div class="rowlist" id="vendors"></div></div>
+</div>
+<div class="panel" id="multiPanel" style="margin-top:16px"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px"><div><h3>Vendors by breadth of violation</h3><div class="psub">Vendors tripping multiple distinct rules — a pattern signal beyond single-rule exposure. Real TRAE data.</div></div>
+<div class="seg-toggle"><button class="seg-btn on" id="segCount" onclick="setVendorMode('count')">By rule count</button><button class="seg-btn" id="segBlend" onclick="setVendorMode('blend')">By blended score</button></div></div>
+<div id="multiList" class="rowlist"></div>
+<div class="warnbox" id="multiNote"></div></div>
+</div>
+
+<div class="band"><div class="band-h"><h2>Are we on top of it</h2><span class="hint">operational health</span></div>
+<div class="grid" style="grid-template-columns:repeat(4,1fr)">
+  <div class="panel"><h3>Investigation funnel</h3><div class="psub">Workflow state.</div><div class="funnel" id="funnel"></div></div>
+  <div class="panel"><h3>Anomaly ageing</h3><div class="psub">Days since transaction.</div><div class="agebars" id="agebars"></div></div>
+  <div class="panel"><h3>Severity mix</h3><div class="psub">Live anomalies.</div><div class="donut-wrap"><svg width="104" height="104" viewBox="0 0 42 42" id="donut"></svg><div id="sevlegend"></div></div></div>
+  <div class="panel"><h3>Control failure</h3><div class="psub">Failure mode.</div><div id="cfmini"></div></div>
+</div></div>
+
+<div class="footnote"><b>Data:</b> real TRAE export (29,451 live rows, 24 rules). Rules aggregated by name. Advance-to-vendor excluded; Early Payment retained. Family mapped to fortifai taxonomy. USD @ 83.<br><b>Synthetic (dummy):</b> geography &amp; cost-center splits, prior-period baselines, delta arrows. P&amp;L is indicative (impact_value on profit-affecting rules, not GL). &nbsp;&bull;&nbsp; <b>fortifai</b> executive prototype.</div>
+</div>
+
+<div class="drawer-bg" id="drawerbg" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer"><div class="drawer-h"><button class="drawer-close" onclick="closeDrawer()">&times;</button>
+  <div class="dt" id="dr-title"></div><div class="dn" id="dr-num"></div><div class="ds" id="dr-sub"></div></div>
+  <div class="drawer-body" id="dr-body"></div></div>
+
+<script>
+const RAW={"rules":{"Potential Bribery and Corruption":{"imp":13727796,"paid":12493933,"open":1233863,"cnt":1160,"unpaid":1233863,"fam":"Policy & Threshold Violations","pnl":false,"sev":{"Medium":959,"Critical":120,"High":81},"geo":{"Mexico":{"imp":10582081,"paid":9585577,"open":996504,"cnt":755},"India":{"imp":2027295,"paid":1815945,"open":211350,"cnt":230},"USA":{"imp":1118420,"paid":1092412,"open":26009,"cnt":175}},"ent":{"MEX03":{"imp":10582081,"paid":9585577,"open":996504,"cnt":755},"IND01":{"imp":2027295,"paid":1815945,"open":211350,"cnt":230},"USA02":{"imp":1118420,"paid":1092412,"open":26009,"cnt":175}},"cc":{"MX-Logistics":{"imp":2431697,"cnt":200},"MX-Finance":{"imp":1214046,"cnt":176},"MX-Procurement":{"imp":3143104,"cnt":194},"MX-Operations":{"imp":3793234,"cnt":185},"IN-Procurement":{"imp":358185,"cnt":52},"IN-Manufacturing":{"imp":545971,"cnt":71},"IN-Logistics":{"imp":720065,"cnt":62},"IN-Admin":{"imp":403075,"cnt":45},"US-Procurement":{"imp":304445,"cnt":41},"US-Facilities":{"imp":138574,"cnt":36},"US-IT":{"imp":266709,"cnt":51},"US-Operations":{"imp":408693,"cnt":47}},"trend":[{"m":"2025-07","paid":2058147,"open":18740,"cnt":214},{"m":"2025-08","paid":3369416,"open":0,"cnt":203},{"m":"2025-09","paid":2231675,"open":110930,"cnt":246},{"m":"2025-10","paid":1285989,"open":145184,"cnt":192},{"m":"2025-11","paid":2857316,"open":164208,"cnt":178},{"m":"2025-12","paid":691390,"open":794801,"cnt":127}],"cf":{"ABSENT":1117,"OPERATING":43},"inv":{"None":1160},"vend":[{"nm":"Sharon Sherman Bryant Inc","imp":1797591},{"nm":"Priscilla Karen Inc","imp":1650793},{"nm":"Cooper Inti Solutions Inc","imp":1484517},{"nm":"Harold Media America Inc","imp":1398492},{"nm":"Janet Lee Jewelers Inc","imp":1312489},{"nm":"James Priscilla Corp","imp":348000},{"nm":"Pamela Cooper Preston Priscilla","imp":317896},{"nm":"Wynn Media America Inc","imp":286199}]},"Split PO":{"imp":133456535,"paid":78931594,"open":54524941,"cnt":2656,"unpaid":54524941,"fam":"Policy & Threshold Violations","pnl":false,"sev":{"High":2106,"Critical":490,"Medium":60},"geo":{"USA":{"imp":32517871,"paid":16587899,"open":15929973,"cnt":1201},"Mexico":{"imp":93814044,"paid":56595407,"open":37218637,"cnt":1088},"India":{"imp":7124619,"paid":5748288,"open":1376331,"cnt":367}},"ent":{"USA02":{"imp":32517871,"paid":16587899,"open":15929973,"cnt":1201},"MEX03":{"imp":93814044,"paid":56595407,"open":37218637,"cnt":1088},"IND01":{"imp":7124619,"paid":5748288,"open":1376331,"cnt":367}},"cc":{"US-Operations":{"imp":6777951,"cnt":321},"MX-Finance":{"imp":17386214,"cnt":248},"US-Procurement":{"imp":10423499,"cnt":296},"US-Facilities":{"imp":7852162,"cnt":311},"IN-Procurement":{"imp":2430488,"cnt":101},"IN-Admin":{"imp":1478981,"cnt":91},"MX-Procurement":{"imp":28710233,"cnt":298},"MX-Operations":{"imp":20272464,"cnt":247},"MX-Logistics":{"imp":27445133,"cnt":295},"US-IT":{"imp":7464259,"cnt":273},"IN-Logistics":{"imp":1835339,"cnt":89},"IN-Manufacturing":{"imp":1379810,"cnt":86}},"trend":[{"m":"2025-07","paid":11497977,"open":1588580,"cnt":314},{"m":"2025-08","paid":22841241,"open":2456543,"cnt":487},{"m":"2025-09","paid":12602697,"open":3662017,"cnt":501},{"m":"2025-10","paid":18360030,"open":3668984,"cnt":410},{"m":"2025-11","paid":10805081,"open":11214813,"cnt":426},{"m":"2025-12","paid":2824567,"open":31934003,"cnt":518}],"cf":{"INCONCLUSIVE":2656},"inv":{"OPEN":2656},"vend":[{"nm":"Harold Valerie Adam Benton","imp":11666991},{"nm":"Arthur Andrew Inc","imp":8245602},{"nm":"Saunders Enterprises","imp":8175904},{"nm":"Agro","imp":7822157},{"nm":"Foods And Beverages Inc Linda","imp":6907447},{"nm":"Calvin Corp","imp":5930783},{"nm":"Kolkat Benjamin Preston","imp":5169152},{"nm":"Anthony Barbara Inc","imp":5056959}]},"Early payment Risk":{"imp":38265328,"paid":38265328,"open":0,"cnt":2669,"unpaid":0,"fam":"Policy & Threshold Violations","pnl":false,"sev":{"High":1578,"Low":10,"Medium":1003,"Critical":78},"geo":{"Mexico":{"imp":26832228,"paid":26832228,"open":0,"cnt":1252},"India":{"imp":4465940,"paid":4465940,"open":0,"cnt":391},"USA":{"imp":6967160,"paid":6967160,"open":0,"cnt":1026}},"ent":{"MEX03":{"imp":26832228,"paid":26832228,"open":0,"cnt":1252},"IND01":{"imp":4465940,"paid":4465940,"open":0,"cnt":391},"USA02":{"imp":6967160,"paid":6967160,"open":0,"cnt":1026}},"cc":{"MX-Procurement":{"imp":7219163,"cnt":320},"IN-Procurement":{"imp":1224750,"cnt":96},"US-IT":{"imp":1946024,"cnt":236},"US-Operations":{"imp":1578955,"cnt":264},"US-Procurement":{"imp":1770006,"cnt":261},"US-Facilities":{"imp":1672175,"cnt":265},"MX-Logistics":{"imp":7127199,"cnt":317},"MX-Finance":{"imp":5998990,"cnt":298},"MX-Operations":{"imp":6486876,"cnt":317},"IN-Admin":{"imp":1189294,"cnt":106},"IN-Manufacturing":{"imp":1188272,"cnt":106},"IN-Logistics":{"imp":863623,"cnt":83}},"trend":[{"m":"2025-07","paid":5793210,"open":0,"cnt":476},{"m":"2025-08","paid":4487252,"open":0,"cnt":443},{"m":"2025-09","paid":5309903,"open":0,"cnt":549},{"m":"2025-10","paid":5614424,"open":0,"cnt":502},{"m":"2025-11","paid":10209033,"open":0,"cnt":427},{"m":"2025-12","paid":6851507,"open":0,"cnt":272}],"cf":{"INCONCLUSIVE":2669},"inv":{"OPEN":2669},"vend":[{"nm":"Agro","imp":4174900},{"nm":"Amanda Enterprises","imp":3561646},{"nm":"Barry Lee Vera Patrick","imp":3531613},{"nm":"Saunders Enterprises","imp":3064723},{"nm":"Stanley Trading Co Inc","imp":1534797},{"nm":"Vincent Tanner","imp":1416700},{"nm":"Ulysses Solutions & Susan Colton","imp":1129433},{"nm":"Industries Corp","imp":1044054}]},"Backdated Posting":{"imp":59994912,"paid":58789316,"open":1205596,"cnt":399,"unpaid":1205596,"fam":"Financial Deviation & Overstatement","pnl":false,"sev":{"High":273,"Medium":125,"Low":1},"geo":{"Mexico":{"imp":16224265,"paid":16007562,"open":216703,"cnt":229},"India":{"imp":28475361,"paid":27912746,"open":562615,"cnt":38},"USA":{"imp":15295286,"paid":14869008,"open":426278,"cnt":132}},"ent":{"MEX03":{"imp":16224265,"paid":16007562,"open":216703,"cnt":229},"IND01":{"imp":28475361,"paid":27912746,"open":562615,"cnt":38},"USA02":{"imp":15295286,"paid":14869008,"open":426278,"cnt":132}},"cc":{"MX-Procurement":{"imp":1776758,"cnt":51},"IN-Admin":{"imp":6951317,"cnt":12},"IN-Manufacturing":{"imp":5515609,"cnt":9},"IN-Procurement":{"imp":9780169,"cnt":11},"IN-Logistics":{"imp":6228265,"cnt":6},"MX-Operations":{"imp":10661175,"cnt":51},"MX-Logistics":{"imp":2081811,"cnt":61},"MX-Finance":{"imp":1704521,"cnt":66},"US-Operations":{"imp":3023476,"cnt":34},"US-Procurement":{"imp":4773178,"cnt":32},"US-Facilities":{"imp":2230499,"cnt":28},"US-IT":{"imp":5268133,"cnt":38}},"trend":[{"m":"2025-07","paid":13329015,"open":2180,"cnt":39},{"m":"2025-08","paid":589143,"open":173207,"cnt":28},{"m":"2025-09","paid":534519,"open":0,"cnt":24},{"m":"2025-10","paid":12723783,"open":167336,"cnt":96},{"m":"2025-11","paid":12932571,"open":227943,"cnt":55},{"m":"2025-12","paid":18680285,"open":634931,"cnt":157}],"cf":{"INCONCLUSIVE":399},"inv":{"None":399},"vend":[{"nm":"Wayne Jpmorgan Chase Bank","imp":41204819},{"nm":"Bank Of America Bank Corp Steven","imp":9657844},{"nm":"Vernon Foods And Matthew Priscilla","imp":2150602},{"nm":"Billy Diana Heath Bank Steven","imp":1738971},{"nm":"Vivian Dairy And Foods","imp":722892},{"nm":"Daniel Dairy Foods Inc","imp":615061},{"nm":"Agro Inc","imp":602410},{"nm":"Jpmorgan Chase Bank Teresa Loan A Norman","imp":401606}]},"Vendor Transactions Without Withholding Tax":{"imp":12684554,"paid":12624953,"open":59601,"cnt":262,"unpaid":59601,"fam":"Financial Deviation & Overstatement","pnl":true,"sev":{"Critical":258,"High":4},"geo":{"USA":{"imp":799553,"paid":799553,"open":0,"cnt":14},"Mexico":{"imp":11755801,"paid":11696200,"open":59601,"cnt":235},"India":{"imp":129199,"paid":129199,"open":0,"cnt":13}},"ent":{"USA02":{"imp":799553,"paid":799553,"open":0,"cnt":14},"MEX03":{"imp":11755801,"paid":11696200,"open":59601,"cnt":235},"IND01":{"imp":129199,"paid":129199,"open":0,"cnt":13}},"cc":{"US-Procurement":{"imp":87718,"cnt":4},"US-Facilities":{"imp":207445,"cnt":4},"US-IT":{"imp":228916,"cnt":2},"US-Operations":{"imp":275474,"cnt":4},"MX-Procurement":{"imp":5043455,"cnt":59},"MX-Logistics":{"imp":3405837,"cnt":56},"MX-Finance":{"imp":1130566,"cnt":60},"MX-Operations":{"imp":2175943,"cnt":60},"IN-Logistics":{"imp":72547,"cnt":7},"IN-Procurement":{"imp":4140,"cnt":1},"IN-Manufacturing":{"imp":8797,"cnt":3},"IN-Admin":{"imp":43715,"cnt":2}},"trend":[{"m":"2025-07","paid":1805575,"open":0,"cnt":49},{"m":"2025-08","paid":788593,"open":3676,"cnt":50},{"m":"2025-09","paid":1433588,"open":0,"cnt":48},{"m":"2025-10","paid":1653415,"open":3182,"cnt":43},{"m":"2025-11","paid":534474,"open":50983,"cnt":43},{"m":"2025-12","paid":6409307,"open":1760,"cnt":29}],"cf":{"INCONCLUSIVE":262},"inv":{"None":262},"vend":[{"nm":"Inti Matthew Securities Inc","imp":8357239},{"nm":"Linda Insurance Corporation Of America","imp":654228},{"nm":"Baxter Aligned General Insurance Colton","imp":486429},{"nm":"Fayetteville Victoria Victoria Nina Corp","imp":362614},{"nm":"Ashley Inti Inc","imp":268373},{"nm":"Steven Inc","imp":232105},{"nm":"Arthur Sean Saunders","imp":187109},{"nm":"Utah Maryland Billy Victoria Nina Luther","imp":174086}]},"Duplicate payments":{"imp":3026180,"paid":2900671,"open":0,"cnt":120,"unpaid":0,"fam":"Duplicate & Ghost Transactions","pnl":true,"sev":{"High":38,"Medium":38,"Critical":15,"Low":29},"geo":{"India":{"imp":847401,"paid":813859,"open":0,"cnt":17},"USA":{"imp":138751,"paid":119743,"open":0,"cnt":27},"Mexico":{"imp":2040027,"paid":1967069,"open":0,"cnt":76}},"ent":{"IND01":{"imp":847401,"paid":813859,"open":0,"cnt":17},"USA02":{"imp":138751,"paid":119743,"open":0,"cnt":27},"MEX03":{"imp":2040027,"paid":1967069,"open":0,"cnt":76}},"cc":{"IN-Manufacturing":{"imp":251277,"cnt":2},"IN-Admin":{"imp":225075,"cnt":5},"US-Operations":{"imp":69459,"cnt":7},"US-IT":{"imp":7145,"cnt":4},"IN-Procurement":{"imp":53673,"cnt":3},"IN-Logistics":{"imp":317376,"cnt":7},"US-Procurement":{"imp":28900,"cnt":9},"US-Facilities":{"imp":33247,"cnt":7},"MX-Procurement":{"imp":860835,"cnt":20},"MX-Finance":{"imp":277428,"cnt":23},"MX-Operations":{"imp":627545,"cnt":18},"MX-Logistics":{"imp":274219,"cnt":15}},"trend":[{"m":"2025-07","paid":167545,"open":0,"cnt":16},{"m":"2025-08","paid":735092,"open":0,"cnt":24},{"m":"2025-09","paid":585220,"open":0,"cnt":25},{"m":"2025-10","paid":381632,"open":0,"cnt":31},{"m":"2025-11","paid":560292,"open":0,"cnt":18},{"m":"2025-12","paid":470891,"open":0,"cnt":6}],"cf":{"INCONCLUSIVE":120},"inv":{"None":120},"vend":[{"nm":"Harold Valerie Adam Benton","imp":683164},{"nm":"Saunders Enterprises","imp":467121},{"nm":"Murphy Gordon And Co.","imp":466615},{"nm":"Kelly Crawford","imp":272298},{"nm":"Amanda Enterprises","imp":232044},{"nm":"Calvin Corp","imp":225873},{"nm":"Samuel Karen Industries","imp":107428},{"nm":"Ashley & Inti Adam Linda","imp":88901}]},"Goods Receipt without PO":{"imp":4810860,"paid":4021801,"open":789059,"cnt":153,"unpaid":789059,"fam":"Policy & Threshold Violations","pnl":false,"sev":{"Critical":142,"High":11},"geo":{"India":{"imp":1476890,"paid":1469721,"open":7169,"cnt":63},"USA":{"imp":1362094,"paid":1037036,"open":325058,"cnt":60},"Mexico":{"imp":1971877,"paid":1515044,"open":456833,"cnt":30}},"ent":{"IND01":{"imp":1476890,"paid":1469721,"open":7169,"cnt":63},"USA02":{"imp":1362094,"paid":1037036,"open":325058,"cnt":60},"MEX03":{"imp":1971877,"paid":1515044,"open":456833,"cnt":30}},"cc":{"IN-Admin":{"imp":748564,"cnt":21},"US-IT":{"imp":191570,"cnt":10},"MX-Logistics":{"imp":315730,"cnt":8},"MX-Operations":{"imp":529311,"cnt":6},"IN-Manufacturing":{"imp":291705,"cnt":16},"IN-Procurement":{"imp":226616,"cnt":13},"IN-Logistics":{"imp":210004,"cnt":13},"US-Facilities":{"imp":386427,"cnt":20},"US-Procurement":{"imp":268909,"cnt":15},"MX-Finance":{"imp":871013,"cnt":11},"US-Operations":{"imp":515188,"cnt":15},"MX-Procurement":{"imp":255824,"cnt":5}},"trend":[{"m":"2025-07","paid":1911528,"open":244376,"cnt":94},{"m":"2025-08","paid":1347084,"open":48795,"cnt":35},{"m":"2025-09","paid":277108,"open":3970,"cnt":4},{"m":"2025-10","paid":153249,"open":0,"cnt":5},{"m":"2025-11","paid":0,"open":0,"cnt":0},{"m":"2025-12","paid":332831,"open":491917,"cnt":15}],"cf":{"INCONCLUSIVE":153},"inv":{"OPEN":153},"vend":[{"nm":"Stanley Trading Co Inc","imp":967608},{"nm":"Chandler Spencer & Co.","imp":630552},{"nm":"Graham Sandy Samuel Nicole","imp":391576},{"nm":"Universal Trading Co","imp":298775},{"nm":"Matthew Myra Travis America Inc","imp":283741},{"nm":"Patrick Engineers Inc","imp":277108},{"nm":"Kagaz Gurugra Gordon & Sons","imp":228767},{"nm":"Masters Spencer & Foods Preston","imp":219914}]},"Price Variance Risk":{"imp":2802448,"paid":38001652,"open":957856,"cnt":707,"unpaid":957856,"fam":"Financial Deviation & Overstatement","pnl":true,"sev":{"High":521,"Critical":28,"Medium":158},"geo":{"Mexico":{"imp":2600171,"paid":31017870,"open":847094,"cnt":304},"USA":{"imp":325934,"paid":2842504,"open":175310,"cnt":186},"India":{"imp":-123657,"paid":4141279,"open":-64548,"cnt":217}},"ent":{"MEX03":{"imp":2600171,"paid":31017870,"open":847094,"cnt":304},"USA02":{"imp":325934,"paid":2842504,"open":175310,"cnt":186},"IND01":{"imp":-123657,"paid":4141279,"open":-64548,"cnt":217}},"cc":{"MX-Logistics":{"imp":82691,"cnt":71},"MX-Operations":{"imp":773616,"cnt":77},"MX-Procurement":{"imp":1077433,"cnt":75},"MX-Finance":{"imp":666431,"cnt":81},"US-Procurement":{"imp":121865,"cnt":46},"US-Facilities":{"imp":5584,"cnt":47},"US-IT":{"imp":104872,"cnt":52},"IN-Manufacturing":{"imp":-44738,"cnt":50},"IN-Admin":{"imp":-69014,"cnt":56},"IN-Logistics":{"imp":-16011,"cnt":63},"IN-Procurement":{"imp":6106,"cnt":48},"US-Operations":{"imp":93614,"cnt":41}},"trend":[{"m":"2025-07","paid":2485314,"open":-38746,"cnt":90},{"m":"2025-08","paid":3614461,"open":-143951,"cnt":123},{"m":"2025-09","paid":2445051,"open":-28026,"cnt":128},{"m":"2025-10","paid":17927236,"open":32644,"cnt":108},{"m":"2025-11","paid":8616351,"open":3062,"cnt":93},{"m":"2025-12","paid":2913239,"open":1132873,"cnt":165}],"cf":{"INCONCLUSIVE":707},"inv":{"OPEN":707},"vend":[{"nm":"Sharon Sherman Bryant Inc","imp":540455},{"nm":"Janet Lee Jewelers Inc","imp":431858},{"nm":"Vernon Foods And Matthew Priscilla","imp":422169},{"nm":"Vincent Tanner","imp":250303},{"nm":"Adweb Trading Co","imp":121695},{"nm":"Adweb Belinda Cecile","imp":121695},{"nm":"Natalie Agro Trading Co","imp":108517},{"nm":"Vivian Dairy And Foods","imp":99036}]},"3-Way Match Failure":{"imp":3815377,"paid":3003781,"open":811597,"cnt":84,"unpaid":811597,"fam":"Policy & Threshold Violations","pnl":false,"sev":{"Critical":58,"High":26},"geo":{"USA":{"imp":3815377,"paid":3003781,"open":811597,"cnt":84}},"ent":{"USA02":{"imp":3815377,"paid":3003781,"open":811597,"cnt":84}},"cc":{"US-Procurement":{"imp":186506,"cnt":21},"US-Facilities":{"imp":444040,"cnt":20},"US-Operations":{"imp":1318624,"cnt":22},"US-IT":{"imp":1866207,"cnt":21}},"trend":[{"m":"2025-07","paid":79559,"open":0,"cnt":5},{"m":"2025-08","paid":59622,"open":0,"cnt":5},{"m":"2025-09","paid":63918,"open":0,"cnt":9},{"m":"2025-10","paid":43073,"open":0,"cnt":6},{"m":"2025-11","paid":25116,"open":0,"cnt":7},{"m":"2025-12","paid":2732492,"open":811597,"cnt":52}],"cf":{"INCONCLUSIVE":84},"inv":{"None":84},"vend":[{"nm":"Patterson Goodrich Baxter","imp":1087952},{"nm":"Empire Foods And Spencer Inc Linda","imp":578133},{"nm":"Sterling Global","imp":436446},{"nm":"Charles & Co.","imp":263780},{"nm":"Sterling Foods America","imp":259970},{"nm":"Russell Spencer","imp":213527},{"nm":"Dennis Saunders Corp","imp":174341},{"nm":"Hillary Valerie Oliver Inc","imp":96777}]},"Invoice Payment Linked to Active PO":{"imp":3306410,"paid":2889270,"open":466234,"cnt":563,"unpaid":466234,"fam":"Policy & Threshold Violations","pnl":false,"sev":{"High":271,"Medium":54,"Critical":206,"Low":32},"geo":{"Mexico":{"imp":1389036,"paid":1060676,"open":364566,"cnt":143},"India":{"imp":1867713,"paid":1778933,"open":101668,"cnt":392},"USA":{"imp":49661,"paid":49661,"open":0,"cnt":28}},"ent":{"MEX03":{"imp":1389036,"paid":1060676,"open":364566,"cnt":143},"IND01":{"imp":1867713,"paid":1778933,"open":101668,"cnt":392},"USA02":{"imp":49661,"paid":49661,"open":0,"cnt":28}},"cc":{"MX-Operations":{"imp":272736,"cnt":39},"MX-Procurement":{"imp":223484,"cnt":32},"MX-Logistics":{"imp":344115,"cnt":43},"MX-Finance":{"imp":548701,"cnt":29},"IN-Procurement":{"imp":635767,"cnt":108},"IN-Logistics":{"imp":375999,"cnt":96},"IN-Manufacturing":{"imp":431153,"cnt":99},"IN-Admin":{"imp":424795,"cnt":89},"US-IT":{"imp":12177,"cnt":6},"US-Procurement":{"imp":9284,"cnt":5},"US-Operations":{"imp":15837,"cnt":9},"US-Facilities":{"imp":12363,"cnt":8}},"trend":[{"m":"2025-07","paid":513588,"open":4455,"cnt":113},{"m":"2025-08","paid":579464,"open":7425,"cnt":122},{"m":"2025-09","paid":1107780,"open":7425,"cnt":153},{"m":"2025-10","paid":474106,"open":76424,"cnt":85},{"m":"2025-11","paid":214332,"open":150256,"cnt":53},{"m":"2025-12","paid":0,"open":220250,"cnt":37}],"cf":{"INCONCLUSIVE":563},"inv":{"None":563},"vend":[{"nm":"Dennis Saunders Foods Corp","imp":826100},{"nm":"Group Media America Inc","imp":444409},{"nm":"Blake Cooper Inc","imp":280019},{"nm":"Berkshire Hathaway Rebecca Corp","imp":140912},{"nm":"Andrew Foods Inc Corp","imp":83348},{"nm":"Sawyer Corp","imp":82131},{"nm":"Tanner America Harrison Inc","imp":69209},{"nm":"Tanner America Harrison Inc","imp":68786}]},"Invoice Exceeds PO":{"imp":103131,"paid":2729659,"open":6908,"cnt":68,"unpaid":6908,"fam":"Policy & Threshold Violations","pnl":false,"sev":{"Critical":36,"High":29,"Medium":3},"geo":{"India":{"imp":63494,"paid":1786767,"open":2726,"cnt":25},"USA":{"imp":21331,"paid":453061,"open":3122,"cnt":24},"Mexico":{"imp":18306,"paid":489831,"open":1060,"cnt":19}},"ent":{"IND01":{"imp":63494,"paid":1786767,"open":2726,"cnt":25},"USA02":{"imp":21331,"paid":453061,"open":3122,"cnt":24},"MEX03":{"imp":18306,"paid":489831,"open":1060,"cnt":19}},"cc":{"IN-Manufacturing":{"imp":14469,"cnt":4},"IN-Logistics":{"imp":13883,"cnt":7},"US-Operations":{"imp":3670,"cnt":7},"IN-Admin":{"imp":32207,"cnt":12},"US-Procurement":{"imp":9694,"cnt":8},"MX-Operations":{"imp":4430,"cnt":4},"MX-Procurement":{"imp":5949,"cnt":7},"IN-Procurement":{"imp":2934,"cnt":2},"MX-Logistics":{"imp":5446,"cnt":4},"US-IT":{"imp":2637,"cnt":4},"MX-Finance":{"imp":2481,"cnt":4},"US-Facilities":{"imp":5331,"cnt":5}},"trend":[{"m":"2025-07","paid":469506,"open":0,"cnt":9},{"m":"2025-08","paid":195746,"open":0,"cnt":11},{"m":"2025-09","paid":808728,"open":0,"cnt":12},{"m":"2025-10","paid":808060,"open":367,"cnt":13},{"m":"2025-11","paid":245910,"open":2726,"cnt":11},{"m":"2025-12","paid":201709,"open":3815,"cnt":12}],"cf":{"INCONCLUSIVE":68},"inv":{"None":68},"vend":[{"nm":"Omar Foods Priya","imp":23432},{"nm":"Sandra Spencer And Edward Preston","imp":13646},{"nm":"Sterling Foods America","imp":8605},{"nm":"Vanessa Foods Industries","imp":8178},{"nm":"Herbert Susan Agerton","imp":4957},{"nm":"Rachel Rachel Foods Proprie Co.","imp":4100},{"nm":"Spencer Metals Corp","imp":4055},{"nm":"Taylor Colton Corp","imp":3324}]},"GR Quantity Reversal After Invoice Posting":{"imp":1555879,"paid":3471676,"open":53672,"cnt":25,"unpaid":53672,"fam":"Policy & Threshold Violations","pnl":false,"sev":{"Critical":13,"Medium":7,"High":4,"Low":1},"geo":{"India":{"imp":126422,"paid":201965,"open":3212,"cnt":9},"Mexico":{"imp":1322420,"paid":3031027,"open":24992,"cnt":8},"USA":{"imp":107037,"paid":238684,"open":25468,"cnt":8}},"ent":{"IND01":{"imp":126422,"paid":201965,"open":3212,"cnt":9},"MEX03":{"imp":1322420,"paid":3031027,"open":24992,"cnt":8},"USA02":{"imp":107037,"paid":238684,"open":25468,"cnt":8}},"cc":{"IN-Procurement":{"imp":6861,"cnt":3},"MX-Finance":{"imp":838373,"cnt":2},"IN-Manufacturing":{"imp":6294,"cnt":2},"IN-Logistics":{"imp":113267,"cnt":4},"US-Procurement":{"imp":19170,"cnt":2},"US-IT":{"imp":6885,"cnt":1},"MX-Procurement":{"imp":11899,"cnt":3},"US-Facilities":{"imp":60079,"cnt":4},"US-Operations":{"imp":20903,"cnt":1},"MX-Operations":{"imp":471713,"cnt":2},"MX-Logistics":{"imp":435,"cnt":1}},"trend":[{"m":"2025-07","paid":1859277,"open":727,"cnt":3},{"m":"2025-08","paid":136703,"open":2360,"cnt":7},{"m":"2025-09","paid":253704,"open":8556,"cnt":7},{"m":"2025-10","paid":1165663,"open":25468,"cnt":2},{"m":"2025-11","paid":56329,"open":16562,"cnt":6},{"m":"2025-12","paid":0,"open":0,"cnt":0}],"cf":{"INCONCLUSIVE":25},"inv":{"None":25},"vend":[{"nm":"Ines Wolfgang Preston Co. Corp","imp":832078},{"nm":"Vincent Tanner","imp":455176},{"nm":"Sterling Foods America","imp":73768},{"nm":"Ramsey Samuel Sullivan","imp":39339},{"nm":"Foods And Beverages Inc Linda","imp":25468},{"nm":"America Timothy Works Corp","imp":22856},{"nm":"Matthew Import Export Inc","imp":20903},{"nm":"Ashley & Inti Adam Linda","imp":18324}]},"Open GRN > 45 Days Without Invoice":{"imp":1205,"paid":0,"open":1205,"cnt":1,"unpaid":1205,"fam":"Policy & Threshold Violations","pnl":false,"sev":{"High":1},"geo":{"Mexico":{"imp":1205,"paid":0,"open":1205,"cnt":1}},"ent":{"MEX03":{"imp":1205,"paid":0,"open":1205,"cnt":1}},"cc":{"MX-Operations":{"imp":1205,"cnt":1}},"trend":[{"m":"2025-07","paid":0,"open":0,"cnt":0},{"m":"2025-08","paid":0,"open":0,"cnt":0},{"m":"2025-09","paid":0,"open":1205,"cnt":1},{"m":"2025-10","paid":0,"open":0,"cnt":0},{"m":"2025-11","paid":0,"open":0,"cnt":0},{"m":"2025-12","paid":0,"open":0,"cnt":0}],"cf":{"INCONCLUSIVE":1},"inv":{"OPEN":1},"vend":[{"nm":"Kanchee","imp":1205}]},"Direct FI invoice entry (FB60) without PO":{"imp":20689,"paid":16686,"open":4003,"cnt":11,"unpaid":4003,"fam":"Policy & Threshold Violations","pnl":false,"sev":{"High":9,"Medium":2},"geo":{"USA":{"imp":20689,"paid":16686,"open":4003,"cnt":11}},"ent":{"USA02":{"imp":20689,"paid":16686,"open":4003,"cnt":11}},"cc":{"US-Operations":{"imp":7452,"cnt":4},"US-Facilities":{"imp":3743,"cnt":2},"US-IT":{"imp":7451,"cnt":4},"US-Procurement":{"imp":2043,"cnt":1}},"trend":[{"m":"2025-07","paid":0,"open":0,"cnt":0},{"m":"2025-08","paid":0,"open":0,"cnt":0},{"m":"2025-09","paid":0,"open":0,"cnt":0},{"m":"2025-10","paid":14069,"open":4003,"cnt":9},{"m":"2025-11","paid":2617,"open":0,"cnt":2},{"m":"2025-12","paid":0,"open":0,"cnt":0}],"cf":{"INCONCLUSIVE":11},"inv":{"None":11},"vend":[{"nm":"Zena Inc","imp":19343},{"nm":"Online Proprie Owen Timothy Vendor","imp":1346}]},"Same User Posts Invoice and Payment":{"imp":11269237,"paid":11269237,"open":0,"cnt":1068,"unpaid":0,"fam":"Access & Privilege Abuse","pnl":false,"sev":{"High":907,"Critical":161},"geo":{"Mexico":{"imp":2538563,"paid":2538563,"open":0,"cnt":401},"India":{"imp":8156737,"paid":8156737,"open":0,"cnt":405},"USA":{"imp":573937,"paid":573937,"open":0,"cnt":262}},"ent":{"MEX03":{"imp":2538563,"paid":2538563,"open":0,"cnt":401},"IND01":{"imp":8156737,"paid":8156737,"open":0,"cnt":405},"USA02":{"imp":573937,"paid":573937,"open":0,"cnt":262}},"cc":{"MX-Procurement":{"imp":410822,"cnt":92},"IN-Manufacturing":{"imp":1711431,"cnt":115},"IN-Admin":{"imp":2002057,"cnt":88},"US-Operations":{"imp":137229,"cnt":62},"MX-Finance":{"imp":466456,"cnt":105},"MX-Operations":{"imp":1219798,"cnt":114},"US-Facilities":{"imp":115963,"cnt":54},"IN-Procurement":{"imp":3058363,"cnt":100},"MX-Logistics":{"imp":441487,"cnt":90},"US-Procurement":{"imp":173499,"cnt":78},"US-IT":{"imp":147246,"cnt":68},"IN-Logistics":{"imp":1384886,"cnt":102}},"trend":[{"m":"2025-07","paid":1179713,"open":0,"cnt":190},{"m":"2025-08","paid":4658431,"open":0,"cnt":236},{"m":"2025-09","paid":1464664,"open":0,"cnt":246},{"m":"2025-10","paid":2275143,"open":0,"cnt":214},{"m":"2025-11","paid":1538084,"open":0,"cnt":153},{"m":"2025-12","paid":153202,"open":0,"cnt":29}],"cf":{"INCONCLUSIVE":1068},"inv":{"OPEN":1068},"vend":[{"nm":"Calvin Corp","imp":3332705},{"nm":"Agro","imp":687707},{"nm":"Sullivan Industries","imp":654321},{"nm":"Anthony Barbara Inc","imp":571276},{"nm":"Sharon Sherman Bryant Inc","imp":545862},{"nm":"Natalie Agro Trading Co","imp":463390},{"nm":"Janet Lee Jewelers Inc","imp":415630},{"nm":"Vincent Tanner","imp":388042}]},"Invoice Above Threshold with No IRN":{"imp":30532871,"paid":8249596,"open":22283275,"cnt":1120,"unpaid":22283275,"fam":"Policy & Threshold Violations","pnl":false,"sev":{"Medium":421,"High":651,"Critical":48},"geo":{"USA":{"imp":3912850,"paid":683991,"open":3228859,"cnt":216},"India":{"imp":3793953,"paid":2385240,"open":1408713,"cnt":211},"Mexico":{"imp":22826068,"paid":5180365,"open":17645703,"cnt":693}},"ent":{"USA02":{"imp":3912850,"paid":683991,"open":3228859,"cnt":216},"IND01":{"imp":3793953,"paid":2385240,"open":1408713,"cnt":211},"MEX03":{"imp":22826068,"paid":5180365,"open":17645703,"cnt":693}},"cc":{"US-IT":{"imp":865205,"cnt":59},"US-Operations":{"imp":831025,"cnt":46},"IN-Procurement":{"imp":1150701,"cnt":52},"MX-Procurement":{"imp":4557443,"cnt":179},"MX-Logistics":{"imp":5869894,"cnt":164},"IN-Logistics":{"imp":928768,"cnt":51},"MX-Finance":{"imp":7380567,"cnt":176},"MX-Operations":{"imp":5018164,"cnt":174},"IN-Admin":{"imp":783025,"cnt":58},"US-Procurement":{"imp":1207376,"cnt":53},"IN-Manufacturing":{"imp":931460,"cnt":50},"US-Facilities":{"imp":1009244,"cnt":58}},"trend":[{"m":"2025-07","paid":1541568,"open":2476296,"cnt":189},{"m":"2025-08","paid":2248845,"open":1820779,"cnt":182},{"m":"2025-09","paid":1828802,"open":2550927,"cnt":179},{"m":"2025-10","paid":1254213,"open":2337437,"cnt":155},{"m":"2025-11","paid":933574,"open":2596212,"cnt":192},{"m":"2025-12","paid":442594,"open":10501624,"cnt":223}],"cf":{"INCONCLUSIVE":1120},"inv":{"None":1120},"vend":[{"nm":"Inti Matthew Securities Inc","imp":8357239},{"nm":"Priscilla Karen Inc","imp":1670555},{"nm":"Cooper Inti Solutions Inc","imp":1429937},{"nm":"Agro","imp":1290444},{"nm":"Russell Spencer","imp":581014},{"nm":"Baxter Aligned General Insurance Colton","imp":580120},{"nm":"Linda Insurance Corporation Of America","imp":570732},{"nm":"Irvine Power Co Corp","imp":457195}]},"Same User Creates PO and Posts Invoice":{"imp":123501,"paid":0,"open":123501,"cnt":7,"unpaid":123501,"fam":"Access & Privilege Abuse","pnl":false,"sev":{"Critical":2,"High":5},"geo":{"Mexico":{"imp":35806,"paid":0,"open":35806,"cnt":6},"USA":{"imp":87695,"paid":0,"open":87695,"cnt":1}},"ent":{"MEX03":{"imp":35806,"paid":0,"open":35806,"cnt":6},"USA02":{"imp":87695,"paid":0,"open":87695,"cnt":1}},"cc":{"MX-Logistics":{"imp":1381,"cnt":1},"MX-Finance":{"imp":2063,"cnt":1},"MX-Operations":{"imp":26072,"cnt":3},"MX-Procurement":{"imp":6290,"cnt":1},"US-IT":{"imp":87695,"cnt":1}},"trend":[{"m":"2025-07","paid":0,"open":1381,"cnt":1},{"m":"2025-08","paid":0,"open":2063,"cnt":1},{"m":"2025-09","paid":0,"open":0,"cnt":0},{"m":"2025-10","paid":0,"open":22972,"cnt":1},{"m":"2025-11","paid":0,"open":7381,"cnt":2},{"m":"2025-12","paid":0,"open":89705,"cnt":2}],"cf":{"INCONCLUSIVE":7},"inv":{"None":7},"vend":[{"nm":"Kolkat Benjamin Preston","imp":87695},{"nm":"Corpus Christi & Co Greeley","imp":22972},{"nm":"Dennis Saunders Foods Corp","imp":9391},{"nm":"Rosemary Curtis Priscilla Inc","imp":2063},{"nm":"Davis Spencers Inc","imp":1381}]},"Same User Posts GR and Invoice for Same PO":{"imp":1170588,"paid":0,"open":1170588,"cnt":79,"unpaid":1170588,"fam":"Access & Privilege Abuse","pnl":false,"sev":{"High":69,"Medium":10},"geo":{"Mexico":{"imp":169434,"paid":0,"open":169434,"cnt":9},"USA":{"imp":1001154,"paid":0,"open":1001154,"cnt":70}},"ent":{"MEX03":{"imp":169434,"paid":0,"open":169434,"cnt":9},"USA02":{"imp":1001154,"paid":0,"open":1001154,"cnt":70}},"cc":{"MX-Procurement":{"imp":79019,"cnt":4},"US-Operations":{"imp":219594,"cnt":15},"US-IT":{"imp":302259,"cnt":21},"US-Facilities":{"imp":246625,"cnt":18},"US-Procurement":{"imp":232677,"cnt":16},"MX-Logistics":{"imp":40694,"cnt":3},"MX-Operations":{"imp":49720,"cnt":2}},"trend":[{"m":"2025-07","paid":0,"open":341959,"cnt":22},{"m":"2025-08","paid":0,"open":413916,"cnt":35},{"m":"2025-09","paid":0,"open":12224,"cnt":3},{"m":"2025-10","paid":0,"open":161259,"cnt":5},{"m":"2025-11","paid":0,"open":0,"cnt":0},{"m":"2025-12","paid":0,"open":241231,"cnt":14}],"cf":{"INCONCLUSIVE":79},"inv":{"None":79},"vend":[{"nm":"Gordon Raymond Karen Chandler","imp":734619},{"nm":"Foods And Beverages Inc Linda","imp":249794},{"nm":"Matthew Nashville Roy","imp":82806},{"nm":"Corpus Christi & Co Greeley","imp":73934},{"nm":"Ashley & Inti Adam Linda","imp":12263},{"nm":"Dennis Saunders Foods Corp","imp":7361},{"nm":"Patrick Engineers Inc","imp":4478},{"nm":"Global Electrical And Cooper Inc","imp":3881}]},"Invoice before PO date":{"imp":24437873,"paid":19488270,"open":8759708,"cnt":3321,"unpaid":8759708,"fam":"Policy & Threshold Violations","pnl":false,"sev":{"Low":2092,"Medium":968,"High":256,"Critical":5},"geo":{"India":{"imp":5914726,"paid":6219017,"open":1500594,"cnt":861},"USA":{"imp":3241632,"paid":3018784,"open":781973,"cnt":368},"Mexico":{"imp":15281515,"paid":10250468,"open":6477142,"cnt":2092}},"ent":{"IND01":{"imp":5914726,"paid":6219017,"open":1500594,"cnt":861},"USA02":{"imp":3241632,"paid":3018784,"open":781973,"cnt":368},"MEX03":{"imp":15281515,"paid":10250468,"open":6477142,"cnt":2092}},"cc":{"IN-Procurement":{"imp":1604292,"cnt":214},"IN-Logistics":{"imp":1496991,"cnt":218},"US-Operations":{"imp":615498,"cnt":88},"US-Facilities":{"imp":1011331,"cnt":99},"US-Procurement":{"imp":939140,"cnt":96},"MX-Procurement":{"imp":4226758,"cnt":497},"MX-Operations":{"imp":3362372,"cnt":543},"IN-Admin":{"imp":1435923,"cnt":209},"MX-Finance":{"imp":3667308,"cnt":546},"MX-Logistics":{"imp":4025077,"cnt":506},"IN-Manufacturing":{"imp":1377521,"cnt":220},"US-IT":{"imp":675662,"cnt":85}},"trend":[{"m":"2025-07","paid":4308380,"open":1204961,"cnt":556},{"m":"2025-08","paid":3203390,"open":760479,"cnt":503},{"m":"2025-09","paid":3682612,"open":1053248,"cnt":648},{"m":"2025-10","paid":3772332,"open":1936328,"cnt":556},{"m":"2025-11","paid":2887991,"open":1778233,"cnt":594},{"m":"2025-12","paid":1633564,"open":2026459,"cnt":464}],"cf":{"INCONCLUSIVE":3321},"inv":{"OPEN":3321},"vend":[{"nm":"Ulysses Solutions & Susan Colton","imp":1384145},{"nm":"Cooper Inti Solutions Inc","imp":1031960},{"nm":"Accenture Solutions Inc","imp":609390},{"nm":"Gavin Inti Franklin Inc","imp":500345},{"nm":"Oregon Power Distribution Co Linda","imp":445408},{"nm":"Matthew Nashville Roy","imp":441174},{"nm":"Eric & Yolanda Llc","imp":386465},{"nm":"Blake Cooper Inc","imp":363648}]},"Parked Invoices Aging > 30 Days Without Posting":{"imp":1078438,"paid":0,"open":1078438,"cnt":58,"unpaid":1078438,"fam":"Policy & Threshold Violations","pnl":false,"sev":{"High":39,"Medium":8,"Low":11},"geo":{"India":{"imp":282492,"paid":0,"open":282492,"cnt":6},"Mexico":{"imp":764685,"paid":0,"open":764685,"cnt":47},"USA":{"imp":31261,"paid":0,"open":31261,"cnt":5}},"ent":{"IND01":{"imp":282492,"paid":0,"open":282492,"cnt":6},"MEX03":{"imp":764685,"paid":0,"open":764685,"cnt":47},"USA02":{"imp":31261,"paid":0,"open":31261,"cnt":5}},"cc":{"IN-Procurement":{"imp":3300,"cnt":1},"IN-Logistics":{"imp":243420,"cnt":3},"MX-Logistics":{"imp":459205,"cnt":14},"MX-Operations":{"imp":42129,"cnt":8},"IN-Admin":{"imp":3300,"cnt":1},"MX-Procurement":{"imp":182396,"cnt":13},"MX-Finance":{"imp":80955,"cnt":12},"IN-Manufacturing":{"imp":32472,"cnt":1},"US-Facilities":{"imp":16852,"cnt":2},"US-Procurement":{"imp":10565,"cnt":2},"US-IT":{"imp":3845,"cnt":1}},"trend":[{"m":"2025-07","paid":0,"open":498218,"cnt":10},{"m":"2025-08","paid":0,"open":208976,"cnt":8},{"m":"2025-09","paid":0,"open":280094,"cnt":16},{"m":"2025-10","paid":0,"open":57439,"cnt":12},{"m":"2025-11","paid":0,"open":33710,"cnt":12},{"m":"2025-12","paid":0,"open":0,"cnt":0}],"cf":{"INCONCLUSIVE":58},"inv":{"None":58},"vend":[{"nm":"Sharon Shane Tanner","imp":226088},{"nm":"Ashley Inti Inc","imp":219384},{"nm":"Arthur Andrew Inc","imp":139157},{"nm":"Sharon Sherman Bryant Inc","imp":123614},{"nm":"Agnes Fabrication Inc","imp":101384},{"nm":"Anthony Barbara Inc","imp":58258},{"nm":"Harold Raymond Raymond Barry Harold","imp":40164},{"nm":"Patricia Digital Inc","imp":38450}]},"Same User Creates Vendor and Raises PO":{"imp":22235,"paid":0,"open":22235,"cnt":5,"unpaid":22235,"fam":"Access & Privilege Abuse","pnl":false,"sev":{"Medium":4,"High":1},"geo":{"Mexico":{"imp":22235,"paid":0,"open":22235,"cnt":5}},"ent":{"MEX03":{"imp":22235,"paid":0,"open":22235,"cnt":5}},"cc":{"MX-Finance":{"imp":4777,"cnt":2},"MX-Procurement":{"imp":14490,"cnt":1},"MX-Operations":{"imp":1840,"cnt":1},"MX-Logistics":{"imp":1128,"cnt":1}},"trend":[{"m":"2025-07","paid":0,"open":0,"cnt":0},{"m":"2025-08","paid":0,"open":2016,"cnt":1},{"m":"2025-09","paid":0,"open":17251,"cnt":2},{"m":"2025-10","paid":0,"open":1840,"cnt":1},{"m":"2025-11","paid":0,"open":0,"cnt":0},{"m":"2025-12","paid":0,"open":1128,"cnt":1}],"cf":{"INCONCLUSIVE":5},"inv":{"None":5},"vend":[{"nm":"Burton America Inc","imp":22235}]}},"months":["2025-07","2025-08","2025-09","2025-10","2025-11","2025-12"],"headline":{"identified":346206047,"cashout":297147423,"exposure":93552280,"unpaid":93552280,"crit_high":8540,"vendors":1608,"total":14536,"excluded":196,"pnl_total":18513182},"baseline":{"cashout":264461206,"exposure":99165417,"crit_high":7856,"vendors":1527,"unpaid":103843031},"ruleNames":["3-Way Match Failure","Backdated Posting","Direct FI invoice entry (FB60) without PO","Duplicate payments","Early payment Risk","GR Quantity Reversal After Invoice Posting","Goods Receipt without PO","Invoice Above Threshold with No IRN","Invoice Exceeds PO","Invoice Payment Linked to Active PO","Invoice before PO date","Open GRN > 45 Days Without Invoice","Parked Invoices Aging > 30 Days Without Posting","Potential Bribery and Corruption","Price Variance Risk","Same User Creates PO and Posts Invoice","Same User Creates Vendor and Raises PO","Same User Posts GR and Invoice for Same PO","Same User Posts Invoice and Payment","Split PO","Vendor Transactions Without Withholding Tax"],"ai_fallback":{"insights":[{"theme":"EXPOSURE","t":"$93.6M still stoppable \u2014 27% of risk not yet cash","b":"Of $346.2M identified, $93.6M remains unpaid and preventable before the next disbursement cycle \u2014 the highest-return intervention window, protecting working capital rather than recovering sunk cost."},{"theme":"CONTROL/SOX","t":"8,540 Critical/High alerts point to systemic control weakness","b":"The breadth across five of the top rule families suggests a pervasive control deficiency rather than isolated exceptions \u2014 a pattern that warrants assessment against SOX 404 material-weakness thresholds before certification."},{"theme":"P&L","t":"$18.5M potential earnings impact from profit-affecting rules","b":"Overpayment, duplicate-payment and withholding exposures total $18.5M. Any portion booked in-period is a candidate for restatement review; confirm materiality against the current earnings base."},{"theme":"DATA RELIABILITY","t":"Data quality 88.6% \u2014 vendor attribution gap needs disclosure","b":"PK integrity is 100% across 21 tables, but vendor_id is null on 8.15% of purchase records, understating vendor-level exposure. This is the one gap an external auditor is likely to probe."}],"urgent":[{"t":"Split PO","v":"$54.5M"},{"t":"Invoice Above Threshold with No IRN","v":"$22.3M"},{"t":"Invoice before PO date","v":"$8.8M"}],"actions":[{"t":"Assign remediation owner for Split PO ($54.5M open)"},{"t":"Hold IRN-noncompliant invoices ($22.3M)"},{"t":"Escalate control-environment findings to audit committee"}]},"assurance":{"score":88.6,"rating":"Good","ratingDesc":"Minor gaps, detection coverage unaffected.","records":"5.5M","tables":21,"criticals":4,"highs":9,"earliest":"2025-03-13","latest":"2026-02-10","validated":"2026-03-18","company_codes":3,"pk_integrity":100,"breakdown":[{"label":"PK Integrity","score":100,"weight":"20%"},{"label":"Field Completeness","score":98.0320754716981,"weight":"25%"},{"label":"P2P Chain Linkage","score":76.8,"weight":"30%"},{"label":"Domain Validity","score":100,"weight":"15%"},{"label":"Master Data Quality","score":60.68275456150677,"weight":"10%"}],"chain_rate":66.1,"vendor_null_records":24474,"vendor_null_pct":"8.15%"},"vendors_multi":{"by_count":[{"name":"Ashley & Inti Adam Linda","rc":11,"imp":413680,"rules":["3-Way Match Failure","Backdated Posting","Duplicate payments","Early payment Risk","GR Quantity Reversal After Invoice Posting","Goods Receipt without PO","Invoice Above Threshold with No IRN","Invoice before PO date","Price Variance Risk","Same User Posts GR and Invoice for Same PO","Vendor Transactions Without Withholding Tax"],"blend":61.0},{"name":"Gordon Raymond Karen Chandler","rc":8,"imp":4957154,"rules":["3-Way Match Failure","Backdated Posting","Invoice Above Threshold with No IRN","Invoice Payment Linked to Active PO","Invoice before PO date","Price Variance Risk","Same User Posts GR and Invoice for Same PO","Split PO"],"blend":55.5},{"name":"Priscilla Industries America Corp","rc":8,"imp":1322216,"rules":["Duplicate payments","Early payment Risk","Invoice Above Threshold with No IRN","Invoice Exceeds PO","Invoice before PO date","Price Variance Risk","Same User Posts Invoice and Payment","Split PO"],"blend":46.8},{"name":"Patrick Packaging Corp","rc":8,"imp":565049,"rules":["3-Way Match Failure","Duplicate payments","Invoice Exceeds PO","Invoice before PO date","Parked Invoices Aging > 30 Days Without Posting","Potential Bribery and Corruption","Price Variance Risk","Split PO"],"blend":45.0},{"name":"Harold Raymond Raymond Barry Harold","rc":8,"imp":363848,"rules":["Early payment Risk","Invoice Above Threshold with No IRN","Invoice before PO date","Parked Invoices Aging > 30 Days Without Posting","Potential Bribery and Corruption","Price Variance Risk","Same User Posts Invoice and Payment","Split PO"],"blend":44.5},{"name":"Enterprises","rc":8,"imp":173158,"rules":["Backdated Posting","Early payment Risk","Invoice Exceeds PO","Invoice before PO date","Potential Bribery and Corruption","Price Variance Risk","Same User Posts Invoice and Payment","Split PO"],"blend":44.1},{"name":"Sarah Enterprises","rc":8,"imp":168771,"rules":["Early payment Risk","GR Quantity Reversal After Invoice Posting","Invoice Exceeds PO","Invoice before PO date","Potential Bribery and Corruption","Price Variance Risk","Same User Posts Invoice and Payment","Split PO"],"blend":44.0},{"name":"Foods And Beverages Inc Linda","rc":7,"imp":7481712,"rules":["Backdated Posting","Early payment Risk","GR Quantity Reversal After Invoice Posting","Invoice Above Threshold with No IRN","Invoice before PO date","Same User Posts GR and Invoice for Same PO","Split PO"],"blend":56.1},{"name":"Russell Spencer","rc":7,"imp":3483127,"rules":["3-Way Match Failure","Backdated Posting","Goods Receipt without PO","Invoice Above Threshold with No IRN","Invoice before PO date","Price Variance Risk","Split PO"],"blend":46.5},{"name":"Sterling Foods America","rc":7,"imp":1471130,"rules":["3-Way Match Failure","Backdated Posting","GR Quantity Reversal After Invoice Posting","Invoice Above Threshold with No IRN","Invoice Exceeds PO","Price Variance Risk","Split PO"],"blend":41.7},{"name":"Cooper","rc":7,"imp":906992,"rules":["Early payment Risk","Invoice Above Threshold with No IRN","Invoice before PO date","Potential Bribery and Corruption","Price Variance Risk","Same User Posts Invoice and Payment","Split PO"],"blend":40.4},{"name":"Packaging Llc","rc":7,"imp":665844,"rules":["Duplicate payments","Early payment Risk","Invoice Exceeds PO","Invoice before PO date","Price Variance Risk","Same User Posts Invoice and Payment","Split PO"],"blend":39.8},{"name":"Foods Corp","rc":7,"imp":558417,"rules":["3-Way Match Failure","Backdated Posting","Duplicate payments","Early payment Risk","Goods Receipt without PO","Price Variance Risk","Split PO"],"blend":39.5},{"name":"Linda Packaging Solutions Inc","rc":7,"imp":557243,"rules":["Backdated Posting","Early payment Risk","Invoice before PO date","Parked Invoices Aging > 30 Days Without Posting","Price Variance Risk","Same User Posts Invoice and Payment","Split PO"],"blend":39.5},{"name":"Priscilla Services","rc":7,"imp":296362,"rules":["Backdated Posting","Duplicate payments","Early payment Risk","Invoice before PO date","Price Variance Risk","Same User Posts Invoice and Payment","Split PO"],"blend":38.9}],"by_blend":[{"name":"Agro","rc":6,"imp":14077020,"rules":["Early payment Risk","Invoice Above Threshold with No IRN","Price Variance Risk","Same User Posts Invoice and Payment","Split PO","Vendor Transactions Without Withholding Tax"],"blend":66.4},{"name":"Ashley & Inti Adam Linda","rc":11,"imp":413680,"rules":["3-Way Match Failure","Backdated Posting","Duplicate payments","Early payment Risk","GR Quantity Reversal After Invoice Posting","Goods Receipt without PO","Invoice Above Threshold with No IRN","Invoice before PO date","Price Variance Risk","Same User Posts GR and Invoice for Same PO","Vendor Transactions Without Withholding Tax"],"blend":61.0},{"name":"Foods And Beverages Inc Linda","rc":7,"imp":7481712,"rules":["Backdated Posting","Early payment Risk","GR Quantity Reversal After Invoice Posting","Invoice Above Threshold with No IRN","Invoice before PO date","Same User Posts GR and Invoice for Same PO","Split PO"],"blend":56.1},{"name":"Gordon Raymond Karen Chandler","rc":8,"imp":4957154,"rules":["3-Way Match Failure","Backdated Posting","Invoice Above Threshold with No IRN","Invoice Payment Linked to Active PO","Invoice before PO date","Price Variance Risk","Same User Posts GR and Invoice for Same PO","Split PO"],"blend":55.5},{"name":"Inti Matthew Securities Inc","rc":2,"imp":16714477,"rules":["Invoice Above Threshold with No IRN","Vendor Transactions Without Withholding Tax"],"blend":50.9},{"name":"Saunders Enterprises","rc":4,"imp":11771084,"rules":["Duplicate payments","Early payment Risk","Price Variance Risk","Split PO"],"blend":50.0},{"name":"Amanda Enterprises","rc":6,"imp":6229662,"rules":["Backdated Posting","Duplicate payments","Early payment Risk","Parked Invoices Aging > 30 Days Without Posting","Price Variance Risk","Split PO"],"blend":47.6},{"name":"Anthony Barbara Inc","rc":6,"imp":6013726,"rules":["Early payment Risk","Invoice before PO date","Parked Invoices Aging > 30 Days Without Posting","Price Variance Risk","Same User Posts Invoice and Payment","Split PO"],"blend":47.1},{"name":"Priscilla Industries America Corp","rc":8,"imp":1322216,"rules":["Duplicate payments","Early payment Risk","Invoice Above Threshold with No IRN","Invoice Exceeds PO","Invoice before PO date","Price Variance Risk","Same User Posts Invoice and Payment","Split PO"],"blend":46.8},{"name":"Russell Spencer","rc":7,"imp":3483127,"rules":["3-Way Match Failure","Backdated Posting","Goods Receipt without PO","Invoice Above Threshold with No IRN","Invoice before PO date","Price Variance Risk","Split PO"],"blend":46.5},{"name":"Kolkat Benjamin Preston","rc":6,"imp":5360391,"rules":["Invoice Above Threshold with No IRN","Invoice before PO date","Parked Invoices Aging > 30 Days Without Posting","Price Variance Risk","Same User Creates PO and Posts Invoice","Split PO"],"blend":45.6},{"name":"Patrick Packaging Corp","rc":8,"imp":565049,"rules":["3-Way Match Failure","Duplicate payments","Invoice Exceeds PO","Invoice before PO date","Parked Invoices Aging > 30 Days Without Posting","Potential Bribery and Corruption","Price Variance Risk","Split PO"],"blend":45.0},{"name":"Calvin Corp","rc":4,"imp":9566385,"rules":["Duplicate payments","Price Variance Risk","Same User Posts Invoice and Payment","Split PO"],"blend":44.7},{"name":"Harold Raymond Raymond Barry Harold","rc":8,"imp":363848,"rules":["Early payment Risk","Invoice Above Threshold with No IRN","Invoice before PO date","Parked Invoices Aging > 30 Days Without Posting","Potential Bribery and Corruption","Price Variance Risk","Same User Posts Invoice and Payment","Split PO"],"blend":44.5},{"name":"Enterprises","rc":8,"imp":173158,"rules":["Backdated Posting","Early payment Risk","Invoice Exceeds PO","Invoice before PO date","Potential Bribery and Corruption","Price Variance Risk","Same User Posts Invoice and Payment","Split PO"],"blend":44.1}],"total_multi":706,"max_rc":11,"all_rules":["3-Way Match Failure","Backdated Posting","Direct FI invoice entry (FB60) without PO","Duplicate payments","Early payment Risk","GR Quantity Reversal After Invoice Posting","Goods Receipt without PO","Invoice Above Threshold with No IRN","Invoice Exceeds PO","Invoice Payment Linked to Active PO","Invoice before PO date","Open GRN > 45 Days Without Invoice","Parked Invoices Aging > 30 Days Without Posting","Potential Bribery and Corruption","Price Variance Risk","Same User Creates PO and Posts Invoice","Same User Creates Vendor and Raises PO","Same User Posts GR and Invoice for Same PO","Same User Posts Invoice and Payment","Split PO","Vendor Transactions Without Withholding Tax"]}};
+let coOnly=false, curRule='';
+const fmtUSD=(n)=>{n=Math.round(n);if(n>=1e9)return '$'+(n/1e9).toFixed(2)+'B';if(n>=1e6)return '$'+(n/1e6).toFixed(1)+'M';if(n>=1e3)return '$'+(n/1e3).toFixed(0)+'K';return '$'+n;};
+const SEVCOL={Critical:'#C0392B',High:'#E67E22',Medium:'#E0A800',Low:'#4A9D6E'};
+const FLAG={Mexico:'\uD83C\uDDF2\uD83C\uDDFD',USA:'\uD83C\uDDFA\uD83C\uDDF8',India:'\uD83C\uDDEE\uD83C\uDDF3'};
+const ENT2GEO={MEX03:'Mexico',USA02:'USA',IND01:'India'};
+const PNLCOLOR='#C0392B';
+function pct(c,b){const d=100*(c-b)/b;return (d>=0?'\u25B2 ':'\u25BC ')+Math.abs(d).toFixed(1)+'%';}
+
+// populate rule filter
+(function(){const rs=document.getElementById('ruleSel');RAW.ruleNames.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;rs.appendChild(o);});})();
+
+// build a scoped view: either ALL (aggregate) or single rule
+function view(){
+  if(curRule && RAW.rules[curRule]){
+    const s=RAW.rules[curRule];
+    return {single:true,name:curRule,imp:s.imp,paid:s.paid,open:s.open,unpaid:s.unpaid,cnt:s.cnt,
+      sev:s.sev,geo:s.geo,ent:s.ent,cc:s.cc,trend:s.trend,cf:s.cf,inv:s.inv,fam:{[s.fam]:{imp:s.imp,cnt:s.cnt,sev:s.sev}},
+      vend:s.vend.map(v=>({nm:v.nm,imp:v.imp})),pnl:s.pnl?{[curRule]:{imp:s.imp,cnt:s.cnt}}:{}};
+  }
+  // aggregate all rules
+  const A={imp:0,paid:0,open:0,unpaid:0,cnt:0,sev:{},geo:{},ent:{},cc:{},trend:{},cf:{},inv:{},fam:{},vend:{},pnl:{}};
+  RAW.months.forEach(m=>A.trend[m]={paid:0,open:0,cnt:0});
+  for(const [name,s] of Object.entries(RAW.rules)){
+    A.imp+=s.imp;A.paid+=s.paid;A.open+=s.open;A.unpaid+=s.unpaid;A.cnt+=s.cnt;
+    for(const k in s.sev)A.sev[k]=(A.sev[k]||0)+s.sev[k];
+    for(const g in s.geo){A.geo[g]=A.geo[g]||{imp:0,paid:0,open:0,cnt:0};for(const k in s.geo[g])A.geo[g][k]+=s.geo[g][k];}
+    for(const e in s.ent){A.ent[e]=A.ent[e]||{imp:0,paid:0,open:0,cnt:0};for(const k in s.ent[e])A.ent[e][k]+=s.ent[e][k];}
+    for(const c in s.cc){A.cc[c]=A.cc[c]||{imp:0,cnt:0};A.cc[c].imp+=s.cc[c].imp;A.cc[c].cnt+=s.cc[c].cnt;}
+    A.fam[s.fam]=A.fam[s.fam]||{imp:0,cnt:0,sev:{}};A.fam[s.fam].imp+=s.imp;A.fam[s.fam].cnt+=s.cnt;
+    for(const k in s.sev)A.fam[s.fam].sev[k]=(A.fam[s.fam].sev[k]||0)+s.sev[k];
+    s.trend.forEach(t=>{A.trend[t.m].paid+=t.paid;A.trend[t.m].open+=t.open;A.trend[t.m].cnt+=t.cnt;});
+    for(const k in s.cf)A.cf[k]=(A.cf[k]||0)+s.cf[k];
+    for(const k in s.inv)A.inv[k]=(A.inv[k]||0)+s.inv[k];
+    s.vend.forEach(v=>A.vend[v.nm]=(A.vend[v.nm]||0)+v.imp);
+    if(s.pnl)A.pnl[name]={imp:s.imp,cnt:s.cnt};
+  }
+  A.single=false;
+  A.trend=RAW.months.map(m=>({m,paid:A.trend[m].paid,open:A.trend[m].open,cnt:A.trend[m].cnt}));
+  A.vend=Object.entries(A.vend).map(([nm,imp])=>({nm,imp})).sort((a,b)=>b.imp-a.imp).slice(0,8);
+  return A;
+}
+
+function leakList(){
+  // unpaid ranking across rules (always all-rules basis unless scoped)
+  let arr;
+  if(curRule){const s=RAW.rules[curRule];arr=[{name:curRule,unpaid:s.unpaid,cnt:s.cnt}];}
+  else arr=Object.entries(RAW.rules).map(([n,s])=>({name:n,unpaid:s.unpaid,cnt:s.cnt})).filter(x=>x.unpaid>0).sort((a,b)=>b.unpaid-a.unpaid).slice(0,8);
+  return arr;
+}
+function ruleRank(){
+  return Object.entries(RAW.rules).map(([n,s])=>({name:n,imp:s.imp,cnt:s.cnt,fam:s.fam})).sort((a,b)=>b.imp-a.imp).slice(0,10);
+}
+
+function render(){
+  const V=view();const base=RAW.baseline;
+  document.getElementById('h-identified').textContent=fmtUSD(V.imp);
+  document.getElementById('h-stoppable').textContent=fmtUSD(V.open);
+  document.getElementById('h-codelta').textContent=pct(V.paid,base.cashout);
+  document.getElementById('perLabel').textContent=document.getElementById('perSel').value.toLowerCase();
+  document.getElementById('scopeLbl').textContent=curRule?curRule:'all rules';
+
+  const ch=(V.sev.Critical||0)+(V.sev.High||0);
+  document.getElementById('k-cashout').textContent=fmtUSD(V.paid);
+  document.getElementById('k-codelta').textContent=pct(V.paid,base.cashout)+' vs baseline';
+  document.getElementById('k-unpaid').textContent=fmtUSD(V.unpaid);
+  document.getElementById('k-updelta').textContent=pct(V.unpaid,base.unpaid)+' vs baseline';
+  document.getElementById('k-ch').textContent=ch.toLocaleString();
+  document.getElementById('k-chdelta').textContent=pct(ch,base.crit_high)+' vs baseline';
+  const vcount=curRule?RAW.rules[curRule].vend.length:RAW.headline.vendors;
+  document.getElementById('k-vend').textContent=vcount.toLocaleString();
+  document.getElementById('k-vdelta').textContent=curRule?'in scope':pct(RAW.headline.vendors,base.vendors)+' vs baseline';
+
+  // leak list
+  const ll=document.getElementById('leaklist');ll.innerHTML='';
+  const leaks=leakList();const lmax=leaks[0].unpaid;
+  leaks.forEach((x,i)=>{ll.innerHTML+=`<div class="li clk" onclick="setRule('${x.name.replace(/'/g,"\\'")}')"><span class="rank">${i+1}</span><span class="lname">${x.name}</span><span class="lct">${x.cnt.toLocaleString()} txns</span><span class="lbar"><i style="width:${100*x.unpaid/lmax}%"></i></span><span class="lval">${fmtUSD(x.unpaid)}</span></div>`;});
+
+  // P&L
+  const pw=document.getElementById('pnlwrap');pw.innerHTML='';
+  const pnl=Object.entries(V.pnl).map(([n,v])=>({n,v:v.imp,c:v.cnt})).sort((a,b)=>b.v-a.v);
+  const pmax=pnl.length?pnl[0].v:1;let ptot=0;
+  const desc={'ITC on Unreceipted Invoice':'Tax-credit reversal risk','Duplicate payments':'Paid more than once','Price Variance Risk':'Overpayment vs PO','Vendor Transactions Without Withholding Tax':'Tax withholding shortfall'};
+  pnl.forEach(p=>{ptot+=p.v;pw.innerHTML+=`<div class="pnl-r"><div class="pn">${p.n}<small>${desc[p.n]||''} \u00B7 ${p.c.toLocaleString()} txns</small></div><div class="pnl-track"><i style="width:${100*p.v/pmax}%"></i></div><div class="pv">${fmtUSD(p.v)}</div></div>`;});
+  if(!pnl.length)pw.innerHTML='<div style="color:var(--mut);font-size:12.5px;padding:10px 0">This rule does not directly affect P&amp;L.</div>';
+  document.getElementById('pnltotal').textContent=fmtUSD(ptot);
+
+  // family
+  const fs=document.getElementById('famstack');fs.innerHTML='';
+  const order=['Critical','High','Medium','Low'];
+  const famorder=['Policy & Threshold Violations','Financial Deviation & Overstatement','Access & Privilege Abuse','Duplicate & Ghost Transactions'];
+  famorder.filter(f=>V.fam[f]).forEach(f=>{const F=V.fam[f];const sv=F.sev||{};const tot=order.reduce((a,s)=>a+(sv[s]||0),0)||1;
+    let segs=order.map(s=>`<div class="seg ${s}" style="width:${100*(sv[s]||0)/tot}%"></div>`).join('');
+    fs.innerHTML+=`<div class="stack-row"><div class="top"><b>${f}</b><span class="amt">${fmtUSD(F.imp)} \u00B7 ${F.cnt.toLocaleString()} items</span></div><div class="bar">${segs}</div></div>`;});
+
+  // entity
+  const et=document.getElementById('enttbl');et.innerHTML='';
+  Object.entries(V.ent).sort((a,b)=>b[1].imp-a[1].imp).forEach(([e,v])=>{et.innerHTML+=`<tr><td><b>${e}</b></td><td class="num">${fmtUSD(v.paid)}</td><td class="num">${fmtUSD(v.open)}</td><td class="num">${v.cnt.toLocaleString()}</td></tr>`;});
+
+  // geo
+  const gw=document.getElementById('geowrap');gw.innerHTML='';
+  const geoArr=Object.entries(V.geo).sort((a,b)=>b[1].imp-a[1].imp);const gmax=geoArr[0][1].imp;
+  geoArr.forEach(([g,v])=>{gw.innerHTML+=`<div class="geo-r"><div class="flag">${FLAG[g]||'\uD83C\uDF10'}</div><div class="gm"><div class="gn"><span>${g}</span><span class="gv">${fmtUSD(v.imp)}</span></div><div class="geo-track"><i style="width:${100*v.imp/gmax}%"></i></div><div class="gsub">${v.cnt.toLocaleString()} anomalies \u00B7 ${fmtUSD(v.open)} still open</div></div></div>`;});
+
+  // cost centers
+  const cc=Object.entries(V.cc).sort((a,b)=>b[1].imp-a[1].imp).slice(0,10);const ccmax=cc[0][1].imp;
+  const cl=document.getElementById('cclist');cl.innerHTML='';
+  cc.forEach(([c,v],i)=>{cl.innerHTML+=`<div class="li"><span class="rank">${i+1}</span><span class="lname">${c}</span><span class="ltag">${v.cnt.toLocaleString()} items</span><span class="lbar"><i style="width:${100*v.imp/ccmax}%"></i></span><span class="lval">${fmtUSD(v.imp)}</span></div>`;});
+
+  drawTrend(V.trend);
+
+  // top rules (always all-rules, highlight scoped)
+  const rr=ruleRank();const rmax=rr[0].imp;const rl=document.getElementById('rules');rl.innerHTML='';
+  rr.forEach((r,i)=>{const vpi=r.imp/r.cnt;const hot=vpi>25000?'hot':'';const sc=(r.name===curRule)?'style="background:#EAF1F8;border-radius:6px"':'';
+    rl.innerHTML+=`<div class="li clk ${hot}" ${sc} onclick="setRule('${r.name.replace(/'/g,"\\'")}')"><span class="rank">${i+1}</span><span class="lname">${r.name}</span><span class="lct">${r.cnt.toLocaleString()} txns</span><span class="lbar"><i style="width:${100*r.imp/rmax}%"></i></span><span class="lval">${fmtUSD(r.imp)}</span></div>`;});
+
+  // vendors
+  const vl=document.getElementById('vendors');vl.innerHTML='';
+  const vmax=V.vend.length?V.vend[0].imp:1;
+  V.vend.forEach((v,i)=>{vl.innerHTML+=`<div class="li"><span class="rank">${i+1}</span><span class="lname">${v.nm}</span><span class="lbar"><i style="width:${100*v.imp/vmax}%"></i></span><span class="lval">${fmtUSD(v.imp)}</span></div>`;});
+
+  // funnel
+  const openN=V.inv.OPEN||0,noneN=V.inv.None||0,tot=V.cnt;
+  const fn=document.getElementById('funnel');fn.innerHTML='';
+  [['Detected',tot],['In progress',openN],['Resolved',noneN]].forEach(s=>{fn.innerHTML+=`<div class="fstep"><div class="fl">${s[0]}</div><div class="ft"><i style="width:${tot?100*s[1]/tot:0}%"></i></div><div class="fn">${s[1]>=1000?(s[1]/1000).toFixed(1)+'k':s[1]}</div></div>`;});
+
+  // ageing (proportional to scope)
+  const AGE={'0-30':4137,'31-60':5463,'61-90':4918,'90+':11282};const scaleA=tot/29451;
+  const ab=document.getElementById('agebars');ab.innerHTML='';const ao=['0-30','31-60','61-90','90+'];
+  const amax=Math.max(...ao.map(k=>AGE[k]));
+  ao.forEach(k=>{const val=Math.round(AGE[k]*scaleA);ab.innerHTML+=`<div class="age-r"><div class="al">${k}d</div><div class="at"><i style="width:${100*AGE[k]/amax}%"></i></div><div class="an">${val.toLocaleString()}</div></div>`;});
+
+  drawDonut(V.sev);
+
+  // cf mini
+  const cfm=document.getElementById('cfmini');cfm.innerHTML='';
+  const cfcol={INCONCLUSIVE:'#9DB2C9',ABSENT:'#C0392B',OPERATING:'#E67E22'};const cflab={INCONCLUSIVE:'Inconclusive',ABSENT:'Absent',OPERATING:'Operating'};
+  const cfarr=Object.entries(V.cf).sort((a,b)=>b[1]-a[1]);const cfmax=cfarr[0][1];
+  cfarr.forEach(([k,v])=>{cfm.innerHTML+=`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:4px"><span>${cflab[k]||k}</span><span class="mono" style="color:var(--mut)">${v.toLocaleString()}</span></div><div style="height:8px;background:#EEF2F6;border-radius:4px;overflow:hidden"><i style="display:block;height:100%;width:${100*v/cfmax}%;background:${cfcol[k]||'#888'}"></i></div></div>`;});
+  if(typeof renderMulti==="function")renderMulti();
+}
+
+function _endRender(){renderMulti();}
+function drawTrend(t){const svg=document.getElementById('trendchart');svg.innerHTML='';
+  const W=1000,H=230,pad=34,padL=54;
+  const maxV=Math.max(1,...t.map(d=>Math.max(d.paid,coOnly?0:d.open)))*1.1;
+  const x=i=>padL+i*(W-padL-pad)/(t.length-1);const y=v=>H-pad-v/maxV*(H-pad-18);
+  for(let g=0;g<=4;g++){const yy=18+g*(H-pad-18)/4;
+    svg.innerHTML+=`<line x1="${padL}" y1="${yy}" x2="${W-pad}" y2="${yy}" stroke="#EEF2F6"/>`;
+    svg.innerHTML+=`<text x="${padL-8}" y="${yy+4}" text-anchor="end" font-size="10" fill="#9DB2C9" font-family="DM Mono">${fmtUSD(maxV*(1-g/4))}</text>`;}
+  const line=(k,col,fill)=>{let pts=t.map((d,i)=>`${x(i)},${y(d[k])}`).join(' ');
+    if(fill)svg.innerHTML+=`<polygon points="${padL},${H-pad} ${pts} ${W-pad},${H-pad}" fill="${col}" opacity="0.08"/>`;
+    svg.innerHTML+=`<polyline points="${pts}" fill="none" stroke="${col}" stroke-width="2.5"/>`;
+    t.forEach((d,i)=>svg.innerHTML+=`<circle cx="${x(i)}" cy="${y(d[k])}" r="3.5" fill="${col}"/>`);};
+  line('paid','#2E5A8A',true);if(!coOnly)line('open','#6699CC',false);
+  const ml=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  t.forEach((d,i)=>{const mo=+d.m.split('-')[1];svg.innerHTML+=`<text x="${x(i)}" y="${H-14}" text-anchor="middle" font-size="10" fill="#5B6B7E">${ml[mo]}</text>`;});
+  svg.innerHTML+=`<rect x="${W-pad-150}" y="6" width="10" height="10" fill="#2E5A8A"/><text x="${W-pad-135}" y="15" font-size="10.5" fill="#5B6B7E">Cash Out</text>`;
+  if(!coOnly)svg.innerHTML+=`<rect x="${W-pad-70}" y="6" width="10" height="10" fill="#6699CC"/><text x="${W-pad-55}" y="15" font-size="10.5" fill="#5B6B7E">Open exp.</text>`;}
+
+function drawDonut(sev){const svg=document.getElementById('donut');svg.innerHTML='';const order=['Critical','High','Medium','Low'];
+  const tot=order.reduce((a,s)=>a+(sev[s]||0),0)||1;let off=0;const leg=document.getElementById('sevlegend');leg.innerHTML='';
+  order.forEach(s=>{const v=sev[s]||0;const p=100*v/tot;
+    if(p>0)svg.innerHTML+=`<circle r="15.9" cx="21" cy="21" fill="transparent" stroke="${SEVCOL[s]}" stroke-width="6" stroke-dasharray="${p} ${100-p}" stroke-dashoffset="${25-off}"/>`;off+=p;
+    leg.innerHTML+=`<div class="mini"><i class="dot" style="background:${SEVCOL[s]}"></i> <b>${p.toFixed(0)}%</b> ${s}</div>`;});}
+
+function toggleCO(){coOnly=!coOnly;document.getElementById('coToggle').classList.toggle('on',coOnly);render();}
+function onRule(){curRule=document.getElementById('ruleSel').value;syncScope();render();}
+function setRule(n){curRule=n;document.getElementById('ruleSel').value=n;syncScope();render();window.scrollTo({top:0,behavior:'smooth'});}
+function clearRule(){curRule='';document.getElementById('ruleSel').value='';syncScope();render();}
+function syncScope(){const st=document.getElementById('scopeTag');if(curRule){st.classList.add('on');document.getElementById('scopeName').textContent='Scoped: '+curRule;}else st.classList.remove('on');}
+
+function openDrawer(type){const t=document.getElementById('dr-title'),n=document.getElementById('dr-num'),s=document.getElementById('dr-sub'),body=document.getElementById('dr-body');const V=view();
+  if(type==='cashout'){t.textContent='Cash Out breakdown';n.textContent=fmtUSD(V.paid);s.textContent='Realised outflow on flagged transactions';
+    const by=Object.entries(V.geo).map(([g,v])=>({n:g,v:v.paid})).sort((a,b)=>b.v-a.v);const gm=Math.max(...by.map(x=>x.v),1);
+    const fam=Object.entries(V.fam).map(([f,v])=>({n:f,v:v.imp})).sort((a,b)=>b.v-a.v);const fm=Math.max(...fam.map(x=>x.v),1);
+    body.innerHTML=sect('By region',by,gm)+sect('By risk family',fam,fm)+`<div class="warnbox" style="margin-top:4px"><b>Note:</b> region split is synthetic. Cash Out is raw paid rupees, USD-converted.</div>`;
+  }else if(type==='entity'){t.textContent='Entity detail';n.textContent=Object.keys(V.ent).length+' entities';s.textContent='Ranked by total impact';
+    const rows=Object.entries(V.ent).map(([e,v])=>({n:e+' \u00B7 '+v.cnt.toLocaleString()+' anomalies',v:v.imp})).sort((a,b)=>b.v-a.v);const m=Math.max(...rows.map(x=>x.v),1);
+    body.innerHTML=sect('Total impact by entity',rows,m)+sect('Cash Out by entity',Object.entries(V.ent).map(([e,v])=>({n:e,v:v.paid})).sort((a,b)=>b.v-a.v),Math.max(...Object.values(V.ent).map(v=>v.paid),1));}
+  document.getElementById('drawer').classList.add('open');document.getElementById('drawerbg').classList.add('open');}
+function sect(title,rows,max){let h=`<div class="dbreak"><h4>${title}</h4>`;rows.forEach(r=>{h+=`<div class="dbrow"><span class="dbn">${r.n}</span><span class="dbt"><i style="width:${100*r.v/max}%"></i></span><span class="dbv">${fmtUSD(r.v)}</span></div>`;});return h+'</div>';}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('drawerbg').classList.remove('open');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer();});
+
+function renderAI(data,live){
+  const ins=document.getElementById('aiInsights');ins.innerHTML='';
+  data.insights.forEach((x,i)=>{
+    const hasBody=x.b&&x.b.length>0;
+    ins.innerHTML+='<div class="ai-ins'+(hasBody?' expandable':'')+'" onclick="this.classList.toggle(\'open\')">'+
+      '<div class="it">'+(x.theme?'<span class="theme">'+x.theme+'</span>':'')+x.t+(hasBody?'<span class="chev">&#9662;</span>':'')+'</div>'+
+      (hasBody?'<div class="ib">'+x.b+'</div>':'')+'</div>';
+  });
+  const urg=document.getElementById('aiUrgent');urg.innerHTML='';
+  data.urgent.forEach((x,i)=>{urg.innerHTML+='<div class="ai-urg"><div class="un">'+(i+1)+'</div><div class="ut">'+x.t+'</div><div class="uv">'+x.v+'</div></div>';});
+  const act=document.getElementById('aiActions');act.innerHTML='';
+  data.actions.forEach(x=>{act.innerHTML+='<div class="ai-act"><div class="ac">&#9656;</div><div class="at">'+x.t+'</div></div>';});
+  document.getElementById('aiFoot').textContent = live ? ('Live AI inference \u00b7 '+new Date().toLocaleTimeString()) : 'Pre-computed analysis \u00b7 click Regenerate for live inference.';
+}
+function buildAIPrompt(){
+  const V=view();
+  const rr=Object.entries(RAW.rules).map(([n,s])=>({n,imp:s.imp,unpaid:s.unpaid,cnt:s.cnt,open:s.open,fam:s.fam,pnl:s.pnl})).sort((a,b)=>b.imp-a.imp).slice(0,8);
+  const pnl=Object.entries(RAW.rules).filter(([n,s])=>s.pnl).map(([n,s])=>({n,imp:s.imp,cnt:s.cnt}));
+  const cf={};Object.values(RAW.rules).forEach(s=>{for(const k in s.cf)cf[k]=(cf[k]||0)+s.cf[k];});
+  const a=RAW.assurance;
+  const payload={
+    exposure:{identified:V.imp,cashout:V.paid,open_stoppable:V.open,critical_high:(V.sev.Critical||0)+(V.sev.High||0)},
+    pnl:{total:RAW.headline.pnl_total,rules:pnl},
+    control_environment:{failure_modes:cf,note:"most anomalies inconclusive until Xa/Ia enrichment"},
+    data_reliability:{score:a.score,rating:a.rating,pk_integrity:a.pk_integrity,vendor_null:a.vendor_null_pct,chain_linkage:a.chain_rate,criticals:a.criticals,highs:a.highs},
+    top_rules:rr,geography:V.geo
+  };
+  return "You are a risk-intelligence analyst briefing the CFO and audit committee of a listed company using fortifai (enterprise P2P risk platform). Data in USD.\n\nDATA:\n"+JSON.stringify(payload,null,1)+"\n\nProduce a board-grade briefing. Rules:\n- Frame losses as potential, never confirmed. Use Cash Out not financial loss.\n- CFO lens: SOX/control-certification liability, earnings/restatement risk, audit-readiness, cash preservation.\n- KEY INSIGHTS must be exactly these FOUR fixed themes in order, one each: (1) theme EXPOSURE, (2) theme CONTROL/SOX, (3) theme P&L, (4) theme DATA RELIABILITY. Each: a one-line headline (max 12 words, embed the key number) plus a 1-2 sentence body in CFO/audit language.\n- MOST URGENT: 3 rules by open stoppable exposure, name + amount only.\n- SUGGESTED ACTIONS: 3 imperative one-liners with amounts, tied to remediation ownership.\n\nRespond ONLY valid JSON, no markdown:\n{\"insights\":[{\"theme\":\"EXPOSURE\",\"t\":\"headline\",\"b\":\"body\"},{\"theme\":\"CONTROL/SOX\",\"t\":\"\",\"b\":\"\"},{\"theme\":\"P&L\",\"t\":\"\",\"b\":\"\"},{\"theme\":\"DATA RELIABILITY\",\"t\":\"\",\"b\":\"\"}],\"urgent\":[{\"t\":\"rule\",\"v\":\"$XXM\"}],\"actions\":[{\"t\":\"action\"}]}";
+}
+async function genAI(){
+  const btn=document.getElementById('aiRegen'),txt=document.getElementById('aiRegenTxt'),grid=document.getElementById('aiGrid');
+  btn.disabled=true;txt.textContent='Analysing...';grid.classList.add('ai-loading');
+  try{
+    const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1200,messages:[{role:"user",content:buildAIPrompt()}]})});
+    const data=await resp.json();
+    let text=data.content.filter(i=>i.type==="text").map(i=>i.text).join("").replace(/```json|```/g,"").trim();
+    renderAI(JSON.parse(text),true);
+  }catch(e){console.error("AI error",e);renderAI(RAW.ai_fallback,false);
+    document.getElementById('aiFoot').textContent='Live inference unavailable here \u2014 showing pre-computed analysis.';
+  }finally{btn.disabled=false;txt.textContent='Regenerate';grid.classList.remove('ai-loading');}
+}
+
+
+
+let vendorMode='count';
+function setVendorMode(m){vendorMode=m;document.getElementById('segCount').classList.toggle('on',m==='count');document.getElementById('segBlend').classList.toggle('on',m==='blend');renderMulti();}
+function renderMulti(){
+  const mv=RAW.vendors_multi;if(!mv)return;
+  const panel=document.getElementById('multiPanel');
+  // grey out in single-rule scope
+  if(curRule){panel.style.opacity='.5';document.getElementById('multiList').innerHTML='<div style="color:var(--mut);font-size:12.5px;padding:14px 0">Breadth-of-violation is only meaningful across all rules. Clear the rule filter to view.</div>';document.getElementById('multiNote').innerHTML='';return;}
+  panel.style.opacity='1';
+  const list=(vendorMode==='count'?mv.by_count:mv.by_blend);
+  const el=document.getElementById('multiList');el.innerHTML='';
+  list.forEach((x,i)=>{
+    const chips=Array.from({length:x.rc}).map(()=>'<span class="mv-chip"></span>').join('');
+    const score=vendorMode==='blend'?'<span class="mv-score">'+x.blend+'</span>':'';
+    el.innerHTML+='<div class="mv-row"><span class="mv-rank">'+(i+1)+'</span><span class="mv-name" title="'+x.name+'">'+x.name+'</span><span class="mv-badge">'+x.rc+' rules</span><span class="mv-chips">'+chips+'</span><span class="mv-val">'+fmtUSD(x.imp)+'</span>'+score+'</div>';
+  });
+  const modeTxt=vendorMode==='count'?'Ranked by number of distinct rules violated (pattern breadth).':'Ranked by blended score: 60% rule-count + 40% exposure (investigation priority). Weighting is an SME judgement, not an objective measure.';
+  document.getElementById('multiNote').innerHTML='<b>'+mv.total_multi.toLocaleString()+'</b> vendors trip 2+ distinct rules. '+modeTxt+' Vendor attribution excludes the '+RAW.assurance.vendor_null_pct+' of records with null vendor_id.';
+}
+
+function renderAssurance(){
+  const a=RAW.assurance;if(!a)return;
+  document.getElementById('asRating').textContent=a.score+'% \u00b7 '+a.rating;
+  document.getElementById('asSub').textContent='Data period '+fmtDate(a.earliest)+' \u2013 '+fmtDate(a.latest)+' \u00b7 '+a.records+' records \u00b7 '+a.tables+' tables \u00b7 '+a.company_codes+' company codes \u00b7 last validated '+fmtDate(a.validated);
+  const tiles=[
+    {l:'Data quality score',v:a.score+'%',s:a.rating},
+    {l:'PK integrity',v:a.pk_integrity+'%',s:a.tables+' tables, no dup keys'},
+    {l:'Records analysed',v:a.records,s:a.tables+' tables \u00b7 '+a.company_codes+' company codes'},
+    {l:'Data period',v:'11 mo',s:fmtDate(a.earliest)+' \u2013 '+fmtDate(a.latest)},
+    {l:'Last validated',v:fmtDate(a.validated),s:'reliability run'},
+  ];
+  document.getElementById('asTiles').innerHTML=tiles.map(t=>`<div class="at-tile"><div class="atl">${t.l}</div><div class="atv">${t.v}</div><div class="ats">${t.s}</div></div>`).join('');
+  const bcol=(s)=>s>=90?'#4A9D6E':s>=75?'#E0A800':'#C0392B';
+  document.getElementById('asBreak').innerHTML=a.breakdown.map(b=>`<div class="ab-item"><div class="abn"><span>${b.label}</span><b>${Math.round(b.score)}%</b></div><div class="abt"><i style="width:${b.score}%;background:${bcol(b.score)}"></i></div></div>`).join('');
+  document.getElementById('asDisc').innerHTML='<b>Known gaps (disclosed for audit):</b> vendor_id is null on '+a.vendor_null_pct+' of purchase-header records ('+a.vendor_null_records.toLocaleString()+' records cannot be joined to a vendor), so vendor-level exposure is understated. P2P chain linkage (PO item \u2192 invoice item) resolves at '+a.chain_rate+'%, which bounds full 3-way-match traceability. Detection coverage is unaffected.';
+}
+function fmtDate(s){if(!s)return '\u2014';const d=new Date(s);return d.toLocaleDateString('en-US',{day:'numeric',month:'short',year:'numeric'});}
+
+renderAI(RAW.ai_fallback,false);
+renderAssurance();
+render();
+renderMulti();
+</script></body></html>

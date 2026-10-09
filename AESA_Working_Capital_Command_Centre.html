@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AESA — Working Capital Command Centre</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* official fortifai tokens */
+  --navy:#0D1520;--deep-blue:#2E5A8A;--brand-blue:#6699CC;--steel:#99AFBC;
+  --crit:#C62828;--crit-bg:#FDECEC;--crit-tx:#8B1A1A;
+  --high:#E65100;--high-bg:#FFF3E0;--high-tx:#6D3B00;
+  --med:#98AA3A;--med-bg:#F5F7DC;--med-tx:#3A4400;
+  --low:#6699CC;--low-bg:#E8F0F8;--low-tx:#1A3A5C;
+  --norisk:#6B7280;--norisk-bg:#F2F4F7;--norisk-tx:#374151;
+  --bg:#F2F4F7;--card:#fff;--border:#E5E7EB;
+  --ch:#333333;--text:#374151;--mid:#6B7280;--lite:#9CA3AF;
+  --ramp1:#EDEFF3;--ramp2:#AEB6C2;--ramp3:#6B7686;--ramp4:#3F4A5A;
+}
+body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-height:100vh;font-family:'DM Sans',sans-serif;-webkit-font-smoothing:antialiased}
+.mono{font-family:'DM Mono',monospace}
+
+/* TOPBAR */
+.topbar{background:var(--navy);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:50px;position:sticky;top:0;z-index:300}
+.tb-brand{display:flex;align-items:center;gap:8px}
+.tb-logo{height:22px;padding:0 8px;background:var(--brand-blue);border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:11px;letter-spacing:.5px;color:#fff;font-family:'DM Mono',monospace}
+.tb-title{color:#fff;font-weight:600;font-size:13px}
+.tb-sub{color:rgba(255,255,255,.45);font-size:11px;margin-left:6px}
+.tb-right{display:flex;align-items:center;gap:10px}
+.curr-tog{display:flex;border:1px solid rgba(255,255,255,.25);border-radius:5px;overflow:hidden}
+.curr-tog button{background:transparent;border:none;color:rgba(255,255,255,.6);padding:4px 10px;cursor:pointer;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all .15s}
+.curr-tog button.active{background:var(--brand-blue);color:#fff}
+.badge-live{background:rgba(152,170,58,.25);color:#C6D96B;border:1px solid rgba(152,170,58,.4);padding:2px 7px;border-radius:4px;font-size:10px;font-weight:500;font-family:'DM Mono',monospace}
+
+/* SCORE BAR */
+.sbar{background:#fff;border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.sring{position:relative;flex-shrink:0}
+.sring svg{transform:rotate(-90deg)}
+.snum{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:18px;font-weight:600;color:var(--navy);display:flex;flex-direction:column;align-items:center;line-height:1;font-family:'DM Mono',monospace}
+.snum small{font-size:9px;color:var(--mid);font-weight:400;font-family:'DM Sans',sans-serif}
+.sdiv{width:1px;height:44px;background:var(--border);flex-shrink:0}
+.lever-sc{text-align:center;min-width:70px}
+.lever-sc .val{font-size:17px;font-weight:600;font-family:'DM Mono',monospace}
+.lever-sc .lbl{font-size:9px;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;margin-top:1px}
+.sopp{margin-left:auto;background:var(--navy);border-radius:8px;padding:10px 16px;color:#fff;text-align:right;flex-shrink:0}
+.sopp .ol{font-size:9px;opacity:.65;text-transform:uppercase;letter-spacing:.5px}
+.sopp .ov{font-size:20px;font-weight:600;font-family:'DM Mono',monospace}
+.sopp .os{font-size:9px;opacity:.65}
+
+/* TABS */
+.tabs{background:#fff;border-bottom:1px solid var(--border);padding:0 20px;display:flex;overflow-x:auto;position:sticky;top:50px;z-index:200}
+.tab{background:none;border:none;border-bottom:2px solid transparent;padding:10px 13px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;color:var(--lite);white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:6px}
+.tab:hover{color:var(--ch);background:var(--bg)}
+.tab.active{color:var(--deep-blue);font-weight:600;border-bottom-color:var(--deep-blue)}
+.tdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+.tc{display:none;padding:16px 20px 32px}
+.tc.active{display:block}
+
+/* METRIC CARDS */
+.mrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.mc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:11px 13px;border-left:3px solid var(--steel)}
+.mc.crit{border-left-color:var(--crit)}.mc.high{border-left-color:var(--high)}.mc.med{border-left-color:var(--med)}.mc.low{border-left-color:var(--low)}.mc.norisk{border-left-color:var(--norisk)}
+.mc-lbl{font-size:9px;color:var(--mid);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.mc-val{font-size:20px;font-weight:600;color:var(--ch);line-height:1.2;font-family:'DM Mono',monospace}
+.mc-sub{font-size:10px;color:var(--mid);margin-top:3px}
+.mc-delta{font-size:10px;font-weight:500;margin-top:3px}
+.dup{color:var(--crit)}.ddn{color:var(--med-tx)}.dflat{color:var(--mid)}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.g23{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+@media(max-width:860px){.g2,.g23,.g3{grid-template-columns:1fr}}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:13px;margin-bottom:12px}
+.card-title{font-size:11px;font-weight:600;color:var(--ch);text-transform:uppercase;letter-spacing:.5px;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px}
+.amt-badge{font-size:10px;background:var(--low-bg);color:var(--deep-blue);padding:2px 7px;border-radius:3px;font-weight:600;font-family:'DM Mono',monospace;text-transform:none}
+.chart-wrap{position:relative;width:100%}
+
+/* TABLES */
+.stable{overflow-x:auto;border-radius:6px;border:1px solid var(--border)}
+.stable table{width:100%;border-collapse:collapse;font-size:12px}
+.stable table th{background:var(--bg);color:var(--mid);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.4px;padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+.stable table td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+.stable table tr:last-child td{border-bottom:none}
+.stable table tbody tr:nth-child(even) td{background:#FAFBFC}
+.stable table tr:hover td{background:#F8FAFF}
+.num{text-align:right;font-family:'DM Mono',monospace}
+.tfoot td{background:var(--bg)!important;font-weight:600;border-top:2px solid var(--border)}
+
+/* BADGES (severity only) */
+.badge{padding:2px 7px;border-radius:3px;font-size:10px;font-weight:600;font-family:'DM Mono',monospace;white-space:nowrap}
+.b-crit{background:var(--crit-bg);color:var(--crit-tx)}
+.b-high{background:var(--high-bg);color:var(--high-tx)}
+.b-med{background:var(--med-bg);color:var(--med-tx)}
+.b-low{background:var(--low-bg);color:var(--low-tx)}
+.b-grey{background:var(--norisk-bg);color:var(--norisk-tx)}
+/* geo/group code badge (neutral) */
+.codebadge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.3px;color:var(--mid);background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:0 5px;line-height:17px;font-family:'DM Mono',monospace}
+
+/* HBARS */
+.hbar-r{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.hbar-l{width:132px;font-size:11px;color:var(--text);flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar-t{flex:1;background:var(--bg);border-radius:2px;height:8px;overflow:hidden}
+.hbar-f{height:8px;border-radius:2px}
+.hbar-v{width:74px;text-align:right;font-size:11px;font-weight:600;font-family:'DM Mono',monospace;color:var(--ch);flex-shrink:0}
+.hbar-note{font-size:10px;color:var(--mid);margin-top:9px;padding-top:8px;border-top:1px solid var(--border);line-height:1.5}
+
+/* AI PANEL (per-lever streaming) — solid navy, not gradient */
+.ai-panel{background:var(--navy);border-radius:8px;padding:14px 16px;color:#fff;margin-bottom:12px}
+.ai-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ai-badge{font-size:9px;font-weight:600;letter-spacing:.6px;color:#C6D96B;background:rgba(152,170,58,.2);border:1px solid rgba(152,170,58,.35);padding:2px 7px;border-radius:3px;font-family:'DM Mono',monospace}
+.ai-title{font-size:12px;font-weight:600;color:#fff}
+.ai-intro{font-size:11px;line-height:1.6;color:rgba(255,255,255,.72);margin-bottom:10px;max-width:92ch}
+.ai-btns{display:flex;gap:6px;flex-wrap:wrap}
+.ai-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:5px 11px;border-radius:5px;cursor:pointer;font-size:11px;font-family:'DM Sans',sans-serif;font-weight:500;transition:background .15s}
+.ai-btn:hover{background:rgba(102,153,204,.35);border-color:rgba(102,153,204,.5)}
+.ai-out{background:rgba(0,0,0,.22);border-radius:6px;padding:0;margin-top:10px;display:none}
+.ai-out.show{display:block;padding:12px 14px}
+.ai-out-body{font-size:11.5px;line-height:1.7;color:rgba(255,255,255,.9);white-space:pre-wrap}
+.ai-typing::after{content:'▋';animation:blink .7s infinite;color:#C6D96B}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.ai-sql{margin-top:10px;border:1px solid rgba(255,255,255,.14);border-radius:6px;overflow:hidden}
+.ai-sql-h{display:flex;align-items:center;gap:8px;padding:7px 11px;background:rgba(255,255,255,.06);cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7)}
+.ai-sql-h .tag{margin-left:auto;font-size:8.5px;background:rgba(102,153,204,.25);color:#bcd6f0;border:1px solid rgba(102,153,204,.4);padding:1px 6px;border-radius:4px}
+.ai-sql-h .cx{font-size:8px;transition:transform .15s}
+.ai-sql.open .ai-sql-h .cx{transform:rotate(90deg)}
+.ai-sql pre{display:none;padding:11px 13px;font-family:'DM Mono',monospace;font-size:10px;color:#9fd4f5;background:#0a0f16;white-space:pre;overflow-x:auto;line-height:1.6}
+.ai-sql.open pre{display:block}
+
+/* ACTION ITEMS */
+.action-item{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:12px 14px;margin-bottom:8px;border-left:3px solid var(--steel)}
+.action-item.crit{border-left-color:var(--crit)}.action-item.high{border-left-color:var(--high)}.action-item.med{border-left-color:var(--med)}.action-item.low{border-left-color:var(--low)}
+.ai-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.ai-left{flex:1}
+.act-title{font-size:13px;font-weight:600;color:var(--ch);margin-bottom:3px}
+.act-desc{font-size:11.5px;color:var(--mid);line-height:1.55}
+.act-meta{display:flex;gap:7px;margin-top:7px;flex-wrap:wrap;align-items:center}
+.ai-right{text-align:right;flex-shrink:0}
+.act-val{font-size:15px;font-weight:600;color:var(--navy);font-family:'DM Mono',monospace}
+.act-who{font-size:9px;color:var(--mid)}
+.owner{background:var(--low-bg);color:var(--deep-blue);padding:2px 7px;border-radius:10px;font-size:10px;font-weight:500}
+.sla{font-size:10px;color:var(--mid)}
+.act-ai-line{margin-top:9px;padding-top:9px;border-top:1px solid var(--border)}
+.act-ai-btn{background:none;border:1px solid var(--border);color:var(--deep-blue);padding:4px 11px;border-radius:20px;font-size:10.5px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s}
+.act-ai-btn:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+.act-ai-out{margin-top:9px;font-size:11.5px;line-height:1.65;color:var(--text);background:var(--bg);border-radius:6px;padding:0;display:none}
+.act-ai-out.show{display:block;padding:11px 13px}
+.act-ai-out strong{color:var(--deep-blue)}
+
+.sec-div{font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.7px;margin:16px 0 9px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+
+/* quiet note (not a callout box) */
+.note-quiet{font-size:11px;color:var(--mid);line-height:1.5;margin-bottom:12px}
+.note-quiet strong{color:var(--text);font-weight:600}
+.note-quiet code{font-family:'DM Mono',monospace;font-size:10px;background:var(--bg);padding:1px 4px;border-radius:3px;color:var(--deep-blue)}
+
+/* CCC flow */
+.ccc-flow{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.ccc-seg{display:flex;align-items:center;gap:10px}
+.ccc-seg-l{width:120px;font-size:11px;color:var(--text);text-align:right;flex-shrink:0}
+.ccc-seg-t{flex:1;background:var(--bg);border-radius:3px;height:24px;overflow:hidden}
+.ccc-seg-f{height:24px;display:flex;align-items:center;padding:0 9px;font-size:11px;font-weight:600;color:#fff;font-family:'DM Mono',monospace;white-space:nowrap}
+.ccc-seg-r{width:46px;text-align:right;font-size:11px;font-family:'DM Mono',monospace;flex-shrink:0;font-weight:600}
+
+/* simulator */
+.sim-row{margin-bottom:13px}
+.sim-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.sim-lbl{font-size:11.5px;color:var(--text);font-weight:500}
+.sim-val{font-size:12px;font-weight:600;color:var(--deep-blue);font-family:'DM Mono',monospace}
+input[type=range]{width:100%;height:4px;-webkit-appearance:none;appearance:none;background:var(--bg);border-radius:3px;cursor:pointer;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--deep-blue);cursor:pointer;border:2px solid var(--card);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--deep-blue);cursor:pointer;border:2px solid var(--card)}
+.sim-out{background:var(--navy);border-radius:8px;padding:14px;color:#fff;text-align:center;margin-top:14px}
+.sim-out-l{font-size:9px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px}
+.sim-out-v{font-size:26px;font-weight:600;margin:3px 0;font-family:'DM Mono',monospace}
+.sim-out-s{font-size:10.5px;color:rgba(255,255,255,.65)}
+.sim-assume{font-size:10px;color:var(--mid);line-height:1.55;margin-top:11px}
+
+/* savings bar */
+.savings-bar{display:flex;height:30px;border-radius:5px;overflow:hidden;margin:10px 0}
+.sb-seg{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff;transition:width .5s;font-family:'DM Mono',monospace}
+
+/* scorecard boxes */
+.sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
+.sc-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:13px;text-align:center}
+.sc-val{font-size:22px;font-weight:600;margin-bottom:2px;font-family:'DM Mono',monospace}
+.sc-lbl{font-size:9px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px}
+.sc-trend{font-size:10px;margin-top:3px}
+
+/* hub inputs */
+.hub-sel{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:3px 6px;font-size:10px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--text)}
+.hub-in{border:1px solid var(--border);border-radius:3px;padding:3px 6px;font-size:10px;font-family:'DM Mono',monospace}
+.hub-in-txt{border:1px solid var(--border);border-radius:3px;padding:3px 6px;font-size:10px;font-family:'DM Sans',sans-serif}
+
+/* methodology */
+.method-h{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px}
+.method-h .n{width:22px;height:22px;background:var(--deep-blue);color:#fff;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:'DM Mono',monospace;flex-shrink:0;font-weight:500}
+.method-body{font-size:11.5px;color:var(--text);line-height:1.75;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:13px;margin-bottom:16px}
+.method-body code{font-family:'DM Mono',monospace;background:var(--bg);padding:1px 4px;border-radius:3px;font-size:10px;color:var(--deep-blue)}
+.method-body ul{margin-left:16px;margin-top:5px}.method-body li{margin-bottom:4px}.method-body p{margin-bottom:8px}
+.formula-box{background:var(--low-bg);border:1px solid var(--low);border-radius:4px;padding:10px 13px;margin:8px 0;font-family:'DM Mono',monospace;font-size:10.5px;color:var(--deep-blue);line-height:1.7}
+.sql-box{background:var(--navy);border-radius:5px;padding:12px 14px;margin:8px 0;font-family:'DM Mono',monospace;font-size:10px;color:#dbe4ea;line-height:1.7;overflow-x:auto;white-space:pre}
+.sql-box .kw{color:#6699CC}.sql-box .fn{color:#C6D96B}.sql-box .st{color:#E89B6C}.sql-box .cm{color:#6B7686;font-style:italic}
+
+::-webkit-scrollbar{height:9px;width:9px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--ramp2);border-radius:5px}
+
+/* ASSISTANT (conversational, DM Sans, severity-neutral) */
+#as-fab{position:fixed;right:22px;bottom:22px;z-index:900;height:46px;padding:0 16px 0 13px;border-radius:24px;background:var(--navy);box-shadow:0 4px 16px rgba(13,21,32,.28);display:flex;align-items:center;gap:8px;cursor:pointer;border:1px solid rgba(255,255,255,.08);transition:transform .15s}
+#as-fab:hover{transform:translateY(-2px)}
+#as-fab .fi{width:24px;height:24px;border-radius:6px;background:var(--brand-blue);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;font-family:'DM Mono',monospace}
+#as-fab .ft{color:#fff;font-weight:600;font-size:12.5px}
+#as-ov{position:fixed;inset:0;z-index:950;background:rgba(13,21,32,.34);opacity:0;pointer-events:none;transition:opacity .2s}
+#as-ov.open{opacity:1;pointer-events:auto}
+#as-panel{position:fixed;right:0;top:0;bottom:0;z-index:960;width:470px;max-width:95vw;background:var(--bg);box-shadow:-8px 0 36px rgba(13,21,32,.2);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .26s cubic-bezier(.4,0,.2,1)}
+#as-panel.open{transform:translateX(0)}
+.as-hd{padding:15px 18px 13px;background:var(--navy);color:#fff;flex-shrink:0}
+.as-hd-top{display:flex;align-items:center;gap:10px}
+.as-hd-mark{height:28px;padding:0 10px;border-radius:7px;background:var(--brand-blue);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;letter-spacing:.5px;color:#fff;font-family:'DM Mono',monospace;flex:0 0 auto}
+.as-hd-name{font-weight:600;font-size:15px;line-height:1.1}
+.as-hd-sub{font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,.5);margin-top:2px}
+.as-hd-x{margin-left:auto;cursor:pointer;color:rgba(255,255,255,.5);font-size:21px;line-height:1;padding:2px 6px}
+.as-hd-x:hover{color:#fff}
+.as-gate{display:flex;align-items:center;gap:7px;margin-top:10px;font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,.5)}
+.as-gate .dot{width:6px;height:6px;border-radius:50%;background:var(--med)}
+.as-body{flex:1;overflow-y:auto;padding:16px 16px 6px}
+.as-welcome{padding:10px 4px}
+.as-welcome h3{font-size:16px;font-weight:600;color:var(--ch);margin-bottom:6px}
+.as-welcome p{font-size:12px;color:var(--mid);line-height:1.55;margin-bottom:14px}
+.as-chips{display:flex;flex-direction:column;gap:7px}
+.as-chip{text-align:left;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:10px 12px;font-size:12px;color:var(--text);cursor:pointer;transition:all .15s;line-height:1.4}
+.as-chip:hover{border-color:var(--deep-blue);background:#F8FAFF}
+.as-chip .ck{font-family:'DM Mono',monospace;font-size:9px;color:var(--deep-blue);letter-spacing:.3px;text-transform:uppercase;display:block;margin-bottom:3px}
+.as-msg{margin-bottom:14px;display:flex;gap:9px}
+.as-msg.user{justify-content:flex-end}
+.as-ava{height:22px;padding:0 7px;border-radius:7px;background:var(--brand-blue);flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;letter-spacing:.4px;color:#fff;font-family:'DM Mono',monospace;margin-top:2px}
+.as-bubble{max-width:88%;font-size:12.5px;line-height:1.55}
+.as-msg.user .as-bubble{background:var(--navy);color:#fff;padding:9px 12px;border-radius:11px 11px 3px 11px}
+.as-msg.bot .as-bubble{color:var(--text)}
+.as-ans{margin-bottom:6px}
+.as-ans strong{color:var(--ch);font-weight:600}
+.as-gq{margin:8px 0;border:1px solid var(--border);border-radius:7px;overflow:hidden;background:var(--card)}
+.as-gq-h{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg);cursor:pointer;font-family:'DM Mono',monospace;font-size:9.5px;color:var(--mid)}
+.as-gq-h .tag{margin-left:auto;font-size:8.5px;color:var(--deep-blue);background:var(--low-bg);border:1px solid #cfe0ef;padding:1px 6px;border-radius:4px}
+.as-gq-h .cx{font-size:8px;transition:transform .15s}
+.as-gq.open .as-gq-h .cx{transform:rotate(90deg)}
+.as-gq pre{display:none;padding:10px 12px;font-family:'DM Mono',monospace;font-size:10px;background:#0a0f16;color:#9fd4f5;white-space:pre-wrap;line-height:1.55}
+.as-gq.open pre{display:block}
+.as-tbl{width:100%;border-collapse:collapse;margin:7px 0;font-size:11px;border:1px solid var(--border);border-radius:7px;overflow:hidden}
+.as-tbl th{background:var(--navy);color:#dce6ee;font-weight:500;text-align:left;padding:5px 8px;font-size:9px;letter-spacing:.3px;text-transform:uppercase}
+.as-tbl td{padding:5px 8px;border-bottom:1px solid var(--border);color:var(--text)}
+.as-tbl td.num{text-align:right;font-family:'DM Mono',monospace}
+.as-tbl tr:nth-child(even) td{background:var(--bg)}
+.as-kpis{display:flex;gap:7px;margin:7px 0;flex-wrap:wrap}
+.as-kpi{flex:1;min-width:84px;border:1px solid var(--border);border-top:2px solid var(--deep-blue);border-radius:7px;padding:8px 9px;background:var(--card)}
+.as-kpi .v{font-family:'DM Mono',monospace;font-size:16px;font-weight:600;color:var(--navy);line-height:1}
+.as-kpi .l{font-size:8.5px;color:var(--mid);margin-top:3px;text-transform:uppercase;letter-spacing:.3px}
+.as-foot{padding:11px 16px 13px;border-top:1px solid var(--border);background:var(--card);flex-shrink:0}
+.as-inp{display:flex;align-items:flex-end;gap:8px;border:1px solid var(--border);border-radius:11px;padding:7px 7px 7px 13px;background:var(--card)}
+.as-inp:focus-within{border-color:var(--deep-blue);box-shadow:0 0 0 3px var(--low-bg)}
+.as-inp textarea{flex:1;border:none;outline:none;resize:none;font-family:'DM Sans',sans-serif;font-size:12.5px;color:var(--text);background:transparent;max-height:84px;line-height:1.4;padding:2px 0}
+.as-send{border:none;cursor:pointer;background:var(--navy);color:#fff;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;padding:8px 16px;border-radius:18px;transition:background .15s}
+.as-send:hover{background:#1a2636}
+.as-foot-note{text-align:center;font-family:'DM Mono',monospace;font-size:8.5px;color:var(--lite);margin-top:7px}
+.as-clear{cursor:pointer;color:var(--deep-blue);text-decoration:underline}
+.as-typing{display:flex;gap:4px;padding:3px 0}
+.as-typing span{width:6px;height:6px;border-radius:50%;background:var(--brand-blue);animation:asb 1.2s infinite}
+.as-typing span:nth-child(2){animation-delay:.15s}.as-typing span:nth-child(3){animation-delay:.3s}
+@keyframes asb{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">AESA</div>
+    <span class="tb-title">Working Capital Command Centre</span>
+    <span class="tb-sub">Acme International</span>
+  </div>
+  <div class="tb-right">
+    <span class="badge-live">● LIVE</span>
+    <div class="curr-tog">
+      <button id="btn-usd" class="active" onclick="setCurr('USD')">$ USD</button>
+      <button id="btn-inr" onclick="setCurr('INR')">₹ INR</button>
+    </div>
+    <span style="color:rgba(255,255,255,.4);font-size:10px;font-family:'DM Mono',monospace">FY2025–26 · P7</span>
+  </div>
+</div>
+
+<!-- SCORE BAR -->
+<div class="sbar">
+  <div class="sring">
+    <svg width="60" height="60" viewBox="0 0 60 60">
+      <circle cx="30" cy="30" r="25" fill="none" stroke="#E5E7EB" stroke-width="6"/>
+      <circle cx="30" cy="30" r="25" fill="none" stroke="#C62828" stroke-width="6" stroke-dasharray="157" stroke-dashoffset="55" stroke-linecap="round"/>
+    </svg>
+    <div class="snum">71<small>CCC days</small></div>
+  </div>
+  <div class="sdiv"></div>
+  <div class="lever-sc"><div class="val" style="color:var(--med-tx)">46</div><div class="lbl">DIO · inv</div></div>
+  <div class="lever-sc"><div class="val" style="color:var(--crit)">67</div><div class="lbl">DSO · AR</div></div>
+  <div class="lever-sc"><div class="val" style="color:var(--med-tx)">42</div><div class="lbl">DPO · AP</div></div>
+  <div class="sdiv"></div>
+  <div class="lever-sc"><div class="val" style="color:var(--ch)">+22</div><div class="lbl">DSO vs terms</div></div>
+  <div class="lever-sc"><div class="val" style="color:var(--ch)"><span class="cv" data-usd="$7.4M" data-inr="₹62 Cr">$7.4M</span></div><div class="lbl">per cycle day</div></div>
+  <div class="sopp">
+    <div class="ol">Releasable working capital</div>
+    <div class="ov cv" data-usd="$195M" data-inr="₹1,630 Cr">$195M</div>
+    <div class="os">receivables · payables · inventory</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" data-t="ov" onclick="tab('ov')"><span class="tdot" style="background:var(--deep-blue)"></span>Overview</button>
+  <button class="tab" data-t="ar" onclick="tab('ar')"><span class="tdot" style="background:var(--crit)"></span>Receivables · O2C</button>
+  <button class="tab" data-t="ap" onclick="tab('ap')"><span class="tdot" style="background:var(--high)"></span>Payables · P2P</button>
+  <button class="tab" data-t="inv" onclick="tab('inv')"><span class="tdot" style="background:var(--med)"></span>Inventory · MM</button>
+  <button class="tab" data-t="ccc" onclick="tab('ccc')"><span class="tdot" style="background:var(--low)"></span>Cash Cycle &amp; Simulator</button>
+  <button class="tab" data-t="hub" onclick="tab('hub')"><span class="tdot" style="background:var(--deep-blue)"></span>Actions Hub</button>
+  <button class="tab" data-t="meth" onclick="tab('meth')"><span class="tdot" style="background:var(--norisk)"></span>Methodology</button>
+</div>
+
+<!-- ═══ OVERVIEW ═══ -->
+<div id="tc-ov" class="tc active">
+  <p class="note-quiet"><strong>Acme International</strong> — diversified mining, pellet, steel, gases, shipping, wind &amp; aviation group. 18 company codes, single client <code>140</code>, Indian fiscal year (April = P1). This centre reads the O2C, P2P and Inventory schemas to quantify where cash is trapped in the cash conversion cycle. Figures are illustrative, computed on the Acme schema (<code>bsid/bsad</code>, <code>ekko/ekpo/rseg</code>, <code>matdoc</code>); live data is not connected in this prototype.</p>
+
+  <div class="mrow">
+    <div class="mc crit"><div class="mc-lbl">Receivables overdue</div><div class="mc-val cv" data-usd="$112M" data-inr="₹940 Cr">$112M</div><div class="mc-sub">DSO 67d vs ~45d terms</div><div class="mc-delta dup">▲ 22 days above terms</div></div>
+    <div class="mc high"><div class="mc-lbl">Payables leakage</div><div class="mc-val cv" data-usd="$45M" data-inr="₹380 Cr">$45M</div><div class="mc-sub">Variance + early-pay + maverick</div><div class="mc-delta dflat">recoverable annually</div></div>
+    <div class="mc med"><div class="mc-lbl">Slow &amp; non-moving stock</div><div class="mc-val cv" data-usd="$57M" data-inr="₹480 Cr">$57M</div><div class="mc-sub">No issue &gt;90d (MATDOC)</div><div class="mc-delta ddn">▼ 4% vs prior period</div></div>
+    <div class="mc low"><div class="mc-lbl">Disputed / short-paid</div><div class="mc-val cv" data-usd="$25M" data-inr="₹210 Cr">$25M</div><div class="mc-sub">Open credit-memo chains</div><div class="mc-delta dup">▲ 38 open items</div></div>
+    <div class="mc high"><div class="mc-lbl">GR/IR clearing gap</div><div class="mc-val cv" data-usd="$19M" data-inr="₹160 Cr">$19M</div><div class="mc-sub">GR posted, invoice awaited</div><div class="mc-delta dflat">EKBE vs RSEG</div></div>
+  </div>
+
+  <!-- AI panel: overview -->
+  <div class="ai-panel">
+    <div class="ai-hdr"><span class="ai-badge">AESA</span><span class="ai-title">Working capital intelligence</span></div>
+    <div class="ai-intro">AESA reads the AR subledger (BSID/BSAD), the P2P chain (EKKO/EKPO/RSEG/BSEG) and inventory movements (MATDOC) across all 18 company codes to locate trapped cash and quantify the release. Ask for the group summary, or open any lever below. Every analysis shows the governed query behind it.</div>
+    <div class="ai-btns">
+      <button class="ai-btn" onclick="runAI('ov-summary','ov-out')">Group working-capital summary</button>
+      <button class="ai-btn" onclick="runAI('ov-priority','ov-out')">Where is the biggest release?</button>
+      <button class="ai-btn" onclick="runAI('ov-cashvsebitda','ov-out')">Cash vs EBITDA — how they differ</button>
+    </div>
+    <div class="ai-out" id="ov-out"></div>
+  </div>
+
+  <div class="g23">
+    <div class="card"><div class="card-title">Cash conversion cycle — 6-period trend<span class="amt-badge">DIO · DSO · DPO days</span></div><div class="chart-wrap" style="height:230px"><canvas id="ov-ccc"></canvas></div></div>
+    <div class="card"><div class="card-title">Where cash is trapped<span class="amt-badge cv" data-usd="$195M" data-inr="₹1,630 Cr">$195M</span></div><div class="chart-wrap" style="height:230px"><canvas id="ov-split"></canvas></div></div>
+  </div>
+
+  <div class="g23">
+    <div class="card"><div class="card-title">Working capital health — 4 levers<span class="amt-badge">0–100 health score</span></div><div class="chart-wrap" style="height:280px"><canvas id="ov-radar"></canvas></div>
+      <div class="hbar-note">Each lever is scored 0–100 so higher always means healthier (days and ratios normalised to a common scale). Current vs a realistic near-term target.</div>
+    </div>
+    <div class="card"><div class="card-title">Lever health detail<span class="amt-badge">current → target</span></div>
+      <div class="hbar-r"><span class="hbar-l">Receivables (DSO)</span><div class="hbar-t"><div class="hbar-f" style="width:42%;background:var(--crit)"></div></div><span class="hbar-v">42 → 72</span></div>
+      <div class="hbar-r"><span class="hbar-l">Payables (DPO)</span><div class="hbar-t"><div class="hbar-f" style="width:64%;background:var(--med)"></div></div><span class="hbar-v">64 → 80</span></div>
+      <div class="hbar-r"><span class="hbar-l">Inventory (DIO)</span><div class="hbar-t"><div class="hbar-f" style="width:58%;background:var(--med)"></div></div><span class="hbar-v">58 → 78</span></div>
+      <div class="hbar-r"><span class="hbar-l">Collections / disputes</span><div class="hbar-t"><div class="hbar-f" style="width:48%;background:var(--high)"></div></div><span class="hbar-v">48 → 75</span></div>
+      <div style="margin-top:12px;padding-top:11px;border-top:1px solid var(--border);display:flex;align-items:baseline;justify-content:space-between">
+        <span style="font-size:11px;color:var(--mid)">Composite WC health</span>
+        <span style="font-size:20px;font-weight:600;font-family:'DM Mono',monospace;color:var(--high)">53<span style="font-size:11px;color:var(--mid);font-weight:400"> / 100</span></span>
+      </div>
+      <div class="hbar-note">Receivables is the weakest lever (DSO 22 days over terms) and the largest cash pool — the priority axis to move. Reaching target lifts composite health to ~76.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card"><div class="card-title">Receivables overdue by division<span class="amt-badge">SPART</span></div>
+      <div class="hbar-r"><span class="hbar-l">Pellet (9)</span><div class="hbar-t"><div class="hbar-f" style="width:82%;background:var(--crit)"></div></div><span class="hbar-v cv" data-usd="$41M" data-inr="₹340 Cr">$41M</span></div>
+      <div class="hbar-r"><span class="hbar-l">Iron Ore (1)</span><div class="hbar-t"><div class="hbar-f" style="width:58%;background:var(--high)"></div></div><span class="hbar-v cv" data-usd="$29M" data-inr="₹240 Cr">$29M</span></div>
+      <div class="hbar-r"><span class="hbar-l">Gases (3)</span><div class="hbar-t"><div class="hbar-f" style="width:36%;background:var(--high)"></div></div><span class="hbar-v cv" data-usd="$18M" data-inr="₹150 Cr">$18M</span></div>
+      <div class="hbar-r"><span class="hbar-l">Service (13)</span><div class="hbar-t"><div class="hbar-f" style="width:24%;background:var(--med)"></div></div><span class="hbar-v cv" data-usd="$12M" data-inr="₹100 Cr">$12M</span></div>
+      <div class="hbar-r"><span class="hbar-l">Wind (15)</span><div class="hbar-t"><div class="hbar-f" style="width:16%;background:var(--steel)"></div></div><span class="hbar-v cv" data-usd="$8M" data-inr="₹70 Cr">$8M</span></div>
+      <div class="hbar-note">Division from VBAK.division (SPART). Pellet &amp; Iron Ore carry 62% of overdue AR.</div>
+    </div>
+    <div class="card"><div class="card-title">Cash leakage — monthly by lever<span class="amt-badge">last 6 periods</span></div><div class="chart-wrap" style="height:200px"><canvas id="ov-leak"></canvas></div></div>
+  </div>
+
+  <!-- Concentration / top-driver pattern -->
+  <div class="card"><div class="card-title">Concentration analysis — where exposure clusters<span class="amt-badge" id="conc-badge">Pareto · top-driver</span></div>
+    <div class="g3" style="margin-bottom:0">
+      <div><div style="font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Receivables overdue</div><div class="chart-wrap" style="height:160px"><canvas id="conc-ar"></canvas></div><div id="conc-ar-n" style="font-size:10px;color:var(--mid);margin-top:7px;line-height:1.5"></div></div>
+      <div><div style="font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">AP price variance</div><div class="chart-wrap" style="height:160px"><canvas id="conc-ap"></canvas></div><div id="conc-ap-n" style="font-size:10px;color:var(--mid);margin-top:7px;line-height:1.5"></div></div>
+      <div><div style="font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Inventory value by plant</div><div class="chart-wrap" style="height:160px"><canvas id="conc-inv"></canvas></div><div id="conc-inv-n" style="font-size:10px;color:var(--mid);margin-top:7px;line-height:1.5"></div></div>
+    </div>
+    <div style="font-size:10px;color:var(--mid);margin-top:11px;padding-top:9px;border-top:1px solid var(--border);line-height:1.5">Each bar ranks entities by exposure; the overlaid line is the cumulative share. The callout is the computed <strong>80/20</strong> point — how few entities drive most of the exposure, so effort concentrates where the cash is.</div>
+  </div>
+
+  <!-- AI Patterns & Trends -->
+  <div class="ai-panel">
+    <div class="ai-hdr"><span class="ai-badge">AESA</span><span class="ai-title">Patterns &amp; trends</span></div>
+    <div class="ai-intro">Computed from the 6-period history by linear-trend regression and 2σ anomaly detection — not a model's guess. Velocity is the per-period slope; the forecast projects the next period with a confidence band; anomalies are points that break their own trend. The narrative layer (roadmap) reads these signals and explains them.</div>
+    <div class="g3" style="margin-bottom:0">
+      <div style="background:rgba(0,0,0,.22);border-radius:6px;padding:12px 13px">
+        <div style="font-size:9px;color:rgba(255,255,255,.5);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.5px">Velocity · DSO</div>
+        <div id="tr-vel" style="font-size:22px;font-weight:600;font-family:'DM Mono',monospace;color:#fff;margin:3px 0">—</div>
+        <div id="tr-vel-s" style="font-size:10px;color:rgba(255,255,255,.65);line-height:1.5">—</div>
+      </div>
+      <div style="background:rgba(0,0,0,.22);border-radius:6px;padding:12px 13px">
+        <div style="font-size:9px;color:rgba(255,255,255,.5);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.5px">Forecast · next period</div>
+        <div id="tr-fc" style="font-size:22px;font-weight:600;font-family:'DM Mono',monospace;color:#fff;margin:3px 0">—</div>
+        <div id="tr-fc-s" style="font-size:10px;color:rgba(255,255,255,.65);line-height:1.5">—</div>
+      </div>
+      <div style="background:rgba(0,0,0,.22);border-radius:6px;padding:12px 13px">
+        <div style="font-size:9px;color:rgba(255,255,255,.5);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.5px">Anomaly detected</div>
+        <div id="tr-an" style="font-size:22px;font-weight:600;font-family:'DM Mono',monospace;color:#C6D96B;margin:3px 0">—</div>
+        <div id="tr-an-s" style="font-size:10px;color:rgba(255,255,255,.65);line-height:1.5">—</div>
+      </div>
+    </div>
+    <div id="tr-brief" style="background:rgba(0,0,0,.22);border-radius:6px;padding:11px 13px;margin-top:10px;font-size:11.5px;line-height:1.65;color:rgba(255,255,255,.9)"></div>
+  </div>
+
+  <div class="card"><div class="card-title">Priority actions this period<span class="amt-badge">ranked by cash impact × ease</span></div>
+    <div class="stable"><table>
+      <thead><tr><th>Priority</th><th>Lever</th><th>Action</th><th class="num">Cash impact</th><th>SLA</th><th>Owner</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge b-crit">CRITICAL</span></td><td>Receivables</td><td>Escalate 3 pellet customers &gt;90 days overdue</td><td class="num cv" data-usd="$37M" data-inr="₹310 Cr">$37M</td><td>7 days</td><td><span class="owner">CFO · Collections</span></td><td class="mono" style="font-size:10px;color:var(--mid)">bsid</td></tr>
+        <tr><td><span class="badge b-high">HIGH</span></td><td>Payables</td><td>Recover invoice-over-PO price variance, 9 vendors</td><td class="num cv" data-usd="$17M" data-inr="₹140 Cr">$17M</td><td>15 days</td><td><span class="owner">AP Head</span></td><td class="mono" style="font-size:10px;color:var(--mid)">rseg · ekpo</td></tr>
+        <tr><td><span class="badge b-crit">CRITICAL</span></td><td>Payables</td><td>Hold FB60/FV60 maverick invoices pre-payment</td><td class="num cv" data-usd="$13M" data-inr="₹110 Cr">$13M</td><td>Immediate</td><td><span class="owner">CFO · Audit</span></td><td class="mono" style="font-size:10px;color:var(--mid)">bkpf</td></tr>
+        <tr><td><span class="badge b-med">MEDIUM</span></td><td>Inventory</td><td>Transfer non-moving spares between plants (STO)</td><td class="num cv" data-usd="$23M" data-inr="₹190 Cr">$23M</td><td>60 days</td><td><span class="owner">Supply Chain</span></td><td class="mono" style="font-size:10px;color:var(--mid)">matdoc</td></tr>
+        <tr><td><span class="badge b-low">WATCH</span></td><td>Receivables</td><td>Cancel unearned discounts, poor-paying accounts</td><td class="num cv" data-usd="$8M" data-inr="₹70 Cr">$8M</td><td>30 days</td><td><span class="owner">Sales Head</span></td><td class="mono" style="font-size:10px;color:var(--mid)">knvv · prcd</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ═══ RECEIVABLES ═══ -->
+<div id="tc-ar" class="tc">
+  <p class="note-quiet"><strong>Source.</strong> AR subledger open items <code>bsid</code> and cleared items <code>bsad</code>, joined to <code>kna1</code>/<code>knvv</code> for names, terms &amp; division. DSO and ageing on <code>net_due_date</code>; days-to-clear from <code>bsad.clearing_date − net_due_date</code>. Terms from <code>knvv.payment_terms_key</code> (Z007=45d, Z009=90d, Y004=30d). Credit-limit view is unavailable — <code>knkk</code> &amp; <code>knb5</code> are empty.</p>
+
+  <div class="mrow">
+    <div class="mc crit"><div class="mc-lbl">Total AR overdue</div><div class="mc-val cv" data-usd="$112M" data-inr="₹940 Cr">$112M</div><div class="mc-sub">DSO 67 days</div></div>
+    <div class="mc crit"><div class="mc-lbl">&gt;90 days</div><div class="mc-val cv" data-usd="$37M" data-inr="₹310 Cr">$37M</div><div class="mc-sub">Provision risk — 3 customers</div></div>
+    <div class="mc high"><div class="mc-lbl">Disputed / short-paid</div><div class="mc-val cv" data-usd="$25M" data-inr="₹210 Cr">$25M</div><div class="mc-sub">38 open credit-memo items</div></div>
+    <div class="mc low"><div class="mc-lbl">DSO vs terms gap</div><div class="mc-val">+22d</div><div class="mc-sub">weighted terms ~45d</div></div>
+    <div class="mc high"><div class="mc-lbl">Unearned discount</div><div class="mc-val cv" data-usd="$8M" data-inr="₹70 Cr">$8M</div><div class="mc-sub">given to &gt;60d payers</div></div>
+  </div>
+
+  <div class="ai-panel">
+    <div class="ai-hdr"><span class="ai-badge">AESA</span><span class="ai-title">Receivables intelligence</span></div>
+    <div class="ai-intro">Customer clearing behaviour (BSAD), open exposure (BSID), pricing conditions (PRCD_ELEMENTS) and sales-area terms (KNVV) analysed to surface collection, pricing and discount actions. Each answer shows the governed query it ran.</div>
+    <div class="ai-btns">
+      <button class="ai-btn" onclick="runAI('ar-esc','ar-out')">Critical overdue — collection plan</button>
+      <button class="ai-btn" onclick="runAI('ar-price','ar-out')">Price realignment candidates</button>
+      <button class="ai-btn" onclick="runAI('ar-disc','ar-out')">Cancel unearned discounts</button>
+      <button class="ai-btn" onclick="runAI('ar-dso','ar-out')">Early-pay offer to cut DSO</button>
+    </div>
+    <div class="ai-out" id="ar-out"></div>
+  </div>
+
+  <div class="g2">
+    <div class="card"><div class="card-title">AR ageing<span class="amt-badge">bsid · net_due_date</span></div><div class="chart-wrap" style="height:210px"><canvas id="ar-age"></canvas></div></div>
+    <div class="card"><div class="card-title">DSO vs payment terms<span class="amt-badge">6-period trend</span></div><div class="chart-wrap" style="height:210px"><canvas id="ar-dso-c"></canvas></div></div>
+  </div>
+
+  <div class="sec-div">Action items</div>
+  <div class="action-item crit">
+    <div class="ai-row">
+      <div class="ai-left"><div class="act-title">Escalate customers past 90 days — provision risk before year-end</div>
+        <div class="act-desc">Three pellet &amp; iron-ore customers hold $37M open beyond 90 days on 45-day terms (Z007). At Acme's March fiscal close (P12) these move into mandatory provisioning. Escalate to MD level; largest single exposure $15.8M, unresponsive 8 days.</div>
+        <div class="act-meta"><span class="badge b-crit">CRITICAL</span><span class="codebadge">bsid · kna1</span><span class="owner">CFO · Collections Head</span><span class="sla">SLA 7 days</span></div>
+        <div class="act-ai-line"><button class="act-ai-btn" onclick="actAI('a1','How should we sequence the collection calls, and what is the provisioning exposure if unresolved?')">Ask AESA how to action this</button><div class="act-ai-out" id="a1"></div></div>
+      </div>
+      <div class="ai-right"><div class="act-val cv" data-usd="$37M" data-inr="₹310 Cr">$37M</div><div class="act-who">recoverable</div></div>
+    </div>
+  </div>
+
+  <div class="card"><div class="card-title">Critical overdue customers<span class="amt-badge">bsid · &gt;60 days · client 140</span></div>
+    <div class="stable"><table>
+      <thead><tr><th>Customer</th><th>Name</th><th>Grp</th><th>Div</th><th>Terms</th><th class="num">Open value</th><th class="num">Days overdue</th><th>Last clearing</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">0010004821</td><td>Meridian Pellet Traders</td><td><span class="codebadge">C001</span></td><td>Pellet</td><td class="mono">Z007</td><td class="num cv" data-usd="$15.8M" data-inr="₹132 Cr">$15.8M</td><td class="num"><span class="badge b-crit">112</span></td><td>02-Jul-25</td><td><span class="badge b-crit">Escalate MD</span></td></tr>
+        <tr><td class="mono">0010007233</td><td>Cascade Steel &amp; Power</td><td><span class="codebadge">C001</span></td><td>Iron Ore</td><td class="mono">Z009</td><td class="num cv" data-usd="$11.7M" data-inr="₹98 Cr">$11.7M</td><td class="num"><span class="badge b-crit">96</span></td><td>18-Jun-25</td><td><span class="badge b-crit">Legal notice</span></td></tr>
+        <tr><td class="mono">0010011902</td><td>Summit Ferro Alloys</td><td><span class="codebadge">C001</span></td><td>Pellet</td><td class="mono">Z007</td><td class="num cv" data-usd="$9.7M" data-inr="₹81 Cr">$9.7M</td><td class="num"><span class="badge b-high">78</span></td><td>04-Aug-25</td><td><span class="badge b-high">Payment plan</span></td></tr>
+        <tr><td class="mono">0010003340</td><td>Harbor Cement Works</td><td><span class="codebadge">C001</span></td><td>Iron Ore</td><td class="mono">Y006</td><td class="num cv" data-usd="$7.6M" data-inr="₹64 Cr">$7.6M</td><td class="num"><span class="badge b-high">71</span></td><td>28-Jul-25</td><td><span class="badge b-high">Reminder + hold</span></td></tr>
+        <tr><td class="mono">0010009118</td><td>Vertex Gases Pvt Ltd</td><td><span class="codebadge">C001</span></td><td>Gases</td><td class="mono">Z006</td><td class="num cv" data-usd="$5.9M" data-inr="₹49 Cr">$5.9M</td><td class="num"><span class="badge b-high">64</span></td><td>11-Aug-25</td><td><span class="badge b-low">Dispute review</span></td></tr>
+      </tbody>
+      <tfoot><tr class="tfoot"><td colspan="5">Top 5 of 3 critical + 14 high</td><td class="num cv" data-usd="$50.7M" data-inr="₹424 Cr">$50.7M</td><td colspan="3"></td></tr></tfoot>
+    </table></div>
+  </div>
+
+  <div class="action-item low">
+    <div class="ai-row">
+      <div class="ai-left"><div class="act-title">Realign prices on under-contracted customers</div>
+        <div class="act-desc">Pricing conditions (PRCD_ELEMENTS) show 8 customers on rates set &gt;24 months ago, now 8–21% below current realisation for the same material and division. Phase increases at renewal — largest is a pellet account at $50/MT vs $61/MT realised elsewhere.</div>
+        <div class="act-meta"><span class="badge b-low">REVENUE UPLIFT</span><span class="codebadge">prcd · knvv</span><span class="owner">Sales Head · CFO</span><span class="sla">at renewal</span></div>
+        <div class="act-ai-line"><button class="act-ai-btn" onclick="actAI('a2','Which customers do we approach first and what target price should we set?')">Ask AESA how to action this</button><div class="act-ai-out" id="a2"></div></div>
+      </div>
+      <div class="ai-right"><div class="act-val cv" data-usd="$23M" data-inr="₹190 Cr">$23M</div><div class="act-who">annual uplift</div></div>
+    </div>
+  </div>
+
+  <div class="action-item high">
+    <div class="ai-row">
+      <div class="ai-left"><div class="act-title">Cancel discounts to persistently late payers</div>
+        <div class="act-desc">11 customers receive standing cash/trade discounts (PRCD_ELEMENTS) yet clear on average &gt;60 days — the discount was for prompt payment never delivered. Removing or capping recovers $8M with low volume risk.</div>
+        <div class="act-meta"><span class="badge b-high">COMMERCIAL</span><span class="codebadge">bsad · prcd</span><span class="owner">Sales Head · Collections</span><span class="sla">30 days</span></div>
+        <div class="act-ai-line"><button class="act-ai-btn" onclick="actAI('a3','Which accounts should be cancelled outright versus reduced, and what is the volume risk?')">Ask AESA how to action this</button><div class="act-ai-out" id="a3"></div></div>
+      </div>
+      <div class="ai-right"><div class="act-val cv" data-usd="$8M" data-inr="₹70 Cr">$8M</div><div class="act-who">annual saving</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAYABLES ═══ -->
+<div id="tc-ap" class="tc">
+  <p class="note-quiet"><strong>Source.</strong> P2P chain <code>ekko</code>→<code>ekpo</code>→<code>rseg</code>→<code>bkpf</code>/<code>bseg</code>→payment. DPO = AP balance ÷ COGS × 365. Early-pay from <code>bseg</code> baseline vs <code>bkpf</code> payment posting. Invoice-over-PO variance from <code>rseg</code> vs <code>ekpo.net_price</code> beyond <code>t169g</code> tolerance. Maverick from <code>bkpf.transaction_code</code> IN (FB60, FV60, F-53). Vendor groups from <code>lfa1.vendor_account_group</code>.</p>
+
+  <div class="mrow">
+    <div class="mc med"><div class="mc-lbl">AP balance</div><div class="mc-val cv" data-usd="$342M" data-inr="₹2,860 Cr">$342M</div><div class="mc-sub">DPO 42 days</div></div>
+    <div class="mc high"><div class="mc-lbl">Invoice-over-PO variance</div><div class="mc-val cv" data-usd="$17M" data-inr="₹140 Cr">$17M</div><div class="mc-sub">127 invoices over tolerance</div></div>
+    <div class="mc crit"><div class="mc-lbl">Maverick spend</div><div class="mc-val cv" data-usd="$13M" data-inr="₹110 Cr">$13M</div><div class="mc-sub">FB60/FV60, no PO</div></div>
+    <div class="mc low"><div class="mc-lbl">DPO headroom</div><div class="mc-val">+6d</div><div class="mc-sub">vs terms; $16M if extended</div></div>
+    <div class="mc high"><div class="mc-lbl">Early-payment drag</div><div class="mc-val cv" data-usd="$11M" data-inr="₹90 Cr">$11M</div><div class="mc-sub">paid avg 11d before due</div></div>
+  </div>
+
+  <div class="ai-panel">
+    <div class="ai-hdr"><span class="ai-badge">AESA</span><span class="ai-title">Payables intelligence</span></div>
+    <div class="ai-intro">Vendor spend, payment timing (BSEG baseline vs payment), price variance (RSEG vs EKPO) and off-contract entries (BKPF codes) analysed. AP has two distinct opportunities — timing (DPO) and leakage (price, maverick, discounts).</div>
+    <div class="ai-btns">
+      <button class="ai-btn" onclick="runAI('ap-dpo','ap-out')">Extend DPO — where it's safe</button>
+      <button class="ai-btn" onclick="runAI('ap-var','ap-out')">Recover price variance</button>
+      <button class="ai-btn" onclick="runAI('ap-mav','ap-out')">Maverick invoices to hold</button>
+      <button class="ai-btn" onclick="runAI('ap-disc','ap-out')">Capture early-pay discounts</button>
+    </div>
+    <div class="ai-out" id="ap-out"></div>
+  </div>
+
+  <div class="g2">
+    <div class="card"><div class="card-title">DPO by vendor account group<span class="amt-badge">lfa1 · KTOKK</span></div>
+      <div class="hbar-r"><span class="hbar-l">V002 Domestic Trade</span><div class="hbar-t"><div class="hbar-f" style="width:60%;background:var(--high)"></div></div><span class="hbar-v">38 d</span></div>
+      <div class="hbar-r"><span class="hbar-l">V003 Services</span><div class="hbar-t"><div class="hbar-f" style="width:72%;background:var(--low)"></div></div><span class="hbar-v">46 d</span></div>
+      <div class="hbar-r"><span class="hbar-l">V004 Contractors</span><div class="hbar-t"><div class="hbar-f" style="width:88%;background:var(--med)"></div></div><span class="hbar-v">56 d</span></div>
+      <div class="hbar-r"><span class="hbar-l">V005 Imports</span><div class="hbar-t"><div class="hbar-f" style="width:82%;background:var(--med)"></div></div><span class="hbar-v">52 d</span></div>
+      <div class="hbar-r"><span class="hbar-l">V006 Transport</span><div class="hbar-t"><div class="hbar-f" style="width:50%;background:var(--high)"></div></div><span class="hbar-v">32 d</span></div>
+      <div class="hbar-r"><span class="hbar-l">V007 Capital/PM</span><div class="hbar-t"><div class="hbar-f" style="width:46%;background:var(--crit)"></div></div><span class="hbar-v">29 d</span></div>
+      <div class="hbar-note">Weighted DPO 42d vs 48d achievable. V006/V007 paid fastest — first candidates to extend, subject to MSMED status.</div>
+    </div>
+    <div class="card"><div class="card-title">AP ageing<span class="amt-badge">open invoice buckets</span></div><div class="chart-wrap" style="height:200px"><canvas id="ap-age"></canvas></div></div>
+  </div>
+
+  <div class="sec-div">Action items — timing</div>
+  <div class="action-item low">
+    <div class="ai-row">
+      <div class="ai-left"><div class="act-title">Extend DPO where terms &amp; MSMED status allow</div>
+        <div class="act-desc">Weighted DPO of 42 days sits ~6 days under achievable terms. Contractors (V004) &amp; imports (V005) already run 52–56 days; the drag is V006/V007 paid at 29–32 days despite 45-day terms. Align via T052 — but exclude MSMED-registered vendors, where the 45-day statutory cap applies.</div>
+        <div class="act-meta"><span class="badge b-low">CASH TIMING</span><span class="codebadge">t052 · lfb1</span><span class="owner">Procurement · CFO</span><span class="sla">15 days</span></div>
+        <div class="act-ai-line"><button class="act-ai-btn" onclick="actAI('a4','Which vendor groups can we safely extend, and how do we exclude MSMED vendors?')">Ask AESA how to action this</button><div class="act-ai-out" id="a4"></div></div>
+      </div>
+      <div class="ai-right"><div class="act-val cv" data-usd="$16M" data-inr="₹130 Cr">$16M</div><div class="act-who">one-time release</div></div>
+    </div>
+  </div>
+
+  <div class="sec-div">Action items — leakage</div>
+  <div class="action-item high">
+    <div class="ai-row">
+      <div class="ai-left"><div class="act-title">Recover invoice-over-PO price variance</div>
+        <div class="act-desc">127 invoices cleared at a unit price above the PO beyond T169G tolerance — $17M overbilled, $11M recoverable via credit note or deduction. Concentrated in raw-material &amp; consumable vendors where price was revised after GR. Block further invoices pending resolution.</div>
+        <div class="act-meta"><span class="badge b-high">RECOVERY</span><span class="codebadge">rseg · ekpo · t169g</span><span class="owner">AP Head · Controller</span><span class="sla">15 days</span></div>
+        <div class="act-ai-line"><button class="act-ai-btn" onclick="actAI('a5','What is the recovery mechanism per vendor and what is the root-cause fix?')">Ask AESA how to action this</button><div class="act-ai-out" id="a5"></div></div>
+      </div>
+      <div class="ai-right"><div class="act-val cv" data-usd="$11M" data-inr="₹90 Cr">$11M</div><div class="act-who">recoverable</div></div>
+    </div>
+  </div>
+
+  <div class="card"><div class="card-title">Invoice-over-PO variance — top vendors<span class="amt-badge">rseg vs ekpo · beyond tolerance</span></div>
+    <div class="stable"><table>
+      <thead><tr><th>Vendor</th><th>Name</th><th>Grp</th><th class="num">Invoices over</th><th class="num">Avg overcharge</th><th class="num">Overbilled</th><th class="num">Recoverable</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">0003100116</td><td>Ridgeline Coal &amp; Coke</td><td><span class="codebadge">V002</span></td><td class="num">28</td><td class="num"><span class="badge b-crit">9.4%</span></td><td class="num cv" data-usd="$4.5M" data-inr="₹38 Cr">$4.5M</td><td class="num cv" data-usd="$4.2M" data-inr="₹35 Cr">$4.2M</td><td><span class="badge b-crit">Credit note</span></td></tr>
+        <tr><td class="mono">0003104522</td><td>Foundry Grinding Media</td><td><span class="codebadge">V002</span></td><td class="num">21</td><td class="num"><span class="badge b-high">7.8%</span></td><td class="num cv" data-usd="$3.5M" data-inr="₹29 Cr">$3.5M</td><td class="num cv" data-usd="$3.0M" data-inr="₹25 Cr">$3.0M</td><td><span class="badge b-crit">Deduct next</span></td></tr>
+        <tr><td class="mono">0003108841</td><td>Cardinal Flocculants Co</td><td><span class="codebadge">V002</span></td><td class="num">18</td><td class="num"><span class="badge b-high">6.2%</span></td><td class="num cv" data-usd="$2.5M" data-inr="₹21 Cr">$2.5M</td><td class="num cv" data-usd="$1.9M" data-inr="₹16 Cr">$1.9M</td><td><span class="badge b-high">Credit note</span></td></tr>
+        <tr><td class="mono">0003102390</td><td>Basin Furnace Oil</td><td><span class="codebadge">V005</span></td><td class="num">14</td><td class="num"><span class="badge b-low">5.8%</span></td><td class="num cv" data-usd="$1.7M" data-inr="₹14 Cr">$1.7M</td><td class="num cv" data-usd="$1.0M" data-inr="₹8 Cr">$1.0M</td><td><span class="badge b-low">Review</span></td></tr>
+      </tbody>
+      <tfoot><tr class="tfoot"><td colspan="5">127 invoices · 9 vendors</td><td class="num cv" data-usd="$17M" data-inr="₹140 Cr">$17M</td><td class="num cv" data-usd="$11M" data-inr="₹90 Cr">$11M</td><td></td></tr></tfoot>
+    </table></div>
+  </div>
+
+  <div class="action-item crit">
+    <div class="ai-row">
+      <div class="ai-left"><div class="act-title">Hold maverick FB60/FV60 invoices before payment</div>
+        <div class="act-desc">22 invoices posted through FB60/FV60 (direct entry, no PO, 3-way match bypassed) totalling $13M, not yet cleared. Several sit with vendors created shortly before the invoice. Set payment block, route to dual MD + Controller authorisation, refer to Internal Audit.</div>
+        <div class="act-meta"><span class="badge b-crit">HOLD PAYMENT</span><span class="codebadge">bkpf · cdhdr</span><span class="owner">CFO · Internal Audit</span><span class="sla">Immediate</span></div>
+        <div class="act-ai-line"><button class="act-ai-btn" onclick="actAI('a6','Which invoices are highest risk and what control prevents recurrence?')">Ask AESA how to action this</button><div class="act-ai-out" id="a6"></div></div>
+      </div>
+      <div class="ai-right"><div class="act-val cv" data-usd="$13M" data-inr="₹110 Cr">$13M</div><div class="act-who">at risk</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ INVENTORY ═══ -->
+<div id="tc-inv" class="tc">
+  <p class="note-quiet"><strong>Source.</strong> S/4HANA unified movement table <code>matdoc</code> (replaces legacy MKPF+MSEG here) for goods movements — last issue date, consumption run-rate, GR-vs-invoice. Valuation from <code>mbew</code>, plant settings from <code>marc</code>, batch expiry from <code>mcha</code>, count differences from <code>iseg</code>. Data reality: MARD unrestricted stock is 0 across all rows and 60.8% of materials carry zero standard price — signals come from movement history and valuation, not MARD balances.</p>
+
+  <div class="mrow">
+    <div class="mc med"><div class="mc-lbl">Total inventory value</div><div class="mc-val cv" data-usd="$296M" data-inr="₹2,480 Cr">$296M</div><div class="mc-sub">DIO 46 days</div></div>
+    <div class="mc high"><div class="mc-lbl">Slow-moving &gt;90d</div><div class="mc-val cv" data-usd="$57M" data-inr="₹480 Cr">$57M</div><div class="mc-sub">no issue, 90–180d</div></div>
+    <div class="mc crit"><div class="mc-lbl">Non-moving &gt;180d</div><div class="mc-val cv" data-usd="$23M" data-inr="₹190 Cr">$23M</div><div class="mc-sub">write-down risk</div></div>
+    <div class="mc high"><div class="mc-lbl">GR/IR clearing gap</div><div class="mc-val cv" data-usd="$19M" data-inr="₹160 Cr">$19M</div><div class="mc-sub">GR posted, invoice awaited</div></div>
+    <div class="mc low"><div class="mc-lbl">Expiring batches</div><div class="mc-val cv" data-usd="$7M" data-inr="₹60 Cr">$7M</div><div class="mc-sub">shelf life &lt;60d (mcha)</div></div>
+  </div>
+
+  <div class="ai-panel">
+    <div class="ai-hdr"><span class="ai-badge">AESA</span><span class="ai-title">Inventory intelligence</span></div>
+    <div class="ai-intro">Goods movements (MATDOC), valuation (MBEW), batch expiry (MCHA) and physical-count variance (ISEG) analysed across plants. For a mining/pellet/steel operation the release levers are inter-plant transfer, non-moving disposal and GR/IR clearing.</div>
+    <div class="ai-btns">
+      <button class="ai-btn" onclick="runAI('inv-slow','inv-out')">Slow-moving — transfer &amp; liquidate</button>
+      <button class="ai-btn" onclick="runAI('inv-dead','inv-out')">Non-moving — disposal before close</button>
+      <button class="ai-btn" onclick="runAI('inv-grir','inv-out')">GR/IR clearing exceptions</button>
+      <button class="ai-btn" onclick="runAI('inv-batch','inv-out')">Expiring batches</button>
+    </div>
+    <div class="ai-out" id="inv-out"></div>
+  </div>
+
+  <div class="g2">
+    <div class="card"><div class="card-title">Stock by movement class<span class="amt-badge">matdoc · last issue</span></div><div class="chart-wrap" style="height:210px"><canvas id="inv-move"></canvas></div></div>
+    <div class="card"><div class="card-title">Inventory value by plant<span class="amt-badge">mbew · valuation area</span></div>
+      <div class="hbar-r"><span class="hbar-l">GD10 North Mine</span><div class="hbar-t"><div class="hbar-f" style="width:78%;background:var(--ramp4)"></div></div><span class="hbar-v cv" data-usd="$86M" data-inr="₹720 Cr">$86M</span></div>
+      <div class="hbar-r"><span class="hbar-l">PL01 Pellet Plant</span><div class="hbar-t"><div class="hbar-f" style="width:66%;background:var(--ramp4)"></div></div><span class="hbar-v cv" data-usd="$73M" data-inr="₹610 Cr">$73M</span></div>
+      <div class="hbar-r"><span class="hbar-l">MC01 Met Coke</span><div class="hbar-t"><div class="hbar-f" style="width:48%;background:var(--ramp3)"></div></div><span class="hbar-v cv" data-usd="$53M" data-inr="₹440 Cr">$53M</span></div>
+      <div class="hbar-r"><span class="hbar-l">GP01 Gas Plant</span><div class="hbar-t"><div class="hbar-f" style="width:34%;background:var(--ramp3)"></div></div><span class="hbar-v cv" data-usd="$37M" data-inr="₹310 Cr">$37M</span></div>
+      <div class="hbar-r"><span class="hbar-l">CH02 Chem</span><div class="hbar-t"><div class="hbar-f" style="width:22%;background:var(--ramp2)"></div></div><span class="hbar-v cv" data-usd="$26M" data-inr="₹220 Cr">$26M</span></div>
+      <div class="hbar-r"><span class="hbar-l">AV01 Aviation</span><div class="hbar-t"><div class="hbar-f" style="width:10%;background:var(--ramp2)"></div></div><span class="hbar-v cv" data-usd="$21M" data-inr="₹180 Cr">$21M</span></div>
+      <div class="hbar-note">Plant from MATDOC.plant / MARC.plant. North Mine &amp; Pellet Plant hold 54% of stock value.</div>
+    </div>
+  </div>
+
+  <div class="sec-div">Action items</div>
+  <div class="action-item high">
+    <div class="ai-row">
+      <div class="ai-left"><div class="act-title">Transfer non-moving spares between plants, liquidate the rest</div>
+        <div class="act-desc">$57M of stores &amp; spares show no issue movement in 90–180 days (MATDOC 261/601 absence). Cross-plant demand exists at GD10/MC01 for items idle at PL01 — inter-plant STO recovers full book value. Non-transferable engineering spares go to internal auction at ~65%.</div>
+        <div class="act-meta"><span class="badge b-high">TRANSFER + AUCTION</span><span class="codebadge">matdoc · marc</span><span class="owner">Supply Chain Head</span><span class="sla">60 days</span></div>
+        <div class="act-ai-line"><button class="act-ai-btn" onclick="actAI('a7','What is the split between transfer, return and auction, and expected recovery?')">Ask AESA how to action this</button><div class="act-ai-out" id="a7"></div></div>
+      </div>
+      <div class="ai-right"><div class="act-val cv" data-usd="$23M" data-inr="₹190 Cr">$23M</div><div class="act-who">recoverable</div></div>
+    </div>
+  </div>
+
+  <div class="card"><div class="card-title">Slow &amp; non-moving materials<span class="amt-badge">matdoc · no issue &gt;90d · valued via mbew</span></div>
+    <div class="stable"><table>
+      <thead><tr><th>Plant</th><th>Material</th><th>Description</th><th>Stor.loc</th><th class="num">Value</th><th class="num">Days idle</th><th>Transfer to</th><th class="num">Recovery</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">PL01</td><td class="mono">1043210</td><td>Pellet plant roller bearings</td><td class="mono">PPST</td><td class="num cv" data-usd="$9.3M" data-inr="₹78 Cr">$9.3M</td><td class="num"><span class="badge b-crit">172</span></td><td><span class="badge b-med">GD10</span></td><td class="num">85%</td><td><span class="badge b-med">STO transfer</span></td></tr>
+        <tr><td class="mono">MC01</td><td class="mono">1052088</td><td>Coke oven refractory brick</td><td class="mono">RMST</td><td class="num cv" data-usd="$7.4M" data-inr="₹62 Cr">$7.4M</td><td class="num"><span class="badge b-crit">148</span></td><td><span class="badge b-high">Limited</span></td><td class="num">65%</td><td><span class="badge b-high">Auction</span></td></tr>
+        <tr><td class="mono">GD10</td><td class="mono">1038847</td><td>Conveyor idler assemblies</td><td class="mono">MAIN</td><td class="num cv" data-usd="$5.9M" data-inr="₹49 Cr">$5.9M</td><td class="num"><span class="badge b-high">131</span></td><td><span class="badge b-med">PL01</span></td><td class="num">90%</td><td><span class="badge b-med">STO transfer</span></td></tr>
+        <tr><td class="mono">GP01</td><td class="mono">1061120</td><td>Air separation spares</td><td class="mono">BPME</td><td class="num cv" data-usd="$4.1M" data-inr="₹34 Cr">$4.1M</td><td class="num"><span class="badge b-high">118</span></td><td><span class="badge b-low">Vendor return</span></td><td class="num">75%</td><td><span class="badge b-low">RTV</span></td></tr>
+        <tr><td class="mono">PL01</td><td class="mono">1044901</td><td>Grinding media (excess)</td><td class="mono">GRND</td><td class="num cv" data-usd="$4.9M" data-inr="₹41 Cr">$4.9M</td><td class="num"><span class="badge b-high">104</span></td><td><span class="badge b-med">MC01</span></td><td class="num">95%</td><td><span class="badge b-med">STO transfer</span></td></tr>
+      </tbody>
+      <tfoot><tr class="tfoot"><td colspan="4">Top 5 of $57M slow-moving</td><td class="num cv" data-usd="$31.6M" data-inr="₹264 Cr">$31.6M</td><td colspan="4"></td></tr></tfoot>
+    </table></div>
+  </div>
+
+  <div class="action-item crit">
+    <div class="ai-row">
+      <div class="ai-left"><div class="act-title">Dispose non-moving stock before fiscal close</div>
+        <div class="act-desc">$23M idle &gt;180 days. If not actioned before March (P12) close, write-down provisioning hits the P&amp;L. Scrap sale via ZSCR billing recovers 20–30%; that revenue offsets the provision. Prioritise refractory &amp; obsolete plant spares.</div>
+        <div class="act-meta"><span class="badge b-crit">BEFORE P12</span><span class="codebadge">matdoc · mbew</span><span class="owner">CFO · Plant Head</span><span class="sla">by Mar-26</span></div>
+        <div class="act-ai-line"><button class="act-ai-btn" onclick="actAI('a8','What is the P&amp;L impact of disposal versus doing nothing?')">Ask AESA how to action this</button><div class="act-ai-out" id="a8"></div></div>
+      </div>
+      <div class="ai-right"><div class="act-val cv" data-usd="$23M" data-inr="₹190 Cr">$23M</div><div class="act-who">write-down risk</div></div>
+    </div>
+  </div>
+
+  <div class="action-item low">
+    <div class="ai-row">
+      <div class="ai-left"><div class="act-title">Clear GR/IR exceptions</div>
+        <div class="act-desc">$19M of goods received without matching invoice (EKBE 3-way check: MATDOC 101 receipts vs RSEG). Chase vendors for balance invoices; several are month-end processing lags. Conversely, block payment where invoice posted without GR.</div>
+        <div class="act-meta"><span class="badge b-low">CLEARING</span><span class="codebadge">ekbe · rseg · matdoc</span><span class="owner">Controller · Stores</span><span class="sla">14 days</span></div>
+      </div>
+      <div class="ai-right"><div class="act-val cv" data-usd="$12M" data-inr="₹100 Cr">$12M</div><div class="act-who">clearable</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ CASH CYCLE & SIMULATOR ═══ -->
+<div id="tc-ccc" class="tc">
+  <p class="note-quiet"><strong>Working-capital framing.</strong> The cash conversion cycle is the correct CFO lens: <code>CCC = DIO + DSO − DPO</code>. Reducing the cycle releases cash from the balance sheet; it is distinct from the P&amp;L. Only genuine price, discount and recovery actions touch EBITDA — shown separately below so the two are never conflated.</p>
+
+  <div class="g23">
+    <div>
+      <div class="card"><div class="card-title">Cash conversion cycle — current state<span class="amt-badge">71 days</span></div>
+        <div class="ccc-flow">
+          <div class="ccc-seg"><span class="ccc-seg-l">Inventory (DIO)</span><div class="ccc-seg-t"><div class="ccc-seg-f" style="width:65%;background:var(--med)">46 days</div></div><span class="ccc-seg-r" style="color:var(--med-tx)">+46</span></div>
+          <div class="ccc-seg"><span class="ccc-seg-l">Receivables (DSO)</span><div class="ccc-seg-t"><div class="ccc-seg-f" style="width:94%;background:var(--crit)">67 days</div></div><span class="ccc-seg-r" style="color:var(--crit)">+67</span></div>
+          <div class="ccc-seg"><span class="ccc-seg-l">Payables (DPO)</span><div class="ccc-seg-t"><div class="ccc-seg-f" style="width:59%;background:var(--steel)">42 days</div></div><span class="ccc-seg-r" style="color:var(--mid)">−42</span></div>
+          <div class="ccc-seg" style="margin-top:4px;padding-top:8px;border-top:1px solid var(--border)"><span class="ccc-seg-l" style="font-weight:600;color:var(--ch)">Net cycle</span><div class="ccc-seg-t" style="background:transparent"><div class="ccc-seg-f" style="width:100%;background:var(--navy)">71 days trapped</div></div><span class="ccc-seg-r" style="color:var(--ch)">71</span></div>
+        </div>
+        <div style="margin-top:13px;font-size:11px;color:var(--mid);line-height:1.6">At Acme's turnover, one day of cycle ≈ <strong style="color:var(--ch)"><span class="cv" data-usd="$7.4M" data-inr="₹62 Cr">$7.4M</span></strong>. A target cycle of 50 days would release <strong style="color:var(--deep-blue)"><span class="cv" data-usd="~$155M" data-inr="~₹1,300 Cr">~$155M</span></strong> of cash. The single biggest lever is DSO (67d vs 45d terms).</div>
+      </div>
+      <div class="card"><div class="card-title">Target vs current — by component<span class="amt-badge">days</span></div><div class="chart-wrap" style="height:200px"><canvas id="ccc-target"></canvas></div></div>
+
+      <div class="card"><div class="card-title">EBITDA impact — P&amp;L only<span class="amt-badge">annualised · recurring</span></div>
+        <p style="font-size:11px;color:var(--mid);line-height:1.6;margin-bottom:10px">Cycle compression releases <em>cash</em>, not profit. Only these actions change the P&amp;L — kept strictly separate from the <span class="cv" data-usd="$195M" data-inr="₹1,630 Cr">$195M</span> cash figure so the two are never conflated:</p>
+        <div class="stable"><table>
+          <tbody>
+            <tr><td>Price realignment (AR)</td><td class="num" style="color:var(--med-tx);font-weight:600">+<span class="cv" data-usd="$23M" data-inr="₹190 Cr">$23M</span></td></tr>
+            <tr><td>Cancel unearned discounts (AR)</td><td class="num" style="color:var(--med-tx);font-weight:600">+<span class="cv" data-usd="$8M" data-inr="₹70 Cr">$8M</span></td></tr>
+            <tr><td>Price-variance recovery (AP)</td><td class="num" style="color:var(--med-tx);font-weight:600">+<span class="cv" data-usd="$11M" data-inr="₹90 Cr">$11M</span></td></tr>
+            <tr><td>Maverick / off-contract prevention (AP)</td><td class="num" style="color:var(--med-tx);font-weight:600">+<span class="cv" data-usd="$5M" data-inr="₹40 Cr">$5M</span></td></tr>
+            <tr><td>Non-moving write-down avoided (Inv)</td><td class="num" style="color:var(--med-tx);font-weight:600">+<span class="cv" data-usd="$23M" data-inr="₹190 Cr">$23M</span></td></tr>
+            <tr><td>Early-pay discount cost (AR offer)</td><td class="num" style="color:var(--high);font-weight:600">−<span class="cv" data-usd="$2M" data-inr="₹20 Cr">$2M</span></td></tr>
+          </tbody>
+          <tfoot><tr class="tfoot"><td style="font-weight:600;color:var(--ch)">Net EBITDA impact</td><td class="num" style="font-weight:600;color:var(--med-tx)">+<span class="cv" data-usd="$68M" data-inr="₹570 Cr">$68M</span></td></tr></tfoot>
+        </table></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Cycle simulator<span class="amt-badge">model the release</span></div>
+      <p style="font-size:11px;color:var(--mid);line-height:1.5;margin-bottom:14px">Model how each lever compresses the cash cycle and releases balance-sheet cash.</p>
+      <div class="sim-row"><div class="sim-top"><span class="sim-lbl">Receivables — cut DSO by</span><span class="sim-val" id="s-dso-v">0 days</span></div><input type="range" min="0" max="22" value="0" id="s-dso" oninput="sim()"></div>
+      <div class="sim-row"><div class="sim-top"><span class="sim-lbl">Receivables — resolve disputes</span><span class="sim-val" id="s-disp-v">0%</span></div><input type="range" min="0" max="100" step="5" value="0" id="s-disp" oninput="sim()"></div>
+      <div class="sim-row"><div class="sim-top"><span class="sim-lbl">Payables — extend DPO by</span><span class="sim-val" id="s-dpo-v">0 days</span></div><input type="range" min="0" max="12" value="0" id="s-dpo" oninput="sim()"></div>
+      <div class="sim-row"><div class="sim-top"><span class="sim-lbl">Inventory — cut DIO by</span><span class="sim-val" id="s-dio-v">0 days</span></div><input type="range" min="0" max="16" value="0" id="s-dio" oninput="sim()"></div>
+      <div class="sim-out"><div class="sim-out-l">New cash conversion cycle</div><div class="sim-out-v" id="s-ccc">71 days</div><div class="sim-out-s" id="s-release">Move levers to release cash</div></div>
+      <p class="sim-assume">One cycle day ≈ $7.4M. DSO floor is the ~45-day weighted terms; DPO ceiling respects the MSMED 45-day cap on registered vendors. DIO reduction assumes transfer/liquidation of non-moving stock only.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ACTIONS HUB ═══ -->
+<div id="tc-hub" class="tc">
+  <div class="sc-grid">
+    <div class="sc-box"><div class="sc-val" style="color:var(--deep-blue)" id="h-tot">16</div><div class="sc-lbl">Total actions</div></div>
+    <div class="sc-box"><div class="sc-val" style="color:var(--crit)" id="h-open">12</div><div class="sc-lbl">Open</div></div>
+    <div class="sc-box"><div class="sc-val" style="color:var(--high)" id="h-prog">3</div><div class="sc-lbl">In progress</div></div>
+    <div class="sc-box"><div class="sc-val" style="color:var(--med-tx)" id="h-done">1</div><div class="sc-lbl">Done</div></div>
+    <div class="sc-box"><div class="sc-val" style="color:var(--navy)" id="h-rel">$0M</div><div class="sc-lbl">Cash released</div></div>
+  </div>
+
+  <!-- AI prioritisation panel -->
+  <div class="ai-panel">
+    <div class="ai-hdr"><span class="ai-badge">AESA</span><span class="ai-title">Prioritisation engine</span></div>
+    <div class="ai-intro">Every action is scored on a transparent, computed blend — <strong>Impact × Ease × Urgency × Confidence</strong> — then ranked. This is deterministic math (not a model guess); the figures below are the live inputs, and hovering any score shows its breakdown. The model layer, when connected, only <em>explains</em> this ranking — it never sets the numbers.</div>
+    <div style="background:rgba(0,0,0,.22);border-radius:6px;padding:12px 14px;margin-top:4px">
+      <div style="font-size:9px;color:rgba(255,255,255,.55);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px">AESA · recommended sequence this period</div>
+      <div id="h-rationale" style="color:rgba(255,255,255,.9)"></div>
+    </div>
+  </div>
+
+  <div class="card"><div class="card-title">Action tracker — ranked by priority score
+    <span class="amt-badge" style="text-transform:none;cursor:pointer" onclick="toggleHubSort()">sort: <span id="h-sort-lbl">Priority score</span> ⇅</span></div>
+    <div class="stable"><table id="h-tbl">
+      <thead><tr><th>Score</th><th>Lever</th><th>Action</th><th class="num">Target</th><th>Owner</th><th>SLA</th><th>Priority</th><th>Status</th><th class="num">Outcome</th><th>Note</th></tr></thead>
+      <tbody id="h-body"></tbody>
+    </table></div>
+    <div style="font-size:10px;color:var(--mid);margin-top:9px;padding-top:8px;border-top:1px solid var(--border);line-height:1.5">Score weights: Impact 40% (cash size) · Urgency 25% (days to deadline) · Ease 20% (speed &amp; control) · Confidence 15% (evidence strength). Hover a score for its component breakdown.</div>
+  </div>
+
+  <div class="g2">
+    <div class="card"><div class="card-title">Status mix</div><div class="chart-wrap" style="height:185px"><canvas id="h-status"></canvas></div></div>
+    <div class="card"><div class="card-title">Cash released vs open pipeline<span class="amt-badge" id="h-pct">0% captured</span></div><div class="chart-wrap" style="height:185px"><canvas id="h-val"></canvas></div></div>
+  </div>
+</div>
+
+<!-- ═══ METHODOLOGY ═══ -->
+<div id="tc-meth" class="tc">
+  <div class="method-h"><span class="n">1</span>Data foundation</div>
+  <div class="method-body">
+    <p>Built on the Acme International schemas: <strong>P2P v4.0</strong>, <strong>O2C v1.2</strong>, <strong>Inventory v5.03</strong>. All tables live under a single client, <code>client = '140'</code> — included in every join and filter.</p>
+    <ul>
+      <li><strong>18 company codes</strong> across the group. Always filter by company_code to avoid cross-company mixing.</li>
+      <li><strong>Indian fiscal year</strong> (variant V3): April = period 1, March = period 12.</li>
+      <li><strong>Divisions</strong> (SPART): Iron Ore (1), Gases (3), Sludge (5), Spares (6), Scrap (8), Pellet (9), Chem (10), Hire (12), Service (13), Wind (15).</li>
+      <li><strong>GL structure</strong> from chart <code>BGCA</code> (894 accounts): Assets 1xxxxxx, Liabilities/Equity 2xxxxxx, Revenue 3xxxxxx, Expenses 4xxxxxx.</li>
+    </ul>
+  </div>
+
+  <div class="method-h"><span class="n">2</span>Receivables (O2C)</div>
+  <div class="method-body">
+    <p><strong>DSO &amp; ageing</strong> from the AR subledger — open items <code>bsid</code>, cleared items <code>bsad</code>. Buckets on days past <code>net_due_date</code>.</p>
+    <div class="sql-box"><span class="cm">-- AR ageing by customer (illustrative)</span>
+<span class="kw">SELECT</span> company_code, customer_number,
+  <span class="kw">CASE WHEN</span> current_date - net_due_date <span class="kw">&lt;=</span> 0 <span class="kw">THEN</span> <span class="st">'not_due'</span>
+       <span class="kw">WHEN</span> current_date - net_due_date <span class="kw">&lt;=</span> 30 <span class="kw">THEN</span> <span class="st">'0_30'</span>
+       <span class="kw">WHEN</span> current_date - net_due_date <span class="kw">&lt;=</span> 90 <span class="kw">THEN</span> <span class="st">'31_90'</span>
+       <span class="kw">ELSE</span> <span class="st">'90_plus'</span> <span class="kw">END</span> <span class="kw">AS</span> bucket,
+  <span class="fn">SUM</span>(amount_in_local_currency) <span class="kw">AS</span> open_value
+<span class="kw">FROM</span> bsid <span class="kw">WHERE</span> client = <span class="st">'140'</span>
+<span class="kw">GROUP BY</span> 1, 2, 3;</div>
+    <p><strong>DSO</strong> = (AR balance ÷ credit revenue) × 365. <strong>Days-to-clear</strong> = <code>bsad.clearing_date − net_due_date</code>. <strong>Terms</strong> from <code>knvv.payment_terms_key</code> (Y004=30d, Z007=45d, Z008=60d, Z009=90d). <strong>Unearned discount</strong> = customers with a discount condition in <code>prcd_elements</code> whose average days-to-clear exceeds their terms. Credit-limit analysis is not possible — <code>knkk</code> &amp; <code>knb5</code> are empty.</p>
+  </div>
+
+  <div class="method-h"><span class="n">3</span>Payables (P2P)</div>
+  <div class="method-body">
+    <p><strong>DPO</strong> = (AP balance ÷ COGS) × 365, AP from <code>bseg</code> vendor lines (<code>account_type = 'K'</code>). <strong>Early-payment drag</strong> compares baseline/due date to actual payment posting.</p>
+    <div class="sql-box"><span class="cm">-- Invoice-over-PO price variance beyond tolerance</span>
+<span class="kw">SELECT</span> e.vendor_id, r.po_doc_number,
+  (r.amount / r.quantity) - (p.net_price / p.price_unit) <span class="kw">AS</span> unit_var
+<span class="kw">FROM</span> rseg r
+<span class="kw">JOIN</span> ekpo p <span class="kw">ON</span> r.po_doc_number = p.doc_number <span class="kw">AND</span> r.po_item_number = p.line_item
+<span class="kw">JOIN</span> ekko e <span class="kw">ON</span> p.doc_number = e.doc_number
+<span class="kw">WHERE</span> r.client = <span class="st">'140'</span>
+  <span class="kw">AND</span> (r.amount / r.quantity) &gt; (p.net_price / p.price_unit) * 1.02;</div>
+    <p><strong>Maverick spend</strong> = <code>bkpf.transaction_code</code> IN (FB60, FV60, F-53) — no PO, 3-way match bypassed. <strong>MSMED guard:</strong> DPO extension excludes MSMED-registered vendors, where the statutory 45-day cap applies.</p>
+  </div>
+
+  <div class="method-h"><span class="n">4</span>Inventory (MM)</div>
+  <div class="method-body">
+    <p><strong>Movement-based</strong>, on the S/4HANA unified table <code>matdoc</code> (replaces the empty legacy MKPF+MSEG). Slow/non-moving = no issue movement within 90 / 180 days; value from <code>mbew</code>.</p>
+    <div class="sql-box"><span class="cm">-- Non-moving stock: no issue movement in 180 days</span>
+<span class="kw">SELECT</span> m.plant, m.material_number, b.standard_price,
+  <span class="fn">MAX</span>(m.posting_date) <span class="kw">AS</span> last_issue
+<span class="kw">FROM</span> matdoc m
+<span class="kw">JOIN</span> mbew b <span class="kw">ON</span> m.material_number = b.material_number <span class="kw">AND</span> m.plant = b.valuation_area
+<span class="kw">WHERE</span> m.client = <span class="st">'140'</span> <span class="kw">AND</span> m.movement_type <span class="kw">IN</span> (<span class="st">'261'</span>,<span class="st">'601'</span>,<span class="st">'201'</span>)
+<span class="kw">GROUP BY</span> 1, 2, 3
+<span class="kw">HAVING</span> <span class="fn">MAX</span>(m.posting_date) &lt; current_date - 180;</div>
+    <p><strong>DIO</strong> = (inventory value ÷ COGS) × 365. <strong>GR/IR gap</strong> = MATDOC 101 receipts reconciled against <code>rseg</code> via <code>ekbe</code>. <strong>Batch expiry</strong> from <code>mcha.shelf_life_expiration</code>. <strong>Data reality:</strong> MARD unrestricted stock is 0 across all 91,184 rows and 60.8% of materials carry zero standard price — so absence-of-price and MARD balances are <em>not</em> anomaly signals; movement history and valuation are.</p>
+  </div>
+
+  <div class="method-h"><span class="n">5</span>Cash cycle &amp; the cash/EBITDA split</div>
+  <div class="method-body">
+    <p>The headline metric is the cash conversion cycle:</p>
+    <div class="formula-box">CCC = DIO + DSO − DPO = 46 + 67 − 42 = 71 days
+Cash released = Δcycle days × daily turnover (≈ $7.4M/day)</div>
+    <p><strong>Why the earlier EBITDA bridge was retired.</strong> A previous prototype summed cash-release figures and applied a cost-of-capital to produce a single "EBITDA impact". That conflates two different statements. Changing DPO/DSO/DIO moves <em>cash and the balance sheet</em> — it does not change EBITDA. Only actions that change realised price, discount, or cost touch the P&amp;L. This build keeps them separate: a <strong>cash</strong> figure ($195M releasable via the cycle) and a distinct, smaller <strong>EBITDA</strong> figure (~$68M). Neither is double-counted. Cost of capital for any timing-value context is taken at 10% p.a. (illustrative).</p>
+  </div>
+
+  <div class="method-h"><span class="n">6</span>Currency</div>
+  <div class="method-body">
+    <div class="formula-box">$1 USD = ₹83.50 INR (illustrative)
+Primary display is USD; the group reports in INR (crore) internally.
+INR (crore) = USD (millions) × 83.50 ÷ 10</div>
+    <p>Primary display is USD, converted from the underlying INR ledger at an assumed ₹83.50/$. The INR toggle shows the native crore figures. Rate is illustrative and display-only.</p>
+  </div>
+</div>
+
+<!-- ═══ ASSISTANT ═══ -->
+<button id="as-fab" onclick="asOpen()"><span class="fi">AI</span><span class="ft">Ask AESA</span></button>
+<div id="as-ov" onclick="asClose()"></div>
+<div id="as-panel">
+  <div class="as-hd">
+    <div class="as-hd-top">
+      <div class="as-hd-mark">AESA</div>
+      <div><div class="as-hd-name">Assistant</div><div class="as-hd-sub">working capital · O2C · P2P · MM</div></div>
+      <div class="as-hd-x" onclick="asClose()">×</div>
+    </div>
+    <div class="as-gate"><span class="dot"></span><span>Read-only over the governed schema · client 140 · every answer shows its query</span></div>
+  </div>
+  <div class="as-body" id="as-body"></div>
+  <div class="as-foot">
+    <div class="as-inp"><textarea id="as-ta" rows="1" placeholder="Ask about DSO, overdue customers, price variance, non-moving stock…" onkeydown="asKey(event)"></textarea><button class="as-send" onclick="asSubmit()">Ask</button></div>
+    <div class="as-foot-note">AESA answers over the loaded working-capital data · <span class="as-clear" onclick="asClear()">clear conversation</span></div>
+  </div>
+</div>
+
+<script>
+/* ═══ CURRENCY ═══ */
+let cur='USD';
+function setCurr(c){cur=c;
+  document.getElementById('btn-usd').classList.toggle('active',c==='USD');
+  document.getElementById('btn-inr').classList.toggle('active',c==='INR');
+  document.querySelectorAll('.cv').forEach(e=>{if(e.dataset[c.toLowerCase()])e.textContent=e.dataset[c.toLowerCase()];});
+}
+/* ═══ TABS ═══ */
+function tab(t){
+  document.querySelectorAll('.tc').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tc-'+t).classList.add('active');
+  document.querySelector('[data-t="'+t+'"]').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ═══ STREAMING AI (per-lever) — rich answer + governed SQL ═══ */
+const AI_TEXTS={
+'ov-summary':{t:`Group working-capital summary — FY2025–26, P7:\n\nAESA consolidated the cash position across all 18 company codes. Acme's cash conversion cycle stands at 71 days (DIO 46 + DSO 67 − DPO 42), up 14 days versus FY24 close. At group turnover, one cycle day is worth about $7.4M, so the drift alone has absorbed roughly $104M of cash this year.\n\nReleasable working capital totals ~$195M across three pools:\n\n• Receivables — $112M overdue, DSO running 22 days beyond the ~45-day weighted terms. $37M is beyond 90 days and at provisioning risk before the March close. This is the single largest and most actionable pool.\n\n• Inventory — $57M slow-moving (no issue 90–180d) and $23M non-moving (>180d) on the MATDOC movement history, against $296M total stock.\n\n• Payables — $45M of leakage (price variance, maverick, early-pay) plus ~$16M of DPO timing headroom, bounded by the MSMED 45-day cap.\n\nThe pools divide cleanly into a cash story ($195M, balance sheet) and a smaller EBITDA story (~$68M, P&L) — never double-counted. CFO focus for the period: the $37M >90-day AR bucket and the $13M maverick hold.`,
+sql:`SELECT lever, SUM(amount_usd) AS trapped_cash\nFROM (\n  SELECT 'receivables' AS lever, SUM(open_amount) AS amount_usd\n    FROM bsid WHERE client='140' AND current_date - net_due_date > 0\n  UNION ALL\n  SELECT 'inventory', SUM(b.standard_price*s.qty)\n    FROM matdoc m JOIN mbew b USING(material_number)\n    JOIN stock s USING(material_number,plant)\n    WHERE m.client='140' GROUP BY ... HAVING MAX(posting_date)<current_date-90\n  UNION ALL\n  SELECT 'payables_leakage', variance+maverick+early_pay FROM ap_kpi\n) x GROUP BY lever ORDER BY trapped_cash DESC;`},
+'ov-priority':{t:`Where is the biggest release? — ranked by cash × ease:\n\nAESA scored every lever on cash size and implementation ease (speed, control, dependency). The ranking:\n\n1. Receivables collection — $37M, HIGH ease. The >90-day bucket is three named customers on 45-day terms. No system change, no negotiation — escalation and delivery blocks. Fastest cash, biggest single number. Start here.\n\n2. Inventory transfer — $23M, MEDIUM ease. Non-moving spares with confirmed sister-plant demand; inter-plant STOs recover full book value. Takes 60 days but needs no markdown.\n\n3. Price-variance recovery — $11M, MEDIUM ease. 127 invoices overbilled vs PO; credit notes plus an info-record lock. Recurring P&L benefit.\n\n4. Maverick hold — $13M at risk, HIGH ease but control-sensitive. Payment block is immediate; the saving is loss-avoidance, not new cash.\n\n5. DPO extension — $16M, LOW-MEDIUM ease. A system parameter change on V006/V007, ex-MSMED. Modest and bounded.\n\nThe 80/20: the top two levers ($60M) are ~70% of the realistically releasable cash this half. Everything else is incremental.`,
+sql:`SELECT lever, cash_impact_usd, ease_score,\n       cash_impact_usd * ease_weight AS priority_rank\nFROM wc_opportunities\nWHERE client='140' AND status='open'\nORDER BY priority_rank DESC;`},
+'ov-cashvsebitda':{t:`Cash vs EBITDA — why they are different numbers:\n\nThis is the distinction most working-capital decks get wrong, so AESA keeps them strictly separate.\n\nCASH ($195M) — releasing working capital is a balance-sheet event. Collecting a receivable, clearing slow stock, or paying a supplier later moves cash from one line to another. It does NOT create profit. This is the number the Treasurer cares about — it funds capex, debt reduction, or dividends without new borrowing.\n\nEBITDA (~$68M) — only actions that change realised price, discount, or cost touch the P&L:\n  • Price realignment on under-contracted customers: +$23M\n  • Cancelling discounts that late payers never earned: +$8M\n  • Recovering invoice-over-PO overbilling: +$11M\n  • Preventing maverick/off-contract premium: +$5M\n  • Avoiding a non-moving write-down before close: +$23M\n  • less the early-pay discount cost: −$2M\n\nThe error to avoid: taking the $195M cash release and also counting a "cost-of-capital saving" on it as EBITDA, then adding the two. That double-counts. A day of DSO reduction is cash; it is not margin. AESA reports the cash figure and the EBITDA figure side by side, and never sums them.`,
+sql:`-- P&L-only items (excludes pure timing/cycle effects)\nSELECT item, ebitda_impact_usd FROM wc_actions\nWHERE client='140'\n  AND impact_type IN ('price','discount','recovery','writedown_avoided')\nORDER BY ebitda_impact_usd DESC;`},
+'ar-esc':{t:`Critical overdue — collection plan:\n\nThree customers hold $37M beyond 90 days on 45–90 day terms. At Acme's March close this converts to provisioning unless cleared.\n\n1. Meridian Pellet Traders — $15.8M, 112 days, Z007 (45d). No clearing since 02-Jul. MD-to-promoter call within 48h; if no dated commitment by month-end, statutory demand. Board-level exposure.\n\n2. Cascade Steel & Power — $11.7M, 96 days, Z009. Secure a written schedule; hold new despatches (delivery block) until the first tranche lands.\n\n3. Summit Ferro Alloys — $9.7M, 78 days. Structured 3-instalment plan with interest.\n\nAcross the tail, 14 accounts hold ~$13M at 60–90 days. Target: clear 70% of the >90-day bucket before P12, which removes ~$26M of provisioning exposure from the close.`,
+sql:`SELECT b.customer_number, k.name1, b.net_due_date,\n       current_date - b.net_due_date AS days_overdue,\n       SUM(b.amount_in_local_currency) AS open_value\nFROM bsid b\nJOIN kna1 k ON b.customer_number = k.customer_number\nWHERE b.client = '140'\n  AND current_date - b.net_due_date > 90\nGROUP BY 1,2,3\nORDER BY open_value DESC;`},
+'ar-price':{t:`Price realignment candidates:\n\n8 customers price 8–21% below current realisation for the same material and division — contracts set >24 months ago, never revised.\n\n• Meridian Pellet — $50/MT vs $61 realised (+21%). On $38M volume that is $8.0M foregone. Renews Nov-25 — issue revised terms now (45-day notice).\n• Cascade Steel — +16%. Volume stable; realign at Dec renewal.\n• Harbor Cement — +14%; stage 8% now, 6% next year.\n\nStagger by renewal date; let the CFO nominate strategic-hold accounts. Full-year uplift $23M — recurring P&L, not one-time cash.`,
+sql:`SELECT p.customer_number, k.name1, v.division,\n       p.condition_rate AS current_rate, mkt.benchmark_rate,\n       p.valid_to AS contract_end\nFROM prcd_elements p\nJOIN kna1 k ON p.customer_number = k.customer_number\nJOIN knvv v ON v.customer_number = k.customer_number\nJOIN market_benchmark mkt USING (material_group)\nWHERE p.client='140' AND p.condition_type='PR00'\n  AND p.condition_rate < mkt.benchmark_rate * 0.92\nORDER BY (mkt.benchmark_rate - p.condition_rate) DESC;`},
+'ar-disc':{t:`Cancel unearned discounts:\n\n11 customers carry a cash/trade discount yet clear on average >60 days — the discount rewarded prompt payment that never happened.\n\n• South Basin Distributors — 7%, clears 94d, volume −18%. Cancel; three alternative buyers. Saves $3.4M.\n• North Ridge Traders — 5%, clears 81d. Reduce to a 2% prompt-pay tier tied to ≤15-day clearing. Saves $1.2M.\n• Central Ferro — 8%, clears 72d, declining. Cancel — legacy.\n\nIssue commercial letters citing a Q4 terms review; legal check the 3 with contractual discount clauses. $8M recurring saving, low volume risk.`,
+sql:`SELECT d.customer_number, k.name1, d.discount_pct,\n       AVG(a.clearing_date - a.net_due_date) AS avg_days_to_clear\nFROM prcd_elements d\nJOIN kna1 k ON d.customer_number = k.customer_number\nJOIN bsad a ON a.customer_number = k.customer_number\nWHERE d.client='140' AND d.discount_pct > 0\nGROUP BY 1,2,3\nHAVING AVG(a.clearing_date - a.net_due_date) > 60\nORDER BY d.discount_pct DESC;`},
+'ar-dso':{t:`Early-pay offer to cut DSO:\n\nFor large accounts with no existing discount and DSO >45 days, a 1% early-pay offer accelerates cash. Economics: 1% cost vs 10% cost-of-capital × days saved ÷ 365.\n\nExample — Meridian Pellet ($15.8M, 112 days): offer 1% for payment within 30 days. Cost $0.16M; cash 82 days earlier → CoC gain $0.36M. Net +$0.20M, and it removes the provisioning risk.\n\nApply only where (a) no discount already given, (b) genuine repeat volume, (c) DSO >45d. Do NOT offer to the unearned-discount accounts — that rewards them twice. Programme cost ~$2M; a selective lever, not a blanket one.`,
+sql:`SELECT b.customer_number, k.name1,\n       SUM(b.amount_in_local_currency) AS open_value,\n       current_date - MIN(b.net_due_date) AS max_days\nFROM bsid b\nJOIN kna1 k ON b.customer_number = k.customer_number\nLEFT JOIN prcd_elements d\n  ON d.customer_number = k.customer_number AND d.discount_pct > 0\nWHERE b.client='140' AND d.customer_number IS NULL\nGROUP BY 1,2 HAVING current_date - MIN(b.net_due_date) > 45\nORDER BY open_value DESC;`},
+'ap-dpo':{t:`Extend DPO — where it's safe:\n\nWeighted DPO is 42 days vs ~48 achievable — but the average hides the picture. Contractors (V004) and imports (V005) already run 52–56 days. The drag is V006 transport (32d) and V007 capital/PM (29d), paid well inside their 45-day terms.\n\nRealign payment terms (T052) for V006/V007 domestic vendors to 45 days — a system parameter change, no negotiation. One-time release $16M.\n\nHard constraint: exclude any MSMED-registered vendor — the 45-day cap is statutory; stretching them is a breach with penal interest. This is a modest, safe lever; the larger AP prize is leakage, not timing.`,
+sql:`SELECT l.vendor_account_group, COUNT(*) AS vendors,\n       AVG(pay.clearing_date - seg.baseline_date) AS avg_dpo\nFROM bseg seg\nJOIN lfa1 l ON seg.vendor_id = l.vendor_id\nJOIN payment pay ON pay.invoice_doc = seg.doc_number\nWHERE seg.client='140' AND seg.account_type='K'\n  AND l.msme_flag IS NULL          -- exclude MSMED\nGROUP BY 1 ORDER BY avg_dpo ASC;`},
+'ap-var':{t:`Recover price variance:\n\n127 invoices cleared at a unit price above the PO beyond T169G tolerance — $17M overbilled, $11M recoverable.\n\n• Ridgeline Coal & Coke (V002) — 28 invoices, 9.4% avg, $4.2M recoverable. Price revised upward after GR. Credit note; block further invoices (BSEG payment_block 'R').\n• Foundry Grinding Media — 21 invoices, $3.0M. Wrong info-record price pulled into the PO. Correct the record; deduct next invoices.\n• Cardinal Flocculants — 18 invoices, $1.9M.\n\nController sends recovery letters within 5 days, sets IV blocks on all 9 vendors. Root-cause fix: lock info-record price changes >3% behind approval. Recurring P&L.`,
+sql:`SELECT e.vendor_id, l.name1, COUNT(*) AS invoices_over,\n       AVG((r.amount/r.quantity)/(p.net_price/p.price_unit)-1) AS avg_overcharge\nFROM rseg r\nJOIN ekpo p ON r.po_doc_number=p.doc_number AND r.po_item_number=p.line_item\nJOIN ekko e ON p.doc_number=e.doc_number\nJOIN lfa1 l ON e.vendor_id=l.vendor_id\nWHERE r.client='140'\n  AND (r.amount/r.quantity) > (p.net_price/p.price_unit)*1.02\nGROUP BY 1,2 ORDER BY invoices_over DESC;`},
+'ap-mav':{t:`Maverick invoices to hold:\n\n22 invoices posted through FB60/FV60 — direct FI entry, no PO, 3-way match bypassed — totalling $13M, not yet cleared.\n\nHighest concern: a $4.5M consulting invoice (FB60), vendor created 8 days before the invoice per CDHDR — shell-vendor risk. Hold, refer to Audit. A $3.5M advisory invoice, no SOW. A $2.5M contractor invoice parked via FV60 — block posting before it clears.\n\nSet payment block (BSEG 'A') on all 22; dual MD + Controller authorisation; 30-day audit. Legitimate subset ~$5M. Prevent recurrence: withdraw FB60/FV60 authorisation from routine buyers.`,
+sql:`SELECT h.doc_number, h.transaction_code, seg.vendor_id,\n       seg.amount_in_local_currency, c.change_date AS vendor_created\nFROM bkpf h\nJOIN bseg seg ON h.doc_number=seg.doc_number AND h.fiscal_year=seg.fiscal_year\nLEFT JOIN cdhdr c ON c.object_value=seg.vendor_id AND c.change_type='I'\nWHERE h.client='140' AND h.transaction_code IN ('FB60','FV60','F-53')\n  AND seg.clearing_doc_number IS NULL\nORDER BY seg.amount_in_local_currency DESC;`},
+'ap-disc':{t:`Capture early-pay discounts:\n\nSeparate from — and opposite to — DPO extension: where a vendor offers an early-pay discount that exceeds our cost of capital, taking it is net-positive.\n\nScreen T052 for discount clauses (e.g. 2%/10 net 45). Net = discount % − CoC × early days ÷ 365. At 2%/10: 2% − 0.27% = 1.73% net positive per invoice.\n\nThis applies to a minority — most Acme terms are plain net-30/45/60 (Z006/Z007/Z008) with no discount. Where the clause exists and goes uncaptured, set the payment run to pay within the discount window. Modest but free.`,
+sql:`SELECT t.pymnt_terms, t.discount_pct1, t.discount_days1,\n       COUNT(*) AS open_invoices,\n       SUM(seg.amount_in_local_currency) AS value\nFROM t052 t\nJOIN bseg seg ON seg.payment_terms = t.pymnt_terms\nWHERE seg.client='140' AND seg.account_type='K'\n  AND t.discount_pct1 > 0 AND seg.clearing_doc_number IS NULL\nGROUP BY 1,2,3 ORDER BY value DESC;`},
+'inv-slow':{t:`Slow-moving — transfer & liquidate:\n\n$57M of stores & spares show no issue movement (261/601) in 90–180 days. Three tracks:\n\nInter-plant STO (full book value): pellet roller bearings idle at PL01 ($9.3M) have demand at GD10; conveyor idlers at GD10 ($5.9M) needed at PL01; excess grinding media at PL01 ($4.9M) consumable at MC01. Raise STOs — no markdown. ~$21M.\n\nVendor return (~75%): air-separation spares at GP01 ($4.1M), within window — RTV.\n\nInternal auction (~65%): coke-oven refractory ($7.4M), no sister-plant demand.\n\nSupply Chain raises STOs within 7 days. Recovery ~$23M of the $57M. Releases cash (cuts DIO); not a P&L event unless it prevents a write-down.`,
+sql:`SELECT m.plant, m.material_number, b.standard_price * s.qty AS value,\n       current_date - MAX(m.posting_date) AS days_idle\nFROM matdoc m\nJOIN mbew b ON m.material_number=b.material_number AND m.plant=b.valuation_area\nJOIN stock s ON s.material_number=m.material_number AND s.plant=m.plant\nWHERE m.client='140' AND m.movement_type IN ('261','601')\nGROUP BY 1,2,3\nHAVING current_date - MAX(m.posting_date) BETWEEN 90 AND 180\nORDER BY value DESC;`},
+'inv-dead':{t:`Non-moving — disposal before close:\n\n$23M idle >180 days — no receipts or issues. Cannot be transferred (no demand). Left alone, it forces a write-down at March close that hits EBITDA.\n\nDispose via scrap sale (ZSCR billing) at 20–30% recovery — refractory, obsolete plant spares, superseded components. Scrap revenue (~$6M) offsets the provision, so the P&L impact becomes −$17M instead of −$23M, and $6M cash comes in.\n\nProvision now regardless; show disposal proceeds in other income. This is the one inventory action genuinely P&L-positive vs doing nothing — hence it sits in the EBITDA summary. Hard deadline: before P12.`,
+sql:`SELECT m.plant, m.material_number, b.standard_price * s.qty AS book_value\nFROM matdoc m\nJOIN mbew b ON m.material_number=b.material_number AND m.plant=b.valuation_area\nJOIN stock s ON s.material_number=m.material_number AND s.plant=m.plant\nWHERE m.client='140'\nGROUP BY 1,2, s.qty, b.standard_price\nHAVING current_date - MAX(m.posting_date) > 180\nORDER BY book_value DESC;`},
+'inv-grir':{t:`GR/IR clearing exceptions:\n\n$19M of goods received without a matching invoice — MATDOC 101 receipts with a PO reference that have no corresponding RSEG line. A recognised liability sitting in the GR/IR clearing account.\n\nTop items are month-end lags: a coal receipt ($4.2M) fully received, invoice not posted; a grinding-media GR ($2.5M) with a quantity mismatch to chase. Controller + Stores run weekly GR/IR reconciliation and clear 80% within 14 days — $12M clearable.\n\nConversely, where an invoice was posted without a GR, payment stays blocked until the movement is confirmed. Clean-up and control, largely balance-sheet.`,
+sql:`SELECT m.purchasing_document, m.material_number,\n       SUM(m.quantity) AS gr_qty,\n       COALESCE(SUM(r.quantity),0) AS inv_qty,\n       SUM(m.amount_in_local_currency) AS gr_value\nFROM matdoc m\nLEFT JOIN rseg r ON r.po_doc_number=m.purchasing_document\n                 AND r.po_item_number=m.purchasing_document_item\nWHERE m.client='140' AND m.movement_type='101'\nGROUP BY 1,2 HAVING SUM(m.quantity) > COALESCE(SUM(r.quantity),0)\nORDER BY gr_value DESC;`},
+'inv-batch':{t:`Expiring batches:\n\n$7M of batch-managed stock has shelf-life expiry (MCHA) within 60 days — chemicals, flocculants, reagents used in beneficiation and the gas plant. Once expired these are a straight write-off.\n\nActions: (a) prioritise consumption — flag these batches for first issue (FIFO) at consuming plants; (b) redistribute to a plant with nearer demand; (c) for surplus, attempt vendor buy-back or discounted sale before expiry.\n\nCheck batch status (MCHA.batch_status) — any in restricted status ('1') shouldn't be issued to production. Small but time-critical; the value vanishes at the expiry date.`,
+sql:`SELECT c.plant, c.material_number, c.batch_number,\n       c.shelf_life_expiration,\n       c.shelf_life_expiration - current_date AS days_to_expiry,\n       s.qty * b.standard_price AS value\nFROM mcha c\nJOIN stock s ON s.batch_number=c.batch_number AND s.plant=c.plant\nJOIN mbew b ON b.material_number=c.material_number AND b.valuation_area=c.plant\nWHERE c.client='140'\n  AND c.shelf_life_expiration - current_date < 60\nORDER BY days_to_expiry ASC;`}
+};
+
+function runAI(k,outId){
+  const el=document.getElementById(outId);const d=AI_TEXTS[k];
+  el.classList.add('show');
+  el.innerHTML='<div class="ai-out-body ai-typing" id="'+outId+'-b"></div>';
+  const b=document.getElementById(outId+'-b');
+  const words=d.t.split(' ');let i=0;
+  const gid=outId+'-sql';
+  const iv=setInterval(()=>{
+    if(i>=words.length){
+      clearInterval(iv);b.classList.remove('ai-typing');
+      if(d.sql){
+        el.innerHTML+='<div class="ai-sql" id="'+gid+'"><div class="ai-sql-h" onclick="document.getElementById(\''+gid+'\').classList.toggle(\'open\')"><span class="cx">▶</span> governed query <span class="tag">read-only · ingest_db</span></div><pre>'+esc(d.sql)+'</pre></div>';
+      }
+      return;
+    }
+    b.innerHTML+=(i===0?'':' ')+words[i].replace(/\n/g,'<br>');i++;
+    el.scrollTop=el.scrollHeight;
+  },11);
+}
+
+/* ═══ PER-ACTION AI ═══ */
+const ACT_AI={
+'a1':`<strong>Sequencing:</strong> lead with Meridian ($15.8M, 112d) — MD-to-promoter call today, statutory-demand draft ready. Cascade ($11.7M) next — delivery block until a first tranche lands. Summit ($9.7M) onto a 3-instalment plan. <strong>Provisioning exposure:</strong> if the >90-day bucket is unresolved at P12, ~$37M moves to provision, a direct EBITDA hit. Clearing 70% pre-close avoids ~$26M of that.`,
+'a2':`<strong>First:</strong> Meridian (renews Nov-25, +21% gap) — the notice window is closing, so revised terms go out now at a target of $58/MT (from $50). <strong>Second:</strong> Cascade at Dec renewal, target +12% (not the full 16%, to protect volume). Stage the rest by renewal date. CFO signs off any account flagged strategic-hold before the letter goes.`,
+'a3':`<strong>Cancel outright:</strong> South Basin (7%, 94d, volume −18%) and Central Ferro (8%, 72d, declining) — both have alternative buyers, low volume risk. <strong>Reduce, don't cancel:</strong> North Ridge to a 2% prompt-pay tier tied to ≤15-day clearing — keeps the relationship, ends the free discount. Legal reviews the 3 accounts with contractual discount clauses first.`,
+'a4':`<strong>Safe to extend:</strong> V006 transport (32d) and V007 capital/PM (29d) — both sit well inside 45-day terms, so aligning to 45 is a system change, not a negotiation. <strong>Exclude:</strong> any vendor with the MSMED flag set — filter <code>lfa1.msme_flag IS NULL</code> before the term update. Contractors/imports (V004/V005) are already at 52–56d — leave them. Net one-time release ~$16M.`,
+'a5':`<strong>Per vendor:</strong> Ridgeline — raise a credit note for the full $4.2M, block new invoices (BSEG 'R'). Foundry — the cause is a stale info-record; correct it, then deduct $3.0M from the next invoices. Cardinal — credit note $1.9M. <strong>Root-cause fix:</strong> lock info-record price changes above 3% behind CPO approval so revised prices can't silently flow into new POs — this stops the leak recurring.`,
+'a6':`<strong>Highest risk:</strong> the $4.5M consulting invoice — vendor created 8 days before the invoice (CDHDR), no PO, FB60. Hold and refer to Audit immediately. Then the $3.5M advisory (no SOW) and the $2.5M contractor parked via FV60 — block the posting before it clears. <strong>Control:</strong> withdraw FB60/FV60 posting rights from routine buyers; genuine emergencies still route through a retrospective PO within 24h.`,
+'a7':`<strong>Transfer (~$21M, full value):</strong> pellet bearings PL01→GD10, conveyor idlers GD10→PL01, grinding media PL01→MC01 — all have confirmed demand at the receiving plant. <strong>Return (~75%):</strong> air-separation spares at GP01, within vendor window. <strong>Auction (~65%):</strong> coke-oven refractory at MC01, no sister-plant demand. Net recovery ~$23M of $57M; STOs raised within 7 days.`,
+'a8':`<strong>Do nothing:</strong> $23M write-down provision at P12 — full EBITDA hit. <strong>Dispose:</strong> scrap sale at ~25% recovers ~$6M, shown in other income, so the net P&L impact is −$17M and $6M cash comes in. The difference is $6M of EBITDA plus the cash. Provision now regardless; the disposal is what makes it better than the do-nothing case. Deadline is hard — before March P12.`
+};
+function actAI(id,q){
+  const el=document.getElementById(id);
+  if(el.classList.contains('show')){el.classList.remove('show');return;}
+  el.classList.add('show');
+  el.innerHTML='<div style="font-size:10px;color:var(--mid);font-family:\'DM Mono\',monospace;margin-bottom:5px">AESA · '+esc(q)+'</div><div id="'+id+'-t"></div>';
+  const t=document.getElementById(id+'-t');const words=ACT_AI[id].split(' ');let i=0;
+  const iv=setInterval(()=>{
+    if(i>=words.length){clearInterval(iv);return;}
+    t.innerHTML+=(i===0?'':' ')+words[i];i++;
+  },11);
+}
+
+/* ═══ SIMULATOR ═══ */
+function sim(){
+  const dso=+gv('s-dso'),disp=+gv('s-disp'),dpo=+gv('s-dpo'),dio=+gv('s-dio');
+  st('s-dso-v',dso+' days');st('s-disp-v',disp+'%');st('s-dpo-v',dpo+' days');st('s-dio-v',dio+' days');
+  const ccc=(46-dio)+(67-dso)-(42+dpo);
+  st('s-ccc',ccc+' days');
+  const daysSaved=71-ccc;
+  const cash=daysSaved*7.4 + (disp/100)*25*0.4;
+  const f=x=> cur==='USD' ? '$'+x.toFixed(0)+'M' : '₹'+Math.round(x*83.5/10)+' Cr';
+  document.getElementById('s-release').textContent =
+    daysSaved>0 ? 'Releases ~'+f(cash)+' of cash ('+daysSaved+' days out of the cycle)' : 'Move levers to release cash';
+}
+function gv(id){return document.getElementById(id).value}
+function st(id,x){document.getElementById(id).textContent=x}
+
+/* ═══ ACTIONS HUB ═══ */
+const ACTS=[
+  {id:1,lv:'AR',a:'Escalate 3 customers &gt;90 days overdue',t:'$37M',cash:37,ease:5,urg:7,conf:0.95,o:'CFO · Collections',s:'7 days',p:'CRITICAL',st:'Open',out:'',n:''},
+  {id:2,lv:'AR',a:'Realign prices — 8 under-contracted customers',t:'$23M',cash:23,ease:2,urg:120,conf:0.70,o:'Sales Head',s:'At renewal',p:'HIGH',st:'Open',out:'',n:''},
+  {id:3,lv:'AR',a:'Cancel unearned discounts — 11 accounts',t:'$8M',cash:8,ease:3,urg:30,conf:0.80,o:'Sales Head · Legal',s:'30 days',p:'MEDIUM',st:'Open',out:'',n:''},
+  {id:4,lv:'AR',a:'Resolve 38 disputed / short-paid items',t:'$25M',cash:25,ease:3,urg:21,conf:0.75,o:'Collections',s:'21 days',p:'HIGH',st:'In Progress',out:'',n:'Sprint underway'},
+  {id:5,lv:'AR',a:'Selective early-pay offers (net-positive)',t:'$7M',cash:7,ease:3,urg:20,conf:0.65,o:'Sales Head',s:'20 days',p:'WATCH',st:'Open',out:'',n:''},
+  {id:6,lv:'AP',a:'Extend DPO on V006/V007 (ex-MSMED)',t:'$16M',cash:16,ease:4,urg:15,conf:0.85,o:'Procurement · CFO',s:'15 days',p:'HIGH',st:'Open',out:'',n:''},
+  {id:7,lv:'AP',a:'Recover invoice-over-PO variance — 9 vendors',t:'$11M',cash:11,ease:3,urg:15,conf:0.90,o:'AP Head · Controller',s:'15 days',p:'HIGH',st:'In Progress',out:'',n:'Credit notes raised'},
+  {id:8,lv:'AP',a:'Hold 22 maverick FB60/FV60 invoices',t:'$13M',cash:13,ease:5,urg:2,conf:0.92,o:'CFO · Audit',s:'Immediate',p:'CRITICAL',st:'Open',out:'',n:''},
+  {id:9,lv:'AP',a:'Capture available early-pay discounts',t:'$4M',cash:4,ease:4,urg:45,conf:0.70,o:'AP Head',s:'Ongoing',p:'WATCH',st:'Open',out:'',n:''},
+  {id:10,lv:'AP',a:'Lock info-record price changes &gt;3%',t:'Control',cash:5,ease:2,urg:30,conf:0.78,o:'Procurement · IT',s:'30 days',p:'MEDIUM',st:'Open',out:'',n:''},
+  {id:11,lv:'INV',a:'Inter-plant STO — non-moving spares',t:'$21M',cash:21,ease:3,urg:60,conf:0.82,o:'Supply Chain',s:'60 days',p:'HIGH',st:'Open',out:'',n:''},
+  {id:12,lv:'INV',a:'Dispose non-moving stock before P12',t:'$23M',cash:23,ease:2,urg:40,conf:0.80,o:'CFO · Plant Head',s:'By Mar-26',p:'CRITICAL',st:'Open',out:'',n:''},
+  {id:13,lv:'INV',a:'Clear GR/IR exceptions',t:'$12M',cash:12,ease:4,urg:14,conf:0.85,o:'Controller · Stores',s:'14 days',p:'HIGH',st:'Open',out:'',n:''},
+  {id:14,lv:'INV',a:'Vendor return — air-separation spares',t:'$3M',cash:3,ease:4,urg:30,conf:0.75,o:'Procurement',s:'30 days',p:'MEDIUM',st:'Completed',out:'3.1',n:'RTV done at 75%'},
+  {id:15,lv:'INV',a:'Prioritise / redistribute expiring batches',t:'$7M',cash:7,ease:3,urg:30,conf:0.72,o:'Plant Materials',s:'30 days',p:'MEDIUM',st:'Open',out:'',n:''},
+  {id:16,lv:'INV',a:'Freeze reorder on over-stocked materials',t:'$9M',cash:9,ease:4,urg:2,conf:0.76,o:'MRP Controller',s:'Immediate',p:'MEDIUM',st:'Open',out:'',n:''}
+];
+/* ═══ PRIORITISATION ENGINE (deterministic, explainable) ═══
+   Priority = Impact × Ease × Urgency × Confidence, each normalised 0–1, ×100.
+   This is computed math, not a model guess; the model layer (roadmap) only explains it. */
+function urgScore(days){ // nearer deadline → higher; 0d→1.0, 120d+→~0.15
+  return Math.max(0.12, Math.min(1, 1 - Math.log10(days+1)/2.2));
+}
+function scoreOf(a){
+  const impact=Math.min(1, a.cash/37);          // normalised to largest cash item
+  const ease=a.ease/5;
+  const urg=urgScore(a.urg);
+  const conf=a.conf;
+  const raw=impact*0.40 + ease*0.20 + urg*0.25 + conf*0.15; // weighted blend
+  return {score:Math.round(raw*100), impact,ease,urg,conf};
+}
+function scoreBreakdown(a){
+  const s=scoreOf(a);
+  return 'Impact '+Math.round(s.impact*100)+' · Ease '+Math.round(s.ease*100)+' · Urgency '+Math.round(s.urg*100)+' · Confidence '+Math.round(s.conf*100);
+}
+
+/* ═══ TREND & FORECAST DATA (6 historical periods, per metric) ═══ */
+const TREND={
+  periods:['P2','P3','P4','P5','P6','P7'],
+  dso:[55,58,61,64,66,67],
+  dpo:[45,44,43,42,42,42],
+  dio:[44,45,45,46,46,46],
+  ccc:[54,59,63,68,70,71],
+  grir:[13,14,14,15,15,19],      // GR/IR gap $M — note P7 jump (anomaly)
+  overdue:[78,86,94,101,106,112] // AR overdue $M
+};
+/* linear regression → slope (velocity) + next-period forecast */
+function linReg(y){
+  const n=y.length, xs=[...Array(n).keys()];
+  const mx=xs.reduce((a,b)=>a+b,0)/n, my=y.reduce((a,b)=>a+b,0)/n;
+  let num=0,den=0;
+  xs.forEach((x,i)=>{num+=(x-mx)*(y[i]-my);den+=(x-mx)*(x-mx);});
+  const slope=num/den, intercept=my-slope*mx;
+  const forecast=slope*n+intercept;
+  // residual std for confidence band
+  const resid=y.map((v,i)=>v-(slope*i+intercept));
+  const sd=Math.sqrt(resid.reduce((a,b)=>a+b*b,0)/n);
+  return {slope,intercept,forecast,sd};
+}
+/* anomaly: a point that breaks the trend established by the points before it,
+   scaled by the series' own typical period-to-period step (robust on short series) */
+function anomalies(y){
+  const flags=[];
+  for(let i=2;i<y.length;i++){
+    const hist=y.slice(0,i);
+    const rr=linReg(hist);
+    const pred=rr.slope*i+rr.intercept;
+    const steps=[]; for(let j=1;j<hist.length;j++) steps.push(Math.abs(hist[j]-hist[j-1]));
+    const stepMean=steps.reduce((a,b)=>a+b,0)/steps.length||1;
+    if(Math.abs(y[i]-pred) > 2.5*Math.max(stepMean,0.5)) flags.push(i);
+  }
+  return flags;
+}
+
+/* ═══ CONCENTRATION DATA (for top-driver / Pareto widgets) ═══ */
+const CONC={
+  ar:[['Meridian Pellet',15.8],['Cascade Steel',11.7],['Summit Ferro',9.7],['Harbor Cement',7.6],['Vertex Gases',5.9],['Others (12)',61.3]],
+  apVar:[['Ridgeline Coal',4.2],['Foundry Media',3.0],['Cardinal Floc.',1.9],['Basin Oil',1.0],['Others (5)',0.9]],
+  inv:[['North Mine GD10',86],['Pellet PL01',73],['Met Coke MC01',53],['Gas GP01',37],['Chem CH02',26],['Aviation AV01',21]]
+};
+let hcS,hcV;
+let hubSort='score';
+function hub(){
+  const b=document.getElementById('h-body');b.innerHTML='';
+  let open=0,prog=0,done=0,rel=0;
+  // compute scores, then sort (open/in-progress first, then by score desc)
+  const rows=ACTS.map(a=>({a,sc:scoreOf(a).score}));
+  rows.forEach(r=>{const a=r.a;
+    if(a.st==='Completed'){done++;rel+=parseFloat(a.out)||0;}
+    else if(a.st==='In Progress')prog++;else open++;
+  });
+  if(hubSort==='score'){
+    rows.sort((x,y)=>{
+      const dx=x.a.st==='Completed'?1:0, dy=y.a.st==='Completed'?1:0;
+      if(dx!==dy)return dx-dy;            // completed sink to bottom
+      return y.sc-x.sc;                   // then score desc
+    });
+  }
+  rows.forEach(r=>{const a=r.a; const sc=r.sc;
+    const lc=a.lv==='AR'?'b-crit':a.lv==='AP'?'b-high':'b-med';
+    const pc=a.p==='CRITICAL'?'b-crit':a.p==='HIGH'?'b-high':a.p==='MEDIUM'?'b-med':'b-low';
+    const scColor = sc>=70?'var(--crit)':sc>=50?'var(--high)':sc>=35?'var(--med-tx)':'var(--mid)';
+    const faded = a.st==='Completed'?'opacity:.5;':'';
+    const tr=document.createElement('tr');
+    tr.style.cssText=faded;
+    tr.innerHTML='<td><div style="display:flex;align-items:center;gap:7px">'+
+        '<div style="width:34px;height:24px;border-radius:5px;background:'+scColor+';color:#fff;display:flex;align-items:center;justify-content:center;font-family:\'DM Mono\',monospace;font-weight:600;font-size:12px" title="'+scoreBreakdown(a)+'">'+sc+'</div>'+
+        '<span class="mono" style="font-size:9px;color:var(--lite)">#'+a.id+'</span></div></td>'+
+      '<td><span class="badge '+lc+'">'+a.lv+'</span></td>'+
+      '<td>'+a.a+'<div style="font-size:9px;color:var(--lite);font-family:\'DM Mono\',monospace;margin-top:2px">'+scoreBreakdown(a)+'</div></td>'+
+      '<td class="num" style="font-weight:600">'+a.t+'</td>'+
+      '<td><span class="owner">'+a.o+'</span></td>'+
+      '<td class="mono" style="font-size:10px">'+a.s+'</td>'+
+      '<td><span class="badge '+pc+'">'+a.p+'</span></td>'+
+      '<td><select class="hub-sel" onchange="hst('+a.id+',this.value)"><option'+(a.st==='Open'?' selected':'')+'>Open</option><option'+(a.st==='In Progress'?' selected':'')+'>In Progress</option><option'+(a.st==='Completed'?' selected':'')+'>Completed</option></select></td>'+
+      '<td class="num"><input class="hub-in" style="width:56px;text-align:right" type="number" step="0.1" value="'+a.out+'" placeholder="—" onchange="hout('+a.id+',this.value)"></td>'+
+      '<td><input class="hub-in-txt" style="width:106px" value="'+a.n+'" placeholder="note…" onchange="hnote('+a.id+',this.value)"></td>';
+    b.appendChild(tr);
+  });
+  st('h-tot',ACTS.length);st('h-open',open);st('h-prog',prog);st('h-done',done);
+  st('h-rel','$'+rel.toFixed(1)+'M');
+  st('h-pct',Math.round(rel/195*100)+'% captured');
+  if(hcS){hcS.data.datasets[0].data=[open,prog,done];hcS.update();}
+  if(hcV){hcV.data.datasets[0].data=[rel,195-rel];hcV.update();}
+  // top-3 rationale strip
+  const top=rows.filter(r=>r.a.st!=='Completed').slice(0,3).map(r=>r.a);
+  if(top.length&&document.getElementById('h-rationale')){
+    document.getElementById('h-rationale').innerHTML=
+      top.map((a,i)=>'<div style="display:flex;gap:9px;padding:7px 0;'+(i<top.length-1?'border-bottom:1px solid var(--border)':'')+'">'+
+        '<div style="flex:0 0 22px;height:22px;border-radius:5px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-family:\'DM Mono\',monospace;font-size:11px;font-weight:600">'+(i+1)+'</div>'+
+        '<div style="flex:1"><span style="font-weight:600;color:var(--ch);font-size:12px">'+a.a.replace(/&gt;/g,'>')+'</span> '+
+        '<span style="font-size:11px;color:var(--mid)">— '+rationaleFor(a)+'</span></div></div>').join('');
+  }
+}
+function rationaleFor(a){
+  const s=scoreOf(a);
+  const bits=[];
+  if(s.urg>0.75) bits.push('deadline in '+a.urg+'d');
+  if(s.impact>0.6) bits.push('$'+a.cash+'M at stake');
+  if(s.ease>=0.8) bits.push('fast to execute');
+  if(s.conf>=0.88) bits.push('strong evidence');
+  if(a.lv==='AP'&&/maverick/i.test(a.a)) bits.push('reversible control, do first');
+  if(!bits.length) bits.push('scored '+s.score+' on the blended model');
+  return 'ranks high: '+bits.join(', ')+'.';
+}
+function toggleHubSort(){hubSort=hubSort==='score'?'none':'score';
+  document.getElementById('h-sort-lbl').textContent=hubSort==='score'?'Priority score':'Entry order';hub();}
+function hst(id,v){ACTS.find(a=>a.id===id).st=v;hub();}
+function hout(id,v){ACTS.find(a=>a.id===id).out=v;hub();}
+function hnote(id,v){ACTS.find(a=>a.id===id).n=v;}
+
+/* ═══════════ AESA CONVERSATIONAL ASSISTANT ═══════════ */
+const WC={
+  ar:{customers:[
+    {id:'0010004821',name:'Meridian Pellet Traders',div:'Pellet',terms:'Z007',open:15.8,days:112},
+    {id:'0010007233',name:'Cascade Steel & Power',div:'Iron Ore',terms:'Z009',open:11.7,days:96},
+    {id:'0010011902',name:'Summit Ferro Alloys',div:'Pellet',terms:'Z007',open:9.7,days:78},
+    {id:'0010003340',name:'Harbor Cement Works',div:'Iron Ore',terms:'Y006',open:7.6,days:71},
+    {id:'0010009118',name:'Vertex Gases Pvt Ltd',div:'Gases',terms:'Z006',open:5.9,days:64}]},
+  ap:{vendors:[
+    {name:'Ridgeline Coal & Coke',grp:'V002',invOver:28,over:'9.4%',recov:4.2},
+    {name:'Foundry Grinding Media',grp:'V002',invOver:21,over:'7.8%',recov:3.0},
+    {name:'Cardinal Flocculants Co',grp:'V002',invOver:18,over:'6.2%',recov:1.9},
+    {name:'Basin Furnace Oil',grp:'V005',invOver:14,over:'5.8%',recov:1.0}]},
+  inv:{items:[
+    {plant:'PL01',mat:'1043210',desc:'Pellet roller bearings',val:9.3,idle:172,action:'STO transfer'},
+    {plant:'MC01',mat:'1052088',desc:'Coke oven refractory',val:7.4,idle:148,action:'Auction'},
+    {plant:'GD10',mat:'1038847',desc:'Conveyor idler assemblies',val:5.9,idle:131,action:'STO transfer'},
+    {plant:'GP01',mat:'1061120',desc:'Air separation spares',val:4.1,idle:118,action:'RTV'},
+    {plant:'PL01',mat:'1044901',desc:'Grinding media (excess)',val:4.9,idle:104,action:'STO transfer'}]}
+};
+function fU(x){return cur==='USD'?'$'+x+'M':'₹'+Math.round(x*83.5/10)+' Cr';}
+
+let asMsgs=[];
+function asOpen(){document.getElementById('as-ov').classList.add('open');document.getElementById('as-panel').classList.add('open');asRender();}
+function asClose(){document.getElementById('as-ov').classList.remove('open');document.getElementById('as-panel').classList.remove('open');}
+function asClear(){asMsgs=[];asRender();}
+function asKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();asSubmit();}}
+window.asAsk=function(t){document.getElementById('as-ta').value=t;asSubmit();};
+
+function ansCCC(){return{text:`Acme's cash conversion cycle is <strong>71 days</strong> — DIO 46 + DSO 67 − DPO 42. At ~${fU(7.4)}/day of turnover, compressing to a 50-day target would release about <strong>${fU(155)}</strong>. The dominant lever is DSO, 22 days above the ~45-day weighted terms.`,
+  sql:`SELECT dio, dso, dpo, dio+dso-dpo AS ccc\nFROM working_capital_kpi WHERE client='140' AND period='2025-P7';`,
+  kpis:[{v:'46',l:'DIO'},{v:'67',l:'DSO'},{v:'42',l:'DPO'},{v:'71',l:'CCC'}]};}
+function ansOverdue(){
+  const rows=WC.ar.customers.map(c=>({Customer:c.name,Div:c.div,Terms:c.terms,Open:fU(c.open),Days:c.days}));
+  return{text:`<strong>${fU(37)}</strong> is overdue beyond 90 days across 3 customers; <strong>${fU(112)}</strong> total overdue at a DSO of 67 days. Top exposures:`,
+  sql:`SELECT b.customer_number, k.name1, v.division, v.payment_terms,\n       current_date - b.net_due_date AS days_overdue,\n       SUM(b.amount_in_local_currency) AS open_value\nFROM bsid b\nJOIN kna1 k ON b.customer_number=k.customer_number\nJOIN knvv v ON v.customer_number=k.customer_number\nWHERE b.client='140' AND current_date - b.net_due_date > 60\nGROUP BY 1,2,3,4 ORDER BY open_value DESC;`,
+  columns:['Customer','Div','Terms','Open','Days'],data:rows};}
+function ansDSO(){return{text:`DSO is <strong>67 days</strong> against weighted terms of ~45 days — a 22-day gap tying up roughly <strong>${fU(163)}</strong>. Pellet and Iron Ore divisions carry 62% of the overdue balance.`,
+  sql:`SELECT (SUM(open_amount)/(SELECT credit_revenue FROM kpi))*365 AS dso\nFROM bsid WHERE client='140';`,
+  kpis:[{v:'67',l:'DSO days'},{v:'~45',l:'Terms'},{v:'+22',l:'Gap'}]};}
+function ansVariance(){
+  const rows=WC.ap.vendors.map(v=>({Vendor:v.name,Grp:v.grp,Invoices:v.invOver,Overcharge:v.over,Recoverable:fU(v.recov)}));
+  return{text:`<strong>127 invoices</strong> across 9 vendors cleared above PO price beyond tolerance — <strong>${fU(17)}</strong> overbilled, <strong>${fU(11)}</strong> recoverable. Concentrated in raw-material and consumable vendors:`,
+  sql:`SELECT l.name1, l.vendor_account_group, COUNT(*) AS invoices_over,\n       AVG((r.amount/r.quantity)/(p.net_price/p.price_unit)-1) AS avg_overcharge\nFROM rseg r\nJOIN ekpo p ON r.po_doc_number=p.doc_number AND r.po_item_number=p.line_item\nJOIN ekko e ON p.doc_number=e.doc_number\nJOIN lfa1 l ON e.vendor_id=l.vendor_id\nWHERE r.client='140' AND (r.amount/r.quantity)>(p.net_price/p.price_unit)*1.02\nGROUP BY 1,2 ORDER BY invoices_over DESC;`,
+  columns:['Vendor','Grp','Invoices','Overcharge','Recoverable'],data:rows};}
+function ansMaverick(){return{text:`<strong>22 invoices</strong> totalling <strong>${fU(13)}</strong> were posted via FB60/FV60 — direct FI entry, no PO, bypassing the 3-way match. Several sit with vendors created shortly before the invoice. Recommend a payment block on all 22 and dual authorisation to release.`,
+  sql:`SELECT h.doc_number, h.transaction_code, seg.vendor_id,\n       seg.amount_in_local_currency\nFROM bkpf h\nJOIN bseg seg ON h.doc_number=seg.doc_number\nWHERE h.client='140' AND h.transaction_code IN ('FB60','FV60','F-53')\n  AND seg.clearing_doc_number IS NULL\nORDER BY seg.amount_in_local_currency DESC;`,
+  kpis:[{v:'22',l:'Invoices'},{v:fU(13),l:'At risk'},{v:'FB60/FV60',l:'Route'}]};}
+function ansDPO(){return{text:`DPO is <strong>42 days</strong> with about <strong>6 days</strong> of headroom to terms — worth ~<strong>${fU(16)}</strong> if aligned. Safe candidates are V006 transport (32d) and V007 capital/PM (29d). MSMED-registered vendors are excluded — the 45-day statutory cap makes stretching them a breach.`,
+  sql:`SELECT l.vendor_account_group, AVG(dpo) AS avg_dpo\nFROM ap_dpo_by_invoice JOIN lfa1 l USING(vendor_id)\nWHERE l.msme_flag IS NULL GROUP BY 1 ORDER BY avg_dpo;`,
+  kpis:[{v:'42',l:'DPO'},{v:'+6',l:'Headroom'},{v:fU(16),l:'If extended'}]};}
+function ansInvSlow(){
+  const rows=WC.inv.items.map(i=>({Plant:i.plant,Material:i.mat,Value:fU(i.val),Idle:i.idle,Action:i.action}));
+  return{text:`<strong>${fU(57)}</strong> of stock shows no issue movement in 90–180 days, and <strong>${fU(23)}</strong> is non-moving beyond 180 days (write-down risk before P12). About <strong>${fU(23)}</strong> is recoverable through transfer, return and auction:`,
+  sql:`SELECT m.plant, m.material_number, b.standard_price*s.qty AS value,\n       current_date - MAX(m.posting_date) AS days_idle\nFROM matdoc m\nJOIN mbew b ON m.material_number=b.material_number AND m.plant=b.valuation_area\nJOIN stock s ON s.material_number=m.material_number AND s.plant=m.plant\nWHERE m.client='140' AND m.movement_type IN ('261','601')\nGROUP BY 1,2,3 HAVING current_date - MAX(m.posting_date) > 90\nORDER BY value DESC;`,
+  columns:['Plant','Material','Value','Idle','Action'],data:rows};}
+function ansTrapped(){return{text:`About <strong>${fU(195)}</strong> of working capital is releasable: receivables (${fU(112)} overdue), inventory (${fU(57)} slow-moving), and payables timing. This is a <strong>cash / balance-sheet</strong> figure — separate from the ~${fU(68)} EBITDA impact, which comes only from price, discount and write-down actions.`,
+  sql:`SELECT lever, SUM(amount_usd) FROM wc_trapped_cash\nWHERE client='140' GROUP BY lever ORDER BY 2 DESC;`,
+  kpis:[{v:fU(112),l:'Receivables'},{v:fU(57),l:'Inventory'},{v:fU(195),l:'Total cash'}]};}
+function ansEbitda(){return{text:`The <strong>EBITDA</strong> impact is about <strong>${fU(68)}</strong> annualised — deliberately separate from the ${fU(195)} cash figure. Only price realignment (${fU(23)}), discount cancellation (${fU(8)}), variance recovery (${fU(11)}), maverick prevention (${fU(5)}) and write-down avoidance (${fU(23)}) touch the P&L, net of the ${fU(2)} early-pay cost. Changing DPO/DSO/DIO moves cash, not profit.`,
+  sql:`SELECT item, ebitda_impact_usd FROM wc_actions\nWHERE client='140'\n  AND impact_type IN ('price','discount','recovery','writedown_avoided')\nORDER BY ebitda_impact_usd DESC;`,
+  kpis:[{v:'+'+fU(68),l:'Net EBITDA'},{v:fU(195),l:'Cash (sep.)'}]};}
+function ansHelp(){return{text:`I answer over Acme's governed working-capital data — the AR subledger (BSID/BSAD), the P2P chain (EKKO/EKPO/RSEG/BSEG) and inventory movements (MATDOC), on client 140. Every answer shows the query behind it. Try a starter below, or ask about DSO, a named overdue customer, price variance, maverick spend, or non-moving stock.`,sql:null};}
+function ansCustomer(q){
+  const c=WC.ar.customers.find(x=>q.toLowerCase().includes(x.name.toLowerCase().split(' ')[0].toLowerCase())||q.includes(x.id));
+  if(!c)return null;
+  return{text:`<strong>${c.name}</strong> (${c.id}) — ${c.div} division, terms ${c.terms}. Open exposure <strong>${fU(c.open)}</strong>, <strong>${c.days} days</strong> overdue. ${c.days>90?'Beyond 90 days and at provisioning risk before P12 — recommend MD-level escalation.':'Approaching the critical bucket — active follow-up recommended.'}`,
+  sql:`SELECT b.customer_number, k.name1, v.division, v.payment_terms,\n       SUM(b.amount_in_local_currency) AS open_value,\n       current_date - MIN(b.net_due_date) AS days_overdue\nFROM bsid b JOIN kna1 k ON b.customer_number=k.customer_number\nJOIN knvv v ON v.customer_number=k.customer_number\nWHERE b.client='140' AND b.customer_number='${c.id}' GROUP BY 1,2,3,4;`,
+  columns:['Field','Value'],data:[{Field:'Division',Value:c.div},{Field:'Terms',Value:c.terms},{Field:'Open',Value:fU(c.open)},{Field:'Days overdue',Value:c.days}]};}
+
+const ROUTES=[
+  [/(cash conversion|ccc|cycle|dio.*dso)/i,ansCCC],
+  [/(overdue|aging|ageing|past due|who owes|collection)/i,ansOverdue],
+  [/(dso|days sales)/i,ansDSO],
+  [/(price variance|overbill|over.?po|rseg)/i,ansVariance],
+  [/(maverick|fb60|fv60|off.?contract|no po)/i,ansMaverick],
+  [/(dpo|days payable|extend.*pay|payment terms)/i,ansDPO],
+  [/(slow.?moving|non.?moving|dead stock|inventory.*idle|matdoc|liquidat)/i,ansInvSlow],
+  [/(trapped|releasable|how much.*cash|total.*opportunity|free up)/i,ansTrapped],
+  [/(ebitda|p&l|profit|margin)/i,ansEbitda],
+  [/(help|what can you|how do you|what do you)/i,ansHelp],
+];
+function route(q){
+  const c=ansCustomer(q); if(c) return c;
+  for(const[re,fn]of ROUTES){if(re.test(q))return fn();}
+  const base=ansOverdue();
+  base.text='Here is the receivables overdue position — the largest single pool of trapped cash. '+base.text;
+  return base;
+}
+
+function asRender(){
+  const body=document.getElementById('as-body');
+  if(!asMsgs.length){
+    body.innerHTML=`<div class="as-welcome">
+      <h3>Ask AESA</h3>
+      <p>I read Acme's working-capital data across O2C, P2P and inventory — and show the governed query behind every answer.</p>
+      <div class="as-chips">
+        <button class="as-chip" onclick="asAsk('What is our cash conversion cycle?')"><span class="ck">Cash cycle</span>What is our cash conversion cycle?</button>
+        <button class="as-chip" onclick="asAsk('Which customers are most overdue?')"><span class="ck">Receivables</span>Which customers are most overdue?</button>
+        <button class="as-chip" onclick="asAsk('Show invoice-over-PO price variance by vendor')"><span class="ck">Payables</span>Show price variance by vendor</button>
+        <button class="as-chip" onclick="asAsk('How much slow-moving inventory do we have?')"><span class="ck">Inventory</span>How much slow-moving inventory do we have?</button>
+        <button class="as-chip" onclick="asAsk('How much working capital can we release?')"><span class="ck">Opportunity</span>How much working capital can we release?</button>
+        <button class="as-chip" onclick="asAsk('What is the EBITDA impact versus the cash impact?')"><span class="ck">Cash vs P&L</span>EBITDA impact vs cash impact?</button>
+      </div></div>`;
+    return;
+  }
+  let h='';
+  asMsgs.forEach((m,i)=>{
+    if(m.role==='user'){h+=`<div class="as-msg user"><div class="as-bubble">${esc(m.text)}</div></div>`;}
+    else{
+      let inner=`<div class="as-ans">${m.text}</div>`;
+      if(m.kpis)inner+='<div class="as-kpis">'+m.kpis.map(k=>`<div class="as-kpi"><div class="v">${esc(k.v)}</div><div class="l">${esc(k.l)}</div></div>`).join('')+'</div>';
+      if(m.columns&&m.data&&m.data.length){
+        inner+='<table class="as-tbl"><thead><tr>'+m.columns.map(c=>`<th>${esc(c)}</th>`).join('')+'</tr></thead><tbody>';
+        m.data.forEach(r=>{inner+='<tr>'+m.columns.map(c=>{let v=r[c]==null?'':r[c];const num=typeof v==='number'||/^[\$₹\d]/.test(String(v));return`<td class="${num?'num':''}">${esc(v)}</td>`;}).join('')+'</tr>';});
+        inner+='</tbody></table>';
+      }
+      if(m.sql){const gid='asg'+i;inner+=`<div class="as-gq" id="${gid}"><div class="as-gq-h" onclick="document.getElementById('${gid}').classList.toggle('open')"><span class="cx">▶</span> governed query <span class="tag">read-only · ingest_db</span></div><pre>${esc(m.sql)}</pre></div>`;}
+      h+=`<div class="as-msg bot"><div class="as-ava">AESA</div><div class="as-bubble">${inner}</div></div>`;
+    }
+  });
+  if(window._asTyping)h+=`<div class="as-msg bot"><div class="as-ava">AESA</div><div class="as-bubble"><div class="as-typing"><span></span><span></span><span></span></div></div></div>`;
+  body.innerHTML=h;body.scrollTop=body.scrollHeight;
+}
+function asSubmit(){
+  const ta=document.getElementById('as-ta');const q=(ta.value||'').trim();if(!q)return;
+  ta.value='';asMsgs.push({role:'user',text:q});window._asTyping=true;asRender();
+  setTimeout(()=>{const a=route(q);window._asTyping=false;asMsgs.push(Object.assign({role:'bot'},a));asRender();},440);
+}
+
+/* ═══════════ CHARTS (getElementById) ═══════════ */
+const F={family:"'DM Sans',sans-serif",size:10};
+const GRID='#E5E7EB';
+Chart.defaults.font.family="'DM Sans',sans-serif";
+Chart.defaults.color='#6B7280';
+function C(id){return document.getElementById(id);}
+
+window.addEventListener('load',()=>{
+  const P=['P2 May','P3 Jun','P4 Jul','P5 Aug','P6 Sep','P7 Oct'];
+  // CCC trend with computed forecast (P8) + anomaly highlighting on DSO
+  const Pf=[...P,'P8 →'];
+  const dsoHist=TREND.dso, dsoReg=linReg(dsoHist);
+  const dsoFc=Math.round(dsoReg.forecast);
+  const dsoAnoms=anomalies(dsoHist);
+  const dsoPtColors=dsoHist.map((_,i)=>dsoAnoms.includes(i)?'#E65100':'#C62828');
+  const dsoPtRadius=dsoHist.map((_,i)=>dsoAnoms.includes(i)?5:2);
+  new Chart(C('ov-ccc'),{type:'line',data:{labels:Pf,datasets:[
+    {label:'DIO',data:[...TREND.dio,null],borderColor:'#98AA3A',tension:.3,borderWidth:2,pointRadius:2,fill:false},
+    {label:'DSO',data:[...dsoHist,null],borderColor:'#C62828',tension:.3,borderWidth:2,pointRadius:dsoPtRadius,pointBackgroundColor:dsoPtColors,fill:false},
+    {label:'DSO forecast',data:[...Array(dsoHist.length-1).fill(null),dsoHist[dsoHist.length-1],dsoFc],borderColor:'#C62828',borderDash:[2,2],borderWidth:1.5,pointRadius:[...Array(dsoHist.length).fill(0),4],pointBackgroundColor:'#C62828',pointStyle:'triangle',fill:false},
+    {label:'DPO',data:[...TREND.dpo,null],borderColor:'#99AFBC',tension:.3,borderWidth:2,pointRadius:2,fill:false},
+    {label:'CCC',data:[...TREND.ccc,null],borderColor:'#0D1520',borderDash:[5,3],tension:.3,borderWidth:2,pointRadius:0,fill:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:F,boxWidth:9,padding:8,filter:it=>it.text!=='DSO forecast'}},tooltip:{callbacks:{afterBody:items=>{const i=items[0].dataIndex;return dsoAnoms.includes(i)?'⚠ DSO anomaly: breaks its own trend':'';}}}},scales:{y:{min:30,max:80,grid:{color:GRID},ticks:{font:F}},x:{grid:{display:false},ticks:{font:F}}}}});
+  new Chart(C('ov-split'),{type:'doughnut',data:{labels:['Receivables','Inventory','Payables timing'],datasets:[{data:[112,57,25],backgroundColor:['#C62828','#98AA3A','#6699CC'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{position:'bottom',labels:{font:F,boxWidth:9,padding:8}}}}});
+  new Chart(C('ov-radar'),{type:'radar',data:{labels:['Receivables (DSO)','Payables (DPO)','Inventory (DIO)','Collections / disputes'],datasets:[
+    {label:'Current',data:[42,64,58,48],borderColor:'#6B3FA0',backgroundColor:'rgba(107,63,160,.14)',borderWidth:2,pointBackgroundColor:'#6B3FA0',pointRadius:3,pointHoverRadius:4},
+    {label:'Target',data:[72,80,78,75],borderColor:'#98AA3A',backgroundColor:'rgba(152,170,58,.05)',borderWidth:1.5,borderDash:[5,4],pointBackgroundColor:'#98AA3A',pointRadius:3,pointStyle:'circle'}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:F,boxWidth:12,padding:12,usePointStyle:false}}},scales:{r:{min:0,max:100,ticks:{stepSize:20,font:{size:9},backdropColor:'transparent',color:'#9CA3AF'},grid:{color:'#E5E7EB'},angleLines:{color:'#E5E7EB'},pointLabels:{font:{family:"'DM Sans',sans-serif",size:11},color:'#374151'}}}}});
+  new Chart(C('ov-leak'),{type:'bar',data:{labels:P,datasets:[
+    {label:'AR carrying',data:[8,9,10,11,12,12],backgroundColor:'#C62828'},
+    {label:'AP leakage',data:[6,6,7,7,7,8],backgroundColor:'#E65100'},
+    {label:'Inv holding',data:[4,4,5,5,5,5],backgroundColor:'#99AFBC'}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:F,boxWidth:9,padding:8}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:F}},y:{stacked:true,grid:{color:GRID},ticks:{font:F}}}}});
+  new Chart(C('ar-age'),{type:'bar',data:{labels:['Not due','0–30','31–60','61–90','>90'],datasets:[{data:[69,50,33,23,37],backgroundColor:['#99AFBC','#98AA3A','#6699CC','#E65100','#C62828']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:GRID},ticks:{font:F,callback:v=>'$'+v+'M'}},x:{grid:{display:false},ticks:{font:F}}}}});
+  new Chart(C('ar-dso-c'),{type:'line',data:{labels:P,datasets:[
+    {label:'DSO',data:[55,58,61,64,66,67],borderColor:'#C62828',backgroundColor:'rgba(198,40,40,.07)',fill:true,tension:.3,borderWidth:2,pointRadius:2},
+    {label:'Terms ~45d',data:[45,45,45,45,45,45],borderColor:'#98AA3A',borderDash:[5,3],fill:false,borderWidth:1.5,pointRadius:0}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:F,boxWidth:9,padding:8}}},scales:{y:{min:30,max:75,grid:{color:GRID},ticks:{font:F}},x:{grid:{display:false},ticks:{font:F}}}}});
+  new Chart(C('ap-age'),{type:'bar',data:{labels:['Current','1–15','16–30','31–45','>45'],datasets:[{data:[201,65,45,22,9],backgroundColor:['#99AFBC','#99AFBC','#6699CC','#E65100','#C62828']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:GRID},ticks:{font:F,callback:v=>'$'+v+'M'}},x:{grid:{display:false},ticks:{font:F}}}}});
+  new Chart(C('inv-move'),{type:'doughnut',data:{labels:['Fast-moving','Normal','Slow >90d','Non-moving >180d'],datasets:[{data:[134,82,57,23],backgroundColor:['#98AA3A','#99AFBC','#E65100','#C62828'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'right',labels:{font:F,boxWidth:9,padding:7}}}}});
+  new Chart(C('ccc-target'),{type:'bar',data:{labels:['DIO','DSO','DPO','CCC'],datasets:[
+    {label:'Current',data:[46,67,42,71],backgroundColor:'#C62828'},
+    {label:'Target',data:[38,45,48,35],backgroundColor:'#98AA3A'}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:F,boxWidth:9,padding:8}}},scales:{y:{grid:{color:GRID},ticks:{font:F,callback:v=>v+'d'}},x:{grid:{display:false},ticks:{font:F}}}}});
+  hcS=new Chart(C('h-status'),{type:'doughnut',data:{labels:['Open','In Progress','Done'],datasets:[{data:[12,3,1],backgroundColor:['#C62828','#E65100','#98AA3A'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'right',labels:{font:F,boxWidth:9,padding:7}}}}});
+  hcV=new Chart(C('h-val'),{type:'doughnut',data:{labels:['Released','Open pipeline'],datasets:[{data:[3.1,191.9],backgroundColor:['#98AA3A','#E5E7EB'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{position:'right',labels:{font:F,boxWidth:9,padding:7}}}}});
+  // ═══ Populate Patterns & Trends panel (computed) ═══
+  (function(){
+    const dso=TREND.dso, reg=linReg(dso), an=anomalies(dso);
+    const vel=reg.slope;
+    document.getElementById('tr-vel').textContent=(vel>=0?'+':'')+vel.toFixed(1)+' d/period';
+    document.getElementById('tr-vel-s').textContent=vel>0?'DSO deteriorating — rising steadily':'DSO improving';
+    const fc=Math.round(reg.forecast), band=Math.max(1,Math.round(reg.sd));
+    document.getElementById('tr-fc').textContent=fc+' d';
+    document.getElementById('tr-fc-s').textContent='P8 projection ±'+band+'d · crosses 70d threshold '+(fc>=70?'now':'soon');
+    // GR/IR anomaly (the designed P7 spike)
+    const grAn=anomalies(TREND.grir);
+    if(grAn.length){
+      const idx=grAn[grAn.length-1];
+      document.getElementById('tr-an').textContent=TREND.periods[idx]+' · GR/IR';
+      document.getElementById('tr-an-s').textContent='GR/IR gap broke its baseline (+'+Math.round((TREND.grir[idx]/TREND.grir[idx-1]-1)*100)+'% vs prior)';
+    } else {
+      document.getElementById('tr-an').textContent='none';
+      document.getElementById('tr-an-s').textContent='all series within 2σ of trend';
+    }
+    const dsoTotalRise=dso[dso.length-1]-dso[0];
+    document.getElementById('tr-brief').innerHTML=
+      '<strong style="color:#fff">Trend brief.</strong> DSO has risen '+dsoTotalRise+' days across the 6 periods at '+vel.toFixed(1)+' d/period; at this velocity it reaches ~'+fc+'d next period, past the 70-day provisioning-pressure line. DPO is flat-to-declining (giving up timing headroom) and DIO is stable, so the cycle deterioration is receivables-driven. The <span style="color:#C6D96B">P7 GR/IR spike</span> is a genuine anomaly, not seasonal drift — it breaks the trend of the series itself and warrants a same-period review.';
+  })();
+
+  // ═══ Concentration Pareto charts ═══
+  function paretoChart(cid, data, nid, unit){
+    const sorted=[...data];
+    const total=sorted.reduce((a,b)=>a+b[1],0);
+    let cum=0; const cumline=sorted.map(d=>{cum+=d[1];return Math.round(cum/total*100);});
+    const bars=sorted.map(d=>d[1]);
+    const labels=sorted.map(d=>d[0]);
+    const cols=sorted.map((d,i)=> d[0].toLowerCase().startsWith('other')?'#AEB6C2': i===0?'#C62828':i===1?'#E65100':i===2?'#98AA3A':'#6699CC');
+    new Chart(C(cid),{data:{labels,datasets:[
+      {type:'bar',data:bars,backgroundColor:cols,order:2,yAxisID:'y'},
+      {type:'line',data:cumline,borderColor:'#0D1520',borderWidth:1.5,pointRadius:2,tension:.2,order:1,yAxisID:'y1'}
+    ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.datasetIndex===1?('cumulative '+ctx.raw+'%'):(unit+ctx.raw+'M')}}},scales:{y:{grid:{color:GRID},ticks:{font:{size:8},callback:v=>unit+v}},y1:{position:'right',min:0,max:100,grid:{display:false},ticks:{font:{size:8},callback:v=>v+'%'}},x:{grid:{display:false},ticks:{font:{size:8},maxRotation:30,minRotation:30}}}}});
+    // 80/20 callout: how many entities (excluding 'Others') to reach ~80%
+    const named=sorted.filter(d=>!d[0].toLowerCase().startsWith('other'));
+    let c2=0,k=0; for(const d of named){c2+=d[1];k++; if(c2/total>=0.8)break;}
+    const share=Math.round(named.slice(0,k).reduce((a,b)=>a+b[1],0)/total*100);
+    document.getElementById(nid).innerHTML='Top <strong>'+k+'</strong> drive <strong>'+share+'%</strong> of the '+unit.replace('$','$')+total+'M total.';
+  }
+  paretoChart('conc-ar',CONC.ar,'conc-ar-n','$');
+  paretoChart('conc-ap',CONC.apVar,'conc-ap-n','$');
+  paretoChart('conc-inv',CONC.inv,'conc-inv-n','$');
+
+  hub();sim();
+});
+</script>
+</body>
+</html>

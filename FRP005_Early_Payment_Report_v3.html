@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FRP005 — Early Payment CoC Exposure | FortifAI</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --charcoal: #333333;
+  --brand-blue: #6699CC;
+  --deep-blue: #2E5A8A;
+  --steel-blue: #99AFBC;
+  --olive: #98AA3A;
+  --page-bg: #F2F4F7;
+  --card-bg: #FFFFFF;
+  --border: #E5E7EB;
+  --dark-navy: #0D1520;
+  --mid-grey: #6B7280;
+  --lt-grey: #9CA3AF;
+  --dark-grey: #374151;
+  --crit: #C62828; --crit-fill: #FDECEC;
+  --high: #E65100; --high-fill: #FFF3E0;
+  --med: #98AA3A; --med-fill: #F5F7DC;
+  --low: #6699CC; --low-fill: #E8F0F8;
+  --norisk: #6B7280; --norisk-fill: #F2F4F7;
+  --font: 'DM Sans', system-ui, sans-serif;
+  --mono: 'DM Mono', monospace;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:13px; }
+body { font-family:var(--font); background:var(--page-bg); color:var(--charcoal); min-height:100vh; }
+
+/* ── Topbar ── */
+.topbar { background:var(--dark-navy); padding:0 28px; height:52px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+.topbar-brand { display:flex; align-items:center; gap:10px; color:#fff; font-weight:600; font-size:1rem; }
+.topbar-brand .logo { width:26px; height:26px; background:linear-gradient(135deg,var(--brand-blue),var(--olive)); border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:700; color:#fff; }
+.topbar-right { display:flex; align-items:center; gap:12px; }
+.badge { padding:3px 10px; border-radius:4px; font-size:0.7rem; font-weight:600; }
+.badge-priv { background:rgba(198,40,40,0.15); color:var(--crit); }
+.badge-live { background:rgba(152,170,58,0.15); color:var(--olive); }
+.meta-text { font-size:0.78rem; color:var(--lt-grey); }
+
+/* Currency toggle */
+.currency-toggle { display:flex; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden; }
+.currency-toggle button { padding:4px 14px; font-family:var(--font); font-size:0.75rem; font-weight:600; border:none; cursor:pointer; background:transparent; color:var(--lt-grey); transition:all 0.2s; }
+.currency-toggle button.active { background:var(--deep-blue); color:#fff; }
+
+/* Download */
+.btn-download { display:flex; align-items:center; gap:5px; padding:5px 14px; background:var(--olive); color:#fff; border:none; border-radius:5px; font-family:var(--font); font-size:0.75rem; font-weight:600; cursor:pointer; }
+.btn-download:hover { background:#7a8c2e; }
+.btn-download svg { width:13px; height:13px; }
+
+/* ── Header ── */
+.report-header { background:var(--card-bg); padding:28px 32px 18px; border-bottom:1px solid var(--border); }
+.report-header h1 { font-size:1.23rem; font-weight:600; color:var(--charcoal); }
+.report-header .sub { margin-top:6px; font-size:0.82rem; color:var(--mid-grey); display:flex; gap:20px; flex-wrap:wrap; }
+.report-header .sub .lbl { color:var(--lt-grey); font-size:0.75rem; }
+
+/* ── Tabs ── */
+.tab-nav { display:flex; gap:1px; padding:0 32px; background:var(--card-bg); border-bottom:1px solid var(--border); overflow-x:auto; }
+.tab-btn { padding:11px 16px; font-family:var(--font); font-size:0.82rem; font-weight:500; color:var(--mid-grey); background:transparent; border:none; cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; transition:all 0.15s; }
+.tab-btn:hover { color:var(--charcoal); background:rgba(102,153,204,0.06); }
+.tab-btn.active { color:var(--deep-blue); border-bottom-color:var(--deep-blue); font-weight:600; }
+.tab-btn .cnt { background:var(--page-bg); padding:1px 7px; border-radius:10px; font-size:0.7rem; margin-left:5px; }
+.tab-btn.active .cnt { background:rgba(46,90,138,0.1); color:var(--deep-blue); }
+
+.tab-content { display:none; padding:24px 32px 48px; }
+.tab-content.active { display:block; }
+
+/* ── KPI ── */
+.kpi-section { margin-bottom:24px; }
+.kpi-title { font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--lt-grey); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.kpi-title .dot { width:7px; height:7px; border-radius:50%; }
+.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(185px,1fr)); gap:12px; }
+.kpi-card { background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow); position:relative; }
+.kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius:var(--radius) var(--radius) 0 0; }
+.kpi-card.cashout::before { background:var(--high); }
+.kpi-card.atrisk::before { background:#CCCB31; }
+.kpi-card.disc::before { background:var(--olive); }
+.kpi-card.neutral::before { background:var(--brand-blue); }
+.kpi-card.savings::before { background:var(--deep-blue); }
+.kpi-lbl { font-size:0.75rem; color:var(--mid-grey); margin-bottom:6px; font-weight:500; }
+.kpi-val { font-size:1.5rem; font-weight:600; font-feature-settings:'tnum'; }
+.kpi-val.cashout-v { color:var(--high); }
+.kpi-val.disc-v { color:var(--olive); }
+.kpi-val.neutral-v { color:var(--deep-blue); }
+.kpi-val.savings-v { color:var(--deep-blue); }
+.kpi-sub { margin-top:4px; font-size:0.72rem; color:var(--lt-grey); }
+
+/* ── Tables ── */
+.tbl-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); margin-top:12px; background:var(--card-bg); }
+.tbl { width:100%; border-collapse:collapse; font-size:0.82rem; white-space:nowrap; }
+.tbl thead th { background:var(--page-bg); padding:9px 12px; font-size:0.7rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; color:var(--mid-grey); border-bottom:1px solid var(--border); text-align:left; position:sticky; top:0; }
+.tbl tbody td { padding:8px 12px; border-bottom:1px solid var(--border); font-feature-settings:'tnum'; color:var(--dark-grey); }
+.tbl tbody tr:hover { background:rgba(102,153,204,0.04); }
+.tbl .num { text-align:right; font-family:var(--mono); font-size:0.78rem; }
+.tbl .total-row { background:var(--page-bg); font-weight:600; }
+
+/* Severity badges */
+.sev-badge { padding:2px 8px; border-radius:4px; font-size:0.7rem; font-weight:600; }
+.sev-critical { background:var(--crit-fill); color:var(--crit); }
+.sev-high { background:var(--high-fill); color:var(--high); }
+.sev-medium { background:var(--med-fill); color:#3A4400; }
+.sev-low { background:var(--low-fill); color:#1A3A5C; }
+
+/* Category / disc badges */
+.cat-badge { padding:2px 8px; border-radius:4px; font-size:0.7rem; font-weight:600; }
+.cat-cashout { background:var(--high-fill); color:var(--high); }
+.cat-atrisk { background:#FFF9DB; color:#92400E; }
+.disc-yes { color:var(--olive); font-weight:600; }
+.disc-no { color:var(--lt-grey); }
+
+/* Recommendation badges */
+.rec-justified { font-size:0.75rem; color:var(--olive); }
+.rec-unjustified { font-size:0.75rem; color:var(--crit); font-weight:500; }
+.rec-review { font-size:0.75rem; color:var(--high); }
+
+.ai-flag { white-space:normal; max-width:260px; font-size:0.75rem; color:var(--mid-grey); font-style:italic; line-height:1.4; }
+
+/* ── Section headers ── */
+.sec-hdr { display:flex; align-items:center; gap:10px; margin:24px 0 12px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+.sec-hdr h2 { font-size:1rem; font-weight:600; color:var(--charcoal); }
+.sec-hdr .sec-cnt { background:var(--page-bg); padding:2px 10px; border-radius:10px; font-size:0.72rem; color:var(--mid-grey); font-weight:600; }
+
+/* ── AI Insight ── */
+.ai-box { background:var(--card-bg); border:1px solid rgba(46,90,138,0.15); border-left:3px solid var(--deep-blue); border-radius:var(--radius); padding:20px 22px; margin-top:20px; }
+.ai-box::before { content:none; }
+.ai-box .ai-label { font-size:0.68rem; font-weight:700; letter-spacing:0.06em; color:var(--deep-blue); text-transform:uppercase; margin-bottom:8px; }
+.ai-box p { font-size:0.85rem; line-height:1.6; color:var(--dark-grey); margin-bottom:8px; }
+.ai-box p:last-child { margin-bottom:0; }
+.ai-box strong { color:var(--charcoal); }
+.ai-box .rec-block { margin-top:12px; padding:10px 14px; background:rgba(46,90,138,0.04); border-radius:var(--radius); }
+.ai-box .rec-block .rec-lbl { font-size:0.68rem; font-weight:700; color:var(--deep-blue); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px; }
+
+/* ── Charts ── */
+.chart-wrap { position:relative; height:340px; margin-top:12px; background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius); padding:16px; }
+
+/* ── Savings highlight ── */
+.savings-hero { background:var(--card-bg); border:1px solid rgba(46,90,138,0.15); border-left:4px solid var(--deep-blue); border-radius:var(--radius); padding:24px 28px; margin-bottom:24px; }
+.savings-hero .sh-title { font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--deep-blue); margin-bottom:10px; }
+.savings-hero .sh-val { font-size:2rem; font-weight:700; color:var(--deep-blue); font-feature-settings:'tnum'; }
+.savings-hero .sh-sub { font-size:0.85rem; color:var(--mid-grey); margin-top:6px; }
+
+/* ── Waterfall ── */
+.wf { max-width:680px; margin-top:12px; }
+.wf-row { display:flex; align-items:center; gap:14px; padding:12px 0; border-bottom:1px solid var(--border); }
+.wf-row:last-child { border-bottom:none; }
+.wf-lbl { width:280px; font-size:0.85rem; color:var(--dark-grey); }
+.wf-bar-w { flex:1; height:24px; }
+.wf-bar { height:100%; border-radius:3px; display:flex; align-items:center; padding:0 10px; font-size:0.72rem; font-weight:600; color:#fff; min-width:50px; }
+.wf-v { font-size:0.92rem; font-weight:600; min-width:120px; text-align:right; font-feature-settings:'tnum'; }
+
+/* ── Disc cards ── */
+.disc-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:12px; }
+.disc-card { background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius); padding:18px; }
+.disc-card.justified { border-left:3px solid var(--olive); }
+.disc-card.missed { border-left:3px solid var(--high); }
+.disc-card.nope { border-left:3px solid var(--crit); }
+.disc-card .dc-title { font-size:0.82rem; font-weight:600; margin-bottom:8px; }
+.disc-card .dc-stat { display:flex; justify-content:space-between; margin-top:10px; }
+.disc-card .dc-stat div { text-align:center; }
+.dc-stat .dv { font-size:1.1rem; font-weight:600; }
+.dc-stat .dl { font-size:0.68rem; color:var(--lt-grey); margin-top:2px; }
+.disc-card .dc-assess { font-size:0.75rem; color:var(--mid-grey); margin-top:10px; line-height:1.4; }
+
+/* ── Net position ── */
+.net-pos { background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-top:20px; max-width:440px; }
+.nr { display:flex; justify-content:space-between; padding:7px 0; font-size:0.88rem; border-bottom:1px solid var(--border); }
+.nr:last-child { border-bottom:none; }
+.nr.total { font-weight:700; font-size:1rem; border-top:2px solid var(--border); padding-top:10px; margin-top:4px; }
+
+/* ── Audit ── */
+.audit-grid { display:grid; grid-template-columns:240px 1fr; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+.audit-grid div { padding:10px 16px; font-size:0.82rem; border-bottom:1px solid var(--border); }
+.audit-grid div:nth-child(odd) { background:var(--page-bg); color:var(--mid-grey); font-weight:600; font-size:0.78rem; }
+.audit-grid div:nth-child(even) { background:var(--card-bg); }
+.audit-grid code { font-family:var(--mono); font-size:0.78rem; background:rgba(46,90,138,0.06); padding:1px 5px; border-radius:3px; }
+
+/* ── RCA sub-tabs ── */
+.subtab-nav { display:flex; gap:2px; margin-bottom:20px; border-bottom:1px solid var(--border); }
+.subtab-btn { padding:9px 16px; font-family:var(--font); font-size:0.8rem; font-weight:500; color:var(--mid-grey); background:transparent; border:none; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.15s; }
+.subtab-btn:hover { color:var(--charcoal); }
+.subtab-btn.active { color:var(--deep-blue); border-bottom-color:var(--deep-blue); font-weight:600; }
+.subtab-content { display:none; }
+.subtab-content.active { display:block; }
+
+/* RCA cards */
+.rca-grid { display:grid; grid-template-columns:1fr; gap:16px; }
+.rca-card { background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+.rca-card-hdr { padding:14px 18px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); }
+.rca-card-hdr h3 { font-size:0.9rem; font-weight:600; color:var(--charcoal); display:flex; align-items:center; gap:8px; }
+.rca-id { font-family:var(--mono); font-size:0.72rem; color:var(--lt-grey); background:var(--page-bg); padding:2px 8px; border-radius:4px; }
+.rca-impact { font-size:0.78rem; font-weight:600; }
+.rca-card-body { padding:16px 18px; }
+.rca-card-body .rca-finding { font-size:0.85rem; color:var(--dark-grey); line-height:1.6; margin-bottom:12px; }
+.rca-card-body .rca-evidence { font-size:0.78rem; color:var(--mid-grey); background:var(--page-bg); padding:10px 14px; border-radius:var(--radius); margin-bottom:12px; }
+.rca-card-body .rca-evidence strong { color:var(--dark-grey); }
+.rca-remediation { border-top:1px solid var(--border); padding:14px 18px; background:rgba(46,90,138,0.02); }
+.rca-remediation .rem-title { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--deep-blue); margin-bottom:8px; }
+.rem-item { display:flex; gap:10px; margin-bottom:8px; font-size:0.82rem; color:var(--dark-grey); line-height:1.5; }
+.rem-item:last-child { margin-bottom:0; }
+.rem-code { font-family:var(--mono); font-size:0.7rem; color:var(--deep-blue); background:rgba(46,90,138,0.06); padding:2px 6px; border-radius:3px; white-space:nowrap; height:fit-content; margin-top:2px; }
+.rem-owner { display:inline-block; font-size:0.7rem; font-weight:600; color:var(--mid-grey); background:var(--page-bg); padding:1px 8px; border-radius:3px; margin-left:6px; }
+.rem-timeline { display:inline-block; font-size:0.7rem; color:var(--lt-grey); margin-left:6px; }
+
+/* Severity indicator on RCA cards */
+.rca-sev-bar { width:4px; min-height:100%; }
+.rca-card { display:flex; }
+.rca-card > .rca-sev-bar + div { flex:1; }
+
+/* RCA summary strip */
+.rca-summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:24px; }
+.rca-stat { background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; text-align:center; }
+.rca-stat .rs-val { font-size:1.3rem; font-weight:600; color:var(--deep-blue); }
+.rca-stat .rs-lbl { font-size:0.72rem; color:var(--lt-grey); margin-top:4px; }
+
+@media (max-width:900px) {
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .disc-cards { grid-template-columns:1fr; }
+  .tab-content { padding:16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-brand"><div class="logo">F</div><span>FortifAI</span><span style="color:var(--lt-grey);font-weight:400;font-size:0.78rem;">/ Reports / FRP005</span></div>
+  <div class="topbar-right">
+    <div class="currency-toggle">
+      <button class="active" data-curr="INR" onclick="setCurrency('INR')">₹ INR</button>
+      <button data-curr="USD" onclick="setCurrency('USD')">$ USD</button>
+    </div>
+    <button class="btn-download" onclick="alert('Download triggered — Excel export via R6 engine')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download Excel
+    </button>
+    <span class="badge badge-priv">Attorney–Client Privileged</span>
+    <span class="badge badge-live">TRAE Live Data</span>
+    <span class="meta-text">28-Apr-2025</span>
+  </div>
+</div>
+
+<div class="report-header">
+  <h1>Early Payment Cost-of-Capital Exposure Report</h1>
+  <div class="sub">
+    <span><span class="lbl">Report </span>FRP005</span>
+    <span><span class="lbl">Rule </span>PROC0324</span>
+    <span><span class="lbl">Period </span>Aug 2025 — Nov 2025</span>
+    <span><span class="lbl">CoC Rate </span>10% p.a.</span>
+    <span id="curr-label" style="color:var(--deep-blue);font-weight:500;">Values in Lakhs (₹)</span>
+  </div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('savings')">Cash Savings</button>
+  <button class="tab-btn" onclick="showTab('exec')">Executive Summary</button>
+  <button class="tab-btn" onclick="showTab('detail')">Detail <span class="cnt">191</span></button>
+  <button class="tab-btn" onclick="showTab('trend')">Monthly Trend</button>
+  <button class="tab-btn" onclick="showTab('discount')">Discount Analysis</button>
+  <button class="tab-btn" onclick="showTab('rca')">RCA & Remediation</button>
+  <button class="tab-btn" onclick="showTab('vendor')">Vendor Summary <span class="cnt">119</span></button>
+  <button class="tab-btn" onclick="showTab('audit')">Audit & Methodology</button>
+</div>
+
+<!-- ══ TAB: CASH SAVINGS ══ -->
+<div id="tab-savings" class="tab-content active">
+  <div class="savings-hero">
+    <div class="sh-title">Total Preventable CoC Exposure</div>
+    <div class="sh-val" data-val="856912"></div>
+    <div class="sh-sub">If treasury pre-approval gate had been in place for the 188 unjustified early payments this period</div>
+  </div>
+  <div class="sec-hdr"><h2>Savings by Recommendation Lever</h2></div>
+  <div class="kpi-grid" style="margin-top:12px;">
+    <div class="kpi-card savings"><div class="kpi-lbl">R1 · Treasury Pre-Approval Gate</div><div class="kpi-val savings-v" data-val="812932"></div><div class="kpi-sub">188 payments with no discount — would have been held to due date</div></div>
+    <div class="kpi-card savings"><div class="kpi-lbl">R2 · Vendor Term Renegotiation (Top 20)</div><div class="kpi-val savings-v" data-val="538000"></div><div class="kpi-sub">Extend DPO by 15 days on top 20 vendors → estimated annualised saving</div></div>
+    <div class="kpi-card disc"><div class="kpi-lbl">R3 · Discount Capture Improvement</div><div class="kpi-val disc-v" data-val="43980"></div><div class="kpi-sub">3 of 191 transactions captured a discount. Process improvement potential.</div></div>
+    <div class="kpi-card savings"><div class="kpi-lbl">R4 · Vendor Early Payment Pattern Review</div><div class="kpi-val savings-v" data-val="250000"></div><div class="kpi-sub">Flag vendors with &gt;60% early pay rate for payment scheduling audit</div></div>
+  </div>
+  <div class="sec-hdr"><h2>Exposure Waterfall</h2></div>
+  <div class="wf">
+    <div class="wf-row"><div class="wf-lbl" style="font-weight:600;">Current Gross CoC Exposure</div><div class="wf-bar-w"><div class="wf-bar" style="width:100%;background:var(--high);"></div></div><div class="wf-v" style="color:var(--high);" data-val="856912"></div></div>
+    <div class="wf-row"><div class="wf-lbl">→ Less: Discounts already captured</div><div class="wf-bar-w"><div class="wf-bar" style="width:5%;background:var(--olive);min-width:50px;"></div></div><div class="wf-v" style="color:var(--olive);" data-val="43980"></div></div>
+    <div class="wf-row" style="border-top:2px solid var(--border);padding-top:14px;margin-top:4px;"><div class="wf-lbl" style="font-weight:700;">Net Unjustified Exposure</div><div class="wf-bar-w"><div class="wf-bar" style="width:95%;background:var(--crit);"></div></div><div class="wf-v" style="color:var(--crit);font-weight:700;" data-val="812932"></div></div>
+  </div>
+  <div class="ai-box" style="margin-top:24px;">
+    <div class="ai-label">AI Savings Assessment</div>
+    <p><strong>98.4%</strong> of early payments (188 of 191) had no discount justification. The entire <strong data-val="812932"></strong> net exposure was avoidable with a treasury pre-approval gate on payments before contractual due date.</p>
+    <p>The highest concentration is in <strong>Company Code 3000</strong> (₹4.28L CoC exposure, 81 transactions), followed by CC 2000 (₹3.12L, 74 transactions). <strong>Ulysses Solutions & Susan Colton</strong> alone generated ₹0.99L in exposure across 10 repeat early payments — the strongest preferential treatment signal in the dataset.</p>
+    <p><strong>Priority:</strong> R1 (treasury gate) captures 95% of savings and is a policy-only change with zero cost. R4 (vendor pattern review) targets the systemic root cause.</p>
+  </div>
+</div>
+
+<!-- ══ TAB: EXECUTIVE SUMMARY ══ -->
+<div id="tab-exec" class="tab-content">
+  <div class="kpi-section">
+    <div class="kpi-title"><span class="dot" style="background:var(--high);"></span>A. Cash-Out — Payments Released Before Due Date</div>
+    <div class="kpi-grid">
+      <div class="kpi-card cashout"><div class="kpi-lbl">Cash-Out Transactions</div><div class="kpi-val cashout-v">191</div><div class="kpi-sub">All payments in period</div></div>
+      <div class="kpi-card cashout"><div class="kpi-lbl">Total Invoice Value</div><div class="kpi-val cashout-v" data-val="165763627"></div></div>
+      <div class="kpi-card cashout"><div class="kpi-lbl">Gross CoC Exposure (10%)</div><div class="kpi-val cashout-v" data-val="856912"></div></div>
+      <div class="kpi-card disc"><div class="kpi-lbl">Discount Savings</div><div class="kpi-val disc-v" data-val="43980"></div><div class="kpi-sub">Captured on 3 transactions</div></div>
+      <div class="kpi-card cashout"><div class="kpi-lbl">Net CoC Exposure</div><div class="kpi-val cashout-v" data-val="812932"></div></div>
+      <div class="kpi-card neutral"><div class="kpi-lbl">Avg Days Early</div><div class="kpi-val neutral-v">21.5</div></div>
+    </div>
+  </div>
+  <div class="kpi-section">
+    <div class="kpi-title"><span class="dot" style="background:var(--deep-blue);"></span>B. Company Code Breakdown</div>
+    <div class="kpi-grid">
+      <div class="kpi-card neutral"><div class="kpi-lbl">CC 1000</div><div class="kpi-val neutral-v">36</div><div class="kpi-sub">CoC: <span data-val="117222"></span></div></div>
+      <div class="kpi-card neutral"><div class="kpi-lbl">CC 2000</div><div class="kpi-val neutral-v">74</div><div class="kpi-sub">CoC: <span data-val="312005"></span></div></div>
+      <div class="kpi-card neutral"><div class="kpi-lbl">CC 3000</div><div class="kpi-val neutral-v">81</div><div class="kpi-sub">CoC: <span data-val="427685"></span></div></div>
+      <div class="kpi-card neutral"><div class="kpi-lbl">Unique Vendors</div><div class="kpi-val neutral-v">119</div></div>
+    </div>
+  </div>
+  <div class="kpi-section">
+    <div class="kpi-title"><span class="dot" style="background:var(--crit);"></span>C. Severity Breakdown</div>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Severity</th><th>Count</th><th>Invoice Value</th><th>CoC Exposure</th></tr></thead>
+      <tbody>
+        <tr><td><span class="sev-badge sev-critical">Critical</span></td><td>9</td><td class="num" data-val="14220149"></td><td class="num" data-val="137359"></td></tr>
+        <tr><td><span class="sev-badge sev-high">High</span></td><td>105</td><td class="num" data-val="84442619"></td><td class="num" data-val="510135"></td></tr>
+        <tr><td><span class="sev-badge sev-medium">Medium</span></td><td>75</td><td class="num" data-val="64652901"></td><td class="num" data-val="202385"></td></tr>
+        <tr><td><span class="sev-badge sev-low">Low</span></td><td>2</td><td class="num" data-val="2447956"></td><td class="num" data-val="7032"></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="ai-box">
+    <div class="ai-label">AI Insight</div>
+    <p><strong>S1:</strong> Total CoC exposure for the period is <strong data-val="856912"></strong> across 191 cash-out transactions involving 119 vendors and <strong data-val="165763627"></strong> in invoice value.</p>
+    <p><strong>S2:</strong> <strong>Ulysses Solutions & Susan Colton</strong> (vendor 13000385) accounts for the highest repeat exposure — 10 transactions with <strong data-val="99232"></strong> CoC at an average of 19 days early. <strong>Corpus Christi Karen Industries</strong> and <strong>Stanley Trading Co</strong> show the highest single-amount exposures.</p>
+    <p><strong>S3:</strong> Discount utilisation is extremely low — only <strong>3 of 191</strong> transactions (1.6%) captured a discount, totalling just <strong data-val="43980"></strong>. The remaining 98.4% represent unjustified early payments with no offsetting benefit.</p>
+    <p><strong>S4:</strong> 61% of transactions (117) cleared in August 2025, suggesting a month-end or period-end payment acceleration pattern. Days early ranges from 8 to 45, with 40 transactions (21%) exceeding 30 days early.</p>
+    <div class="rec-block">
+      <div class="rec-lbl">Recommended Actions</div>
+      <p><strong>R1:</strong> Implement treasury pre-approval for all payments before contractual due date — this would prevent <strong data-val="812932"></strong> in CoC exposure.</p>
+      <p><strong>R2:</strong> Investigate August 2025 payment spike (117 of 191 transactions) — likely a month-end acceleration issue in AP process.</p>
+      <p><strong>R3:</strong> Review vendors with &gt;60% early payment rate (Tanner Services 90.9%, Kolkat Bangalo 89.4%, Nell Technology 90.0%) for preferential treatment.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB: DETAIL ══ -->
+<div id="tab-detail" class="tab-content">
+  <div class="sec-hdr"><h2>Full Detail Register</h2><span class="sec-cnt">191 records (top 40 by exposure shown)</span></div>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>Category</th><th>Doc No.</th><th>CC</th><th>Vendor ID</th><th>Vendor Name</th><th>Acct Grp</th><th>Severity</th><th>Score</th><th>Invoice Amt</th><th>Due Date</th><th>Clearing</th><th>Days Early</th><th>Terms</th><th>Disc?</th><th>Disc Amt</th><th>CoC Exposure</th><th>Net Exposure</th><th>Recommendation</th></tr></thead>
+    <tbody>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510262548</td><td>3000</td><td>11000314</td><td>Stanley Trading Co Inc</td><td>ZV11</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="16712325">16712325</td>
+<td>2025-08-04</td><td>2025-08-19</td><td>15</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="68681">68681</td>
+<td class="num" data-val="68681">68681</td>
+<td><span class="rec-review">Review — 15d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510263491</td><td>3000</td><td>11000275</td><td>Corpus Christi Karen Industrie</td><td>ZV11</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="9974340">9974340</td>
+<td>2025-08-11</td><td>2025-08-21</td><td>20</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="54654">54654</td>
+<td class="num" data-val="54654">54654</td>
+<td><span class="rec-review">Review — 20d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>2510007064</td><td>2000</td><td>13000572</td><td>Tanner Services Corp</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="6442603">6442603</td>
+<td>2025-08-07</td><td>2025-08-07</td><td>30</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="52953">52953</td>
+<td class="num" data-val="52953">52953</td>
+<td><span class="rec-unjustified">Unjustified — 30d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>2510007257</td><td>2000</td><td>13000385</td><td>Ulysses Solutions & Susan Colt</td><td>ZV33</td>
+<td><span class="sev-badge sev-critical">Critical</span></td><td>95</td>
+<td class="num" data-val="5795680">5795680</td>
+<td>2025-08-11</td><td>2025-08-14</td><td>32</td>
+<td>Z050</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="50811">50811</td>
+<td class="num" data-val="50811">50811</td>
+<td><span class="rec-unjustified">Unjustified — 32d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510263490</td><td>3000</td><td>11000275</td><td>Corpus Christi Karen Industrie</td><td>ZV11</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="9974340">9974340</td>
+<td>2025-08-08</td><td>2025-08-21</td><td>17</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="46456">46456</td>
+<td class="num" data-val="46456">46456</td>
+<td><span class="rec-review">Review — 17d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>2510007689</td><td>2000</td><td>15000001</td><td>Accenture Solutions Inc</td><td>ZV55</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="4806410">4806410</td>
+<td>2025-08-19</td><td>2025-08-25</td><td>24</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="31604">31604</td>
+<td class="num" data-val="31604">31604</td>
+<td><span class="rec-review">Review — 24d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510262551</td><td>3000</td><td>11000318</td><td>Industries</td><td>ZV11</td>
+<td><span class="sev-badge sev-medium">Medium</span></td><td>65</td>
+<td class="num" data-val="12526875">12526875</td>
+<td>2025-08-07</td><td>2025-08-28</td><td>9</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="30888">30888</td>
+<td class="num" data-val="30888">30888</td>
+<td><span class="rec-review">Review — 9d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>1510014450</td><td>1000</td><td>13000385</td><td>Ulysses Solutions & Susan Colt</td><td>ZV33</td>
+<td><span class="sev-badge sev-medium">Medium</span></td><td>65</td>
+<td class="num" data-val="7258909">7258909</td>
+<td>2025-08-12</td><td>2025-08-13</td><td>14</td>
+<td>Z006</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="27842">27842</td>
+<td class="num" data-val="27842">27842</td>
+<td><span class="rec-review">Review — 14d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>2510007425</td><td>2000</td><td>34000140</td><td>Kolkat Bangalo Preston</td><td>ZVFG</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="3159000">3159000</td>
+<td>2025-08-13</td><td>2025-08-19</td><td>24</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="20772">20772</td>
+<td class="num" data-val="20772">20772</td>
+<td><span class="rec-review">Review — 24d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>1510016067</td><td>1000</td><td>13001139</td><td>Chester America Inc</td><td>ZV33</td>
+<td><span class="sev-badge sev-critical">Critical</span></td><td>95</td>
+<td class="num" data-val="1367701">1367701</td>
+<td>2025-08-26</td><td>2025-08-27</td><td>44</td>
+<td>Z009</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="16487">16487</td>
+<td class="num" data-val="16487">16487</td>
+<td><span class="rec-unjustified">Unjustified — 44d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>2510007063</td><td>2000</td><td>13006246</td><td>Nell Technology Services Inc L</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="1930814">1930814</td>
+<td>2025-08-07</td><td>2025-08-07</td><td>30</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="15870">15870</td>
+<td class="num" data-val="15870">15870</td>
+<td><span class="rec-unjustified">Unjustified — 30d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510263032</td><td>3000</td><td>13002047</td><td>Europe Empire Eugene Irvine</td><td>ZV33</td>
+<td><span class="sev-badge sev-critical">Critical</span></td><td>95</td>
+<td class="num" data-val="1210964">1210964</td>
+<td>2025-08-18</td><td>2025-08-19</td><td>44</td>
+<td>Z009</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="14598">14598</td>
+<td class="num" data-val="14598">14598</td>
+<td><span class="rec-unjustified">Unjustified — 44d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510263410</td><td>3000</td><td>11000318</td><td>Industries</td><td>ZV11</td>
+<td><span class="sev-badge sev-medium">Medium</span></td><td>65</td>
+<td class="num" data-val="5010750">5010750</td>
+<td>2025-08-08</td><td>2025-08-28</td><td>10</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="13728">13728</td>
+<td class="num" data-val="13728">13728</td>
+<td><span class="rec-review">Review — 10d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510263413</td><td>3000</td><td>11000314</td><td>Stanley Trading Co Inc</td><td>ZV11</td>
+<td><span class="sev-badge sev-medium">Medium</span></td><td>65</td>
+<td class="num" data-val="4774950">4774950</td>
+<td>2025-08-06</td><td>2025-08-26</td><td>10</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="13082">13082</td>
+<td class="num" data-val="13082">13082</td>
+<td><span class="rec-review">Review — 10d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510274003</td><td>3000</td><td>13006750</td><td>Eric & Yolanda Llc</td><td>ZV33</td>
+<td><span class="sev-badge sev-medium">Medium</span></td><td>65</td>
+<td class="num" data-val="3360000">3360000</td>
+<td>2025-08-28</td><td>2025-08-29</td><td>14</td>
+<td>Z006</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="12888">12888</td>
+<td class="num" data-val="12888">12888</td>
+<td><span class="rec-review">Review — 14d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>2510007202</td><td>2000</td><td>13005519</td><td>Harold Marshall Associates</td><td>ZV33</td>
+<td><span class="sev-badge sev-critical">Critical</span></td><td>95</td>
+<td class="num" data-val="1455093">1455093</td>
+<td>2025-08-11</td><td>2025-08-14</td><td>32</td>
+<td>Z050</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="12757">12757</td>
+<td class="num" data-val="12757">12757</td>
+<td><span class="rec-unjustified">Unjustified — 32d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>1510015117</td><td>1000</td><td>11000592</td><td>Natalie Imani</td><td>ZV11</td>
+<td><span class="sev-badge sev-medium">Medium</span></td><td>65</td>
+<td class="num" data-val="1964252">1964252</td>
+<td>2025-08-13</td><td>2025-08-20</td><td>23</td>
+<td>Z008</td><td class="disc-yes">Yes</td>
+<td class="num" data-val="19643">19643</td>
+<td class="num" data-val="12377">12377</td>
+<td class="num" data-val="-7266">-7266</td>
+<td><span class="rec-justified">Justified — discount captured</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>2510007204</td><td>2000</td><td>13000411</td><td>Webtel Empire America Inc Lind</td><td>ZV33</td>
+<td><span class="sev-badge sev-critical">Critical</span></td><td>95</td>
+<td class="num" data-val="1283793">1283793</td>
+<td>2025-08-11</td><td>2025-08-14</td><td>32</td>
+<td>Z050</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="11255">11255</td>
+<td class="num" data-val="11255">11255</td>
+<td><span class="rec-unjustified">Unjustified — 32d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510273618</td><td>3000</td><td>13000143</td><td>Harold Raymond Raymond Barry H</td><td>ZV33</td>
+<td><span class="sev-badge sev-medium">Medium</span></td><td>65</td>
+<td class="num" data-val="2591030">2591030</td>
+<td>2025-08-25</td><td>2025-08-26</td><td>14</td>
+<td>Z006</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="9938">9938</td>
+<td class="num" data-val="9938">9938</td>
+<td><span class="rec-review">Review — 14d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510279180</td><td>3000</td><td>13002141</td><td>Ida Matthew & Proprie</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="1773129">1773129</td>
+<td>2025-08-26</td><td>2025-09-06</td><td>19</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="9230">9230</td>
+<td class="num" data-val="9230">9230</td>
+<td><span class="rec-review">Review — 19d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>2510007207</td><td>2000</td><td>13002806</td><td>Cooper</td><td>ZV33</td>
+<td><span class="sev-badge sev-critical">Critical</span></td><td>95</td>
+<td class="num" data-val="1032004">1032004</td>
+<td>2025-08-11</td><td>2025-08-14</td><td>32</td>
+<td>Z050</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="9048">9048</td>
+<td class="num" data-val="9048">9048</td>
+<td><span class="rec-unjustified">Unjustified — 32d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510270852</td><td>3000</td><td>13002702</td><td>Richard Pamela Sherman & Assoc</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="1130477">1130477</td>
+<td>2025-08-14</td><td>2025-08-30</td><td>29</td>
+<td>Z052</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="8982">8982</td>
+<td class="num" data-val="8982">8982</td>
+<td><span class="rec-unjustified">Unjustified — 29d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510274628</td><td>3000</td><td>13006866</td><td>Proprie & Paxton</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="1400384">1400384</td>
+<td>2025-08-26</td><td>2025-09-02</td><td>23</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="8824">8824</td>
+<td class="num" data-val="8824">8824</td>
+<td><span class="rec-review">Review — 23d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510254574</td><td>3000</td><td>15000541</td><td>Davis Leonard Adams & Sophia</td><td>ZV55</td>
+<td><span class="sev-badge sev-critical">Critical</span></td><td>95</td>
+<td class="num" data-val="765000">765000</td>
+<td>2025-08-08</td><td>2025-08-13</td><td>40</td>
+<td>Z009</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="8384">8384</td>
+<td class="num" data-val="8384">8384</td>
+<td><span class="rec-unjustified">Unjustified — 40d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510227054</td><td>3000</td><td>15000226</td><td>Nathan Angela</td><td>ZV55</td>
+<td><span class="sev-badge sev-critical">Critical</span></td><td>95</td>
+<td class="num" data-val="661914">661914</td>
+<td>2025-08-01</td><td>2025-08-01</td><td>45</td>
+<td>Z009</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="8161">8161</td>
+<td class="num" data-val="8161">8161</td>
+<td><span class="rec-unjustified">Unjustified — 45d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510244278</td><td>3000</td><td>13001140</td><td>Cooper Inti Solutions Inc</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="1870500">1870500</td>
+<td>2025-08-07</td><td>2025-08-07</td><td>15</td>
+<td>Z006</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="7687">7687</td>
+<td class="num" data-val="7687">7687</td>
+<td><span class="rec-review">Review — 15d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>1510014457</td><td>1000</td><td>13001051</td><td>Selena Global Associates</td><td>ZV33</td>
+<td><span class="sev-badge sev-medium">Medium</span></td><td>65</td>
+<td class="num" data-val="1923641">1923641</td>
+<td>2025-08-11</td><td>2025-08-13</td><td>13</td>
+<td>Z006</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="6851">6851</td>
+<td class="num" data-val="6851">6851</td>
+<td><span class="rec-review">Review — 13d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510321238</td><td>3000</td><td>13000385</td><td>Ulysses Solutions & Susan Colt</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="1126578">1126578</td>
+<td>2025-09-20</td><td>2025-09-29</td><td>21</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="6482">6482</td>
+<td class="num" data-val="6482">6482</td>
+<td><span class="rec-review">Review — 21d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510284236</td><td>3000</td><td>13002222</td><td>Ulysses Inc</td><td>ZV33</td>
+<td><span class="sev-badge sev-critical">Critical</span></td><td>95</td>
+<td class="num" data-val="648000">648000</td>
+<td>2025-08-31</td><td>2025-09-12</td><td>33</td>
+<td>Z009</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="5859">5859</td>
+<td class="num" data-val="5859">5859</td>
+<td><span class="rec-unjustified">Unjustified — 33d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510246160</td><td>3000</td><td>13002702</td><td>Richard Pamela Sherman & Assoc</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="1242564">1242564</td>
+<td>2025-08-07</td><td>2025-09-04</td><td>17</td>
+<td>Z052</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="5787">5787</td>
+<td class="num" data-val="5787">5787</td>
+<td><span class="rec-review">Review — 17d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>2510008652</td><td>2000</td><td>13001769</td><td>Michael & Samuel Inc</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="895520">895520</td>
+<td>2025-09-01</td><td>2025-09-09</td><td>22</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="5398">5398</td>
+<td class="num" data-val="5398">5398</td>
+<td><span class="rec-review">Review — 22d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>2510009694</td><td>2000</td><td>13000669</td><td>Monica Other Media Solutions I</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="792164">792164</td>
+<td>2025-09-17</td><td>2025-09-23</td><td>24</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="5209">5209</td>
+<td class="num" data-val="5209">5209</td>
+<td><span class="rec-review">Review — 24d early, no discount terms</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510263108</td><td>3000</td><td>13002280</td><td>Susan Denise</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="479184">479184</td>
+<td>2025-08-19</td><td>2025-08-25</td><td>39</td>
+<td>Z009</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="5120">5120</td>
+<td class="num" data-val="5120">5120</td>
+<td><span class="rec-unjustified">Unjustified — 39d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>1510014615</td><td>1000</td><td>11000592</td><td>Natalie Imani</td><td>ZV11</td>
+<td><span class="sev-badge sev-low">Low</span></td><td>35</td>
+<td class="num" data-val="1521050">1521050</td>
+<td>2025-08-02</td><td>2025-08-20</td><td>12</td>
+<td>Z008</td><td class="disc-yes">Yes</td>
+<td class="num" data-val="15211">15211</td>
+<td class="num" data-val="5001">5001</td>
+<td class="num" data-val="-10210">-10210</td>
+<td><span class="rec-justified">Justified — discount captured</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>1510013941</td><td>1000</td><td>13003239</td><td>Bates Seth & Laura Services</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="593966">593966</td>
+<td>2025-08-06</td><td>2025-08-22</td><td>29</td>
+<td>Z009</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="4719">4719</td>
+<td class="num" data-val="4719">4719</td>
+<td><span class="rec-unjustified">Unjustified — 29d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>1510013832</td><td>1000</td><td>13005381</td><td>Tony Wolfgang Industries Rebec</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="440558">440558</td>
+<td>2025-08-01</td><td>2025-08-07</td><td>39</td>
+<td>Z009</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="4707">4707</td>
+<td class="num" data-val="4707">4707</td>
+<td><span class="rec-unjustified">Unjustified — 39d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>2510007506</td><td>2000</td><td>13000385</td><td>Ulysses Solutions & Susan Colt</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="590758">590758</td>
+<td>2025-08-14</td><td>2025-08-16</td><td>28</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="4532">4532</td>
+<td class="num" data-val="4532">4532</td>
+<td><span class="rec-unjustified">Unjustified — 28d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>3510273648</td><td>3000</td><td>13003329</td><td>Eric Registrar And Howard Corp</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="457541">457541</td>
+<td>2025-08-26</td><td>2025-09-04</td><td>36</td>
+<td>Z009</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="4513">4513</td>
+<td class="num" data-val="4513">4513</td>
+<td><span class="rec-unjustified">Unjustified — 36d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>2510009232</td><td>2000</td><td>17000672</td><td>Ace Transport Co</td><td>ZV77</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="632764">632764</td>
+<td>2025-09-10</td><td>2025-09-14</td><td>26</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="4507">4507</td>
+<td class="num" data-val="4507">4507</td>
+<td><span class="rec-unjustified">Unjustified — 26d early, no discount. Escalate.</span></td></tr>
+<tr>
+<td><span class="cat-badge cat-cashout">Cash-Out</span></td>
+<td>2510008648</td><td>2000</td><td>13006982</td><td>America Tanner Adam Linda</td><td>ZV33</td>
+<td><span class="sev-badge sev-high">High</span></td><td>90</td>
+<td class="num" data-val="739375">739375</td>
+<td>2025-09-01</td><td>2025-09-09</td><td>22</td>
+<td>Z008</td><td class="disc-no">No</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="4457">4457</td>
+<td class="num" data-val="4457">4457</td>
+<td><span class="rec-review">Review — 22d early, no discount terms</span></td></tr>
+
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ══ TAB: MONTHLY TREND ══ -->
+<div id="tab-trend" class="tab-content">
+  <div class="sec-hdr"><h2>Monthly Early Payment Trend</h2></div>
+  <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+  <div style="margin-top:20px;">
+    <div class="sec-hdr"><h2>Days Early Distribution</h2></div>
+    <div class="chart-wrap"><canvas id="daysChart"></canvas></div>
+  </div>
+  <div class="ai-box" style="margin-top:20px;">
+    <div class="ai-label">Trend Analysis</div>
+    <p><strong>August 2025</strong> accounts for <strong>61%</strong> of all transactions (117 of 191) and <strong>84%</strong> of total CoC exposure (<strong data-val="720723"></strong>). This sharp concentration suggests a period-end payment acceleration pattern — likely driven by AP clearing backlogs before month-end close.</p>
+    <p>September 2025 shows a normalised pattern (69 transactions, <strong data-val="130153"></strong> exposure), while October–November drops to 5 combined transactions — indicating the early payment behaviour is cyclical rather than continuous.</p>
+  </div>
+</div>
+
+<!-- ══ TAB: DISCOUNT ANALYSIS ══ -->
+<div id="tab-discount" class="tab-content">
+  <div class="sec-hdr"><h2>Discount Justification Analysis</h2></div>
+  <div class="disc-cards">
+    <div class="disc-card justified">
+      <div class="dc-title" style="color:var(--olive);">Discount Captured</div>
+      <div class="dc-stat">
+        <div><div class="dv" style="color:var(--olive);">3</div><div class="dl">Transactions</div></div>
+        <div><div class="dv" style="color:var(--olive);" data-val="43980"></div><div class="dl">Savings</div></div>
+        <div><div class="dv" data-val="4412208"></div><div class="dl">Invoice Value</div></div>
+      </div>
+      <div class="dc-assess">Justified — early payment earned a contractual discount.</div>
+    </div>
+    <div class="disc-card nope">
+      <div class="dc-title" style="color:var(--crit);">No Discount Captured</div>
+      <div class="dc-stat">
+        <div><div class="dv" style="color:var(--crit);">188</div><div class="dl">Transactions</div></div>
+        <div><div class="dv" style="color:var(--crit);">₹0</div><div class="dl">Incentive</div></div>
+        <div><div class="dv" data-val="161351418"></div><div class="dl">Invoice Value</div></div>
+      </div>
+      <div class="dc-assess">Unjustified — no discount captured. Pure cash flow cost with no offsetting benefit.</div>
+    </div>
+    <div class="disc-card missed">
+      <div class="dc-title" style="color:var(--high);">Discount Rate</div>
+      <div class="dc-stat">
+        <div><div class="dv" style="color:var(--high);">1.6%</div><div class="dl">Capture Rate</div></div>
+        <div><div class="dv" style="color:var(--high);">98.4%</div><div class="dl">Unjustified</div></div>
+        <div><div class="dv">191</div><div class="dl">Total</div></div>
+      </div>
+      <div class="dc-assess">Near-zero discount utilisation indicates AP process does not optimise for discount capture.</div>
+    </div>
+  </div>
+  <div class="net-pos">
+    <div style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--lt-grey);margin-bottom:12px;">Net Financial Position</div>
+    <div class="nr"><span>Gross CoC Exposure</span><span data-val="856912"></span></div>
+    <div class="nr"><span>Less: Discounts Captured</span><span style="color:var(--olive);" data-val="43980"></span></div>
+    <div class="nr total"><span>Net Unjustified Exposure</span><span style="color:var(--crit);" data-val="812932"></span></div>
+  </div>
+</div>
+
+<!-- ══ TAB: RCA & REMEDIATION ══ -->
+<div id="tab-rca" class="tab-content">
+  <div class="sec-hdr"><h2>Root Cause Analysis & Remediation Plan</h2></div>
+
+  <!-- Sub-tabs -->
+  <div class="subtab-nav">
+    <button class="subtab-btn active" onclick="showSubTab('overview')">RCA Overview</button>
+    <button class="subtab-btn" onclick="showSubTab('rcadetail')">RCA Detail & Evidence</button>
+    <button class="subtab-btn" onclick="showSubTab('remediation')">Remediation Roadmap</button>
+  </div>
+
+  <!-- ── Sub-tab: Overview ── -->
+  <div id="sub-overview" class="subtab-content active">
+    <div class="rca-summary">
+      <div class="rca-stat"><div class="rs-val">6</div><div class="rs-lbl">Root Causes Identified</div></div>
+      <div class="rca-stat"><div class="rs-val">15</div><div class="rs-lbl">Remediation Actions</div></div>
+      <div class="rca-stat"><div class="rs-val" data-val="812932"></div><div class="rs-lbl">Total Addressable Exposure</div></div>
+      <div class="rca-stat"><div class="rs-val">98.4%</div><div class="rs-lbl">Unjustified (No Discount)</div></div>
+      <div class="rca-stat"><div class="rs-val">37</div><div class="rs-lbl">Vendors with &gt;50% Early Rate</div></div>
+      <div class="rca-stat"><div class="rs-val">13</div><div class="rs-lbl">Repeat Offender Vendors</div></div>
+    </div>
+
+    <div class="ai-box">
+      <div class="ai-label">AI Root Cause Summary</div>
+      <p>Analysis of 191 PROC0324 anomalies identifies <strong>six root causes</strong> driving early payments. The dominant cause is the <strong>absence of a treasury pre-approval control</strong> — 188 of 191 transactions (98.4%) were released before the contractual due date with no discount justification and no pre-approval gate to challenge the payment timing.</p>
+      <p>The second systemic cause is <strong>payment term misconfiguration</strong>: Z009 terms (46 transactions) show an average of 35 days early — suggesting the net due date calculated by SAP may not reflect the actual contractual agreement, or that AP is not using the baseline date as the payment trigger.</p>
+      <p>Third, <strong>vendor-specific preferential treatment</strong> is evidenced by 37 vendors with early payment rates above 50%, and 13 vendors with 3 or more repeat early payments. Ulysses Solutions alone accounts for 10 repeat early payments.</p>
+      <p>The remaining three causes — period-end acceleration, manual payment overrides, and discount capture failure — are operational process gaps that compound the control weakness.</p>
+    </div>
+
+    <!-- RCA × Impact chart -->
+    <div style="margin-top:24px;">
+      <div class="sec-hdr"><h2>Root Cause × CoC Exposure Impact</h2></div>
+      <div class="chart-wrap"><canvas id="rcaChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── Sub-tab: RCA Detail ── -->
+  <div id="sub-rcadetail" class="subtab-content">
+    <div class="rca-grid">
+
+      <!-- RCA-1 -->
+      <div class="rca-card">
+        <div class="rca-sev-bar" style="background:var(--crit);"></div>
+        <div>
+          <div class="rca-card-hdr">
+            <h3><span class="rca-id">RCA-1</span> No Treasury Pre-Approval Control</h3>
+            <span class="rca-impact" style="color:var(--crit);" data-val="812932"></span>
+          </div>
+          <div class="rca-card-body">
+            <div class="rca-finding">Payments are released to vendors before the contractual due date without any approval gate or challenge mechanism. The AP process executes the payment run based on the document posting date rather than the baseline payment date, resulting in systematic early release.</div>
+            <div class="rca-evidence">
+              <strong>Evidence:</strong> 188 of 191 transactions (98.4%) cleared before due date with no discount justification. No evidence of treasury review or pre-approval in any transaction. All severity levels affected — 9 Critical, 105 High, 75 Medium.
+            </div>
+          </div>
+          <div class="rca-remediation">
+            <div class="rem-title">Mapped Remediations</div>
+            <div class="rem-item"><span class="rem-code">REM-1A</span><span>Implement SAP payment block (FBZP) on all invoices where clearing date would be &gt;7 days before baseline date. Block requires treasury sign-off to release.<span class="rem-owner">Treasury Head</span><span class="rem-timeline">4 weeks</span></span></div>
+            <div class="rem-item"><span class="rem-code">REM-1B</span><span>Configure automatic payment program (F110) to use baseline payment date as the earliest execution date, not the posting date.<span class="rem-owner">SAP Basis / FI Config</span><span class="rem-timeline">2 weeks</span></span></div>
+            <div class="rem-item"><span class="rem-code">REM-1C</span><span>Establish a weekly pre-payment review report for AP Manager — all invoices scheduled for payment &gt;₹5L within 7 days, flagging those before baseline date.<span class="rem-owner">AP Manager</span><span class="rem-timeline">1 week</span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RCA-2 -->
+      <div class="rca-card">
+        <div class="rca-sev-bar" style="background:var(--high);"></div>
+        <div>
+          <div class="rca-card-hdr">
+            <h3><span class="rca-id">RCA-2</span> Payment Term Misconfiguration (Z009)</h3>
+            <span class="rca-impact" style="color:var(--high);" data-val="137927"></span>
+          </div>
+          <div class="rca-card-body">
+            <div class="rca-finding">Payment term Z009 shows an average of 35 days early across 46 transactions — significantly higher than the 21.5 day overall average. This suggests the SAP payment term configuration for Z009 does not correctly reflect the actual contractual net due period, or AP operators are overriding the calculated due date.</div>
+            <div class="rca-evidence">
+              <strong>Evidence:</strong> Z009: 46 transactions, avg 35 days early, ₹1.39 Cr invoice value, <span data-val="137927"></span> CoC exposure. Compare Z006: 35 transactions, avg 13 days early. The 22-day gap between Z009 and Z006 is inconsistent with normal term variation.
+            </div>
+          </div>
+          <div class="rca-remediation">
+            <div class="rem-title">Mapped Remediations</div>
+            <div class="rem-item"><span class="rem-code">REM-2A</span><span>Audit Z009 payment term definition in SPRO (OBB8) — verify net days, baseline date calculation, and discount conditions match the vendor contract.<span class="rem-owner">SAP FI Consultant</span><span class="rem-timeline">1 week</span></span></div>
+            <div class="rem-item"><span class="rem-code">REM-2B</span><span>Cross-reference Z009 vendor contracts to confirm the net payment period. If contracts say Net-30 but Z009 calculates Net-0, correct the term configuration.<span class="rem-owner">Procurement Head</span><span class="rem-timeline">3 weeks</span></span></div>
+            <div class="rem-item"><span class="rem-code">REM-2C</span><span>Extend review to Z050 (5 txns, avg 32 days early, <span data-val="84782"></span> exposure) — same misconfiguration pattern likely applies.<span class="rem-owner">SAP FI Consultant</span><span class="rem-timeline">1 week</span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RCA-3 -->
+      <div class="rca-card">
+        <div class="rca-sev-bar" style="background:var(--high);"></div>
+        <div>
+          <div class="rca-card-hdr">
+            <h3><span class="rca-id">RCA-3</span> Vendor Preferential Treatment Pattern</h3>
+            <span class="rca-impact" style="color:var(--high);" data-val="174745"></span>
+          </div>
+          <div class="rca-card-body">
+            <div class="rca-finding">13 vendors have 3 or more repeat early payments in the period, accounting for 62 transactions and <span data-val="174745"></span> in CoC exposure. 37 vendors show early payment rates above 50% of their total transactions — far exceeding the expected rate. This pattern is consistent with preferential treatment or AP user-vendor relationships influencing payment timing.</div>
+            <div class="rca-evidence">
+              <strong>Evidence:</strong> Ulysses Solutions — 10 repeat early payments (<span data-val="99232"></span> CoC). Sandra Cooper — 96.4% early rate. Tanner Services — 90.9% early rate, single payment 30 days early. Derek Media — 87.9% early rate across 4 payments. Sawyer Sons — 72.5% early rate across 4 payments.
+            </div>
+          </div>
+          <div class="rca-remediation">
+            <div class="rem-title">Mapped Remediations</div>
+            <div class="rem-item"><span class="rem-code">REM-3A</span><span>Flag the 13 repeat-offender vendors for immediate AP rotation — no single AP clerk should process the same vendor's payments for more than 2 consecutive cycles.<span class="rem-owner">AP Manager</span><span class="rem-timeline">2 weeks</span></span></div>
+            <div class="rem-item"><span class="rem-code">REM-3B</span><span>Commission a preferential treatment investigation on the top 5 vendors by early payment rate (Sandra Cooper 96%, Tanner Services 91%, Nell Technology 90%, Kolkat Bangalo 89%, Derek Media 88%).<span class="rem-owner">Internal Audit</span><span class="rem-timeline">6 weeks</span></span></div>
+            <div class="rem-item"><span class="rem-code">REM-3C</span><span>Implement vendor-level payment pattern dashboard in FortifAI — automatic alert when any vendor exceeds 40% early payment rate over a rolling 90-day window.<span class="rem-owner">FortifAI Product</span><span class="rem-timeline">4 weeks</span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RCA-4 -->
+      <div class="rca-card">
+        <div class="rca-sev-bar" style="background:var(--med);"></div>
+        <div>
+          <div class="rca-card-hdr">
+            <h3><span class="rca-id">RCA-4</span> Period-End Payment Acceleration</h3>
+            <span class="rca-impact" style="color:#3A4400;" data-val="720723"></span>
+          </div>
+          <div class="rca-card-body">
+            <div class="rca-finding">61% of all early payments (117 of 191) cleared in August 2025, with the remaining 39% concentrated in September. This pattern indicates month-end or period-end AP batch processing that accelerates payments without regard for the contractual due date — likely driven by KPIs that reward invoice processing speed rather than payment timing accuracy.</div>
+            <div class="rca-evidence">
+              <strong>Evidence:</strong> Aug-2025: 117 txns, <span data-val="720723"></span> CoC. Sep-2025: 69 txns, <span data-val="130153"></span> CoC. Oct-Nov: 5 txns combined. Day-of-month distribution: 38% cleared on days 1-10, 35% on days 11-20, 27% on days 21-31 — no clear month-end spike, suggesting the acceleration is period-specific (Aug/Sep) rather than calendar-driven.
+            </div>
+          </div>
+          <div class="rca-remediation">
+            <div class="rem-title">Mapped Remediations</div>
+            <div class="rem-item"><span class="rem-code">REM-4A</span><span>Revise AP performance KPIs — replace "invoices processed per month" with "payments released on or after baseline date" as the primary AP efficiency metric.<span class="rem-owner">CFO / AP Manager</span><span class="rem-timeline">4 weeks</span></span></div>
+            <div class="rem-item"><span class="rem-code">REM-4B</span><span>Implement payment calendar governance — F110 automatic payment runs should not execute for invoices where baseline date is more than 7 days in the future, regardless of period-end pressure.<span class="rem-owner">Treasury Head</span><span class="rem-timeline">2 weeks</span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RCA-5 -->
+      <div class="rca-card">
+        <div class="rca-sev-bar" style="background:var(--med);"></div>
+        <div>
+          <div class="rca-card-hdr">
+            <h3><span class="rca-id">RCA-5</span> Company Code 3000 Concentration</h3>
+            <span class="rca-impact" style="color:#3A4400;" data-val="427685"></span>
+          </div>
+          <div class="rca-card-body">
+            <div class="rca-finding">Company Code 3000 accounts for 42% of all early payment transactions (81 of 191) and 50% of total CoC exposure (<span data-val="427685"></span>), despite handling proportionally similar invoice volumes to CC 2000. This suggests a localised control weakness in CC 3000's AP process or a different payment execution practice compared to CC 1000 and 2000.</div>
+            <div class="rca-evidence">
+              <strong>Evidence:</strong> CC 3000: 81 txns, <span data-val="427685"></span> CoC, ₹9.47 Cr invoice value. CC 2000: 74 txns, <span data-val="312005"></span> CoC. CC 1000: 36 txns, <span data-val="117222"></span> CoC. CC 3000 uses 9 different payment terms vs CC 1000's 3 — more complex term landscape increases misconfiguration risk.
+            </div>
+          </div>
+          <div class="rca-remediation">
+            <div class="rem-title">Mapped Remediations</div>
+            <div class="rem-item"><span class="rem-code">REM-5A</span><span>Conduct AP process walk-through for CC 3000 — compare F110 configuration, payment run frequency, and manual override practices against CC 1000 (lowest exposure).<span class="rem-owner">Internal Audit</span><span class="rem-timeline">3 weeks</span></span></div>
+            <div class="rem-item"><span class="rem-code">REM-5B</span><span>Standardise payment term usage across company codes — CC 3000 has 9 active terms vs CC 1000's 3. Consolidate where contracts permit.<span class="rem-owner">Procurement Head</span><span class="rem-timeline">6 weeks</span></span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RCA-6 -->
+      <div class="rca-card">
+        <div class="rca-sev-bar" style="background:var(--low);"></div>
+        <div>
+          <div class="rca-card-hdr">
+            <h3><span class="rca-id">RCA-6</span> Near-Zero Discount Capture Rate</h3>
+            <span class="rca-impact" style="color:var(--deep-blue);" data-val="43980"></span>
+          </div>
+          <div class="rca-card-body">
+            <div class="rca-finding">Only 3 of 191 transactions (1.6%) captured a cash discount, totalling just <span data-val="43980"></span> in savings. If payments are being made early anyway, the AP process should at minimum be capturing any available discounts to offset the CoC cost — but it is not. This indicates that discount terms are either not configured in SAP or AP is not evaluating discount eligibility before releasing payment.</div>
+            <div class="rca-evidence">
+              <strong>Evidence:</strong> 3 transactions with discount captured: total <span data-val="43980"></span>. 188 transactions with no discount. Payment terms Z008 (70 txns) and Z006 (35 txns) are commonly discount-bearing terms in SAP — yet neither shows meaningful discount capture in the data.
+            </div>
+          </div>
+          <div class="rca-remediation">
+            <div class="rem-title">Mapped Remediations</div>
+            <div class="rem-item"><span class="rem-code">REM-6A</span><span>Audit cash discount configuration in payment terms Z008, Z006, Z009 (SPRO → OBB8) — verify discount percentages and days are populated where vendor contracts include discount clauses.<span class="rem-owner">SAP FI Consultant</span><span class="rem-timeline">2 weeks</span></span></div>
+            <div class="rem-item"><span class="rem-code">REM-6B</span><span>If discount terms are correctly configured but not being captured, investigate whether F110 payment proposals are evaluating discount eligibility. Check the "always use discount" / "discount within X days" settings in FBZP.<span class="rem-owner">SAP FI Consultant</span><span class="rem-timeline">1 week</span></span></div>
+            <div class="rem-item"><span class="rem-code">REM-6C</span><span>Negotiate explicit discount terms with the top 20 vendors by invoice volume — if payments are going to be early, ensure a 2-3% discount is contractually captured.<span class="rem-owner">Procurement Head</span><span class="rem-timeline">8 weeks</span></span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Sub-tab: Remediation Roadmap ── -->
+  <div id="sub-remediation" class="subtab-content">
+    <div class="sec-hdr"><h2>Remediation Roadmap — All Actions</h2></div>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Action ID</th><th>Root Cause</th><th>Remediation</th><th>Owner</th><th>Timeline</th><th>Exposure Addressed</th><th>Priority</th></tr></thead>
+      <tbody>
+        <tr><td><span class="rca-id">REM-1A</span></td><td>RCA-1</td><td>Implement SAP payment block (FBZP) — treasury sign-off for early payments</td><td>Treasury Head</td><td>4 weeks</td><td class="num" data-val="812932"></td><td><span class="sev-badge sev-critical">P1</span></td></tr>
+        <tr><td><span class="rca-id">REM-1B</span></td><td>RCA-1</td><td>Configure F110 to use baseline payment date as earliest execution date</td><td>SAP Basis / FI Config</td><td>2 weeks</td><td class="num" data-val="812932"></td><td><span class="sev-badge sev-critical">P1</span></td></tr>
+        <tr><td><span class="rca-id">REM-1C</span></td><td>RCA-1</td><td>Weekly pre-payment review report for AP Manager</td><td>AP Manager</td><td>1 week</td><td class="num" data-val="812932"></td><td><span class="sev-badge sev-critical">P1</span></td></tr>
+        <tr><td><span class="rca-id">REM-2A</span></td><td>RCA-2</td><td>Audit Z009 payment term definition in SPRO (OBB8)</td><td>SAP FI Consultant</td><td>1 week</td><td class="num" data-val="137927"></td><td><span class="sev-badge sev-high">P1</span></td></tr>
+        <tr><td><span class="rca-id">REM-2B</span></td><td>RCA-2</td><td>Cross-reference Z009 vendor contracts for net payment period</td><td>Procurement Head</td><td>3 weeks</td><td class="num" data-val="137927"></td><td><span class="sev-badge sev-high">P1</span></td></tr>
+        <tr><td><span class="rca-id">REM-2C</span></td><td>RCA-2</td><td>Extend payment term audit to Z050 (same misconfiguration pattern)</td><td>SAP FI Consultant</td><td>1 week</td><td class="num" data-val="84782"></td><td><span class="sev-badge sev-high">P2</span></td></tr>
+        <tr><td><span class="rca-id">REM-3A</span></td><td>RCA-3</td><td>AP clerk rotation for 13 repeat-offender vendors</td><td>AP Manager</td><td>2 weeks</td><td class="num" data-val="174745"></td><td><span class="sev-badge sev-high">P1</span></td></tr>
+        <tr><td><span class="rca-id">REM-3B</span></td><td>RCA-3</td><td>Preferential treatment investigation — top 5 vendors by early rate</td><td>Internal Audit</td><td>6 weeks</td><td class="num" data-val="174745"></td><td><span class="sev-badge sev-high">P2</span></td></tr>
+        <tr><td><span class="rca-id">REM-3C</span></td><td>RCA-3</td><td>Vendor payment pattern dashboard with 40% threshold alert</td><td>FortifAI Product</td><td>4 weeks</td><td class="num" data-val="174745"></td><td><span class="sev-badge sev-medium">P2</span></td></tr>
+        <tr><td><span class="rca-id">REM-4A</span></td><td>RCA-4</td><td>Revise AP KPIs — "payments on baseline date" as primary metric</td><td>CFO / AP Manager</td><td>4 weeks</td><td class="num" data-val="720723"></td><td><span class="sev-badge sev-high">P1</span></td></tr>
+        <tr><td><span class="rca-id">REM-4B</span></td><td>RCA-4</td><td>F110 payment calendar — block execution when baseline &gt;7 days away</td><td>Treasury Head</td><td>2 weeks</td><td class="num" data-val="720723"></td><td><span class="sev-badge sev-high">P1</span></td></tr>
+        <tr><td><span class="rca-id">REM-5A</span></td><td>RCA-5</td><td>AP process walk-through for CC 3000 vs CC 1000 benchmark</td><td>Internal Audit</td><td>3 weeks</td><td class="num" data-val="427685"></td><td><span class="sev-badge sev-high">P2</span></td></tr>
+        <tr><td><span class="rca-id">REM-5B</span></td><td>RCA-5</td><td>Standardise payment terms across company codes</td><td>Procurement Head</td><td>6 weeks</td><td class="num" data-val="427685"></td><td><span class="sev-badge sev-medium">P3</span></td></tr>
+        <tr><td><span class="rca-id">REM-6A</span></td><td>RCA-6</td><td>Audit discount configuration in Z008, Z006, Z009 payment terms</td><td>SAP FI Consultant</td><td>2 weeks</td><td class="num" data-val="43980"></td><td><span class="sev-badge sev-medium">P2</span></td></tr>
+        <tr><td><span class="rca-id">REM-6B</span></td><td>RCA-6</td><td>Verify F110 discount evaluation settings in FBZP</td><td>SAP FI Consultant</td><td>1 week</td><td class="num" data-val="43980"></td><td><span class="sev-badge sev-medium">P2</span></td></tr>
+        <tr><td><span class="rca-id">REM-6C</span></td><td>RCA-6</td><td>Negotiate 2-3% discount with top 20 vendors by invoice volume</td><td>Procurement Head</td><td>8 weeks</td><td class="num" data-val="43980"></td><td><span class="sev-badge sev-medium">P3</span></td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="ai-box" style="margin-top:20px;">
+      <div class="ai-label">Implementation Priority</div>
+      <p><strong>Phase 1 (Weeks 1-2):</strong> REM-1B (F110 baseline config), REM-1C (weekly report), REM-2A (Z009 audit), REM-6B (discount settings). These are configuration and reporting changes with zero business disruption and immediate impact.</p>
+      <p><strong>Phase 2 (Weeks 3-4):</strong> REM-1A (payment block), REM-3A (AP rotation), REM-4A (KPI revision), REM-4B (payment calendar). These require process changes and management sign-off but address the largest exposure pools.</p>
+      <p><strong>Phase 3 (Weeks 5-8):</strong> REM-2B (contract review), REM-3B (investigation), REM-5A/5B (CC 3000 audit), REM-6A/6C (discount negotiation). Longer-duration structural changes that prevent recurrence.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB: VENDOR SUMMARY ══ -->
+<div id="tab-vendor" class="tab-content">
+  <div class="sec-hdr"><h2>Vendor Summary</h2><span class="sec-cnt">Top 20 vendors by CoC exposure</span></div>
+  <div class="tbl-wrap"><table class="tbl">
+    <thead><tr><th>Vendor ID</th><th>Vendor Name</th><th>Acct Grp</th><th>CC</th><th>Count</th><th>Invoice Value</th><th>CoC Exposure</th><th>Disc Savings</th><th>Net Exposure</th><th>Avg Days</th><th>Max Sev</th><th>Early Pay %</th><th>AI Flag</th></tr></thead>
+    <tbody>
+<tr>
+<td>11000275</td><td><strong>Corpus Christi Karen Industries</strong></td><td>ZV11</td><td>3000</td>
+<td>2</td><td class="num" data-val="19948680">19948680</td>
+<td class="num" data-val="101110">101110</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="101110">101110</td>
+<td>18.5</td><td><span class="sev-badge sev-high">High</span></td>
+<td>—</td><td class="ai-flag">2 early payment(s), avg 18 days early.</td></tr>
+<tr>
+<td>13000385</td><td><strong>Ulysses Solutions & Susan Colton</strong></td><td>ZV33</td><td>1000,2000,3000</td>
+<td>10</td><td class="num" data-val="17339438">17339438</td>
+<td class="num" data-val="99232">99232</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="99232">99232</td>
+<td>19.1</td><td><span class="sev-badge sev-critical">Critical</span></td>
+<td>—</td><td class="ai-flag">10 repeat early payments. Review vendor payment scheduling.</td></tr>
+<tr>
+<td>11000314</td><td><strong>Stanley Trading Co Inc</strong></td><td>ZV11</td><td>3000</td>
+<td>2</td><td class="num" data-val="21487275">21487275</td>
+<td class="num" data-val="81763">81763</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="81763">81763</td>
+<td>12.5</td><td><span class="sev-badge sev-high">High</span></td>
+<td>—</td><td class="ai-flag">2 early payment(s), avg 12 days early.</td></tr>
+<tr>
+<td>13000572</td><td><strong>Tanner Services Corp</strong></td><td>ZV33</td><td>2000</td>
+<td>1</td><td class="num" data-val="6442603">6442603</td>
+<td class="num" data-val="52953">52953</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="52953">52953</td>
+<td>30.0</td><td><span class="sev-badge sev-high">High</span></td>
+<td>91%</td><td class="ai-flag">Early payment rate 91% — significantly above peer average. Preferential treatment indicator.</td></tr>
+<tr>
+<td>11000318</td><td><strong>Industries</strong></td><td>ZV11</td><td>3000</td>
+<td>2</td><td class="num" data-val="17537625">17537625</td>
+<td class="num" data-val="44616">44616</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="44616">44616</td>
+<td>9.5</td><td><span class="sev-badge sev-medium">Medium</span></td>
+<td>—</td><td class="ai-flag">2 early payment(s), avg 10 days early.</td></tr>
+<tr>
+<td>15000001</td><td><strong>Accenture Solutions Inc</strong></td><td>ZV55</td><td>2000</td>
+<td>1</td><td class="num" data-val="4806410">4806410</td>
+<td class="num" data-val="31604">31604</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="31604">31604</td>
+<td>24.0</td><td><span class="sev-badge sev-high">High</span></td>
+<td>47%</td><td class="ai-flag">1 early payment(s), avg 24 days early.</td></tr>
+<tr>
+<td>34000140</td><td><strong>Kolkat Bangalo Preston</strong></td><td>ZVFG</td><td>2000</td>
+<td>1</td><td class="num" data-val="3159000">3159000</td>
+<td class="num" data-val="20772">20772</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="20772">20772</td>
+<td>24.0</td><td><span class="sev-badge sev-high">High</span></td>
+<td>89%</td><td class="ai-flag">Early payment rate 89% — significantly above peer average. Preferential treatment indicator.</td></tr>
+<tr>
+<td>11000592</td><td><strong>Natalie Imani</strong></td><td>ZV11</td><td>1000</td>
+<td>2</td><td class="num" data-val="3485302">3485302</td>
+<td class="num" data-val="17378">17378</td>
+<td class="num" data-val="34854">34854</td>
+<td class="num" data-val="-17476">-17476</td>
+<td>17.5</td><td><span class="sev-badge sev-medium">Medium</span></td>
+<td>—</td><td class="ai-flag">2 early payment(s), avg 18 days early.</td></tr>
+<tr>
+<td>13002047</td><td><strong>Europe Empire Eugene Irvine</strong></td><td>ZV33</td><td>3000</td>
+<td>2</td><td class="num" data-val="1383549">1383549</td>
+<td class="num" data-val="16678">16678</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="16678">16678</td>
+<td>44.0</td><td><span class="sev-badge sev-critical">Critical</span></td>
+<td>—</td><td class="ai-flag">Avg 44 days early — well above threshold. Treasury pre-approval needed.</td></tr>
+<tr>
+<td>13001139</td><td><strong>Chester America Inc</strong></td><td>ZV33</td><td>1000</td>
+<td>1</td><td class="num" data-val="1367701">1367701</td>
+<td class="num" data-val="16487">16487</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="16487">16487</td>
+<td>44.0</td><td><span class="sev-badge sev-critical">Critical</span></td>
+<td>—</td><td class="ai-flag">Avg 44 days early — well above threshold. Treasury pre-approval needed.</td></tr>
+<tr>
+<td>13006246</td><td><strong>Nell Technology Services Inc Lin</strong></td><td>ZV33</td><td>2000</td>
+<td>1</td><td class="num" data-val="1930814">1930814</td>
+<td class="num" data-val="15870">15870</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="15870">15870</td>
+<td>30.0</td><td><span class="sev-badge sev-high">High</span></td>
+<td>90%</td><td class="ai-flag">Early payment rate 90% — significantly above peer average. Preferential treatment indicator.</td></tr>
+<tr>
+<td>13002702</td><td><strong>Richard Pamela Sherman & Associa</strong></td><td>ZV33</td><td>3000</td>
+<td>2</td><td class="num" data-val="2373041">2373041</td>
+<td class="num" data-val="14769">14769</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="14769">14769</td>
+<td>23.0</td><td><span class="sev-badge sev-high">High</span></td>
+<td>86%</td><td class="ai-flag">Early payment rate 86% — significantly above peer average. Preferential treatment indicator.</td></tr>
+<tr>
+<td>13001140</td><td><strong>Cooper Inti Solutions Inc</strong></td><td>ZV33</td><td>3000</td>
+<td>6</td><td class="num" data-val="3277327">3277327</td>
+<td class="num" data-val="13396">13396</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="13396">13396</td>
+<td>14.8</td><td><span class="sev-badge sev-high">High</span></td>
+<td>61%</td><td class="ai-flag">Early payment rate 61% — significantly above peer average. Preferential treatment indicator.</td></tr>
+<tr>
+<td>13006750</td><td><strong>Eric & Yolanda Llc</strong></td><td>ZV33</td><td>3000</td>
+<td>1</td><td class="num" data-val="3360000">3360000</td>
+<td class="num" data-val="12888">12888</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="12888">12888</td>
+<td>14.0</td><td><span class="sev-badge sev-medium">Medium</span></td>
+<td>—</td><td class="ai-flag">1 early payment(s), avg 14 days early.</td></tr>
+<tr>
+<td>13005519</td><td><strong>Harold Marshall Associates</strong></td><td>ZV33</td><td>2000</td>
+<td>1</td><td class="num" data-val="1455093">1455093</td>
+<td class="num" data-val="12757">12757</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="12757">12757</td>
+<td>32.0</td><td><span class="sev-badge sev-critical">Critical</span></td>
+<td>—</td><td class="ai-flag">Avg 32 days early — well above threshold. Treasury pre-approval needed.</td></tr>
+<tr>
+<td>13002806</td><td><strong>Cooper</strong></td><td>ZV33</td><td>1000,2000,3000</td>
+<td>4</td><td class="num" data-val="2068174">2068174</td>
+<td class="num" data-val="12684">12684</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="12684">12684</td>
+<td>17.2</td><td><span class="sev-badge sev-critical">Critical</span></td>
+<td>48%</td><td class="ai-flag">4 early payment(s), avg 17 days early.</td></tr>
+<tr>
+<td>13000411</td><td><strong>Webtel Empire America Inc Linda</strong></td><td>ZV33</td><td>2000</td>
+<td>1</td><td class="num" data-val="1283793">1283793</td>
+<td class="num" data-val="11255">11255</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="11255">11255</td>
+<td>32.0</td><td><span class="sev-badge sev-critical">Critical</span></td>
+<td>—</td><td class="ai-flag">Avg 32 days early — well above threshold. Treasury pre-approval needed.</td></tr>
+<tr>
+<td>13000143</td><td><strong>Harold Raymond Raymond Barry Har</strong></td><td>ZV33</td><td>3000</td>
+<td>2</td><td class="num" data-val="2750477">2750477</td>
+<td class="num" data-val="10375">10375</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="10375">10375</td>
+<td>12.0</td><td><span class="sev-badge sev-medium">Medium</span></td>
+<td>—</td><td class="ai-flag">2 early payment(s), avg 12 days early.</td></tr>
+<tr>
+<td>13002141</td><td><strong>Ida Matthew & Proprie</strong></td><td>ZV33</td><td>3000</td>
+<td>1</td><td class="num" data-val="1773129">1773129</td>
+<td class="num" data-val="9230">9230</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="9230">9230</td>
+<td>19.0</td><td><span class="sev-badge sev-high">High</span></td>
+<td>—</td><td class="ai-flag">1 early payment(s), avg 19 days early.</td></tr>
+<tr>
+<td>13006866</td><td><strong>Proprie & Paxton</strong></td><td>ZV33</td><td>3000</td>
+<td>1</td><td class="num" data-val="1400384">1400384</td>
+<td class="num" data-val="8824">8824</td>
+<td class="num" data-val="0">0</td>
+<td class="num" data-val="8824">8824</td>
+<td>23.0</td><td><span class="sev-badge sev-high">High</span></td>
+<td>—</td><td class="ai-flag">1 early payment(s), avg 23 days early.</td></tr>
+
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ══ TAB: AUDIT ══ -->
+<div id="tab-audit" class="tab-content">
+  <div class="sec-hdr"><h2>Audit & Methodology</h2></div>
+  <div class="audit-grid">
+    <div>Report ID</div><div>FRP005</div>
+    <div>Report Name</div><div>Early Payment Cost-of-Capital Exposure Report</div>
+    <div>Rule</div><div>PROC0324 — Early Payment Risk</div>
+    <div>Generated</div><div>28-Apr-2025</div>
+    <div>Generated By</div><div>FortifAI R6 Agent v1.13</div>
+    <div>Data Source</div><div><code>transform_db.transaction_risk_analysis_enriched</code></div>
+    <div>Data Mode</div><div><span style="color:var(--olive);font-weight:600;">LIVE (TRAE Extract)</span></div>
+    <div>Period</div><div>August 2025 — November 2025</div>
+    <div>Company Codes</div><div>1000, 2000, 3000</div>
+    <div>Vendor Acct Groups</div><div>ZV11, ZV22, ZV33, ZV55, ZV77, ZVFG (none excluded — no excluded groups in dataset)</div>
+    <div>Total Records</div><div>191 (all Cash-Out / Paid Out)</div>
+    <div>At-Risk Records</div><div>0 (no unpaid invoices in current TRAE extract)</div>
+    <div>Cost of Capital</div><div>10% per annum (overrides F8 default of 8%)</div>
+    <div>CoC Formula</div><div><code>Invoice Amount × 10% × Days Early / 365</code></div>
+    <div>Days Early Source</div><div>Parsed from <code>ai_explain_text</code> field ("X days before due date")</div>
+    <div>Discount Source</div><div>Parsed from <code>ai_explain_text</code> ("Discount captured: Yes/No")</div>
+    <div>Payment Terms</div><div>Z006, Z007, Z008, Z009, Z038, Z046, Z050, Z052, Z053, Z054 (from AI text)</div>
+    <div>FX Rate (USD)</div><div>₹90 / $1 USD</div>
+    <div>Inactive Rules</div><div>PROC0280, PROC0329 excluded</div>
+    <div>Guardrails</div><div>G1–G8 applied (source-only, no opinions, quantified claims)</div>
+    <div>R6 Master Prompt</div><div>v1.13</div>
+    <div>Design System</div><div>FortifAI Colour & Typography Guide v1.0 (June 2025)</div>
+  </div>
+</div>
+
+<script>
+const FX=90; let CC='INR';
+const D={"total_records":191,"total_amount":165763627,"total_coc":856912,"total_disc":43980,"total_net":812932,"avg_days":21.5,"unique_vendors":119,"disc_yes_count":3,"disc_no_count":188,"sev_critical":{"count":9,"amt":14220149,"coc":137359},"sev_high":{"count":105,"amt":84442619,"coc":510135},"sev_medium":{"count":75,"amt":64652901,"coc":202385},"sev_low":{"count":2,"amt":2447956,"coc":7032},"cc_1000":{"count":36,"amt":25201925,"coc":117222},"cc_2000":{"count":74,"amt":45876715,"coc":312005},"cc_3000":{"count":81,"amt":94684987,"coc":427685},"months":[{"month":"2025-08","count":117,"amt":136228540.88,"coc":720723.3800000002},{"month":"2025-09","count":69,"amt":28332568.180000003,"coc":130153.33},{"month":"2025-10","count":4,"amt":986517.67,"coc":3845.4700000000003},{"month":"2025-11","count":1,"amt":216000.0,"coc":2189.59}],"vendors":[{"vid":"11000275","name":"Corpus Christi Karen Industries","grp":"ZV11","count":2,"amt":19948680,"coc":101110,"disc":0,"avg_days":18.5,"max_sev":"High","early_pct":null,"peer_pct":null,"ccs":"3000"},{"vid":"13000385","name":"Ulysses Solutions & Susan Colton","grp":"ZV33","count":10,"amt":17339438,"coc":99232,"disc":0,"avg_days":19.1,"max_sev":"Critical","early_pct":null,"peer_pct":27.6,"ccs":"1000,2000,3000"},{"vid":"11000314","name":"Stanley Trading Co Inc","grp":"ZV11","count":2,"amt":21487275,"coc":81763,"disc":0,"avg_days":12.5,"max_sev":"High","early_pct":null,"peer_pct":null,"ccs":"3000"},{"vid":"13000572","name":"Tanner Services Corp","grp":"ZV33","count":1,"amt":6442603,"coc":52953,"disc":0,"avg_days":30.0,"max_sev":"High","early_pct":90.9,"peer_pct":null,"ccs":"2000"},{"vid":"11000318","name":"Industries","grp":"ZV11","count":2,"amt":17537625,"coc":44616,"disc":0,"avg_days":9.5,"max_sev":"Medium","early_pct":null,"peer_pct":null,"ccs":"3000"},{"vid":"15000001","name":"Accenture Solutions Inc","grp":"ZV55","count":1,"amt":4806410,"coc":31604,"disc":0,"avg_days":24.0,"max_sev":"High","early_pct":46.7,"peer_pct":null,"ccs":"2000"},{"vid":"34000140","name":"Kolkat Bangalo Preston","grp":"ZVFG","count":1,"amt":3159000,"coc":20772,"disc":0,"avg_days":24.0,"max_sev":"High","early_pct":89.4,"peer_pct":null,"ccs":"2000"},{"vid":"11000592","name":"Natalie Imani","grp":"ZV11","count":2,"amt":3485302,"coc":17378,"disc":34854,"avg_days":17.5,"max_sev":"Medium","early_pct":null,"peer_pct":null,"ccs":"1000"},{"vid":"13002047","name":"Europe Empire Eugene Irvine","grp":"ZV33","count":2,"amt":1383549,"coc":16678,"disc":0,"avg_days":44.0,"max_sev":"Critical","early_pct":null,"peer_pct":27.6,"ccs":"3000"},{"vid":"13001139","name":"Chester America Inc","grp":"ZV33","count":1,"amt":1367701,"coc":16487,"disc":0,"avg_days":44.0,"max_sev":"Critical","early_pct":null,"peer_pct":null,"ccs":"1000"},{"vid":"13006246","name":"Nell Technology Services Inc Linda","grp":"ZV33","count":1,"amt":1930814,"coc":15870,"disc":0,"avg_days":30.0,"max_sev":"High","early_pct":90.0,"peer_pct":null,"ccs":"2000"},{"vid":"13002702","name":"Richard Pamela Sherman & Associates","grp":"ZV33","count":2,"amt":2373041,"coc":14769,"disc":0,"avg_days":23.0,"max_sev":"High","early_pct":86.2,"peer_pct":null,"ccs":"3000"},{"vid":"13001140","name":"Cooper Inti Solutions Inc","grp":"ZV33","count":6,"amt":3277327,"coc":13396,"disc":0,"avg_days":14.8,"max_sev":"High","early_pct":61.1,"peer_pct":27.6,"ccs":"3000"},{"vid":"13006750","name":"Eric & Yolanda Llc","grp":"ZV33","count":1,"amt":3360000,"coc":12888,"disc":0,"avg_days":14.0,"max_sev":"Medium","early_pct":null,"peer_pct":27.6,"ccs":"3000"},{"vid":"13005519","name":"Harold Marshall Associates","grp":"ZV33","count":1,"amt":1455093,"coc":12757,"disc":0,"avg_days":32.0,"max_sev":"Critical","early_pct":null,"peer_pct":null,"ccs":"2000"},{"vid":"13002806","name":"Cooper","grp":"ZV33","count":4,"amt":2068174,"coc":12684,"disc":0,"avg_days":17.2,"max_sev":"Critical","early_pct":47.6,"peer_pct":null,"ccs":"1000,2000,3000"},{"vid":"13000411","name":"Webtel Empire America Inc Linda","grp":"ZV33","count":1,"amt":1283793,"coc":11255,"disc":0,"avg_days":32.0,"max_sev":"Critical","early_pct":null,"peer_pct":27.6,"ccs":"2000"},{"vid":"13000143","name":"Harold Raymond Raymond Barry Harold","grp":"ZV33","count":2,"amt":2750477,"coc":10375,"disc":0,"avg_days":12.0,"max_sev":"Medium","early_pct":null,"peer_pct":null,"ccs":"3000"},{"vid":"13002141","name":"Ida Matthew & Proprie","grp":"ZV33","count":1,"amt":1773129,"coc":9230,"disc":0,"avg_days":19.0,"max_sev":"High","early_pct":null,"peer_pct":null,"ccs":"3000"},{"vid":"13006866","name":"Proprie & Paxton","grp":"ZV33","count":1,"amt":1400384,"coc":8824,"disc":0,"avg_days":23.0,"max_sev":"High","early_pct":null,"peer_pct":null,"ccs":"3000"}],"details":[{"doc":"3510262548","li":"1","cc":"3000","vid":"11000314","vname":"Stanley Trading Co Inc","vgrp":"ZV11","sev":"High","score":90,"amt":16712325,"base":"2025-08-04","clr":"2025-08-19","days":15,"disc":"No","disc_amt":0,"coc":68681,"net":68681,"terms":"Z008","early_pct":null},{"doc":"3510263491","li":"1","cc":"3000","vid":"11000275","vname":"Corpus Christi Karen Industrie","vgrp":"ZV11","sev":"High","score":90,"amt":9974340,"base":"2025-08-11","clr":"2025-08-21","days":20,"disc":"No","disc_amt":0,"coc":54654,"net":54654,"terms":"Z008","early_pct":null},{"doc":"2510007064","li":"1","cc":"2000","vid":"13000572","vname":"Tanner Services Corp","vgrp":"ZV33","sev":"High","score":90,"amt":6442603,"base":"2025-08-07","clr":"2025-08-07","days":30,"disc":"No","disc_amt":0,"coc":52953,"net":52953,"terms":"Z008","early_pct":90.9},{"doc":"2510007257","li":"1","cc":"2000","vid":"13000385","vname":"Ulysses Solutions & Susan Colt","vgrp":"ZV33","sev":"Critical","score":95,"amt":5795680,"base":"2025-08-11","clr":"2025-08-14","days":32,"disc":"No","disc_amt":0,"coc":50811,"net":50811,"terms":"Z050","early_pct":null},{"doc":"3510263490","li":"1","cc":"3000","vid":"11000275","vname":"Corpus Christi Karen Industrie","vgrp":"ZV11","sev":"High","score":90,"amt":9974340,"base":"2025-08-08","clr":"2025-08-21","days":17,"disc":"No","disc_amt":0,"coc":46456,"net":46456,"terms":"Z008","early_pct":null},{"doc":"2510007689","li":"1","cc":"2000","vid":"15000001","vname":"Accenture Solutions Inc","vgrp":"ZV55","sev":"High","score":90,"amt":4806410,"base":"2025-08-19","clr":"2025-08-25","days":24,"disc":"No","disc_amt":0,"coc":31604,"net":31604,"terms":"Z008","early_pct":46.7},{"doc":"3510262551","li":"1","cc":"3000","vid":"11000318","vname":"Industries","vgrp":"ZV11","sev":"Medium","score":65,"amt":12526875,"base":"2025-08-07","clr":"2025-08-28","days":9,"disc":"No","disc_amt":0,"coc":30888,"net":30888,"terms":"Z008","early_pct":null},{"doc":"1510014450","li":"1","cc":"1000","vid":"13000385","vname":"Ulysses Solutions & Susan Colt","vgrp":"ZV33","sev":"Medium","score":65,"amt":7258909,"base":"2025-08-12","clr":"2025-08-13","days":14,"disc":"No","disc_amt":0,"coc":27842,"net":27842,"terms":"Z006","early_pct":null},{"doc":"2510007425","li":"1","cc":"2000","vid":"34000140","vname":"Kolkat Bangalo Preston","vgrp":"ZVFG","sev":"High","score":90,"amt":3159000,"base":"2025-08-13","clr":"2025-08-19","days":24,"disc":"No","disc_amt":0,"coc":20772,"net":20772,"terms":"Z008","early_pct":89.4},{"doc":"1510016067","li":"1","cc":"1000","vid":"13001139","vname":"Chester America Inc","vgrp":"ZV33","sev":"Critical","score":95,"amt":1367701,"base":"2025-08-26","clr":"2025-08-27","days":44,"disc":"No","disc_amt":0,"coc":16487,"net":16487,"terms":"Z009","early_pct":null},{"doc":"2510007063","li":"1","cc":"2000","vid":"13006246","vname":"Nell Technology Services Inc L","vgrp":"ZV33","sev":"High","score":90,"amt":1930814,"base":"2025-08-07","clr":"2025-08-07","days":30,"disc":"No","disc_amt":0,"coc":15870,"net":15870,"terms":"Z008","early_pct":90.0},{"doc":"3510263032","li":"1","cc":"3000","vid":"13002047","vname":"Europe Empire Eugene Irvine","vgrp":"ZV33","sev":"Critical","score":95,"amt":1210964,"base":"2025-08-18","clr":"2025-08-19","days":44,"disc":"No","disc_amt":0,"coc":14598,"net":14598,"terms":"Z009","early_pct":null},{"doc":"3510263410","li":"1","cc":"3000","vid":"11000318","vname":"Industries","vgrp":"ZV11","sev":"Medium","score":65,"amt":5010750,"base":"2025-08-08","clr":"2025-08-28","days":10,"disc":"No","disc_amt":0,"coc":13728,"net":13728,"terms":"Z008","early_pct":null},{"doc":"3510263413","li":"1","cc":"3000","vid":"11000314","vname":"Stanley Trading Co Inc","vgrp":"ZV11","sev":"Medium","score":65,"amt":4774950,"base":"2025-08-06","clr":"2025-08-26","days":10,"disc":"No","disc_amt":0,"coc":13082,"net":13082,"terms":"Z008","early_pct":null},{"doc":"3510274003","li":"1","cc":"3000","vid":"13006750","vname":"Eric & Yolanda Llc","vgrp":"ZV33","sev":"Medium","score":65,"amt":3360000,"base":"2025-08-28","clr":"2025-08-29","days":14,"disc":"No","disc_amt":0,"coc":12888,"net":12888,"terms":"Z006","early_pct":null},{"doc":"2510007202","li":"1","cc":"2000","vid":"13005519","vname":"Harold Marshall Associates","vgrp":"ZV33","sev":"Critical","score":95,"amt":1455093,"base":"2025-08-11","clr":"2025-08-14","days":32,"disc":"No","disc_amt":0,"coc":12757,"net":12757,"terms":"Z050","early_pct":null},{"doc":"1510015117","li":"1","cc":"1000","vid":"11000592","vname":"Natalie Imani","vgrp":"ZV11","sev":"Medium","score":65,"amt":1964252,"base":"2025-08-13","clr":"2025-08-20","days":23,"disc":"Yes","disc_amt":19643,"coc":12377,"net":-7266,"terms":"Z008","early_pct":null},{"doc":"2510007204","li":"1","cc":"2000","vid":"13000411","vname":"Webtel Empire America Inc Lind","vgrp":"ZV33","sev":"Critical","score":95,"amt":1283793,"base":"2025-08-11","clr":"2025-08-14","days":32,"disc":"No","disc_amt":0,"coc":11255,"net":11255,"terms":"Z050","early_pct":null},{"doc":"3510273618","li":"1","cc":"3000","vid":"13000143","vname":"Harold Raymond Raymond Barry H","vgrp":"ZV33","sev":"Medium","score":65,"amt":2591030,"base":"2025-08-25","clr":"2025-08-26","days":14,"disc":"No","disc_amt":0,"coc":9938,"net":9938,"terms":"Z006","early_pct":null},{"doc":"3510279180","li":"1","cc":"3000","vid":"13002141","vname":"Ida Matthew & Proprie","vgrp":"ZV33","sev":"High","score":90,"amt":1773129,"base":"2025-08-26","clr":"2025-09-06","days":19,"disc":"No","disc_amt":0,"coc":9230,"net":9230,"terms":"Z008","early_pct":null},{"doc":"2510007207","li":"1","cc":"2000","vid":"13002806","vname":"Cooper","vgrp":"ZV33","sev":"Critical","score":95,"amt":1032004,"base":"2025-08-11","clr":"2025-08-14","days":32,"disc":"No","disc_amt":0,"coc":9048,"net":9048,"terms":"Z050","early_pct":null},{"doc":"3510270852","li":"1","cc":"3000","vid":"13002702","vname":"Richard Pamela Sherman & Assoc","vgrp":"ZV33","sev":"High","score":90,"amt":1130477,"base":"2025-08-14","clr":"2025-08-30","days":29,"disc":"No","disc_amt":0,"coc":8982,"net":8982,"terms":"Z052","early_pct":null},{"doc":"3510274628","li":"1","cc":"3000","vid":"13006866","vname":"Proprie & Paxton","vgrp":"ZV33","sev":"High","score":90,"amt":1400384,"base":"2025-08-26","clr":"2025-09-02","days":23,"disc":"No","disc_amt":0,"coc":8824,"net":8824,"terms":"Z008","early_pct":null},{"doc":"3510254574","li":"1","cc":"3000","vid":"15000541","vname":"Davis Leonard Adams & Sophia","vgrp":"ZV55","sev":"Critical","score":95,"amt":765000,"base":"2025-08-08","clr":"2025-08-13","days":40,"disc":"No","disc_amt":0,"coc":8384,"net":8384,"terms":"Z009","early_pct":null},{"doc":"3510227054","li":"1","cc":"3000","vid":"15000226","vname":"Nathan Angela","vgrp":"ZV55","sev":"Critical","score":95,"amt":661914,"base":"2025-08-01","clr":"2025-08-01","days":45,"disc":"No","disc_amt":0,"coc":8161,"net":8161,"terms":"Z009","early_pct":100.0},{"doc":"3510244278","li":"1","cc":"3000","vid":"13001140","vname":"Cooper Inti Solutions Inc","vgrp":"ZV33","sev":"High","score":90,"amt":1870500,"base":"2025-08-07","clr":"2025-08-07","days":15,"disc":"No","disc_amt":0,"coc":7687,"net":7687,"terms":"Z006","early_pct":null},{"doc":"1510014457","li":"1","cc":"1000","vid":"13001051","vname":"Selena Global Associates","vgrp":"ZV33","sev":"Medium","score":65,"amt":1923641,"base":"2025-08-11","clr":"2025-08-13","days":13,"disc":"No","disc_amt":0,"coc":6851,"net":6851,"terms":"Z006","early_pct":null},{"doc":"3510321238","li":"1","cc":"3000","vid":"13000385","vname":"Ulysses Solutions & Susan Colt","vgrp":"ZV33","sev":"High","score":90,"amt":1126578,"base":"2025-09-20","clr":"2025-09-29","days":21,"disc":"No","disc_amt":0,"coc":6482,"net":6482,"terms":"Z008","early_pct":null},{"doc":"3510284236","li":"1","cc":"3000","vid":"13002222","vname":"Ulysses Inc","vgrp":"ZV33","sev":"Critical","score":95,"amt":648000,"base":"2025-08-31","clr":"2025-09-12","days":33,"disc":"No","disc_amt":0,"coc":5859,"net":5859,"terms":"Z009","early_pct":null},{"doc":"3510246160","li":"1","cc":"3000","vid":"13002702","vname":"Richard Pamela Sherman & Assoc","vgrp":"ZV33","sev":"High","score":90,"amt":1242564,"base":"2025-08-07","clr":"2025-09-04","days":17,"disc":"No","disc_amt":0,"coc":5787,"net":5787,"terms":"Z052","early_pct":86.2},{"doc":"2510008652","li":"1","cc":"2000","vid":"13001769","vname":"Michael & Samuel Inc","vgrp":"ZV33","sev":"High","score":90,"amt":895520,"base":"2025-09-01","clr":"2025-09-09","days":22,"disc":"No","disc_amt":0,"coc":5398,"net":5398,"terms":"Z008","early_pct":null},{"doc":"2510009694","li":"1","cc":"2000","vid":"13000669","vname":"Monica Other Media Solutions I","vgrp":"ZV33","sev":"High","score":90,"amt":792164,"base":"2025-09-17","clr":"2025-09-23","days":24,"disc":"No","disc_amt":0,"coc":5209,"net":5209,"terms":"Z008","early_pct":null},{"doc":"3510263108","li":"1","cc":"3000","vid":"13002280","vname":"Susan Denise","vgrp":"ZV33","sev":"High","score":90,"amt":479184,"base":"2025-08-19","clr":"2025-08-25","days":39,"disc":"No","disc_amt":0,"coc":5120,"net":5120,"terms":"Z009","early_pct":88.9},{"doc":"1510014615","li":"1","cc":"1000","vid":"11000592","vname":"Natalie Imani","vgrp":"ZV11","sev":"Low","score":35,"amt":1521050,"base":"2025-08-02","clr":"2025-08-20","days":12,"disc":"Yes","disc_amt":15211,"coc":5001,"net":-10210,"terms":"Z008","early_pct":null},{"doc":"1510013941","li":"1","cc":"1000","vid":"13003239","vname":"Bates Seth & Laura Services","vgrp":"ZV33","sev":"High","score":90,"amt":593966,"base":"2025-08-06","clr":"2025-08-22","days":29,"disc":"No","disc_amt":0,"coc":4719,"net":4719,"terms":"Z009","early_pct":null},{"doc":"1510013832","li":"1","cc":"1000","vid":"13005381","vname":"Tony Wolfgang Industries Rebec","vgrp":"ZV33","sev":"High","score":90,"amt":440558,"base":"2025-08-01","clr":"2025-08-07","days":39,"disc":"No","disc_amt":0,"coc":4707,"net":4707,"terms":"Z009","early_pct":null},{"doc":"2510007506","li":"1","cc":"2000","vid":"13000385","vname":"Ulysses Solutions & Susan Colt","vgrp":"ZV33","sev":"High","score":90,"amt":590758,"base":"2025-08-14","clr":"2025-08-16","days":28,"disc":"No","disc_amt":0,"coc":4532,"net":4532,"terms":"Z008","early_pct":null},{"doc":"3510273648","li":"1","cc":"3000","vid":"13003329","vname":"Eric Registrar And Howard Corp","vgrp":"ZV33","sev":"High","score":90,"amt":457541,"base":"2025-08-26","clr":"2025-09-04","days":36,"disc":"No","disc_amt":0,"coc":4513,"net":4513,"terms":"Z009","early_pct":null},{"doc":"2510009232","li":"1","cc":"2000","vid":"17000672","vname":"Ace Transport Co","vgrp":"ZV77","sev":"High","score":90,"amt":632764,"base":"2025-09-10","clr":"2025-09-14","days":26,"disc":"No","disc_amt":0,"coc":4507,"net":4507,"terms":"Z008","early_pct":60.0},{"doc":"2510008648","li":"1","cc":"2000","vid":"13006982","vname":"America Tanner Adam Linda","vgrp":"ZV33","sev":"High","score":90,"amt":739375,"base":"2025-09-01","clr":"2025-09-09","days":22,"disc":"No","disc_amt":0,"coc":4457,"net":4457,"terms":"Z008","early_pct":53.3}],"days_buckets":{"8-14":76,"15-21":36,"22-30":39,"31-45":40}};
+
+function fmt(v){
+  if(CC==='INR'){ let l=v/100000; return '₹'+(l>=100?l.toFixed(0):l.toFixed(2))+' L'; }
+  else{ let m=v/FX/1000000; return m>=0.01?'$'+m.toFixed(2)+' M':'$'+(v/FX/1000).toFixed(1)+' K'; }
+}
+function updateAll(){
+  document.querySelectorAll('[data-val]').forEach(el=>{ el.textContent=fmt(parseFloat(el.getAttribute('data-val'))); });
+  document.getElementById('curr-label').textContent=CC==='INR'?'Values in Lakhs (₹)':'Values in Millions ($) · ₹90/$';
+  if(window.tc) buildTrend();
+  if(window.dc) buildDays();
+}
+function setCurrency(c){
+  CC=c;
+  document.querySelectorAll('.currency-toggle button').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.currency-toggle button[data-curr="'+c+'"]').classList.add('active');
+  updateAll();
+}
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.closest('.tab-btn').classList.add('active');
+  if(id==='trend')setTimeout(()=>{ buildTrend(); buildDays(); },80);
+  if(id==='rca')setTimeout(()=>{ buildRcaChart(); },80);
+}
+function showSubTab(id){
+  document.querySelectorAll('.subtab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.subtab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sub-'+id).classList.add('active');
+  event.target.closest('.subtab-btn').classList.add('active');
+}
+let rc=null;
+function buildRcaChart(){
+  const ctx=document.getElementById('rcaChart');
+  if(!ctx)return;
+  if(rc)rc.destroy();
+  const div=CC==='INR'?100000:(FX*1000000);
+  const lbl=CC==='INR'?'Lakhs (₹)':'Millions ($)';
+  rc=new Chart(ctx.getContext('2d'),{
+    type:'bar',
+    data:{
+      labels:['RCA-1: No Pre-Approval','RCA-2: Term Misconfig (Z009)','RCA-3: Vendor Preferential','RCA-4: Period-End Accel.','RCA-5: CC 3000 Conc.','RCA-6: Discount Failure'],
+      datasets:[{label:'CoC Exposure',data:[812932/div,137927/div,174745/div,720723/div,427685/div,43980/div],backgroundColor:['#C62828','#E65100','#E65100','#98AA3A','#98AA3A','#6699CC'],borderRadius:4}]
+    },
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>(CC==='INR'?'₹':'$')+ctx.parsed.x.toFixed(2)+(CC==='INR'?' L':' M')}}},
+      scales:{
+        x:{title:{display:true,text:lbl,color:'#6B7280',font:{family:'DM Sans'}},ticks:{color:'#6B7280'},grid:{color:'#E5E7EB'}},
+        y:{ticks:{color:'#374151',font:{family:'DM Sans',size:11}},grid:{display:false}}
+      }
+    }
+  });
+}
+let tc=null,dc=null;
+function buildTrend(){
+  const ctx=document.getElementById('trendChart').getContext('2d');
+  if(tc)tc.destroy();
+  const div=CC==='INR'?100000:(FX*1000000);
+  const lbl=CC==='INR'?'Lakhs (₹)':'Millions ($)';
+  tc=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:D.months.map(m=>m.month),
+      datasets:[
+        {label:'CoC Exposure',data:D.months.map(m=>m.coc/div),backgroundColor:'rgba(230,81,0,0.7)',borderRadius:4},
+        {label:'Invoice Value (÷100)',data:D.months.map(m=>m.amt/100/div),backgroundColor:'rgba(102,153,204,0.4)',borderRadius:4},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#6B7280',font:{family:'DM Sans',size:11}}}},
+      scales:{
+        x:{ticks:{color:'#6B7280',font:{family:'DM Sans'}},grid:{color:'#E5E7EB'}},
+        y:{title:{display:true,text:lbl,color:'#6B7280',font:{family:'DM Sans'}},ticks:{color:'#6B7280'},grid:{color:'#E5E7EB'}}
+      }
+    }
+  });
+  window.tc=tc;
+}
+function buildDays(){
+  const ctx=document.getElementById('daysChart').getContext('2d');
+  if(dc)dc.destroy();
+  dc=new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      labels:['8-14 days','15-21 days','22-30 days','31-45 days'],
+      datasets:[{data:[D.days_buckets['8-14'],D.days_buckets['15-21'],D.days_buckets['22-30'],D.days_buckets['31-45']],backgroundColor:['#6699CC','#98AA3A','#E65100','#C62828'],borderWidth:0}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'right',labels:{color:'#374151',font:{family:'DM Sans',size:11}}},
+      tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.parsed+' transactions'}}}
+    }
+  });
+  window.dc=dc;
+}
+document.addEventListener('DOMContentLoaded',()=>{updateAll();});
+</script>
+</body>
+</html>
