@@ -27,6 +27,7 @@ reports:
     title: EWAC Procurement Risk Monitoring
     component_key: EWAC_Procurement_Risk_Monitoring_v2
     level: procurement
+    priority: 1
   # report_master.id 31
   - file: AESA_Working_Capital_Command_Centre.html
     title: AESA Working Capital Command Centre
@@ -42,6 +43,7 @@ reports:
     title: Tender
     component_key: tender
     level: procurement
+    priority: 3
   # report_master.id 28
   - file: Ta_Agent_Prototype_v11.html
     title: Exchange Control Risk Monitoring
@@ -65,6 +67,7 @@ reports:
     report_code: APEX-001
     subtitle: Procurement analytics & spend intelligence
     level: procurement
+    priority: 2
   # report_master.id 24
   - file: FCPA_PROC0460_Module_v9.html
     title: Veritas
