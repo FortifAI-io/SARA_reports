@@ -29,8 +29,8 @@ jobs:
     name: validate manifest
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - run: pip install pyyaml
@@ -45,7 +45,7 @@ jobs:
     environment: production        # add "required reviewers" on this environment for an approval gate
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4   # uses the job's automatic token, so no stored git credentials
+      - uses: actions/checkout@v6   # uses the job's automatic token, so no stored git credentials
 
       # HTML first, so a report row never exists before its file does.
       # --checksum: a fresh checkout has new mtimes, so compare content and copy only real changes.
