@@ -1,0 +1,64 @@
+name: deploy-reports
+
+on:
+  pull_request:                  # no paths filter, so the check can be a required status on every PR
+  push:
+    branches: [main]
+    paths: ["*.html", "manifest.yaml", "sync_reports.py"]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-reports          # one deploy at a time; later runs queue instead of racing
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  # ── adjust these to your repo / server layout ─────────────────────
+  HTML_DIR: .                                     # the HTML files sit in the repo root next to manifest.yaml
+  SCRIPT: sync_reports.py                         # path of the sync script in this repo
+  LIVE_HTML_DIR: /var/www/html/uat.sara.fortifai.io/SARA_reports   # folder nginx maps to /fortifai_reports/
+  VENV_PYTHON: /opt/fortifai-sync/venv/bin/python # venv with pyyaml + psycopg
+  ENV_FILE: /etc/fortifai/reports-sync.env        # contains DATABASE_URL=...
+
+jobs:
+  # Runs on a GitHub-hosted machine for pull requests and pushes alike.
+  # PR code never executes on the production server.
+  check:
+    name: validate manifest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - run: python "$SCRIPT" --check --manifest manifest.yaml --html-dir "$HTML_DIR"
+
+  # Runs on the self-hosted runner installed on the server: no inbound SSH needed.
+  deploy:
+    name: deploy on server
+    needs: check
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, linux, fortifai-prod]
+    environment: production        # add "required reviewers" on this environment for an approval gate
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4   # uses the job's automatic token, so no stored git credentials
+
+      # HTML first, so a report row never exists before its file does.
+      # --checksum: a fresh checkout has new mtimes, so compare content and copy only real changes.
+      # The repo root also holds manifest.yaml, the script, .git and .github, so copy only top-level *.html.
+      - name: Publish HTML files
+        run: rsync -r --checksum --chmod=D755,F644 --include='*.html' --exclude='*' "$HTML_DIR"/ "$LIVE_HTML_DIR"/
+
+      - name: Sync database (plan, then apply)
+        run: |
+          set -euo pipefail
+          set -a; . "$ENV_FILE"; set +a
+          args=(--manifest manifest.yaml --html-dir "$LIVE_HTML_DIR")
+          echo "=== plan (read-only) ==="
+          "$VENV_PYTHON" "$SCRIPT" "${args[@]}" --dry-run
+          echo "=== apply ==="
+          "$VENV_PYTHON" "$SCRIPT" "${args[@]}"
