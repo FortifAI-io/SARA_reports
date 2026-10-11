@@ -43,7 +43,7 @@ reports:
     title: Tender
     component_key: tender
     level: procurement
-    priority: 3
+    priority: 5
   # report_master.id 28
   - file: Ta_Agent_Prototype_v11.html
     title: Exchange Control Risk Monitoring
