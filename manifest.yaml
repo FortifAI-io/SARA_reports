@@ -7,82 +7,119 @@
 # Retire a report with `active: false`; never delete an entry.
 
 reports:
-  # report_master.id 35
-  - file: Surge_Channel_Stuffing.html
-    title: Surge Channel Stuffing
-    component_key: Surge_Channel_Stuffing
-    level: sales
-  # report_master.id 34
-  - file: Crystal_v14.html
-    title: Crystal Balance-Sheet Close Assurance
-    component_key: Crystal_v14
-    level: finance
-  # report_master.id 33
-  - file: Argus_Investigation_Agent.html
-    title: Argus Investigation Agent
-    component_key: Argus_Investigation_Agent
-    level: audit
-  # report_master.id 32
+############## Procurement
+# cfo-procurement 
+#   report_master.id 11
+#   level: procurement
+#   priority 10
   - file: EWAC_Procurement_Risk_Monitoring_v2.html
+  # report_master.id 32
     title: EWAC Procurement Risk Monitoring
     component_key: EWAC_Procurement_Risk_Monitoring_v2
     level: procurement
     priority: 1
-  # report_master.id 31
-  - file: AESA_Working_Capital_Command_Centre.html
-    title: AESA Working Capital Command Centre
-    component_key: AESA_Working_Capital_Command_Centre
-    level: finance
-  # report_master.id 30
-  - file: Aegis_Prototype_v30.html
-    title: Aegis Trade Diversion
-    component_key: Aegis-Prototype-v30
-    level: compliance
-  # report_master.id 29
-  - file: Holcim_GHBS_Tender_Prototype_v7.html
-    title: Tender
-    component_key: tender
-    level: procurement
-    priority: 5
-  # report_master.id 28
-  - file: Ta_Agent_Prototype_v11.html
-    title: Exchange Control Risk Monitoring
-    component_key: Ta_Agent_Prototype_v5
-    level: compliance
-  # report_master.id 27
-  - file: FRP005_Early_Payment_Report_v3.html
-    title: Early Payment Report
-    component_key: FRP005_Early_Payment_Report_v3
-    level: finance
-  # report_master.id 26
-  - file: fortifai_exec_dashboard_v6.html
-    title: Executive risk summary
-    component_key: fortifai_exec_dashboard_v6
-    level: procurement
-    active: false
-  # report_master.id 25
   - file: apex_v9.html
+  # report_master.id 25
     title: Apex
     component_key: apex
     report_code: APEX-001
     subtitle: Procurement analytics & spend intelligence
     level: procurement
     priority: 2
-  # report_master.id 24
+  - file: Holcim_GHBS_Tender_Prototype_v7.html
+  # report_master.id 29
+    title: Tender
+    component_key: tender
+    level: procurement
+    priority: 3
+  - file: fortifai_exec_dashboard_v6.html
+  # report_master.id 26
+    title: Executive risk summary
+    component_key: fortifai_exec_dashboard_v6
+    level: procurement
+    active: false
+############## Audit
+# r2r-anomaly
+#   report_master.id 14
+#   level: audit
+#   priority: 10
+# vigil-audit-report
+#   report_master.id 20
+#   level: audit
+#   priority: 20
+  - file: Argus_Investigation_Agent.html
+  # report_master.id 33
+    title: Argus Investigation Agent
+    component_key: Argus_Investigation_Agent
+    level: audit
+    priority: 1
+############## Compliance
+  - file: Aegis_Prototype_v30.html
+  # report_master.id 30
+    title: Aegis Trade Diversion
+    component_key: Aegis-Prototype-v30
+    level: compliance
+    priority: 1
+  - file: Ta_Agent_Prototype_v11.html
+  # report_master.id 28
+    title: Exchange Control Risk Monitoring
+    component_key: Ta_Agent_Prototype_v5
+    level: compliance
+    priority: 2
   - file: FCPA_PROC0460_Module_v9.html
+  # report_master.id 24
     title: Veritas
     component_key: proc0460-bc-report-ui-v4
     subtitle: B&C Risk Intelligence
     level: compliance
-  # report_master.id 22
+    priority: 3
+############## Finance
+# ar-report
+#   report_master.id 7
+#   level: finance
+#   priority: 10
+# cfo-working-capital
+#   report_master.id 12
+#   level: finance
+#   priority: 20
+  - file: Crystal_v14.html
+  # report_master.id 34
+    title: Crystal Balance-Sheet Close Assurance
+    component_key: Crystal_v14
+    level: finance
+    priority: 1
+  - file: AESA_Working_Capital_Command_Centre.html
+  # report_master.id 31
+    title: AESA Working Capital Command Centre
+    component_key: AESA_Working_Capital_Command_Centre
+    level: finance
+    priority: 2
+  - file: FRP005_Early_Payment_Report_v3.html
+  # report_master.id 27
+    title: Early Payment Report
+    component_key: FRP005_Early_Payment_Report_v3
+    level: finance
+    priority: 3
+############## sales
+# channel-stuffing
+#   report_master.id 2
+#   level: sales
+#   priority: 10
+  - file: Surge_Channel_Stuffing.html
+  # report_master.id 35
+    title: Surge Channel Stuffing
+    component_key: Surge_Channel_Stuffing
+    level: sales
+    priority: 1
   - file: Codex_DocIntel_Holcim_GHBS_Q1FY26_1.html
+  # report_master.id 22
     title: Codex
     component_key: codex-doc-intel-holcim
     subtitle: Pre-Posting Document Intelligence
     level: cross
     active: false
-  # report_master.id 21
   - file: Tender_BidIntegrity_Holcim_GHBS_Q1FY26_5.html
+  # report_master.id 21
     title: Tender
     component_key: tender-bid-integrity-holcim
     subtitle: Pre-Award Bid Integrity
