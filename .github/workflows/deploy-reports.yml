@@ -41,7 +41,7 @@ jobs:
     name: deploy on server
     needs: check
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    runs-on: [self-hosted, linux, fortifai-prod]
+    runs-on: [self-hosted, linux, uat-sara]
     environment: production        # add "required reviewers" on this environment for an approval gate
     timeout-minutes: 10
     steps:
