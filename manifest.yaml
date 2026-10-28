@@ -95,13 +95,6 @@ reports:
     subtitle: Balance Sheet CLose Risk
     level: finance
     priority: 1
-  - file: Moneta_Working_Capital_Command_Centre.html
-  # report_master.id 31
-    title: Moneta
-    component_key: Moneta_Working_Capital_Command_Centre
-    subtitle: Working Capital Optimisation Agent
-    level: finance
-    priority: 2
   - file: FRP005_Early_Payment_Report_v3.html
   # report_master.id 27
     title: Supplier Early Payments
@@ -109,6 +102,26 @@ reports:
     subtitle: Workig Capital Optimisation
     level: finance
     priority: 3
+    # 1. KEEP THIS ONE LIVE (Capital M)
+  - file: Moneta_Working_Capital_Command_Centre.html
+    title: Moneta
+    component_key: Moneta_Working_Capital_Command_Centre
+    subtitle: Working Capital Optimisation Agent
+    level: finance
+    priority: 2
+    active: true
+  # 2. HIDE DUPLICATE #2 (Lowercase m from commit ed0483a)
+  - file: Moneta_Working_Capital_Command_Centre.html
+    title: Moneta
+    component_key: moneta_Working_Capital_Command_Centre
+    level: finance
+    active: false
+  # 3. HIDE DUPLICATE #1 (Original AESA key from commit 66eeccb with "Workimng" typo)
+  - file: Moneta_Working_Capital_Command_Centre.html
+    title: Moneta
+    component_key: AESA_Working_Capital_Command_Centre
+    level: finance
+    active: false
 ############## sales
 # channel-stuffing
 #   report_master.id 2
