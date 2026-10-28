@@ -99,7 +99,7 @@ reports:
   # report_master.id 31
     title: Moneta
     component_key: moneta_Working_Capital_Command_Centre
-    subtitle: Workimng Capital Optimisation Agent
+    subtitle: Working Capital Optimisation Agent
     level: finance
     priority: 2
   - file: FRP005_Early_Payment_Report_v3.html
