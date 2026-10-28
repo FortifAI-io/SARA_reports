@@ -27,7 +27,7 @@ reports:
     subtitle: Procurement analytics & spend intelligence
     level: procurement
     priority: 4
-    activity: False
+    active: False
   - file: Holcim_GHBS_Tender_Prototype_v7.html
   # report_master.id 29
     title: Tender
