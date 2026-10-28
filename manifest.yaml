@@ -18,6 +18,7 @@ reports:
     component_key: EWAC_Procurement_Risk_Monitoring_v2
     level: procurement
     priority: 1
+    active: false
   - file: apex_v9.html
   # report_master.id 25
     title: Apex
@@ -131,3 +132,4 @@ reports:
     component_key: AEWAC-procurement-risk-monitoring
     subtitle: Procurement Cost Savings
     level: procurement
+    priority: 1
