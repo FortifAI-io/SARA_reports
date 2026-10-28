@@ -99,7 +99,7 @@ reports:
   # report_master.id 27
     title: Supplier Early Payments
     component_key: FRP005_Early_Payment_Report_v3
-    subtitle: Workig Capital Optimisation
+    subtitle: Working Capital Optimisation
     level: finance
     priority: 3
   # 2. HIDE DUPLICATE #2 (Lowercase m from commit ed0483a)
