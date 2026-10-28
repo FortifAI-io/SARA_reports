@@ -125,3 +125,9 @@ reports:
     subtitle: Pre-Award Bid Integrity
     level: cross
     active: false
+  - file: AEWAC-procurement-risk-monitoring-v2.html
+  # report_master.id 21
+    title: Procurement Risk
+    component_key: AEWAC-procurement-risk-monitoring
+    subtitle: Procurement Cost Savings
+    level: Procurement
