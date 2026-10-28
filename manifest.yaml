@@ -26,7 +26,8 @@ reports:
     report_code: APEX-001
     subtitle: Procurement analytics & spend intelligence
     level: procurement
-    priority: 2
+    priority: 4
+    activity: False
   - file: Holcim_GHBS_Tender_Prototype_v7.html
   # report_master.id 29
     title: Tender
@@ -132,4 +133,12 @@ reports:
     component_key: AEWAC-procurement-risk-monitoring
     subtitle: Procurement Cost Savings
     level: procurement
+    priority: 2
+  - file: Kuber-Procurement-Cost-Optimisation-v2.html
+  # report_master.id 21
+    title: Kuber
+    component_key: kuber-procurement-risk-monitoring
+    subtitle: Procurement Cost Optimisation
+    level: procurement
     priority: 1
+    active: true
