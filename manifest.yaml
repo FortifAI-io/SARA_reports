@@ -95,10 +95,10 @@ reports:
     subtitle: Balance Sheet CLose Risk
     level: finance
     priority: 1
-  - file: AESA_Working_Capital_Command_Centre.html
+  - file: Moneta_Working_Capital_Command_Centre.html
   # report_master.id 31
     title: Moneta
-    component_key: AESA_Working_Capital_Command_Centre
+    component_key: moneta_Working_Capital_Command_Centre
     subtitle: Workimng Capital Optimisation Agent
     level: finance
     priority: 2
