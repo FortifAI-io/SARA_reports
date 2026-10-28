@@ -97,7 +97,7 @@ reports:
     priority: 1
   - file: AESA_Working_Capital_Command_Centre.html
   # report_master.id 31
-    title: AESA
+    title: Moneta
     component_key: AESA_Working_Capital_Command_Centre
     subtitle: Workimng Capital Optimisation Agent
     level: finance
