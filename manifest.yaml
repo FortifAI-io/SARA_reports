@@ -98,7 +98,7 @@ reports:
   - file: Moneta_Working_Capital_Command_Centre.html
   # report_master.id 31
     title: Moneta
-    component_key: moneta_Working_Capital_Command_Centre
+    component_key: Moneta_Working_Capital_Command_Centre
     subtitle: Working Capital Optimisation Agent
     level: finance
     priority: 2
