@@ -32,6 +32,7 @@ reports:
   # report_master.id 29
     title: Tender
     component_key: tender
+    subtitle: RFP Bidding Risk Monitoring 
     level: procurement
     priority: 3
   - file: fortifai_exec_dashboard_v6.html
