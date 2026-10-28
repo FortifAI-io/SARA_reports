@@ -51,28 +51,31 @@ reports:
 #   priority: 20
   - file: Argus_Investigation_Agent.html
   # report_master.id 33
-    title: Argus Investigation Agent
+    title: Argus
+    subtitle: Internal Investgation Agent
     component_key: Argus_Investigation_Agent
     level: audit
     priority: 1
 ############## Compliance
   - file: Aegis_Prototype_v30.html
   # report_master.id 30
-    title: Aegis Trade Diversion
+    title: Aegis
     component_key: Aegis-Prototype-v30
+    subtitle: Trade Diversion Monitoring
     level: compliance
     priority: 1
   - file: Ta_Agent_Prototype_v11.html
   # report_master.id 28
-    title: Exchange Control Risk Monitoring
+    title: Aegis For Exports
     component_key: Ta_Agent_Prototype_v5
+    subtitle: Export Control Monitoring
     level: compliance
     priority: 2
   - file: FCPA_PROC0460_Module_v9.html
   # report_master.id 24
     title: Veritas
     component_key: proc0460-bc-report-ui-v4
-    subtitle: B&C Risk Intelligence
+    subtitle: Bribery & Corruption Monitoring
     level: compliance
     priority: 3
 ############## Finance
@@ -86,14 +89,16 @@ reports:
 #   priority: 20
   - file: Crystal_v14.html
   # report_master.id 34
-    title: Crystal Balance-Sheet Close Assurance
+    title: Crystal
     component_key: Crystal_v14
+    subtitle: Balance Sheet CLose Risk
     level: finance
     priority: 1
   - file: AESA_Working_Capital_Command_Centre.html
   # report_master.id 31
-    title: AESA Working Capital Command Centre
+    title: AESA
     component_key: AESA_Working_Capital_Command_Centre
+    subtitle: Workimng Capital Optimisation Agent
     level: finance
     priority: 2
   - file: FRP005_Early_Payment_Report_v3.html
@@ -109,8 +114,9 @@ reports:
 #   priority: 10
   - file: Surge_Channel_Stuffing.html
   # report_master.id 35
-    title: Surge Channel Stuffing
+    title: Surge
     component_key: Surge_Channel_Stuffing
+    subtitle: Channel Stuffing Monitoring
     level: sales
     priority: 1
   - file: Codex_DocIntel_Holcim_GHBS_Q1FY26_1.html
