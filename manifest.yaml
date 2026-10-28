@@ -102,14 +102,6 @@ reports:
     subtitle: Workig Capital Optimisation
     level: finance
     priority: 3
-    # 1. KEEP THIS ONE LIVE (Capital M)
-  - file: Moneta_Working_Capital_Command_Centre.html
-    title: Moneta
-    component_key: Moneta_Working_Capital_Command_Centre
-    subtitle: Working Capital Optimisation Agent
-    level: finance
-    priority: 2
-    active: true
   # 2. HIDE DUPLICATE #2 (Lowercase m from commit ed0483a)
   - file: Moneta_Working_Capital_Command_Centre.html
     title: Moneta
