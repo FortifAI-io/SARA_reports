@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fortifai Kuber — Procurement Cost Optimisation &amp; Margin Intelligence (v1.0)</title>
+<title>Fortifai Kuber — Procurement Cost Optimisation (v4)</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
@@ -236,6 +236,11 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-h
 .meth-toc a{font-size:11px;color:var(--dp);background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:5px 12px;text-decoration:none;font-weight:600}
 .meth-toc a:hover{background:var(--low-bg);border-color:var(--dp)}
 .meth-big-h{font-size:16px;font-weight:700;color:var(--navy);margin:22px 0 6px;padding-top:10px;border-top:2px solid var(--navy)}
+.mkt-switch{display:flex;gap:5px;margin:6px 0 8px;flex-wrap:wrap}
+.mkt-btn{font-size:10.5px;font-weight:600;color:var(--mid);background:var(--bg);border:1px solid var(--border);border-radius:13px;padding:3px 11px;cursor:pointer}
+.mkt-btn:hover{border-color:var(--dp);color:var(--dp)}
+.mkt-btn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.mkt-note{font-size:10px;color:var(--mid);margin-top:6px;line-height:1.5}
 .msub-row{display:flex;gap:6px;border-bottom:2px solid var(--border);margin-bottom:18px}
 .msub{padding:10px 18px;font-size:12.5px;font-weight:600;color:var(--mid);background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer}
 .msub:hover{color:var(--text)}
@@ -257,6 +262,19 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-h
 .mi-step .mi-k{flex:0 0 150px;color:#9FB6D4;font-size:10px;text-transform:uppercase;letter-spacing:.3px}
 .mi-step .mi-v{font-family:'DM Mono',monospace;color:#fff}
 .mi-result{background:rgba(127,209,127,.12);border:1px solid rgba(127,209,127,.3);border-radius:5px;padding:9px 12px;margin-top:10px;font-size:12px;color:#CDEBCD}
+.sc-bar{display:flex;align-items:center;gap:10px;margin:5px 0;font-size:11.5px}
+.sc-bar .sc-lbl{flex:0 0 190px;color:var(--text)}
+.sc-bar .sc-track{flex:1;height:22px;background:var(--bg);border-radius:4px;position:relative;overflow:hidden}
+.sc-bar .sc-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-family:'DM Mono',monospace;font-size:10px;color:#fff;font-weight:600;white-space:nowrap}
+.sc-bar .sc-val{flex:0 0 92px;text-align:right;font-family:'DM Mono',monospace;font-size:11px;color:var(--text)}
+.sc-traded{background:#2E5A8A}.sc-conv{background:#99AFBC;color:#24405F!important}.sc-oh{background:#AEB6C2;color:#24405F!important}.sc-gap{background:#C62828}
+.method-ladder{counter-reset:ml}
+.ml-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.ml-item:last-child{border-bottom:none}
+.ml-rung{flex:0 0 30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+.ml-body{flex:1}
+.ml-title{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ml-desc{font-size:11px;color:var(--mid);line-height:1.55}
 
 /* MODALS (FP / PROMOTE & BOARD REPORT) */
 .modal-ovl{position:fixed;inset:0;background:rgba(13,21,32,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
@@ -324,6 +342,39 @@ body.no-scroll{overflow:hidden}
 .qq-send:hover{background:var(--navy)}
 .qq-suggest-wrap{padding:4px 2px 10px}
 .qq-suggest-lbl{font-size:9.5px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;margin:4px 0 8px}
+
+/* ============================================================
+   EMBED RESPONSIVENESS — adapts cleanly to the Reports-page frame
+   width (the dashboard is mounted inside platform chrome, not a
+   full tab), so it never renders out of proportion.
+   ============================================================ */
+/* Below ~1280px: topbar + score bar wrap, chart grids stack, cards reflow sooner */
+@media (max-width:1280px){
+  .topbar{height:auto;flex-wrap:wrap;gap:8px;padding:10px 16px;position:static}
+  .tb-right{justify-content:flex-start}
+  .tabs{position:static;top:auto}
+  .sbar{position:static;top:auto}
+  .g2{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr}
+  .wb-grid{grid-template-columns:1fr}
+  .mrow{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+  .tc{padding:14px 16px 30px}
+}
+/* Below ~820px (narrow panel / split view): tighten further */
+@media (max-width:820px){
+  .mrow{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .ev-grid{grid-template-columns:1fr}
+  .bridge-flow{flex-direction:column}
+  .bridge-arrow{transform:rotate(90deg);padding:3px 0}
+  .msub-row{overflow-x:auto}
+  .mkt-switch{overflow-x:auto}
+  .sc-bar .sc-lbl{flex-basis:130px}
+  .tc{padding:12px 12px 26px}
+}
+/* Make every wide table scroll inside its own box instead of forcing page width */
+@media (max-width:1280px){
+  .rule-tbl,.ev-pane table{display:block;overflow-x:auto;white-space:nowrap}
+}
 </style>
 </head>
 <body>
@@ -486,8 +537,15 @@ body.no-scroll{overflow:hidden}
 
   <div class="g2">
     <div class="card">
-      <div class="card-title">Comparative Market Index vs SAP Paid Price Trajectory (Base 100 = Apr) <span class="amt-badge">Asymmetric Pass-Through Wedge</span></div>
-      <div class="chart-wrap" style="height:215px"><canvas id="idxTrajC"></canvas></div>
+      <div class="card-title">Market Benchmark vs Paid Price — the Pass-Through Wedge <span class="amt-badge" id="wedge-badge">Steel · +8.9% gap</span></div>
+      <div class="mkt-switch" id="mktSwitch">
+        <button class="mkt-btn on" onclick="setMkt('steel',this)">Steel / HRC</button>
+        <button class="mkt-btn" onclick="setMkt('cement',this)">Cement</button>
+        <button class="mkt-btn" onclick="setMkt('chem',this)">Process Chem</button>
+        <button class="mkt-btn" onclick="setMkt('fuel',this)">Diesel / HSD</button>
+      </div>
+      <div class="chart-wrap" style="height:188px"><canvas id="idxTrajC"></canvas></div>
+      <div class="mkt-note" id="mktNote">Landed benchmark (index + grade + freight) vs your terms-adjusted paid price. Shaded area = leakage. Steel index is daily (LME).</div>
     </div>
     <div class="card">
       <div class="card-title">PO-to-Invoice Variance Distribution &amp; Sub-Tolerance Creep <span class="amt-badge">T169G Ceiling = 2.0%</span></div>
@@ -1025,6 +1083,34 @@ Flag when gap exceeds category threshold AND the index trend does not justify it
         <tr><td>MRO / fabricated spares</td><td>No reliable external index</td><td><span class="conf-tier ct-low">Internal</span></td><td>Peer-plant &amp; peer-vendor comparison only (stated as such)</td></tr>
       </table>
       <div class="meth-callout callout-excl"><strong>Honesty on limitations.</strong> A category marked <span class="conf-tier ct-low">Internal</span> is benchmarked against the client's own best-price plant/vendor, not an external index — the opportunity is still real (cross-plant arbitrage) but is never presented as an external-market gap. Index-based flags always carry their source and as-of date; internal-only flags say so explicitly.</div>
+    </div>
+
+    <div class="meth-big-h">E · Should-cost decomposition — the method for non-traded items</div>
+    <div class="method-body">
+      <p style="margin:0 0 6px">Most enterprise spend is <strong>not exchange-traded</strong>: fabricated parts, machined components, MRO spares, packaging conversion, assemblies. These have no quoted market price. Kuber benchmarks them by <strong>decomposing the item into its cost drivers</strong> — indexing the portion built from traded inputs to the exchange, and holding the conversion / labour / overhead portion to a benchmark. This "should-cost" model ties a non-traded item back to a real market signal, and is the strongest defensible method where no price line exists.</p>
+      <div style="font-size:11px;color:var(--mid);margin:10px 0 4px"><strong>Worked example — Fabricated steel bracket (SKU 24009134), paid ₹1,180/unit:</strong></div>
+      <div class="sc-bar"><span class="sc-lbl">Steel input (LME-linked)</span><div class="sc-track"><div class="sc-fill sc-traded" style="width:55%">traded · indexed to LME HRC</div></div><span class="sc-val">₹560</span></div>
+      <div class="sc-bar"><span class="sc-lbl">Conversion (labour + machine)</span><div class="sc-track"><div class="sc-fill sc-conv" style="width:24%">wage-index held</div></div><span class="sc-val">₹245</span></div>
+      <div class="sc-bar"><span class="sc-lbl">Consumables + overhead</span><div class="sc-track"><div class="sc-fill sc-oh" style="width:13%">benchmarked</div></div><span class="sc-val">₹130</span></div>
+      <div class="sc-bar"><span class="sc-lbl" style="font-weight:600">Should-cost total</span><div class="sc-track"><div class="sc-fill" style="width:80%;background:#1B5E20">defensible reference</div></div><span class="sc-val" style="font-weight:600">₹935</span></div>
+      <div class="sc-bar"><span class="sc-lbl" style="color:#8B1A1A;font-weight:600">Gap vs paid (₹1,180)</span><div class="sc-track"><div class="sc-fill sc-gap" style="width:20%">+26%</div></div><span class="sc-val" style="color:#8B1A1A;font-weight:600">+₹245</span></div>
+      <div class="formula-box" style="margin-top:12px">Should-cost(item) = Σ (traded_input_i × Index_i)  +  Conversion(wage-indexed)  +  Overhead_benchmark
+Flag when Paid P^eff > Should-cost × (1 + category tolerance), and the traded-input index has not risen to justify it.</div>
+      <div class="meth-callout callout-gov"><strong>Why this is defensible.</strong> The largest cost component is anchored to a real exchange price (here, 55% steel → LME). The conversion and overhead are held to wage/benchmark references, labelled as such. The buyer sees a build-up they can challenge line by line — not an opaque "market price" for an item that has none.</div>
+    </div>
+
+    <div class="meth-big-h">F · Benchmark-method hierarchy — how every rupee is referenced</div>
+    <div class="method-body">
+      <p style="margin:0 0 10px">No single benchmark fits all spend. Kuber selects the <strong>strongest available method per category</strong> and tags every flagged opportunity with the method used and its confidence — so a reviewer always knows whether a gap is measured against the external market, the client's own best price, or internal drift. The method is the credibility.</p>
+      <div class="method-ladder">
+        <div class="ml-item"><div class="ml-rung">1</div><div class="ml-body"><div class="ml-title">Exchange-traded index <span class="conf-tier ct-high">High</span></div><div class="ml-desc">Direct market price for exchange-traded commodities — steel, base metals, diesel, coal. Shown as the market-vs-paid price line (§B–C). <em>Covers: raw commodities.</em></div></div></div>
+        <div class="ml-item"><div class="ml-rung">2</div><div class="ml-body"><div class="ml-title">Should-cost decomposition <span class="conf-tier ct-high">High</span></div><div class="ml-desc">Item decomposed into traded inputs (indexed) + conversion (wage-indexed) + overhead. Ties non-traded manufactured items back to a market signal (§E). <em>Covers: fabricated parts, components, assemblies.</em></div></div></div>
+        <div class="ml-item"><div class="ml-rung">3</div><div class="ml-body"><div class="ml-title">Internal cross-plant best price <span class="conf-tier ct-high">High</span></div><div class="ml-desc">Same SKU bought cheaper by another plant or entity — the benchmark is the client's own best-achieved price. Irrefutable: it is your own company buying the identical part for less. <em>Covers: multi-plant MRO, common components.</em></div></div></div>
+        <div class="ml-item"><div class="ml-rung">4</div><div class="ml-body"><div class="ml-title">Peer-vendor median <span class="conf-tier ct-med">Medium</span></div><div class="ml-desc">Where several vendors supply one material group, the best-quartile P<sup>eff</sup> is the reference and outliers above it are the opportunity (the MVFI / fragmentation engine). <em>Covers: fragmented categories.</em></div></div></div>
+        <div class="ml-item"><div class="ml-rung">5</div><div class="ml-body"><div class="ml-title">Own-history drift <span class="conf-tier ct-med">Medium</span></div><div class="ml-desc">For repeat sole-source buys with no peer, the item's own price trajectory is the benchmark — flag drift rising faster than input cost or inflation. <em>Covers: sole-source repeat purchases.</em></div></div></div>
+        <div class="ml-item"><div class="ml-rung">6</div><div class="ml-body"><div class="ml-title">Wage / rate-card index <span class="conf-tier ct-low">Soft</span></div><div class="ml-desc">For services, the "commodity" is labour — benchmarked against published wage indices, IT rate cards or CPI/WPI, adjusted for skill mix. Noisier; always labelled a soft proxy. <em>Covers: IT services, facilities, professional services.</em></div></div></div>
+      </div>
+      <div class="meth-callout callout-excl"><strong>Every opportunity is method-tagged.</strong> A flag benchmarked at rung 1–2 is an external-market gap; at rung 3–5 it is an internal / own-reference gap; at rung 6 it is a soft-index indication. Kuber never presents an internal benchmark as a market price, and states when a category has no reliable external reference at all.</div>
     </div>
   </div><!-- /msub-mi -->
 </div>
@@ -1982,12 +2068,32 @@ window.addEventListener('load',()=>{
 
   new Chart(document.getElementById('savMonthC'),{type:'bar',data:{labels:M,datasets:[{label:'Booked Savings (₹ Cr)',data:[1.8,2.4,2.9,3.2,3.8,3.9],backgroundColor:'#98AA3A',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}}}});
 
-  new Chart(document.getElementById('idxTrajC'),{type:'line',data:{labels:M,datasets:[
-    {label:'SAP Invoiced Price (incl. Creep)',data:[100,101.2,102.4,103.5,104.2,104.9],borderColor:'#C62828',borderWidth:2.2,tension:.25,pointRadius:3},
-    {label:'SAP PO Price (EKPO.NETPR)',data:[100,100.8,101.5,102.1,102.7,103.1],borderColor:'#E65100',borderWidth:2,borderDash:[3,2],tension:.25,pointRadius:3},
-    {label:'LME HRC Steel Index',data:[100,98.1,96.4,94.2,92.8,91.6],borderColor:'#2E5A8A',borderWidth:2,tension:.25,pointRadius:3},
-    {label:'ICIS Chemical Index',data:[100,97.5,95.0,91.2,88.4,85.8],borderColor:'#98AA3A',borderWidth:2,tension:.25,pointRadius:3}
-  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:10},boxWidth:10}}},scales:{y:{min:82,max:108,ticks:{font:{size:10}}},x:{ticks:{font:{size:10}}}}}});
+  // Market-vs-paid divergence data per category: landed benchmark (index normalised to your basis) vs paid P^eff.
+  // Both indexed to 100 at period start so the GAP is the leakage. 'stepped' matches monthly-cadence sources.
+  const MKT={
+    steel:{unit:'₹/MT',bench:[100,98.2,96.5,94.3,92.9,91.6],paid:[100,100.4,100.9,101.3,101.6,101.8],gap:'+8.9%',src:'LME HRC · daily settlement',stepped:false},
+    cement:{unit:'₹/bag',bench:[100,99.1,97.8,96.4,95.5,94.9],paid:[100,100.3,100.7,101.0,101.4,101.6],gap:'+8.2%',src:'CMA index · monthly bulletin',stepped:true},
+    chem:{unit:'₹/KG',bench:[100,97.5,95.0,91.2,88.4,85.8],paid:[100,100.2,100.5,100.7,100.9,101.0],gap:'+8.4%',src:'ICIS assessment · weekly',stepped:false},
+    fuel:{unit:'₹/L',bench:[100,101.2,102.8,103.9,104.1,104.3],paid:[100,101.1,102.5,103.4,105.1,106.3],gap:'+6.3%',src:'OMC / govt notifications · fortnightly',stepped:false}
+  };
+  let idxChart=null;
+  function drawMkt(key){
+    const d=MKT[key];
+    const cfg={type:'line',data:{labels:M,datasets:[
+      {label:'Your paid price (terms-adjusted)',data:d.paid,borderColor:'#C62828',backgroundColor:'rgba(198,40,40,0.10)',borderWidth:2.4,tension:d.stepped?0:.25,stepped:d.stepped?'before':false,pointRadius:3,fill:'+1'},
+      {label:'Landed market benchmark',data:d.bench,borderColor:'#2E5A8A',borderWidth:2,tension:d.stepped?0:.25,stepped:d.stepped?'before':false,pointRadius:3,fill:false}
+    ]},options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{font:{size:10},boxWidth:10}},
+        tooltip:{callbacks:{footer:(it)=>{const i=it[0].dataIndex;return 'Gap: '+(d.paid[i]-d.bench[i]).toFixed(1)+' pts';}}}},
+      scales:{y:{min:82,max:110,ticks:{font:{size:10},callback:v=>v},title:{display:true,text:'Indexed (start = 100)',font:{size:9}}},x:{ticks:{font:{size:10}}}}}};
+    if(idxChart)idxChart.destroy();
+    idxChart=new Chart(document.getElementById('idxTrajC'),cfg);
+    const nm={steel:'Steel',cement:'Cement',chem:'Process Chem',fuel:'Diesel'}[key];
+    document.getElementById('wedge-badge').textContent=nm+' · '+d.gap+' gap';
+    document.getElementById('mktNote').innerHTML='Landed benchmark (index + grade + freight) vs your terms-adjusted paid price. Shaded area = leakage. Source: '+d.src+'.';
+  }
+  window.setMkt=function(key,btn){document.querySelectorAll('.mkt-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');drawMkt(key);};
+  drawMkt('steel');
 
   new Chart(document.getElementById('varDistC'),{type:'bar',data:{labels:['0% (Exact)','0.1–0.5%','0.5–1.5%','1.5–1.99% (Creep)','2.0–5.0% (>Tol)','>5.0% (Breach)'],datasets:[{label:'Invoice Count',data:[1180,240,196,418,79,48],backgroundColor:['#98AA3A','#6699CC','#AEB6C2','#E65100','#C62828','#C62828'],borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:10}}},x:{ticks:{font:{size:9.5}}}}}});
 
