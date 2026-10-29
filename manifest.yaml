@@ -142,16 +142,16 @@ reports:
     active: false
   - file: AEWAC-procurement-risk-monitoring-v2.html
   # report_master.id 21
-    title: Procurement Risk
+    title: Aewac
     component_key: AEWAC-procurement-risk-monitoring
-    subtitle: Procurement Cost Savings
+    subtitle: Procurement Abuse Monitoring
     level: procurement
     priority: 2
   - file: Kuber-Procurement-Cost-Optimisation-v2.html
   # report_master.id 21
     title: Kuber
     component_key: kuber-procurement-risk-monitoring
-    subtitle: Procurement Cost Optimisation
+    subtitle: Procurement Cost Saving
     level: procurement
     priority: 1
     active: true
