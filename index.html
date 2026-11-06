@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Fortifai — Stage 2 Interactive Agent Experience Cockpit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --nav: #0D1520;
+    --nav-hover: #162234;
+    --nav-active: #1D2D44;
+    --deep-blue: #2E5A8A;
+    --brand-blue: #6699CC;
+    --steel-blue: #99AFBC;
+    --border: #E2E8F0;
+    --text-main: #0F172A;
+    --text-sub: #475569;
+    --text-muted: #64748B;
+    --crit: #8B1A1A;
+    --crit-bg: #FDECEC;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--nav);
+    color: var(--text-main);
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media print { body { display: none !important; } }
+
+  /* ================= STEP 1: POST-NDA GATE SCREEN ================= */
+  #gate-screen {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: radial-gradient(circle at top, #17263B 0%, #0D1520 75%);
+  }
+  .gate-card {
+    background: #131F30;
+    border: 1px solid #2A3A4E;
+    border-top: 3px solid var(--brand-blue);
+    border-radius: 8px;
+    max-width: 520px;
+    width: 100%;
+    padding: 26px 30px;
+    color: #FFFFFF;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+  }
+  .stage-pill {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    color: var(--brand-blue);
+    background: rgba(102, 153, 204, 0.14);
+    border: 1px solid rgba(102, 153, 204, 0.3);
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .gate-card h1 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .gate-card p.sub { font-size: 12.5px; color: var(--steel-blue); line-height: 1.45; margin-bottom: 16px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-group { margin-bottom: 12px; }
+  .form-group label {
+    display: block; font-size: 10.5px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.5px; color: #CBD5E1; margin-bottom: 5px;
+  }
+  .form-group input {
+    width: 100%; padding: 9px 11px; background: #090F17; border: 1px solid #334155;
+    border-radius: 5px; color: #FFFFFF; font-size: 13px; font-family: inherit;
+  }
+  .form-group input:focus { outline: none; border-color: var(--brand-blue); }
+  .terms-box {
+    background: #090F17; border: 1px solid #263548; border-radius: 5px;
+    padding: 10px 12px; height: 95px; overflow-y: auto; font-size: 11.5px;
+    line-height: 1.5; color: #94A3B8; margin-bottom: 12px;
+  }
+  .checkbox-row {
+    display: flex; align-items: flex-start; gap: 8px; font-size: 12px;
+    color: #CBD5E1; margin-bottom: 14px; cursor: pointer;
+  }
+  .btn-unlock {
+    width: 100%; background: var(--deep-blue); color: #FFFFFF; border: 1px solid var(--brand-blue);
+    padding: 10px 16px; border-radius: 5px; font-size: 13.5px; font-weight: 600; cursor: pointer;
+  }
+  .btn-unlock:hover { background: #23476E; }
+  .error-msg {
+    display: none; margin-top: 10px; padding: 8px; background: var(--crit-bg);
+    color: var(--crit); border-radius: 4px; font-size: 12px; text-align: center;
+  }
+
+  /* ================= STEP 2: UAT-SARA SHELL ================= */
+  #sara-platform {
+    display: none;
+    flex: 1;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: relative;
+    background: #FFFFFF;
+  }
+
+  .watermark-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    opacity: 0.055;
+    overflow: hidden;
+  }
+  .wm-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: #0D1520;
+    transform: rotate(-22deg);
+    padding: 60px;
+    white-space: nowrap;
+  }
+
+  .platform-layout {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* 1. Left Dark Navy Navigation */
+  .sara-sidebar {
+    width: 230px;
+    background: var(--nav);
+    color: #94A3B8;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 18px 12px;
+    flex-shrink: 0;
+    border-right: 1px solid #1E293B;
+    z-index: 20;
+  }
+  .sara-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #FFFFFF;
+    padding: 2px 8px 18px;
+    letter-spacing: -0.3px;
+  }
+  .trapezoid-mark {
+    width: 12px;
+    height: 15px;
+    background: #FFFFFF;
+    clip-path: polygon(0% 20%, 100% 0%, 100% 100%, 0% 100%);
+    display: inline-block;
+  }
+  .nav-section-lbl {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: #64748B;
+    padding: 14px 10px 6px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #CBD5E1;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .nav-item:hover { background: var(--nav-hover); color: #FFFFFF; }
+  .nav-item.active-overview {
+    background: var(--deep-blue);
+    color: #FFFFFF;
+    font-weight: 600;
+    border: 1px solid rgba(102, 153, 204, 0.4);
+  }
+  .nav-item.active-parent {
+    background: var(--nav-active);
+    color: #60A5FA;
+    font-weight: 600;
+  }
+  .buyer-sublist {
+    margin-top: 6px;
+    padding-left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .buyer-subitem {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    color: #94A3B8;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .buyer-subitem:hover { color: #FFFFFF; background: rgba(255,255,255,0.04); }
+  .buyer-subitem.active {
+    color: #F97316;
+    font-weight: 600;
+    background: rgba(249, 115, 22, 0.08);
+  }
+  .buyer-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #64748B; flex-shrink: 0;
+  }
+  .buyer-subitem.active .buyer-dot { background: #F97316; }
+
+  .sara-user-footer {
+    border-top: 1px solid #1E293B;
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .user-pill {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 4px 6px;
+    font-size: 12px;
+    color: #E2E8F0;
+  }
+  .avatar-circle {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #2E5A8A; color: #93C5FD;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; flex-shrink: 0;
+  }
+
+  /* 2. Secondary White Agent Drawer */
+  .agent-drawer {
+    width: 240px;
+    background: #FFFFFF;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    transition: width 0.2s ease;
+  }
+  .agent-drawer.collapsed {
+    width: 0;
+    overflow: hidden;
+    border-right: none;
+  }
+  .drawer-top {
+    padding: 16px 14px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .drawer-top h3 { font-size: 14px; font-weight: 600; color: var(--text-main); }
+  .drawer-top p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .collapse-btn {
+    background: #F8FAFC; border: 1px solid var(--border); border-radius: 4px;
+    width: 24px; height: 24px; cursor: pointer; color: var(--text-sub); font-size: 10px;
+  }
+  .drawer-sec-lbl {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.7px; color: #94A3B8; padding: 12px 14px 6px;
+  }
+  .agent-report-list {
+    padding: 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+  }
+  .agent-report-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+  }
+  .agent-report-item:hover { background: #F8FAFC; }
+  .agent-report-item.active {
+    background: #F1F5F9;
+    border-color: #CBD5E1;
+  }
+  .report-icon {
+    width: 26px; height: 26px; border-radius: 6px;
+    background: #EFF6FF; color: #2563EB;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 1px;
+  }
+  .agent-report-item.active .report-icon {
+    background: var(--deep-blue); color: #FFFFFF;
+  }
+  .report-name { font-size: 13px; font-weight: 600; color: var(--text-main); }
+  .report-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; line-height: 1.3; }
+
+  /* 3. Main Right Area (Holds Both Landing Suite Overview & Full Agent Iframe) */
+  .agent-main-canvas {
+    flex: 1;
+    background: #F4F6F9;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ================= VIEW A: AGENT SUITE LANDING PAGE ================= */
+  #suite-landing-view {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px 32px 48px;
+  }
+  .suite-hero {
+    background: #0D1520;
+    color: #FFFFFF;
+    border-radius: 10px;
+    padding: 26px 30px;
+    border: 1px solid #1E293B;
+    border-left: 4px solid var(--brand-blue);
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(13, 21, 32, 0.08);
+  }
+  .suite-hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .suite-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--brand-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 6px;
+  }
+  .suite-hero h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-bottom: 6px;
+  }
+  .suite-hero p {
+    font-size: 13.5px;
+    color: #94A3B8;
+    max-width: 780px;
+    line-height: 1.55;
+  }
+  .suite-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding-top: 18px;
+    border-top: 1px solid #1E293B;
+  }
+  .s-kpi {
+    background: #131F30;
+    border: 1px solid #263548;
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+  .s-kpi-val {
+    font-size: 17px;
+    font-weight: 600;
+    color: #FFFFFF;
+  }
+  .s-kpi-lbl {
+    font-size: 11px;
+    color: var(--steel-blue);
+    margin-top: 3px;
+  }
+
+  /* Buyer Filter Pills on Landing Page */
+  .buyer-filter-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .filter-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .filter-pill {
+    background: #FFFFFF;
+    color: var(--text-sub);
+    border: 1px solid var(--border);
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-pill:hover {
+    border-color: var(--deep-blue);
+    color: var(--text-main);
+  }
+  .filter-pill.active {
+    background: var(--deep-blue);
+    color: #FFFFFF;
+    border-color: var(--deep-blue);
+  }
+
+  /* Agent Cards Grid */
+  .suite-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .suite-card {
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--deep-blue);
+    border-radius: 8px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    cursor: pointer;
+  }
+  .suite-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    border-color: var(--brand-blue);
+  }
+  .sc-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .sc-badge-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sc-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 7px;
+    background: #0D1520;
+    color: #FFFFFF;
+    font-weight: 600;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sc-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+  .sc-role {
+    font-size: 11.5px;
+    color: var(--deep-blue);
+    font-weight: 600;
+  }
+  .sc-buyer-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    background: #F1F5F9;
+    color: var(--text-sub);
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+  .sc-desc {
+    font-size: 12.5px;
+    color: var(--text-sub);
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .sc-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: #F8FAFC;
+    padding: 7px 10px;
+    border-radius: 5px;
+    border: 1px solid #F1F5F9;
+    margin-bottom: 14px;
+  }
+  .sc-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px solid #F1F5F9;
+  }
+  .sc-impact {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+  .sc-launch-btn {
+    background: var(--deep-blue);
+    color: #FFFFFF;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .suite-card:hover .sc-launch-btn {
+    background: #1E3A8A;
+  }
+
+  /* ================= VIEW B: FULL-SCREEN AGENT IFRAME VIEW ================= */
+  #agent-workspace-view {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .canvas-topbar {
+    background: #FFFFFF;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .canvas-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .expand-drawer-btn {
+    display: none;
+    background: #F1F5F9; border: 1px solid var(--border);
+    padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11.5px; font-weight: 600;
+  }
+  .canvas-agent-title h2 { font-size: 15px; font-weight: 600; color: var(--text-main); }
+  .canvas-agent-title p { font-size: 11.5px; color: var(--text-muted); }
+  .canvas-controls { display: flex; align-items: center; gap: 10px; }
+  .fullscreen-btn {
+    background: #F8FAFC; border: 1px solid var(--border); border-radius: 5px;
+    padding: 5px 10px; font-size: 11.5px; color: var(--text-sub); font-weight: 500; cursor: pointer;
+  }
+  .fullscreen-btn:hover { background: #F1F5F9; color: var(--text-main); }
+
+  .iframe-stage {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #FFFFFF;
+  }
+  .agent-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    background: #FFFFFF;
+  }
+</style>
+</head>
+<body>
+
+  <!-- ================= STEP 1: NDA GATE ================= -->
+  <main id="gate-screen">
+    <div class="gate-card">
+      <span class="stage-pill">Stage 2 Evaluation · Post-NDA Sandbox</span>
+      <h1>Fortifai Interactive Agent Cockpit</h1>
+      <p class="sub">Explore the complete Fortifai AI Agent Suite and launch full-screen interactive agent workbenches (Crystal, Moneta, Kuber, Aegis, Veritas, Argus, Aewac, Tender, and Codex DocIntel) organized by executive buyer.</p>
+
+      <form onsubmit="unlockCockpit(event)">
+        <div class="form-grid">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Full Name &amp; Title</label>
+            <input type="text" id="viewer-name" placeholder="e.g., CFO / CAE / CCO" required />
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Official Corporate Email</label>
+            <input type="email" id="viewer-email" placeholder="name@company.com" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Stage 2 NDA Access Code</label>
+          <input type="password" id="access-code" placeholder="Enter post-NDA access code (e.g. NDA2026)" required />
+        </div>
+        <div class="terms-box">
+          <strong>POST-NDA PROPRIETARY SANDBOX &amp; NON-REPLICATION AGREEMENT</strong><br><br>
+          1. <strong>NDA Governed Environment:</strong> All full-page agent interfaces, 4-Lever waterfall calculations, SAP/Oracle SQL queries, and 3-Arm detection methodologies in this cockpit are proprietary IP of Fortifai Inc.<br><br>
+          2. <strong>Non-Replication:</strong> Recipient agrees not to copy, screen-record, or use any UI layouts or forensic rule taxonomies for internal software development or competitive replication.
+        </div>
+        <label class="checkbox-row">
+          <input type="checkbox" id="accept-terms" required />
+          <span>I confirm an active NDA is in place and agree to the Post-NDA Sandbox Terms.</span>
+        </label>
+        <button type="submit" class="btn-unlock">Launch Agent Suite &amp; Interactive Cockpit</button>
+        <div class="error-msg" id="error-msg">Please enter a corporate email and valid Stage 2 code (NDA2026 / COCKPIT2026 / FORTIFAI2026).</div>
+      </form>
+    </div>
+  </main>
+
+  <!-- ================= STEP 2: UAT-SARA PLATFORM SHELL ================= -->
+  <section id="sara-platform">
+    <div class="watermark-overlay" id="watermark-layer"></div>
+
+    <div class="platform-layout">
+      <!-- 1. Left Dark Navy Navigation -->
+      <aside class="sara-sidebar">
+        <div>
+          <div class="sara-brand">
+            <span class="trapezoid-mark"></span>
+            <span>fortifai</span>
+          </div>
+
+          <!-- Landing Page Button: AI Agent Suite Overview -->
+          <div class="nav-item active-overview" id="nav-suite-home" onclick="showSuiteLanding()">
+            <span>⊡</span> <span>0. AI Agent Suite Overview</span>
+          </div>
+
+          <div class="nav-section-lbl">Persona-Based Agents</div>
+          <div class="nav-item active-parent">
+            <span>▤</span> <span>Select Buyer Lens</span>
+          </div>
+
+          <div class="buyer-sublist" id="buyer-nav-list">
+            <div class="buyer-subitem" data-domain="CFO" onclick="selectBuyerDomain('CFO', this)">
+              <span class="buyer-dot"></span> <span>1. CFO · Finance &amp; Close</span>
+            </div>
+            <div class="buyer-subitem" data-domain="CPO" onclick="selectBuyerDomain('CPO', this)">
+              <span class="buyer-dot"></span> <span>2. CPO · Procurement</span>
+            </div>
+            <div class="buyer-subitem" data-domain="CCO" onclick="selectBuyerDomain('CCO', this)">
+              <span class="buyer-dot"></span> <span>3. CCO · Compliance &amp; GC</span>
+            </div>
+            <div class="buyer-subitem" data-domain="CAE" onclick="selectBuyerDomain('CAE', this)">
+              <span class="buyer-dot"></span> <span>4. CAE · Internal Audit</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sara-user-footer">
+          <div class="user-pill">
+            <div class="avatar-circle" id="user-initials">VM</div>
+            <div style="overflow:hidden;">
+              <div style="font-weight:600; color:#FFFFFF; font-size:12px; text-overflow:ellipsis; overflow:hidden;" id="user-display-name">Varun Mowar</div>
+              <div style="font-size:10.5px; color:#64748B;">Post-NDA Sandbox</div>
+            </div>
+          </div>
+          <a href="https://calendly.com/varunmowar/fortifai-demo-est" target="_blank" style="text-decoration:none; background:#1E293B; color:#93C5FD; text-align:center; padding:7px; border-radius:5px; font-size:11.5px; font-weight:600; border:1px solid #334155;">Book Architecture Review →</a>
+        </div>
+      </aside>
+
+      <!-- 2. Secondary White Agent Drawer (Hidden on Suite Overview, Shown When Buyer Persona Selected) -->
+      <aside class="agent-drawer collapsed" id="agent-drawer">
+        <div class="drawer-top">
+          <div>
+            <h3 id="drawer-domain-title">CFO · Finance</h3>
+            <p id="drawer-domain-sub">Balance sheet, cash &amp; margin</p>
+          </div>
+          <button class="collapse-btn" onclick="toggleDrawer()" title="Collapse Drawer">◀</button>
+        </div>
+        <div class="drawer-sec-lbl">Reports &amp; Agents</div>
+        <div class="agent-report-list" id="agent-report-list"></div>
+      </aside>
+
+      <!-- 3. Main Right Area -->
+      <main class="agent-main-canvas">
+
+        <!-- VIEW A: AI AGENT SUITE LANDING PAGE (Default First View) -->
+        <div id="suite-landing-view">
+          <div class="suite-hero">
+            <div class="suite-hero-top">
+              <div>
+                <div class="suite-eyebrow">FORTIFAI SARA · MULTI-AGENT ENTERPRISE CONTROL TOWER</div>
+                <h1>The Autonomous AI Agent Suite — One ERP Spine, Four Executive Buyers</h1>
+                <p>Every Fortifai agent connects read-only to your core ERP tables inside your private VPC with zero data egress. Start by filtering the suite by Economic Buyer below—or click any agent card to launch its live, full-screen interactive workbench.</p>
+              </div>
+            </div>
+            <div class="suite-kpis">
+              <div class="s-kpi">
+                <div class="s-kpi-val">100% Population</div>
+                <div class="s-kpi-lbl">Continuous ERP Telemetry (Zero Sampling Gap)</div>
+              </div>
+              <div class="s-kpi">
+                <div class="s-kpi-val">3-Arm Detection</div>
+                <div class="s-kpi-lbl">Deterministic SQL + Pattern ML + D7 Entity Graph</div>
+              </div>
+              <div class="s-kpi">
+                <div class="s-kpi-val">4-Rung Waterfall</div>
+                <div class="s-kpi-lbl">Zero Double-Counting Across EBITDA &amp; Cash</div>
+              </div>
+              <div class="s-kpi">
+                <div class="s-kpi-val">Zero Data Egress</div>
+                <div class="s-kpi-lbl">100% Client-Hosted (VPC / On-Prem / GovCloud)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="buyer-filter-bar">
+            <div class="filter-pills">
+              <button class="filter-pill active" onclick="filterSuiteGrid('ALL', this)">All Domain Agents (10)</button>
+              <button class="filter-pill" onclick="filterSuiteGrid('CFO', this)">1. CFO · Finance &amp; Close (4)</button>
+              <button class="filter-pill" onclick="filterSuiteGrid('CPO', this)">2. CPO · Procurement (4)</button>
+              <button class="filter-pill" onclick="filterSuiteGrid('CCO', this)">3. CCO · Compliance &amp; GC (3)</button>
+              <button class="filter-pill" onclick="filterSuiteGrid('CAE', this)">4. CAE · Internal Audit (4)</button>
+            </div>
+            <span style="font-size:12px; color:var(--text-muted);">Click any agent card below to experience the full agent live →</span>
+          </div>
+
+          <div class="suite-grid" id="suite-grid"></div>
+        </div>
+
+        <!-- VIEW B: FULL-SCREEN AGENT WORKSPACE (Shown When an Agent Is Selected) -->
+        <div id="agent-workspace-view">
+          <header class="canvas-topbar">
+            <div class="canvas-title-wrap">
+              <button class="expand-drawer-btn" id="expand-btn" onclick="toggleDrawer()">▶ Show Persona Agents</button>
+              <div class="report-icon" id="top-agent-icon">FC</div>
+              <div class="canvas-agent-title">
+                <h2 id="top-agent-name">Crystal</h2>
+                <p id="top-agent-role">Balance Sheet Assurance &amp; Close Integrity</p>
+              </div>
+            </div>
+            <div class="canvas-controls">
+              <button class="fullscreen-btn" onclick="showSuiteLanding()">← Back to Agent Suite Overview</button>
+              <button class="fullscreen-btn" onclick="toggleDrawer()" id="toggle-width-btn">⤢ Expand Full Width</button>
+            </div>
+          </header>
+
+          <div class="iframe-stage">
+            <iframe id="agent-frame" class="agent-iframe" src="about:blank"></iframe>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </section>
+
+<script>
+  const VALID_CODES = ["COCKPIT2026", "NDA2026", "FORTIFAI2026", "PARTNER2026", "KPMG2026"];
+  const LOG_WEBHOOK_URL = "https://formspree.io/f/myeeodjv";
+  const BLOCKED_DOMAINS = ["@gmail.com", "@yahoo.com", "@hotmail.com", "@outlook.com", "@icloud.com"];
+
+  // Exact 10 filenames from your cleaned FortifAI-io/SARA_reports repository
+  const AGENT_CATALOG = {
+    Crystal: {
+      code: "FC",
+      name: "Crystal",
+      role: "Balance Sheet & Close Assurance",
+      buyerTag: "CFO · CAE",
+      primaryDomain: "CFO",
+      desc: "Automates routine GL reconciliations (clearing 70%+ of accounts untouched) while isolating high-risk top-side manual journals, aged GR/IR items, and cut-off anomalies.",
+      lineage: "SAP Tables: ACDOCA · BKPF · BSEG · EKBE",
+      impact: "Rung 1 Close Integrity & SOX 404 Guard",
+      file: "Crystal_v14.html"
+    },
+    Moneta: {
+      code: "FM",
+      name: "Moneta",
+      role: "Working Capital Command Centre",
+      buyerTag: "CFO · Treasurer",
+      primaryDomain: "CFO",
+      desc: "Optimises DPO across vendor payment terms, blocks cross-entity fuzzy duplicate invoices prior to SAP F110 payment runs, and captures early-pay cash release.",
+      lineage: "SAP Tables: BSIK · BSAK · REGUH · REGUP",
+      impact: "Rung 3 Cash Release & Pre-F110 Guard",
+      file: "Moneta_Working_Capital_Command_Centre.html"
+    },
+    Kuber: {
+      code: "FK",
+      name: "Kuber",
+      role: "Procurement Cost Optimisation",
+      buyerTag: "CFO · CPO",
+      primaryDomain: "CPO",
+      desc: "Normalises payment terms and freight into a Terms-Adjusted Effective Price (P_eff) to uncover commodity index pass-through lags, cross-plant price arbitrage, and Zero-Headcount middlemen.",
+      lineage: "SAP Tables: EKKO · EKPO · RBKP · RSEG + D7",
+      impact: "₹142.0 Cr ($17.1M) Cost Opportunity",
+      file: "Kuber-Procurement-Cost-Optimisation-v2.html"
+    },
+    EarlyPay: {
+      code: "EP",
+      name: "Early Payment Arbitrage",
+      role: "Treasury Cash Discount Capture",
+      buyerTag: "CFO · Treasury",
+      primaryDomain: "CFO",
+      desc: "Identifies missed 2/10 Net 30 cash discounts, late-payment APR leakage, and invoices paid ahead of contractual due dates without discount capture.",
+      lineage: "SAP Tables: BSIK · BSAK · T052 · REGUP",
+      impact: "Risk-Free Treasury Yield Uplift",
+      file: "FRP005_Early_Payment_Report_v3.html"
+    },
+    AEWAC: {
+      code: "AW",
+      name: "Aewac",
+      role: "Procurement Abuse & Risk Monitoring",
+      buyerTag: "CPO · CAE",
+      primaryDomain: "CPO",
+      desc: "Continuous full-population P2P control surveillance detecting split purchase orders, retroactive PO creation, disabled 3-way match tolerances, and single-bid awards.",
+      lineage: "SAP Tables: EBAN · EKKO · CDHDR · T169G",
+      impact: "100% P2P Policy & ICFR Enforcement",
+      file: "AEWAC-procurement-risk-monitoring-v2.html"
+    },
+    Tender: {
+      code: "TD",
+      name: "Tender",
+      role: "RFP Bidding & Collusion Monitoring",
+      buyerTag: "CPO · Audit",
+      primaryDomain: "CPO",
+      desc: "Screens RFQ/RFP bid submissions for cover bidding, rotating winners, compressed bid-to-award windows, and shared vendor metadata across bidders.",
+      lineage: "SAP Tables: EKKO · EKPO · RFQ/Bid Logs + D7",
+      impact: "Competitive Sourcing & Bid Integrity",
+      file: "Holcim_GHBS_Tender_Prototype_v7.html"
+    },
+    DocIntel: {
+      code: "DI",
+      name: "Codex DocIntel",
+      role: "Contract & Document Intelligence",
+      buyerTag: "CPO · Legal",
+      primaryDomain: "CPO",
+      desc: "Extracts commercial rate cards, rebate tiers, SLA penalty clauses, and PDF metadata tampering signals to reconcile actual ERP billing against signed contracts.",
+      lineage: "Contracts + SAP EKKO · RBKP · VBRK",
+      impact: "Automated Contract-to-Invoice Assurance",
+      file: "Codex_DocIntel_Holcim_GHBS_Q1FY26_1.html"
+    },
+    Aegis: {
+      code: "FA",
+      name: "Aegis",
+      role: "Export Control & Trade Diversion",
+      buyerTag: "CCO · General Counsel",
+      primaryDomain: "CCO",
+      desc: "Monitors 100% of ECCN/dual-use shipments AFTER initial SAP GTS order clearance—catching mid-flight Ship-To country flips, transshipment hubs, and freight-forwarder masking.",
+      lineage: "SAP Tables: VBAK · VBPA · LIKP · CDPOS + D7",
+      impact: "EAR / ITAR / OFAC Post-Gate Sentinel",
+      file: "Aegis_Prototype_v30.html"
+    },
+    Veritas: {
+      code: "FVr",
+      name: "Veritas (FCPA)",
+      role: "Anti-Bribery, FCPA & T&E Surveillance",
+      buyerTag: "CCO · General Counsel",
+      primaryDomain: "CCO",
+      desc: "Correlates offshore consulting disbursements, PO-exempt fees in high-CPI regions, and Concur T&E hospitality spikes around state-owned tender awards under 'Signals, Not Verdicts'.",
+      lineage: "SAP BSEG · RBKP + Concur T&E + D7 PEP",
+      impact: "DOJ ECCP & FCPA Books-and-Records Guard",
+      file: "FCPA_PROC0460_Module_v9.html"
+    },
+    Argus: {
+      code: "FAr",
+      name: "Argus",
+      role: "Internal Investigations & Collusion",
+      buyerTag: "CCO · CAE · Forensics",
+      primaryDomain: "CAE",
+      desc: "Turns whistleblower tips and multi-signal anomalies into court-ready dossiers—cross-linking HR master records (PA0006) with vendor bank/address attributes and SoD collisions.",
+      lineage: "SAP PA0006 · LFA1 · LFBK · USR02 · CDHDR",
+      impact: "1-Click Sealed Forensic Investigation Pack",
+      file: "Argus_Investigation_Agent.html"
+    }
+  };
+
+  const BUYER_DOMAINS = {
+    CFO: {
+      title: "1. CFO · Finance & Close",
+      sub: "Balance sheet, cash & margin",
+      agents: ["Crystal", "Moneta", "Kuber", "EarlyPay"]
+    },
+    CPO: {
+      title: "2. CPO · Procurement",
+      sub: "Cost recovery & vendor risk",
+      agents: ["Kuber", "AEWAC", "Tender", "DocIntel"]
+    },
+    CCO: {
+      title: "3. CCO · Compliance & GC",
+      sub: "Export, FCPA & investigations",
+      agents: ["Aegis", "Veritas", "Argus"]
+    },
+    CAE: {
+      title: "4. CAE · Internal Audit",
+      sub: "Continuous controls & forensics",
+      agents: ["Argus", "AEWAC", "Crystal", "Veritas"]
+    }
+  };
+
+  // Instant @fortifai.io internal bypass
+  const emailInput = document.getElementById('viewer-email');
+  if (emailInput) {
+    emailInput.addEventListener('input', function() {
+      const isInternal = this.value.trim().toLowerCase().endsWith('@fortifai.io');
+      document.getElementById('viewer-name').required = !isInternal;
+      document.getElementById('access-code').required = !isInternal;
+      document.getElementById('accept-terms').required = !isInternal;
+    });
+  }
+
+  function launchApp(name, email) {
+    const ts = new Date().toISOString().replace('T', ' ').substring(0, 16) + ' UTC';
+    document.getElementById('user-display-name').textContent = name || email;
+    const initials = (name || email).split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+    document.getElementById('user-initials').textContent = initials || 'FT';
+
+    const wm = document.getElementById('watermark-layer');
+    wm.innerHTML = '';
+    for (let i = 0; i < 12; i++) {
+      const d = document.createElement('div');
+      d.className = 'wm-text';
+      d.textContent = `NDA CONFIDENTIAL · ${email} · ${ts}`;
+      wm.appendChild(d);
+    }
+
+    document.getElementById('gate-screen').style.display = 'none';
+    document.getElementById('sara-platform').style.display = 'flex';
+    showSuiteLanding();
+  }
+
+  function unlockCockpit(e) {
+    e.preventDefault();
+    const name = document.getElementById('viewer-name').value.trim() || 'Varun Mowar';
+    const email = document.getElementById('viewer-email').value.trim().toLowerCase();
+    const code = document.getElementById('access-code').value.trim().toUpperCase();
+    const err = document.getElementById('error-msg');
+
+    if (email.endsWith('@fortifai.io')) {
+      localStorage.setItem('fortifai_cockpit_user', email);
+      launchApp(name, email);
+      return;
+    }
+
+    const validEmail = email.includes('@') && !BLOCKED_DOMAINS.some(d => email.endsWith(d));
+    if (!validEmail || !VALID_CODES.includes(code)) {
+      err.style.display = 'block';
+      return;
+    }
+    err.style.display = 'none';
+
+    if (LOG_WEBHOOK_URL) {
+      fetch(LOG_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ event: "STAGE2_COCKPIT_LOGIN", name, email, code, timestamp: new Date().toISOString() })
+      }).catch(() => {});
+    }
+    launchApp(name, email);
+  }
+
+  // Show the Default First Landing Page: Full AI Agent Suite Overview
+  function showSuiteLanding() {
+    document.getElementById('nav-suite-home').classList.add('active-overview');
+    document.querySelectorAll('.buyer-subitem').forEach(b => b.classList.remove('active'));
+    document.getElementById('agent-drawer').classList.add('collapsed');
+    document.getElementById('suite-landing-view').style.display = 'block';
+    document.getElementById('agent-workspace-view').style.display = 'none';
+    filterSuiteGrid('ALL', document.querySelector('.filter-pill'));
+  }
+
+  function filterSuiteGrid(filterKey, btn) {
+    if (btn) {
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    const keys = (filterKey === 'ALL')
+      ? Object.keys(AGENT_CATALOG)
+      : BUYER_DOMAINS[filterKey].agents;
+
+    const grid = document.getElementById('suite-grid');
+    grid.innerHTML = keys.map(agKey => {
+      const ag = AGENT_CATALOG[agKey];
+      const targetDomain = (filterKey === 'ALL') ? ag.primaryDomain : filterKey;
+      return `
+        <div class="suite-card" onclick="launchAgentFromLanding('${targetDomain}', '${agKey}')">
+          <div>
+            <div class="sc-top">
+              <div class="sc-badge-wrap">
+                <div class="sc-icon">${ag.code}</div>
+                <div>
+                  <div class="sc-name">${ag.name}</div>
+                  <div class="sc-role">${ag.role}</div>
+                </div>
+              </div>
+              <span class="sc-buyer-tag">${ag.buyerTag}</span>
+            </div>
+            <div class="sc-desc">${ag.desc}</div>
+            <div class="sc-meta">${ag.lineage}</div>
+          </div>
+          <div class="sc-footer">
+            <span class="sc-impact">${ag.impact}</span>
+            <button class="sc-launch-btn">Launch Agent →</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function launchAgentFromLanding(domKey, agKey) {
+    const navEl = document.querySelector(`[data-domain="${domKey}"]`);
+    selectBuyerDomain(domKey, navEl, agKey);
+  }
+
+  function toggleDrawer() {
+    const dr = document.getElementById('agent-drawer');
+    const exp = document.getElementById('expand-btn');
+    const btn = document.getElementById('toggle-width-btn');
+    dr.classList.toggle('collapsed');
+    const isCollapsed = dr.classList.contains('collapsed');
+    exp.style.display = isCollapsed ? 'inline-block' : 'none';
+    btn.textContent = isCollapsed ? '⤡ Restore Sidebar' : '⤢ Expand Full Width';
+  }
+
+  function selectBuyerDomain(domKey, el, specificAgentKey) {
+    document.getElementById('nav-suite-home').classList.remove('active-overview');
+    document.querySelectorAll('.buyer-subitem').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+
+    // Switch from Suite Landing View to Full Agent Workspace View
+    document.getElementById('suite-landing-view').style.display = 'none';
+    document.getElementById('agent-workspace-view').style.display = 'flex';
+
+    // Open the secondary white drawer so the buyer sees their persona's agent list
+    const dr = document.getElementById('agent-drawer');
+    dr.classList.remove('collapsed');
+    document.getElementById('expand-btn').style.display = 'none';
+    document.getElementById('toggle-width-btn').textContent = '⤢ Expand Full Width';
+
+    const dom = BUYER_DOMAINS[domKey];
+    document.getElementById('drawer-domain-title').textContent = dom.title;
+    document.getElementById('drawer-domain-sub').textContent = dom.sub;
+
+    const targetAgent = specificAgentKey || dom.agents[0];
+
+    const list = document.getElementById('agent-report-list');
+    list.innerHTML = dom.agents.map(agKey => {
+      const ag = AGENT_CATALOG[agKey];
+      const isSelected = (agKey === targetAgent);
+      return `
+        <div class="agent-report-item ${isSelected ? 'active' : ''}" data-agent="${agKey}" onclick="loadAgentFile('${agKey}', this)">
+          <div class="report-icon">${ag.code}</div>
+          <div>
+            <div class="report-name">${ag.name}</div>
+            <div class="report-desc">${ag.role}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const activeEl = list.querySelector(`[data-agent="${targetAgent}"]`) || list.querySelector('.agent-report-item');
+    loadAgentFile(targetAgent, activeEl);
+  }
+
+  function loadAgentFile(agKey, el) {
+    document.querySelectorAll('.agent-report-item').forEach(i => i.classList.remove('active'));
+    if (el) el.classList.add('active');
+
+    const ag = AGENT_CATALOG[agKey];
+    document.getElementById('top-agent-icon').textContent = ag.code;
+    document.getElementById('top-agent-name').textContent = ag.name;
+    document.getElementById('top-agent-role').textContent = ag.role;
+
+    document.getElementById('agent-frame').src = `./${ag.file}`;
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if ((e.metaKey || e.ctrlKey) && ['s', 'p', 'u'].includes(e.key.toLowerCase())) {
+      e.preventDefault();
+    }
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const saved = localStorage.getItem('fortifai_cockpit_user');
+    if (params.get('internal') === 'true' || saved) {
+      launchApp('Varun Mowar', saved || 'varun@fortifai.io');
+    }
+  });
+</script>
+</body>
+</html>
