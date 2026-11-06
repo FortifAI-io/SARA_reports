@@ -110,9 +110,9 @@ reports:
 
     # AR Short Payment Analysis (report_master.id 7)
   - file: Moneta_Working_Capital_Command_Centre.html
-    title: AR Short Payment Analysis
+    title: AR Short Collection Monitoring
     component_key: ar-report
-    subtitle: Customer Deductions & Short-Pay Recovery
+    subtitle: Revenue Leakage
     level: finance
     priority: 4
     active: true
