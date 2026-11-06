@@ -135,6 +135,15 @@ reports:
     priority: 1
     active: true
 
+  # Retire legacy Conduit / Channel Stuffing report (report_master.id 2) — replaced by Surge
+  - file: Surge_Channel_Stuffing.html
+    title: Conduit
+    component_key: channel-stuffing
+    subtitle: Revenue Integrity, Detect Inflated Sales
+    level: sales
+    priority: 10
+    active: false
+    
     ############## Holcim Prototypes (Set active: true whenever needed for demos)
   - file: Holcim_GHBS_Tender_Prototype_v7.html
     title: Tender
