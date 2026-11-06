@@ -35,6 +35,7 @@ reports:
     subtitle: RFP Bidding Risk Monitoring 
     level: procurement
     priority: 3
+    active: False
   - file: fortifai_exec_dashboard_v6.html
   # report_master.id 26
     title: Executive risk summary
