@@ -89,7 +89,7 @@ reports:
     component_key: Crystal_v14
     subtitle: Balance Sheet Close Risk
     level: finance
-    priority: 1
+    priority: 2
     active: true
 
   - file: Moneta_Working_Capital_Command_Centre.html
@@ -97,15 +97,24 @@ reports:
     component_key: Moneta_Working_Capital_Command_Centre
     subtitle: Working Capital Optimisation Agent
     level: finance
-    priority: 2
+    priority: 1
     active: true
 
   - file: FRP005_Early_Payment_Report_v3.html
     title: Supplier Early Payments
     component_key: FRP005_Early_Payment_Report_v3
-    subtitle: Working Capital Optimisation
+    subtitle: Working Capital Leakages
     level: finance
     priority: 3
+    active: true
+
+    # AR Short Payment Analysis (report_master.id 7)
+  - file: Moneta_Working_Capital_Command_Centre.html
+    title: AR Short Payment Analysis
+    component_key: ar-report
+    subtitle: Customer Deductions & Short-Pay Recovery
+    level: finance
+    priority: 4
     active: true
     
 # Retire legacy Finance CFO Report (report_master.id 12) — replaced by Moneta
