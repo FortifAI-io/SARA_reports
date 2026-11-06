@@ -119,7 +119,7 @@
     position: fixed;
     inset: 0;
     pointer-events: none;
-    z-index: 999;
+    z-index: 900;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -305,7 +305,7 @@
     padding-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
   .user-pill {
     display: flex;
@@ -338,6 +338,7 @@
     align-items: center;
     justify-content: center;
     gap: 4px;
+    cursor: pointer;
   }
   .book-cta-link:hover { background: var(--deep-blue); color: #FFFFFF; }
 
@@ -457,6 +458,14 @@
     background: var(--deep-blue);
     color: #FFFFFF;
   }
+  .bar-btn.guide-pill {
+    background: #0D1520;
+    border-color: #2E5A8A;
+    color: #FFFFFF;
+  }
+  .bar-btn.guide-pill:hover {
+    background: var(--deep-blue);
+  }
   .breadcrumb-text {
     font-size: 12.5px;
     font-weight: 600;
@@ -472,7 +481,7 @@
     margin-left: 6px;
   }
 
-  /* Quick Inline Agent Switcher Pills (Visible When White Drawer Is Collapsed) */
+  /* Quick Inline Agent Switcher Pills */
   .inline-agent-pills {
     display: none;
     align-items: center;
@@ -518,6 +527,224 @@
     border: none;
     display: block;
     background: #FFFFFF;
+  }
+
+  /* ================= QUICK-START USER GUIDE MODAL ================= */
+  .guide-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13, 21, 32, 0.72);
+    backdrop-filter: blur(2px);
+    z-index: 950;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .guide-modal {
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--deep-blue);
+    border-radius: 10px;
+    max-width: 720px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+  }
+  .guide-header {
+    background: var(--nav);
+    color: #FFFFFF;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .guide-header .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--brand-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    margin-bottom: 4px;
+  }
+  .guide-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #FFFFFF;
+  }
+  .guide-header p {
+    font-size: 12px;
+    color: var(--steel-blue);
+    margin-top: 2px;
+  }
+  .guide-close {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid #334155;
+    color: #CBD5E1;
+    width: 28px;
+    height: 28px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .guide-body {
+    padding: 20px 24px;
+    background: #F8FAFC;
+  }
+  .guide-steps-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .g-step-card {
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--deep-blue);
+    border-radius: 6px;
+    padding: 13px 15px;
+  }
+  .g-step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--deep-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .g-step-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 4px;
+  }
+  .g-step-desc {
+    font-size: 12px;
+    color: var(--text-sub);
+    line-height: 1.45;
+  }
+  .guide-persona-strip {
+    background: #FFFFFF;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .guide-persona-strip span {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+  .guide-jump-btns {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .g-jump-btn {
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
+    color: var(--deep-blue);
+    padding: 6px 11px;
+    border-radius: 5px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .g-jump-btn:hover {
+    background: var(--deep-blue);
+    color: #FFFFFF;
+  }
+  .guide-footer {
+    padding: 14px 24px;
+    background: #FFFFFF;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .btn-tour-start {
+    background: #F1F5F9;
+    border: 1px solid #CBD5E1;
+    color: var(--text-main);
+    padding: 8px 14px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-tour-start:hover { background: #E2E8F0; }
+  .btn-guide-done {
+    background: var(--deep-blue);
+    border: 1px solid var(--brand-blue);
+    color: #FFFFFF;
+    padding: 8px 18px;
+    border-radius: 5px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn-guide-done:hover { background: #23476E; }
+
+  /* ================= FLOATING INTERACTIVE TOUR COACH BAR ================= */
+  .tour-coach-bar {
+    display: none;
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0D1520;
+    color: #FFFFFF;
+    border: 1px solid var(--brand-blue);
+    border-radius: 8px;
+    padding: 12px 18px;
+    z-index: 940;
+    box-shadow: 0 14px 36px rgba(0,0,0,0.45);
+    align-items: center;
+    gap: 16px;
+    max-width: 680px;
+    width: 92%;
+  }
+  .tour-step-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    background: var(--deep-blue);
+    color: #FFFFFF;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    border: 1px solid var(--brand-blue);
+  }
+  .tour-text {
+    font-size: 12.5px;
+    color: #E2E8F0;
+    line-height: 1.4;
+    flex: 1;
+  }
+  .tour-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .t-btn {
+    background: var(--deep-blue);
+    color: #FFFFFF;
+    border: 1px solid var(--brand-blue);
+    padding: 6px 11px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .t-btn.ghost {
+    background: transparent;
+    border-color: #334155;
+    color: #94A3B8;
   }
 </style>
 </head>
@@ -604,16 +831,19 @@
         </div>
 
         <div class="sara-user-footer">
-          <div class="user-pill" title="Active NDA Session">
-            <div class="avatar-circle" id="user-initials">VM</div>
-            <div class="user-details" style="overflow:hidden;">
-              <div style="font-weight:600; color:#FFFFFF; font-size:11.5px; text-overflow:ellipsis; overflow:hidden;" id="user-display-name">Varun Mowar</div>
-              <div style="font-size:10px; color:#64748B;">Post-NDA Sandbox</div>
-            </div>
-          </div>
+          <button onclick="openGuideModal()" class="book-cta-link" style="background:rgba(102,153,204,0.14); color:#FFFFFF; border-color:rgba(102,153,204,0.4);" title="How to Use This Cockpit">
+            <span>?</span> <span class="book-cta-text">Cockpit User Guide</span>
+          </button>
           <a href="https://calendly.com/varunmowar/fortifai-demo-est" target="_blank" class="book-cta-link" title="Schedule Architecture Review">
             <span>📅</span> <span class="book-cta-text">Book Review →</span>
           </a>
+          <div class="user-pill" title="Active NDA Session">
+            <div class="avatar-circle" id="user-initials">VM</div>
+            <div class="user-details" style="overflow:hidden;">
+              <div style="font-weight:600; color:#FFFFFF; font-size:11px; text-overflow:ellipsis; overflow:hidden;" id="user-display-name">Varun Mowar</div>
+              <div style="font-size:9.5px; color:#64748B;">Post-NDA Sandbox</div>
+            </div>
+          </div>
         </div>
       </aside>
 
@@ -643,6 +873,7 @@
           </div>
 
           <div class="canvas-right" id="suite-jump-controls">
+            <button class="bar-btn guide-pill" onclick="openGuideModal()">? Cockpit Guide</button>
             <button class="bar-btn accent" onclick="selectBuyerDomain('CFO', document.querySelector('[data-domain=CFO]'))">1. CFO Agents →</button>
             <button class="bar-btn accent" onclick="selectBuyerDomain('CPO', document.querySelector('[data-domain=CPO]'))">2. CPO Agents →</button>
             <button class="bar-btn accent" onclick="selectBuyerDomain('CCO', document.querySelector('[data-domain=CCO]'))">3. CCO Agents →</button>
@@ -650,6 +881,7 @@
           </div>
 
           <div class="canvas-right" id="agent-view-controls" style="display:none;">
+            <button class="bar-btn guide-pill" onclick="openGuideModal()">? Guide</button>
             <button class="bar-btn" onclick="loadSuiteOverview()">← Suite Overview</button>
             <button class="bar-btn accent" id="zen-mode-btn" onclick="toggleZenMode()">⤢ Full Screen</button>
           </div>
@@ -660,6 +892,71 @@
         </div>
       </main>
     </div>
+
+    <!-- ================= QUICK-START USER GUIDE MODAL ================= -->
+    <div class="guide-backdrop" id="guide-backdrop" onclick="if(event.target===this)closeGuideModal()">
+      <div class="guide-modal">
+        <div class="guide-header">
+          <div>
+            <div class="eyebrow">WELCOME TO STAGE 2 · POST-NDA INTERACTIVE SANDBOX</div>
+            <h2>How to Navigate the Fortifai Agent Experience Cockpit</h2>
+            <p>Experience how a single, zero-egress ERP integration powers specialized AI agents across 4 executive buyers.</p>
+          </div>
+          <button class="guide-close" onclick="closeGuideModal()">✕</button>
+        </div>
+
+        <div class="guide-body">
+          <div class="guide-steps-grid">
+            <div class="g-step-card">
+              <div class="g-step-num">Step 01 · Architecture &amp; Suite</div>
+              <div class="g-step-title">Start on the 15-Agent Suite Overview</div>
+              <div class="g-step-desc">Review how all 15 agents share one read-only ERP data spine, the Cross-Agent Interlock Map, and the 4-Rung Precedence Waterfall that eliminates double-counting.</div>
+            </div>
+            <div class="g-step-card">
+              <div class="g-step-num">Step 02 · Choose Your Buyer Lens</div>
+              <div class="g-step-title">Click CFO, CPO, CCO, or CAE (Left Rail)</div>
+              <div class="g-step-desc">Select your executive role in the left navigation bar to unlock the curated AI agents built for your function (e.g., <strong>Crystal, Moneta &amp; Kuber</strong> for CFO; <strong>Aegis &amp; Veritas</strong> for CCO).</div>
+            </div>
+            <div class="g-step-card">
+              <div class="g-step-num">Step 03 · Hands-On Agent Exploration</div>
+              <div class="g-step-title">Click Sub-Tabs, ⌘K Copilot &amp; Case Rows</div>
+              <div class="g-step-desc">Each agent is a 100% live interactive application. Click internal tabs, inspect <strong>3-Arm forensic evidence</strong>, test <strong>Ask Agent (⌘K)</strong> queries, toggle <strong>INR / USD</strong>, and open <strong>Board Reports</strong>.</div>
+            </div>
+            <div class="g-step-card">
+              <div class="g-step-num">Step 04 · Full-Screen &amp; Fast Switching</div>
+              <div class="g-step-title">Use "⤢ Full Screen" &amp; Top-Bar Pills</div>
+              <div class="g-step-desc">The left navigation automatically slims into a compact icon rail when you open an agent. Click <strong>⤢ Full Screen</strong> in the top-right to maximize the canvas and switch agents via top-bar pills.</div>
+            </div>
+          </div>
+
+          <div class="guide-persona-strip">
+            <span>Jump straight into a Buyer Persona now:</span>
+            <div class="guide-jump-btns">
+              <button class="g-jump-btn" onclick="closeGuideModal(); selectBuyerDomain('CFO', document.querySelector('[data-domain=CFO]'))">1. CFO · Finance (Crystal / Moneta / Kuber) →</button>
+              <button class="g-jump-btn" onclick="closeGuideModal(); selectBuyerDomain('CPO', document.querySelector('[data-domain=CPO]'))">2. CPO · Procurement (Kuber / Aewac / Tender) →</button>
+              <button class="g-jump-btn" onclick="closeGuideModal(); selectBuyerDomain('CCO', document.querySelector('[data-domain=CCO]'))">3. CCO · Compliance (Aegis / Veritas / Argus) →</button>
+              <button class="g-jump-btn" onclick="closeGuideModal(); selectBuyerDomain('CAE', document.querySelector('[data-domain=CAE]'))">4. CAE · Internal Audit (Argus / Aewac / Crystal) →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="guide-footer">
+          <button class="btn-tour-start" onclick="startInteractiveTour()">✨ Take 3-Step Guided Tour</button>
+          <button class="btn-guide-done" onclick="closeGuideModal()">Got It — Explore Cockpit</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= INTERACTIVE 3-STEP TOUR COACH BAR ================= -->
+    <div class="tour-coach-bar" id="tour-coach-bar">
+      <span class="tour-step-badge" id="tour-step-badge">Step 1 of 3</span>
+      <div class="tour-text" id="tour-step-text"></div>
+      <div class="tour-actions">
+        <button class="t-btn ghost" onclick="endInteractiveTour()">Close Tour</button>
+        <button class="t-btn" id="tour-next-btn" onclick="nextTourStep()">Next Step →</button>
+      </div>
+    </div>
+
   </section>
 
 <script>
@@ -667,8 +964,8 @@
   const LOG_WEBHOOK_URL = "https://formspree.io/f/myeeodjv";
   const BLOCKED_DOMAINS = ["@gmail.com", "@yahoo.com", "@hotmail.com", "@outlook.com", "@icloud.com"];
 
-  // Fixed: points to agent-suite.html (with the 'e') on overview.fortifai.io!
-  const SUITE_OVERVIEW_URL = "https://overview.fortifai.io/agent-suite.html";
+  // Exact filename on overview.fortifai.io (agent-suit.html)
+  const SUITE_OVERVIEW_URL = "https://overview.fortifai.io/agent-suit.html";
 
   const AGENT_CATALOG = {
     Crystal:  { code: "FC",  name: "Crystal",  role: "Balance Sheet & Close Assurance",       file: "Crystal_v14.html" },
@@ -692,6 +989,7 @@
 
   let activeDomainKey = null;
   let activeAgentKey = null;
+  let currentTourStep = 0;
 
   const emailInput = document.getElementById('viewer-email');
   if (emailInput) {
@@ -721,6 +1019,12 @@
     document.getElementById('gate-screen').style.display = 'none';
     document.getElementById('sara-platform').style.display = 'flex';
     loadSuiteOverview();
+
+    // Auto-show the Quick-Start Cockpit Guide on a user's first visit in this session
+    if (!sessionStorage.getItem('fortifai_guide_seen')) {
+      sessionStorage.setItem('fortifai_guide_seen', 'true');
+      openGuideModal();
+    }
   }
 
   function unlockCockpit(e) {
@@ -751,6 +1055,61 @@
       }).catch(() => {});
     }
     launchApp(name, email);
+  }
+
+  function openGuideModal() {
+    document.getElementById('guide-backdrop').style.display = 'flex';
+  }
+
+  function closeGuideModal() {
+    document.getElementById('guide-backdrop').style.display = 'none';
+  }
+
+  // Interactive 3-Step Guided Tour
+  const TOUR_STEPS = [
+    {
+      badge: "Tour 1 / 3 · Suite Overview",
+      text: "You are viewing the 15-Agent Suite Overview. Scroll to see the Cross-Agent Interlock Map and 4-Rung Waterfall, or click 'Next Step →' to open the CFO Lens.",
+      action: () => { loadSuiteOverview(); }
+    },
+    {
+      badge: "Tour 2 / 3 · Buyer Lens & Agents",
+      text: "We switched to the CFO Lens! Notice the left bar slimmed into an icon rail and opened Crystal (Balance Sheet Close Assurance), Moneta, and Kuber.",
+      action: () => { selectBuyerDomain('CFO', document.querySelector('[data-domain=CFO]')); }
+    },
+    {
+      badge: "Tour 3 / 3 · Full-Screen Mode",
+      text: "We activated Full-Screen Mode! The agent now fills 96% of your screen, and you can switch between Crystal, Moneta, Kuber, and Early Payment using the top bar pills.",
+      action: () => { toggleLeftRail(true); toggleDrawer(true); }
+    }
+  ];
+
+  function startInteractiveTour() {
+    closeGuideModal();
+    currentTourStep = 0;
+    document.getElementById('tour-coach-bar').style.display = 'flex';
+    renderTourStep();
+  }
+
+  function renderTourStep() {
+    const step = TOUR_STEPS[currentTourStep];
+    step.action();
+    document.getElementById('tour-step-badge').textContent = step.badge;
+    document.getElementById('tour-step-text').textContent = step.text;
+    document.getElementById('tour-next-btn').textContent = (currentTourStep < TOUR_STEPS.length - 1) ? 'Next Step →' : 'Finish Tour ✓';
+  }
+
+  function nextTourStep() {
+    if (currentTourStep < TOUR_STEPS.length - 1) {
+      currentTourStep++;
+      renderTourStep();
+    } else {
+      endInteractiveTour();
+    }
+  }
+
+  function endInteractiveTour() {
+    document.getElementById('tour-coach-bar').style.display = 'none';
   }
 
   function toggleLeftRail(forceRail) {
@@ -871,6 +1230,9 @@
   document.addEventListener('keydown', function(e) {
     if ((e.metaKey || e.ctrlKey) && ['s', 'p', 'u'].includes(e.key.toLowerCase())) {
       e.preventDefault();
+    }
+    if (e.key === 'Escape') {
+      closeGuideModal();
     }
   });
 
