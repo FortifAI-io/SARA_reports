@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>Fortifai — Stage 2 Interactive Agent Experience Cockpit</title>
+<title>Fortifai — Interactive Agent Cockpit (cockpit.fortifai.io)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -56,7 +56,7 @@
     border-radius: 8px;
     max-width: 520px;
     width: 100%;
-    padding: 26px 30px;
+    padding: 24px 28px;
     color: #FFFFFF;
     box-shadow: 0 20px 45px rgba(0,0,0,0.5);
   }
@@ -72,7 +72,7 @@
     margin-bottom: 8px;
     text-transform: uppercase;
   }
-  .gate-card h1 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .gate-card h1 { font-size: 19px; font-weight: 600; margin-bottom: 6px; }
   .gate-card p.sub { font-size: 12.5px; color: var(--steel-blue); line-height: 1.45; margin-bottom: 16px; }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
   .form-group { margin-bottom: 12px; }
@@ -87,7 +87,7 @@
   .form-group input:focus { outline: none; border-color: var(--brand-blue); }
   .terms-box {
     background: #090F17; border: 1px solid #263548; border-radius: 5px;
-    padding: 10px 12px; height: 95px; overflow-y: auto; font-size: 11.5px;
+    padding: 10px 12px; height: 92px; overflow-y: auto; font-size: 11px;
     line-height: 1.5; color: #94A3B8; margin-bottom: 12px;
   }
   .checkbox-row {
@@ -104,7 +104,7 @@
     color: var(--crit); border-radius: 4px; font-size: 12px; text-align: center;
   }
 
-  /* ================= STEP 2: UAT-SARA PLATFORM SHELL ================= */
+  /* ================= STEP 2: COLLAPSIBLE PLATFORM SHELL ================= */
   #sara-platform {
     display: none;
     flex: 1;
@@ -124,15 +124,15 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-around;
-    opacity: 0.055;
+    opacity: 0.045;
     overflow: hidden;
   }
   .wm-text {
     font-family: 'DM Mono', monospace;
-    font-size: 12px;
+    font-size: 11.5px;
     color: #0D1520;
     transform: rotate(-22deg);
-    padding: 60px;
+    padding: 65px;
     white-space: nowrap;
   }
 
@@ -143,71 +143,116 @@
     overflow: hidden;
   }
 
-  /* 1. Left Dark Navy Navigation */
+  /* 1. Left Dark Navy Navigation (Collapsible to 54px Icon Rail) */
   .sara-sidebar {
-    width: 230px;
+    width: 215px;
     background: var(--nav);
     color: #94A3B8;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 18px 12px;
+    padding: 14px 10px;
     flex-shrink: 0;
     border-right: 1px solid #1E293B;
-    z-index: 20;
+    z-index: 30;
+    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1), padding 0.2s ease;
+    overflow-x: hidden;
+  }
+  .sara-sidebar.rail {
+    width: 54px;
+    padding: 14px 6px;
+  }
+  .sara-brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 6px 14px;
+    border-bottom: 1px solid #1E293B;
+    margin-bottom: 10px;
   }
   .sara-brand {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 600;
     color: #FFFFFF;
-    padding: 2px 8px 18px;
     letter-spacing: -0.3px;
+    white-space: nowrap;
   }
   .trapezoid-mark {
     width: 12px;
     height: 15px;
     background: #FFFFFF;
-    clip-path: polygon(0% 20%, 100% 0%, 100% 100%, 0% 100%);
+    clip-path: polygon(0% 22%, 100% 0%, 100% 100%, 0% 100%);
     display: inline-block;
+    flex-shrink: 0;
   }
+  .rail-toggle-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid #334155;
+    color: #94A3B8;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .rail-toggle-btn:hover { color: #FFFFFF; background: #1E293B; }
+
+  .sara-sidebar.rail .brand-text,
+  .sara-sidebar.rail .nav-label,
+  .sara-sidebar.rail .nav-section-lbl,
+  .sara-sidebar.rail .user-details,
+  .sara-sidebar.rail .book-cta-text {
+    display: none;
+  }
+  .sara-sidebar.rail .sara-brand-row {
+    flex-direction: column;
+    gap: 10px;
+    padding: 2px 0 12px;
+  }
+
   .nav-section-lbl {
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.9px;
+    letter-spacing: 0.8px;
     color: #64748B;
-    padding: 14px 10px 6px;
+    padding: 10px 8px 5px;
+    white-space: nowrap;
   }
   .nav-item {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 9px 10px;
+    padding: 8px 10px;
     border-radius: 6px;
     font-size: 12.5px;
     font-weight: 500;
     color: #CBD5E1;
     cursor: pointer;
     transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .sara-sidebar.rail .nav-item {
+    justify-content: center;
+    padding: 9px 0;
   }
   .nav-item:hover { background: var(--nav-hover); color: #FFFFFF; }
   .nav-item.active-overview {
     background: var(--deep-blue);
     color: #FFFFFF;
     font-weight: 600;
-    border: 1px solid rgba(102, 153, 204, 0.45);
-  }
-  .nav-item.active-parent {
-    background: var(--nav-active);
-    color: #60A5FA;
-    font-weight: 600;
+    border: 1px solid rgba(102, 153, 204, 0.4);
   }
   .buyer-sublist {
-    margin-top: 6px;
-    padding-left: 10px;
+    margin-top: 4px;
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -222,21 +267,42 @@
     color: #94A3B8;
     cursor: pointer;
     transition: all 0.15s;
+    white-space: nowrap;
   }
-  .buyer-subitem:hover { color: #FFFFFF; background: rgba(255,255,255,0.04); }
+  .sara-sidebar.rail .buyer-subitem {
+    justify-content: center;
+    padding: 8px 0;
+  }
+  .buyer-subitem:hover { color: #FFFFFF; background: rgba(255,255,255,0.05); }
   .buyer-subitem.active {
     color: #F97316;
     font-weight: 600;
-    background: rgba(249, 115, 22, 0.08);
+    background: rgba(249, 115, 22, 0.1);
   }
-  .buyer-dot {
-    width: 6px; height: 6px; border-radius: 50%; background: #64748B; flex-shrink: 0;
+  .buyer-badge-mini {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    width: 26px;
+    height: 22px;
+    border-radius: 4px;
+    background: #162234;
+    color: #94A3B8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid #263548;
   }
-  .buyer-subitem.active .buyer-dot { background: #F97316; }
+  .buyer-subitem.active .buyer-badge-mini {
+    background: rgba(249, 115, 22, 0.18);
+    color: #F97316;
+    border-color: rgba(249, 115, 22, 0.45);
+  }
 
   .sara-user-footer {
     border-top: 1px solid #1E293B;
-    padding-top: 12px;
+    padding-top: 10px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -244,27 +310,47 @@
   .user-pill {
     display: flex;
     align-items: center;
-    gap: 9px;
-    padding: 4px 6px;
+    gap: 8px;
+    padding: 4px;
     font-size: 12px;
     color: #E2E8F0;
+    justify-content: flex-start;
   }
+  .sara-sidebar.rail .user-pill { justify-content: center; }
   .avatar-circle {
     width: 26px; height: 26px; border-radius: 50%;
     background: #2E5A8A; color: #93C5FD;
     display: flex; align-items: center; justify-content: center;
     font-size: 11px; font-weight: 600; flex-shrink: 0;
   }
+  .book-cta-link {
+    text-decoration: none;
+    background: #1E293B;
+    color: #93C5FD;
+    text-align: center;
+    padding: 7px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid #334155;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .book-cta-link:hover { background: var(--deep-blue); color: #FFFFFF; }
 
-  /* 2. Secondary White Agent Drawer */
+  /* 2. Secondary White Agent Drawer (Compact 205px, Collapsible) */
   .agent-drawer {
-    width: 240px;
+    width: 205px;
     background: #FFFFFF;
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    transition: width 0.2s ease;
+    transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 20;
   }
   .agent-drawer.collapsed {
     width: 0;
@@ -272,34 +358,35 @@
     border-right: none;
   }
   .drawer-top {
-    padding: 16px 14px 12px;
+    padding: 12px 12px 10px;
     border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
   }
-  .drawer-top h3 { font-size: 14px; font-weight: 600; color: var(--text-main); }
-  .drawer-top p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .drawer-top h3 { font-size: 13px; font-weight: 600; color: var(--text-main); }
+  .drawer-top p { font-size: 10.5px; color: var(--text-muted); margin-top: 1px; }
   .collapse-btn {
     background: #F8FAFC; border: 1px solid var(--border); border-radius: 4px;
-    width: 24px; height: 24px; cursor: pointer; color: var(--text-sub); font-size: 10px;
+    width: 22px; height: 22px; cursor: pointer; color: var(--text-sub); font-size: 10px;
+    flex-shrink: 0;
   }
   .drawer-sec-lbl {
-    font-size: 10px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.7px; color: #94A3B8; padding: 12px 14px 6px;
+    font-size: 9.5px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.7px; color: #94A3B8; padding: 10px 12px 5px;
   }
   .agent-report-list {
-    padding: 0 8px;
+    padding: 0 6px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
     overflow-y: auto;
   }
   .agent-report-item {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
-    padding: 9px 10px;
+    gap: 8px;
+    padding: 8px 8px;
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.15s;
@@ -307,79 +394,121 @@
   }
   .agent-report-item:hover { background: #F8FAFC; }
   .agent-report-item.active {
-    background: #F1F5F9;
-    border-color: #CBD5E1;
+    background: #EFF6FF;
+    border-color: #BFDBFE;
   }
   .report-icon {
-    width: 26px; height: 26px; border-radius: 6px;
-    background: #EFF6FF; color: #2563EB;
+    width: 24px; height: 24px; border-radius: 5px;
+    background: #F1F5F9; color: var(--deep-blue);
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 1px;
+    font-size: 10.5px; font-weight: 600; flex-shrink: 0; margin-top: 1px;
   }
   .agent-report-item.active .report-icon {
     background: var(--deep-blue); color: #FFFFFF;
   }
-  .report-name { font-size: 13px; font-weight: 600; color: var(--text-main); }
-  .report-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; line-height: 1.3; }
+  .report-name { font-size: 12.5px; font-weight: 600; color: var(--text-main); }
+  .report-desc { font-size: 10.5px; color: var(--text-muted); margin-top: 1px; line-height: 1.25; }
 
-  /* 3. Main Full-Screen Agent Canvas */
+  /* 3. Main Full-Screen Agent Canvas (Ultra-Clean 38px Single-Row Header) */
   .agent-main-canvas {
     flex: 1;
-    background: #F8FAFC;
+    background: #FFFFFF;
     display: flex;
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
   }
   .canvas-topbar {
+    height: 40px;
     background: #FFFFFF;
-    padding: 10px 20px;
+    padding: 0 14px;
     border-bottom: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .canvas-title-wrap {
-    display: flex;
-    align-items: center;
     gap: 10px;
   }
-  .expand-drawer-btn {
-    display: none;
-    background: #F1F5F9; border: 1px solid var(--border);
-    padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11.5px; font-weight: 600;
+  .canvas-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
   }
-  .canvas-agent-title h2 { font-size: 15px; font-weight: 600; color: var(--text-main); }
-  .canvas-agent-title p { font-size: 11.5px; color: var(--text-muted); }
-  .canvas-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-  .persona-jump-btn {
-    background: #EFF6FF;
-    border: 1px solid #BFDBFE;
-    color: var(--deep-blue);
-    border-radius: 5px;
-    padding: 5px 10px;
-    font-size: 11.5px;
+  .bar-btn {
+    background: #F8FAFC;
+    border: 1px solid var(--border);
+    color: var(--text-sub);
+    padding: 4px 9px;
+    border-radius: 4px;
+    font-size: 11px;
     font-weight: 600;
     cursor: pointer;
+    white-space: nowrap;
     transition: all 0.15s;
   }
-  .persona-jump-btn:hover {
+  .bar-btn:hover { background: #F1F5F9; color: var(--text-main); }
+  .bar-btn.accent {
+    background: #EFF6FF;
+    border-color: #BFDBFE;
+    color: var(--deep-blue);
+  }
+  .bar-btn.accent:hover {
     background: var(--deep-blue);
     color: #FFFFFF;
   }
-  .fullscreen-btn {
-    background: #F8FAFC; border: 1px solid var(--border); border-radius: 5px;
-    padding: 5px 10px; font-size: 11.5px; color: var(--text-sub); font-weight: 500; cursor: pointer;
+  .breadcrumb-text {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .fullscreen-btn:hover { background: #F1F5F9; color: var(--text-main); }
+  .breadcrumb-sub {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-left: 6px;
+  }
+
+  /* Quick Inline Agent Switcher Pills (Visible When White Drawer Is Collapsed) */
+  .inline-agent-pills {
+    display: none;
+    align-items: center;
+    gap: 4px;
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left: 1px solid var(--border);
+  }
+  .inline-pill {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-sub);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .inline-pill:hover { background: #F1F5F9; color: var(--text-main); }
+  .inline-pill.active {
+    background: var(--deep-blue);
+    color: #FFFFFF;
+    font-weight: 600;
+  }
+
+  .canvas-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
 
   .iframe-stage {
     flex: 1;
     width: 100%;
-    height: 100%;
+    height: calc(100vh - 40px);
     position: relative;
     background: #FFFFFF;
   }
@@ -431,90 +560,101 @@
     </div>
   </main>
 
-  <!-- ================= STEP 2: UAT-SARA PLATFORM SHELL ================= -->
+  <!-- ================= STEP 2: COLLAPSIBLE PLATFORM SHELL ================= -->
   <section id="sara-platform">
     <div class="watermark-overlay" id="watermark-layer"></div>
 
     <div class="platform-layout">
-      <!-- 1. Left Dark Navy Navigation -->
-      <aside class="sara-sidebar">
+      <!-- 1. Collapsible Left Dark Navy Sidebar -->
+      <aside class="sara-sidebar" id="sara-sidebar">
         <div>
-          <div class="sara-brand">
-            <span class="trapezoid-mark"></span>
-            <span>fortifai</span>
+          <div class="sara-brand-row">
+            <div class="sara-brand" title="Fortifai Control Tower">
+              <span class="trapezoid-mark"></span>
+              <span class="brand-text">fortifai</span>
+            </div>
+            <button class="rail-toggle-btn" id="rail-toggle-btn" onclick="toggleLeftRail()" title="Collapse / Expand Navigation">«</button>
           </div>
 
           <div class="nav-section-lbl">Step 1 · Full Suite</div>
-          <!-- Default First Landing Page: Loads your existing agent-suite.html from overview.fortifai.io -->
-          <div class="nav-item active-overview" id="nav-suite-home" onclick="loadSuiteOverview()">
-            <span>⊡</span> <span>AI Agent Suite Overview</span>
+          <div class="nav-item active-overview" id="nav-suite-home" onclick="loadSuiteOverview()" title="AI Agent Suite Overview">
+            <span style="font-size:14px;">⊡</span>
+            <span class="nav-label">AI Agent Suite</span>
           </div>
 
-          <div class="nav-section-lbl">Step 2 · Live Agents by Buyer</div>
-          <div class="nav-item active-parent">
-            <span>▤</span> <span>Select Buyer Persona</span>
-          </div>
-
+          <div class="nav-section-lbl">Step 2 · By Buyer Role</div>
           <div class="buyer-sublist" id="buyer-nav-list">
-            <div class="buyer-subitem" data-domain="CFO" onclick="selectBuyerDomain('CFO', this)">
-              <span class="buyer-dot"></span> <span>1. CFO · Finance &amp; Close</span>
+            <div class="buyer-subitem" data-domain="CFO" onclick="selectBuyerDomain('CFO', this)" title="1. CFO · Finance & Close">
+              <span class="buyer-badge-mini">CFO</span>
+              <span class="nav-label">Finance &amp; Close</span>
             </div>
-            <div class="buyer-subitem" data-domain="CPO" onclick="selectBuyerDomain('CPO', this)">
-              <span class="buyer-dot"></span> <span>2. CPO · Procurement</span>
+            <div class="buyer-subitem" data-domain="CPO" onclick="selectBuyerDomain('CPO', this)" title="2. CPO · Procurement">
+              <span class="buyer-badge-mini">CPO</span>
+              <span class="nav-label">Procurement</span>
             </div>
-            <div class="buyer-subitem" data-domain="CCO" onclick="selectBuyerDomain('CCO', this)">
-              <span class="buyer-dot"></span> <span>3. CCO · Compliance &amp; GC</span>
+            <div class="buyer-subitem" data-domain="CCO" onclick="selectBuyerDomain('CCO', this)" title="3. CCO · Compliance & GC">
+              <span class="buyer-badge-mini">CCO</span>
+              <span class="nav-label">Compliance &amp; GC</span>
             </div>
-            <div class="buyer-subitem" data-domain="CAE" onclick="selectBuyerDomain('CAE', this)">
-              <span class="buyer-dot"></span> <span>4. CAE · Internal Audit</span>
+            <div class="buyer-subitem" data-domain="CAE" onclick="selectBuyerDomain('CAE', this)" title="4. CAE · Internal Audit">
+              <span class="buyer-badge-mini">CAE</span>
+              <span class="nav-label">Internal Audit</span>
             </div>
           </div>
         </div>
 
         <div class="sara-user-footer">
-          <div class="user-pill">
+          <div class="user-pill" title="Active NDA Session">
             <div class="avatar-circle" id="user-initials">VM</div>
-            <div style="overflow:hidden;">
-              <div style="font-weight:600; color:#FFFFFF; font-size:12px; text-overflow:ellipsis; overflow:hidden;" id="user-display-name">Varun Mowar</div>
-              <div style="font-size:10.5px; color:#64748B;">Post-NDA Sandbox</div>
+            <div class="user-details" style="overflow:hidden;">
+              <div style="font-weight:600; color:#FFFFFF; font-size:11.5px; text-overflow:ellipsis; overflow:hidden;" id="user-display-name">Varun Mowar</div>
+              <div style="font-size:10px; color:#64748B;">Post-NDA Sandbox</div>
             </div>
           </div>
-          <a href="https://calendly.com/varunmowar/fortifai-demo-est" target="_blank" style="text-decoration:none; background:#1E293B; color:#93C5FD; text-align:center; padding:7px; border-radius:5px; font-size:11.5px; font-weight:600; border:1px solid #334155;">Book Architecture Review →</a>
+          <a href="https://calendly.com/varunmowar/fortifai-demo-est" target="_blank" class="book-cta-link" title="Schedule Architecture Review">
+            <span>📅</span> <span class="book-cta-text">Book Review →</span>
+          </a>
         </div>
       </aside>
 
-      <!-- 2. Secondary White Agent Drawer (Hidden on Suite Overview, Opens When Buyer Persona Clicked) -->
+      <!-- 2. Secondary White Agent Drawer -->
       <aside class="agent-drawer collapsed" id="agent-drawer">
         <div class="drawer-top">
           <div>
             <h3 id="drawer-domain-title">CFO · Finance</h3>
             <p id="drawer-domain-sub">Balance sheet, cash &amp; margin</p>
           </div>
-          <button class="collapse-btn" onclick="toggleDrawer()" title="Collapse Drawer">◀</button>
+          <button class="collapse-btn" onclick="toggleDrawer()" title="Collapse Agent Drawer">◀</button>
         </div>
-        <div class="drawer-sec-lbl">Click Agent to Experience Live</div>
+        <div class="drawer-sec-lbl">Select Live Agent</div>
         <div class="agent-report-list" id="agent-report-list"></div>
       </aside>
 
-      <!-- 3. Full-Screen Main Canvas -->
+      <!-- 3. Main Full-Screen Canvas -->
       <main class="agent-main-canvas">
+        <!-- Single-Row 40px Context Bar (No Vertical Bloat) -->
         <header class="canvas-topbar">
-          <div class="canvas-title-wrap">
-            <button class="expand-drawer-btn" id="expand-btn" onclick="toggleDrawer()">▶ Show Persona Agents</button>
-            <div class="report-icon" id="top-agent-icon">15</div>
-            <div class="canvas-agent-title">
-              <h2 id="top-agent-name">Fortifai AI Agent Suite Overview</h2>
-              <p id="top-agent-role">Step 1: Review the full 15-Agent Suite below, then click a Buyer Persona to launch live agents</p>
+          <div class="canvas-left">
+            <button class="bar-btn" id="expand-drawer-btn" style="display:none;" onclick="toggleDrawer()">☰ Agent List</button>
+            <div class="breadcrumb-text">
+              <span id="top-agent-name">Fortifai AI Agent Suite Overview</span>
+              <span class="breadcrumb-sub" id="top-agent-role">— 15 Specialized Agents on a Single Zero-Egress Spine</span>
             </div>
+            <!-- Inline Agent Pills Appear Automatically When White Drawer Is Collapsed -->
+            <div class="inline-agent-pills" id="inline-agent-pills"></div>
           </div>
 
-          <!-- Quick-Jump Persona Buttons Always Visible in Top Bar -->
-          <div class="canvas-controls">
-            <button class="persona-jump-btn" onclick="selectBuyerDomain('CFO', document.querySelector('[data-domain=CFO]'))">Try CFO Agents →</button>
-            <button class="persona-jump-btn" onclick="selectBuyerDomain('CPO', document.querySelector('[data-domain=CPO]'))">Try CPO Agents →</button>
-            <button class="persona-jump-btn" onclick="selectBuyerDomain('CCO', document.querySelector('[data-domain=CCO]'))">Try CCO Agents →</button>
-            <button class="persona-jump-btn" onclick="selectBuyerDomain('CAE', document.querySelector('[data-domain=CAE]'))">Try CAE Agents →</button>
-            <button class="fullscreen-btn" id="toggle-width-btn" style="display:none;" onclick="toggleDrawer()">⤢ Expand Full Width</button>
+          <!-- Context Controls -->
+          <div class="canvas-right" id="suite-jump-controls">
+            <button class="bar-btn accent" onclick="selectBuyerDomain('CFO', document.querySelector('[data-domain=CFO]'))">1. CFO Agents →</button>
+            <button class="bar-btn accent" onclick="selectBuyerDomain('CPO', document.querySelector('[data-domain=CPO]'))">2. CPO Agents →</button>
+            <button class="bar-btn accent" onclick="selectBuyerDomain('CCO', document.querySelector('[data-domain=CCO]'))">3. CCO Agents →</button>
+            <button class="bar-btn accent" onclick="selectBuyerDomain('CAE', document.querySelector('[data-domain=CAE]'))">4. CAE Agents →</button>
+          </div>
+
+          <div class="canvas-right" id="agent-view-controls" style="display:none;">
+            <button class="bar-btn" onclick="loadSuiteOverview()">← Suite Overview</button>
+            <button class="bar-btn accent" id="zen-mode-btn" onclick="toggleZenMode()">⤢ Maximize Canvas</button>
           </div>
         </header>
 
@@ -530,95 +670,31 @@
   const LOG_WEBHOOK_URL = "https://formspree.io/f/myeeodjv";
   const BLOCKED_DOMAINS = ["@gmail.com", "@yahoo.com", "@hotmail.com", "@outlook.com", "@icloud.com"];
 
-  // Directly loads the existing Agent Suite page from overview.fortifai.io as the first landing view!
-  const SUITE_OVERVIEW_URL = "https://overview.fortifai.io/agent-suite.html";
+  // Note: On overview.fortifai.io, the file is named agent-suit.html
+  const SUITE_OVERVIEW_URL = "https://overview.fortifai.io/agent-suit.html";
 
-  // Exact 10 filenames from your cleaned FortifAI-io/SARA_reports repository
   const AGENT_CATALOG = {
-    Crystal: {
-      code: "FC",
-      name: "Crystal",
-      role: "Balance Sheet & Close Assurance",
-      file: "Crystal_v14.html"
-    },
-    Moneta: {
-      code: "FM",
-      name: "Moneta",
-      role: "Working Capital Command Centre",
-      file: "Moneta_Working_Capital_Command_Centre.html"
-    },
-    Kuber: {
-      code: "FK",
-      name: "Kuber",
-      role: "Procurement Cost Saving",
-      file: "Kuber-Procurement-Cost-Optimisation-v2.html"
-    },
-    EarlyPay: {
-      code: "EP",
-      name: "Early Payment Arbitrage",
-      role: "Treasury Cash Discount Capture",
-      file: "FRP005_Early_Payment_Report_v3.html"
-    },
-    AEWAC: {
-      code: "AW",
-      name: "Aewac",
-      role: "Procurement Abuse Monitoring",
-      file: "AEWAC-procurement-risk-monitoring-v2.html"
-    },
-    Tender: {
-      code: "TD",
-      name: "Tender",
-      role: "RFP Bidding Risk Monitoring",
-      file: "Holcim_GHBS_Tender_Prototype_v7.html"
-    },
-    DocIntel: {
-      code: "DI",
-      name: "Codex DocIntel",
-      role: "Contract & Document Intelligence",
-      file: "Codex_DocIntel_Holcim_GHBS_Q1FY26_1.html"
-    },
-    Aegis: {
-      code: "FA",
-      name: "Aegis",
-      role: "Export Control & Trade Diversion",
-      file: "Aegis_Prototype_v30.html"
-    },
-    Veritas: {
-      code: "FVr",
-      name: "Veritas (FCPA)",
-      role: "Bribery, FCPA & T&E Monitoring",
-      file: "FCPA_PROC0460_Module_v9.html"
-    },
-    Argus: {
-      code: "FAr",
-      name: "Argus",
-      role: "Forensic Investigation Agent",
-      file: "Argus_Investigation_Agent.html"
-    }
+    Crystal:  { code: "FC",  name: "Crystal",  role: "Balance Sheet & Close Assurance",       file: "Crystal_v14.html" },
+    Moneta:   { code: "FM",  name: "Moneta",   role: "Working Capital Command Centre",        file: "Moneta_Working_Capital_Command_Centre.html" },
+    Kuber:    { code: "FK",  name: "Kuber",    role: "Procurement Cost Saving",               file: "Kuber-Procurement-Cost-Optimisation-v2.html" },
+    EarlyPay: { code: "EP",  name: "Early Payment", role: "Treasury Cash Discount Capture",   file: "FRP005_Early_Payment_Report_v3.html" },
+    AEWAC:    { code: "AW",  name: "Aewac",    role: "Procurement Abuse Monitoring",          file: "AEWAC-procurement-risk-monitoring-v2.html" },
+    Tender:   { code: "TD",  name: "Tender",   role: "RFP Bidding Risk Monitoring",           file: "Holcim_GHBS_Tender_Prototype_v7.html" },
+    DocIntel: { code: "DI",  name: "Codex DocIntel", role: "Contract & Document Intelligence", file: "Codex_DocIntel_Holcim_GHBS_Q1FY26_1.html" },
+    Aegis:    { code: "FA",  name: "Aegis",    role: "Export Control & Trade Diversion",      file: "Aegis_Prototype_v30.html" },
+    Veritas:  { code: "FVr", name: "Veritas (FCPA)", role: "Bribery, FCPA & T&E Monitoring",  file: "FCPA_PROC0460_Module_v9.html" },
+    Argus:    { code: "FAr", name: "Argus",    role: "Forensic Investigation Agent",          file: "Argus_Investigation_Agent.html" }
   };
 
   const BUYER_DOMAINS = {
-    CFO: {
-      title: "1. CFO · Finance & Close",
-      sub: "Balance sheet, cash & margin",
-      agents: ["Crystal", "Moneta", "Kuber", "EarlyPay"]
-    },
-    CPO: {
-      title: "2. CPO · Procurement",
-      sub: "Cost recovery & vendor risk",
-      agents: ["Kuber", "AEWAC", "Tender", "DocIntel"]
-    },
-    CCO: {
-      title: "3. CCO · Compliance & GC",
-      sub: "Export, FCPA & investigations",
-      agents: ["Aegis", "Veritas", "Argus"]
-    },
-    CAE: {
-      title: "4. CAE · Internal Audit",
-      sub: "Continuous controls & forensics",
-      agents: ["Argus", "AEWAC", "Crystal", "Veritas"]
-    }
+    CFO: { title: "CFO · Finance & Close", sub: "Balance sheet, cash & margin",      agents: ["Crystal", "Moneta", "Kuber", "EarlyPay"] },
+    CPO: { title: "CPO · Procurement",     sub: "Cost recovery & vendor risk",       agents: ["Kuber", "AEWAC", "Tender", "DocIntel"] },
+    CCO: { title: "CCO · Compliance & GC", sub: "Export, FCPA & investigations",     agents: ["Aegis", "Veritas", "Argus"] },
+    CAE: { title: "CAE · Internal Audit",  sub: "Continuous controls & forensics",   agents: ["Argus", "AEWAC", "Crystal", "Veritas"] }
   };
+
+  let activeDomainKey = null;
+  let activeAgentKey = null;
 
   // Instant @fortifai.io internal bypass
   const emailInput = document.getElementById('viewer-email');
@@ -681,43 +757,81 @@
     launchApp(name, email);
   }
 
-  // Step 1 Default Landing Page: Renders your existing agent-suite.html from overview.fortifai.io
+  // Collapse / Expand the Dark Navy Left Sidebar into a 54px Icon Rail
+  function toggleLeftRail(forceRail) {
+    const sb = document.getElementById('sara-sidebar');
+    const btn = document.getElementById('rail-toggle-btn');
+    if (typeof forceRail === 'boolean') {
+      sb.classList.toggle('rail', forceRail);
+    } else {
+      sb.classList.toggle('rail');
+    }
+    btn.textContent = sb.classList.contains('rail') ? '»' : '«';
+  }
+
+  // Collapse / Expand the Secondary White Agent Drawer
+  function toggleDrawer(forceCollapse) {
+    const dr = document.getElementById('agent-drawer');
+    const expBtn = document.getElementById('expand-drawer-btn');
+    const pills = document.getElementById('inline-agent-pills');
+    const zenBtn = document.getElementById('zen-mode-btn');
+
+    if (typeof forceCollapse === 'boolean') {
+      dr.classList.toggle('collapsed', forceCollapse);
+    } else {
+      dr.classList.toggle('collapsed');
+    }
+
+    const isCollapsed = dr.classList.contains('collapsed');
+    expBtn.style.display = (isCollapsed && activeDomainKey) ? 'inline-block' : 'none';
+    pills.style.display = (isCollapsed && activeDomainKey) ? 'flex' : 'none';
+    zenBtn.textContent = isCollapsed ? '⤡ Show Drawer' : '⤢ Maximize Canvas';
+  }
+
+  // 1-Click Maximize Canvas (Collapses Both Left Sidebar to Rail + Closes White Drawer)
+  function toggleZenMode() {
+    const dr = document.getElementById('agent-drawer');
+    const isCollapsed = dr.classList.contains('collapsed');
+    if (!isCollapsed) {
+      toggleLeftRail(true);
+      toggleDrawer(true);
+    } else {
+      toggleDrawer(false);
+    }
+  }
+
+  // Step 1 Default Landing Page: Renders the 15-Agent Suite Overview
   function loadSuiteOverview() {
+    activeDomainKey = null;
+    activeAgentKey = null;
+    toggleLeftRail(false);
+
     document.getElementById('nav-suite-home').classList.add('active-overview');
     document.querySelectorAll('.buyer-subitem').forEach(b => b.classList.remove('active'));
 
     document.getElementById('agent-drawer').classList.add('collapsed');
-    document.getElementById('expand-btn').style.display = 'none';
-    document.getElementById('toggle-width-btn').style.display = 'none';
+    document.getElementById('expand-drawer-btn').style.display = 'none';
+    document.getElementById('inline-agent-pills').style.display = 'none';
+    document.getElementById('suite-jump-controls').style.display = 'flex';
+    document.getElementById('agent-view-controls').style.display = 'none';
 
-    document.getElementById('top-agent-icon').textContent = '15';
     document.getElementById('top-agent-name').textContent = 'Fortifai AI Agent Suite Overview';
-    document.getElementById('top-agent-role').textContent = 'Step 1: Review the full 15-Agent Suite below, then click a Buyer Persona to launch live agents';
+    document.getElementById('top-agent-role').textContent = '— Review the 15 Agents, then select a Buyer Role on the left';
 
     document.getElementById('agent-frame').src = SUITE_OVERVIEW_URL;
   }
 
-  function toggleDrawer() {
-    const dr = document.getElementById('agent-drawer');
-    const exp = document.getElementById('expand-btn');
-    const btn = document.getElementById('toggle-width-btn');
-    dr.classList.toggle('collapsed');
-    const isCollapsed = dr.classList.contains('collapsed');
-    exp.style.display = isCollapsed ? 'inline-block' : 'none';
-    btn.textContent = isCollapsed ? '⤡ Restore Sidebar' : '⤢ Expand Full Width';
-  }
-
   function selectBuyerDomain(domKey, el) {
+    activeDomainKey = domKey;
     document.getElementById('nav-suite-home').classList.remove('active-overview');
     document.querySelectorAll('.buyer-subitem').forEach(b => b.classList.remove('active'));
     if (el) el.classList.add('active');
 
-    const dr = document.getElementById('agent-drawer');
-    dr.classList.remove('collapsed');
-    document.getElementById('expand-btn').style.display = 'none';
-    const widthBtn = document.getElementById('toggle-width-btn');
-    widthBtn.style.display = 'inline-block';
-    widthBtn.textContent = '⤢ Expand Full Width';
+    // Automatically slim the dark navy sidebar into a 54px icon rail so the agent gets maximum width!
+    toggleLeftRail(true);
+
+    document.getElementById('suite-jump-controls').style.display = 'none';
+    document.getElementById('agent-view-controls').style.display = 'flex';
 
     const dom = BUYER_DOMAINS[domKey];
     document.getElementById('drawer-domain-title').textContent = dom.title;
@@ -727,7 +841,7 @@
     list.innerHTML = dom.agents.map((agKey, idx) => {
       const ag = AGENT_CATALOG[agKey];
       return `
-        <div class="agent-report-item ${idx === 0 ? 'active' : ''}" onclick="loadAgentFile('${agKey}', this)">
+        <div class="agent-report-item ${idx === 0 ? 'active' : ''}" data-ag="${agKey}" onclick="loadAgentFile('${agKey}')">
           <div class="report-icon">${ag.code}</div>
           <div>
             <div class="report-name">${ag.name}</div>
@@ -737,17 +851,29 @@
       `;
     }).join('');
 
-    loadAgentFile(dom.agents[0], list.querySelector('.agent-report-item'));
+    // Also populate the inline top-bar pills for when the drawer is collapsed
+    const pills = document.getElementById('inline-agent-pills');
+    pills.innerHTML = dom.agents.map((agKey, idx) => {
+      const ag = AGENT_CATALOG[agKey];
+      return `<button class="inline-pill ${idx === 0 ? 'active' : ''}" data-pill="${agKey}" onclick="loadAgentFile('${agKey}')">${ag.name}</button>`;
+    }).join('');
+
+    toggleDrawer(false);
+    loadAgentFile(dom.agents[0]);
   }
 
-  function loadAgentFile(agKey, el) {
-    document.querySelectorAll('.agent-report-item').forEach(i => i.classList.remove('active'));
-    if (el) el.classList.add('active');
+  function loadAgentFile(agKey) {
+    activeAgentKey = agKey;
+    document.querySelectorAll('.agent-report-item').forEach(i => {
+      i.classList.toggle('active', i.getAttribute('data-ag') === agKey);
+    });
+    document.querySelectorAll('.inline-pill').forEach(p => {
+      p.classList.toggle('active', p.getAttribute('data-pill') === agKey);
+    });
 
     const ag = AGENT_CATALOG[agKey];
-    document.getElementById('top-agent-icon').textContent = ag.code;
     document.getElementById('top-agent-name').textContent = ag.name;
-    document.getElementById('top-agent-role').textContent = ag.role;
+    document.getElementById('top-agent-role').textContent = `— ${ag.role}`;
 
     document.getElementById('agent-frame').src = `./${ag.file}`;
   }
