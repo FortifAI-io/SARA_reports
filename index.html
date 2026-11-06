@@ -40,7 +40,7 @@
 
   @media print { body { display: none !important; } }
 
-  /* ================= STEP 1: POST-NDA GATE SCREEN ================= */
+  /* ================= STEP 1: EXECUTIVE PREVIEW GATE SCREEN ================= */
   #gate-screen {
     flex: 1;
     display: flex;
@@ -683,10 +683,10 @@
 </head>
 <body>
 
-  <!-- ================= STEP 1: NDA GATE ================= -->
+  <!-- ================= STEP 1: EXECUTIVE PREVIEW GATE ================= -->
   <main id="gate-screen">
     <div class="gate-card">
-      <span class="stage-pill">Stage 2 Evaluation · Post-NDA Sandbox</span>
+      <span class="stage-pill">Stage 2 Evaluation · Executive Preview Sandbox</span>
       <h1>Fortifai Interactive Agent Cockpit</h1>
       <p class="sub">Start with the complete 15-Agent Suite Overview, then click into any Executive Buyer Persona (CFO, CPO, CCO, CAE) to experience live, full-screen agents first-hand.</p>
 
@@ -703,7 +703,7 @@
         </div>
         <div class="form-group">
           <label>Stage 2 Access Code</label>
-          <input type="password" id="access-code" placeholder="Enter post-NDA access code (e.g. NDA2026)" required />
+          <input type="password" id="access-code" placeholder="Enter your access code (e.g. COCKPIT2026)" required />
         </div>
         <div class="terms-box">
           <strong>EXECUTIVE PREVIEW &amp; CONFIDENTIALITY NOTE</strong><br><br>
@@ -712,10 +712,10 @@
         </div>
         <label class="checkbox-row">
           <input type="checkbox" id="accept-terms" required />
-          <span>I agree to the Executive Preview &amp; Confidentiality Covenants above.</span>
+          <span>I agree to the Executive Preview &amp; Confidentiality Note above.</span>
         </label>
         <button type="submit" class="btn-unlock">Launch Agent Suite &amp; Interactive Cockpit</button>
-        <div class="error-msg" id="error-msg">Please enter a corporate email and valid Stage 2 code (NDA2026 / COCKPIT2026 / FORTIFAI2026).</div>
+        <div class="error-msg" id="error-msg">Please enter a corporate email and valid Stage 2 code (COCKPIT2026 / FORTIFAI2026 / PARTNER2026).</div>
       </form>
     </div>
   </main>
@@ -770,11 +770,11 @@
           <a href="https://calendly.com/varunmowar/fortifai-demo-est" target="_blank" class="book-cta-link" title="Schedule Architecture Review">
             <span>📅</span> <span class="book-cta-text">Book Review →</span>
           </a>
-          <div class="user-pill" title="Active NDA Session">
+          <div class="user-pill" title="Active Executive Preview Session">
             <div class="avatar-circle" id="user-initials">VM</div>
             <div class="user-details" style="overflow:hidden;">
               <div style="font-weight:600; color:#FFFFFF; font-size:11px; text-overflow:ellipsis; overflow:hidden;" id="user-display-name">Varun Mowar</div>
-              <div style="font-size:9.5px; color:#64748B;">Post-NDA Sandbox</div>
+              <div style="font-size:9.5px; color:#64748B;">Executive Preview</div>
             </div>
           </div>
         </div>
@@ -831,7 +831,7 @@
       <div class="guide-modal">
         <div class="guide-header">
           <div>
-            <div class="eyebrow">WELCOME TO STAGE 2 · POST-NDA INTERACTIVE SANDBOX</div>
+            <div class="eyebrow">WELCOME TO STAGE 2 · EXECUTIVE INTERACTIVE SANDBOX</div>
             <h2>How to Navigate the Fortifai Agent Experience Cockpit</h2>
             <p>Experience how a single, zero-egress ERP integration powers specialized AI agents across 4 executive buyers.</p>
           </div>
@@ -882,7 +882,7 @@
   </section>
 
 <script>
-  const VALID_CODES = ["COCKPIT2026", "NDA2026", "FORTIFAI2026", "PARTNER2026", "KPMG2026"];
+  const VALID_CODES = ["COCKPIT2026", "FORTIFAI2026", "PARTNER2026", "KPMG2026", "NDA2026"];
   const LOG_WEBHOOK_URL = "https://formspree.io/f/myeeodjv";
   const BLOCKED_DOMAINS = ["@gmail.com", "@yahoo.com", "@hotmail.com", "@outlook.com", "@icloud.com"];
 
@@ -933,7 +933,7 @@
     for (let i = 0; i < 12; i++) {
       const d = document.createElement('div');
       d.className = 'wm-text';
-      d.textContent = `NDA CONFIDENTIAL · ${email} · ${ts}`;
+      d.textContent = `FORTIFAI CONFIDENTIAL · ${email} · ${ts}`;
       wm.appendChild(d);
     }
 
