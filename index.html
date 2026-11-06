@@ -145,7 +145,7 @@
 
   /* 1. Left Dark Navy Navigation (Collapsible to 54px Icon Rail) */
   .sara-sidebar {
-    width: 215px;
+    width: 210px;
     background: var(--nav);
     color: #94A3B8;
     display: flex;
@@ -283,7 +283,7 @@
     font-family: 'DM Mono', monospace;
     font-size: 10px;
     font-weight: 600;
-    width: 26px;
+    width: 28px;
     height: 22px;
     border-radius: 4px;
     background: #162234;
@@ -341,9 +341,9 @@
   }
   .book-cta-link:hover { background: var(--deep-blue); color: #FFFFFF; }
 
-  /* 2. Secondary White Agent Drawer (Compact 205px, Collapsible) */
+  /* 2. Secondary White Agent Drawer (Compact 200px, Collapsible) */
   .agent-drawer {
-    width: 205px;
+    width: 200px;
     background: #FFFFFF;
     border-right: 1px solid var(--border);
     display: flex;
@@ -409,7 +409,7 @@
   .report-name { font-size: 12.5px; font-weight: 600; color: var(--text-main); }
   .report-desc { font-size: 10.5px; color: var(--text-muted); margin-top: 1px; line-height: 1.25; }
 
-  /* 3. Main Full-Screen Agent Canvas (Ultra-Clean 38px Single-Row Header) */
+  /* 3. Main Full-Screen Agent Canvas (Ultra-Clean 40px Single-Row Header) */
   .agent-main-canvas {
     flex: 1;
     background: #FFFFFF;
@@ -632,19 +632,16 @@
 
       <!-- 3. Main Full-Screen Canvas -->
       <main class="agent-main-canvas">
-        <!-- Single-Row 40px Context Bar (No Vertical Bloat) -->
         <header class="canvas-topbar">
           <div class="canvas-left">
             <button class="bar-btn" id="expand-drawer-btn" style="display:none;" onclick="toggleDrawer()">☰ Agent List</button>
             <div class="breadcrumb-text">
               <span id="top-agent-name">Fortifai AI Agent Suite Overview</span>
-              <span class="breadcrumb-sub" id="top-agent-role">— 15 Specialized Agents on a Single Zero-Egress Spine</span>
+              <span class="breadcrumb-sub" id="top-agent-role">— Review the 15 Agents, then select a Buyer Role on the left</span>
             </div>
-            <!-- Inline Agent Pills Appear Automatically When White Drawer Is Collapsed -->
             <div class="inline-agent-pills" id="inline-agent-pills"></div>
           </div>
 
-          <!-- Context Controls -->
           <div class="canvas-right" id="suite-jump-controls">
             <button class="bar-btn accent" onclick="selectBuyerDomain('CFO', document.querySelector('[data-domain=CFO]'))">1. CFO Agents →</button>
             <button class="bar-btn accent" onclick="selectBuyerDomain('CPO', document.querySelector('[data-domain=CPO]'))">2. CPO Agents →</button>
@@ -654,7 +651,7 @@
 
           <div class="canvas-right" id="agent-view-controls" style="display:none;">
             <button class="bar-btn" onclick="loadSuiteOverview()">← Suite Overview</button>
-            <button class="bar-btn accent" id="zen-mode-btn" onclick="toggleZenMode()">⤢ Maximize Canvas</button>
+            <button class="bar-btn accent" id="zen-mode-btn" onclick="toggleZenMode()">⤢ Full Screen</button>
           </div>
         </header>
 
@@ -670,8 +667,8 @@
   const LOG_WEBHOOK_URL = "https://formspree.io/f/myeeodjv";
   const BLOCKED_DOMAINS = ["@gmail.com", "@yahoo.com", "@hotmail.com", "@outlook.com", "@icloud.com"];
 
-  // Note: On overview.fortifai.io, the file is named agent-suit.html
-  const SUITE_OVERVIEW_URL = "https://overview.fortifai.io/agent-suit.html";
+  // Fixed: points to agent-suite.html (with the 'e') on overview.fortifai.io!
+  const SUITE_OVERVIEW_URL = "https://overview.fortifai.io/agent-suite.html";
 
   const AGENT_CATALOG = {
     Crystal:  { code: "FC",  name: "Crystal",  role: "Balance Sheet & Close Assurance",       file: "Crystal_v14.html" },
@@ -696,7 +693,6 @@
   let activeDomainKey = null;
   let activeAgentKey = null;
 
-  // Instant @fortifai.io internal bypass
   const emailInput = document.getElementById('viewer-email');
   if (emailInput) {
     emailInput.addEventListener('input', function() {
@@ -757,7 +753,6 @@
     launchApp(name, email);
   }
 
-  // Collapse / Expand the Dark Navy Left Sidebar into a 54px Icon Rail
   function toggleLeftRail(forceRail) {
     const sb = document.getElementById('sara-sidebar');
     const btn = document.getElementById('rail-toggle-btn');
@@ -769,7 +764,6 @@
     btn.textContent = sb.classList.contains('rail') ? '»' : '«';
   }
 
-  // Collapse / Expand the Secondary White Agent Drawer
   function toggleDrawer(forceCollapse) {
     const dr = document.getElementById('agent-drawer');
     const expBtn = document.getElementById('expand-drawer-btn');
@@ -785,10 +779,9 @@
     const isCollapsed = dr.classList.contains('collapsed');
     expBtn.style.display = (isCollapsed && activeDomainKey) ? 'inline-block' : 'none';
     pills.style.display = (isCollapsed && activeDomainKey) ? 'flex' : 'none';
-    zenBtn.textContent = isCollapsed ? '⤡ Show Drawer' : '⤢ Maximize Canvas';
+    zenBtn.textContent = isCollapsed ? '⤡ Show Drawer' : '⤢ Full Screen';
   }
 
-  // 1-Click Maximize Canvas (Collapses Both Left Sidebar to Rail + Closes White Drawer)
   function toggleZenMode() {
     const dr = document.getElementById('agent-drawer');
     const isCollapsed = dr.classList.contains('collapsed');
@@ -800,7 +793,6 @@
     }
   }
 
-  // Step 1 Default Landing Page: Renders the 15-Agent Suite Overview
   function loadSuiteOverview() {
     activeDomainKey = null;
     activeAgentKey = null;
@@ -827,7 +819,6 @@
     document.querySelectorAll('.buyer-subitem').forEach(b => b.classList.remove('active'));
     if (el) el.classList.add('active');
 
-    // Automatically slim the dark navy sidebar into a 54px icon rail so the agent gets maximum width!
     toggleLeftRail(true);
 
     document.getElementById('suite-jump-controls').style.display = 'none';
@@ -851,7 +842,6 @@
       `;
     }).join('');
 
-    // Also populate the inline top-bar pills for when the drawer is collapsed
     const pills = document.getElementById('inline-agent-pills');
     pills.innerHTML = dom.agents.map((agKey, idx) => {
       const ag = AGENT_CATALOG[agKey];
