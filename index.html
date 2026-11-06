@@ -7,7 +7,7 @@
 <title>Fortifai — Stage 2 Interactive Agent Experience Cockpit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --nav: #0D1520;
@@ -104,7 +104,7 @@
     color: var(--crit); border-radius: 4px; font-size: 12px; text-align: center;
   }
 
-  /* ================= STEP 2: UAT-SARA SHELL ================= */
+  /* ================= STEP 2: UAT-SARA PLATFORM SHELL ================= */
   #sara-platform {
     display: none;
     flex: 1;
@@ -198,7 +198,7 @@
     background: var(--deep-blue);
     color: #FFFFFF;
     font-weight: 600;
-    border: 1px solid rgba(102, 153, 204, 0.4);
+    border: 1px solid rgba(102, 153, 204, 0.45);
   }
   .nav-item.active-parent {
     background: var(--nav-active);
@@ -322,230 +322,11 @@
   .report-name { font-size: 13px; font-weight: 600; color: var(--text-main); }
   .report-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; line-height: 1.3; }
 
-  /* 3. Main Right Area (Holds Both Landing Suite Overview & Full Agent Iframe) */
+  /* 3. Main Full-Screen Agent Canvas */
   .agent-main-canvas {
     flex: 1;
-    background: #F4F6F9;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  /* ================= VIEW A: AGENT SUITE LANDING PAGE ================= */
-  #suite-landing-view {
-    flex: 1;
-    overflow-y: auto;
-    padding: 28px 32px 48px;
-  }
-  .suite-hero {
-    background: #0D1520;
-    color: #FFFFFF;
-    border-radius: 10px;
-    padding: 26px 30px;
-    border: 1px solid #1E293B;
-    border-left: 4px solid var(--brand-blue);
-    margin-bottom: 24px;
-    box-shadow: 0 8px 24px rgba(13, 21, 32, 0.08);
-  }
-  .suite-hero-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-bottom: 18px;
-  }
-  .suite-eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--brand-blue);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 6px;
-  }
-  .suite-hero h1 {
-    font-size: 22px;
-    font-weight: 600;
-    color: #FFFFFF;
-    margin-bottom: 6px;
-  }
-  .suite-hero p {
-    font-size: 13.5px;
-    color: #94A3B8;
-    max-width: 780px;
-    line-height: 1.55;
-  }
-  .suite-kpis {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    padding-top: 18px;
-    border-top: 1px solid #1E293B;
-  }
-  .s-kpi {
-    background: #131F30;
-    border: 1px solid #263548;
-    border-radius: 6px;
-    padding: 12px 14px;
-  }
-  .s-kpi-val {
-    font-size: 17px;
-    font-weight: 600;
-    color: #FFFFFF;
-  }
-  .s-kpi-lbl {
-    font-size: 11px;
-    color: var(--steel-blue);
-    margin-top: 3px;
-  }
-
-  /* Buyer Filter Pills on Landing Page */
-  .buyer-filter-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 18px;
-  }
-  .filter-pills {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .filter-pill {
-    background: #FFFFFF;
-    color: var(--text-sub);
-    border: 1px solid var(--border);
-    padding: 7px 14px;
-    border-radius: 6px;
-    font-size: 12.5px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .filter-pill:hover {
-    border-color: var(--deep-blue);
-    color: var(--text-main);
-  }
-  .filter-pill.active {
-    background: var(--deep-blue);
-    color: #FFFFFF;
-    border-color: var(--deep-blue);
-  }
-
-  /* Agent Cards Grid */
-  .suite-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 16px;
-  }
-  .suite-card {
-    background: #FFFFFF;
-    border: 1px solid var(--border);
-    border-top: 3px solid var(--deep-blue);
-    border-radius: 8px;
-    padding: 18px 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-    cursor: pointer;
-  }
-  .suite-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-    border-color: var(--brand-blue);
-  }
-  .sc-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 10px;
-  }
-  .sc-badge-wrap {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .sc-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 7px;
-    background: #0D1520;
-    color: #FFFFFF;
-    font-weight: 600;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .sc-name {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-main);
-  }
-  .sc-role {
-    font-size: 11.5px;
-    color: var(--deep-blue);
-    font-weight: 600;
-  }
-  .sc-buyer-tag {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    background: #F1F5F9;
-    color: var(--text-sub);
-    padding: 3px 8px;
-    border-radius: 4px;
-    border: 1px solid var(--border);
-  }
-  .sc-desc {
-    font-size: 12.5px;
-    color: var(--text-sub);
-    line-height: 1.5;
-    margin-bottom: 14px;
-  }
-  .sc-meta {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--text-muted);
     background: #F8FAFC;
-    padding: 7px 10px;
-    border-radius: 5px;
-    border: 1px solid #F1F5F9;
-    margin-bottom: 14px;
-  }
-  .sc-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 10px;
-    border-top: 1px solid #F1F5F9;
-  }
-  .sc-impact {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-main);
-  }
-  .sc-launch-btn {
-    background: var(--deep-blue);
-    color: #FFFFFF;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .suite-card:hover .sc-launch-btn {
-    background: #1E3A8A;
-  }
-
-  /* ================= VIEW B: FULL-SCREEN AGENT IFRAME VIEW ================= */
-  #agent-workspace-view {
-    display: none;
-    flex: 1;
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
@@ -558,6 +339,8 @@
     align-items: center;
     justify-content: space-between;
     flex-shrink: 0;
+    gap: 12px;
+    flex-wrap: wrap;
   }
   .canvas-title-wrap {
     display: flex;
@@ -571,7 +354,22 @@
   }
   .canvas-agent-title h2 { font-size: 15px; font-weight: 600; color: var(--text-main); }
   .canvas-agent-title p { font-size: 11.5px; color: var(--text-muted); }
-  .canvas-controls { display: flex; align-items: center; gap: 10px; }
+  .canvas-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .persona-jump-btn {
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
+    color: var(--deep-blue);
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .persona-jump-btn:hover {
+    background: var(--deep-blue);
+    color: #FFFFFF;
+  }
   .fullscreen-btn {
     background: #F8FAFC; border: 1px solid var(--border); border-radius: 5px;
     padding: 5px 10px; font-size: 11.5px; color: var(--text-sub); font-weight: 500; cursor: pointer;
@@ -601,7 +399,7 @@
     <div class="gate-card">
       <span class="stage-pill">Stage 2 Evaluation · Post-NDA Sandbox</span>
       <h1>Fortifai Interactive Agent Cockpit</h1>
-      <p class="sub">Explore the complete Fortifai AI Agent Suite and launch full-screen interactive agent workbenches (Crystal, Moneta, Kuber, Aegis, Veritas, Argus, Aewac, Tender, and Codex DocIntel) organized by executive buyer.</p>
+      <p class="sub">Start with the complete 15-Agent Suite Overview, then click into any Executive Buyer Persona (CFO, CPO, CCO, CAE) to experience live, full-screen agents first-hand.</p>
 
       <form onsubmit="unlockCockpit(event)">
         <div class="form-grid">
@@ -646,14 +444,15 @@
             <span>fortifai</span>
           </div>
 
-          <!-- Landing Page Button: AI Agent Suite Overview -->
-          <div class="nav-item active-overview" id="nav-suite-home" onclick="showSuiteLanding()">
-            <span>⊡</span> <span>0. AI Agent Suite Overview</span>
+          <div class="nav-section-lbl">Step 1 · Full Suite</div>
+          <!-- Default First Landing Page: Loads your existing agent-suite.html from overview.fortifai.io -->
+          <div class="nav-item active-overview" id="nav-suite-home" onclick="loadSuiteOverview()">
+            <span>⊡</span> <span>AI Agent Suite Overview</span>
           </div>
 
-          <div class="nav-section-lbl">Persona-Based Agents</div>
+          <div class="nav-section-lbl">Step 2 · Live Agents by Buyer</div>
           <div class="nav-item active-parent">
-            <span>▤</span> <span>Select Buyer Lens</span>
+            <span>▤</span> <span>Select Buyer Persona</span>
           </div>
 
           <div class="buyer-sublist" id="buyer-nav-list">
@@ -684,7 +483,7 @@
         </div>
       </aside>
 
-      <!-- 2. Secondary White Agent Drawer (Hidden on Suite Overview, Shown When Buyer Persona Selected) -->
+      <!-- 2. Secondary White Agent Drawer (Hidden on Suite Overview, Opens When Buyer Persona Clicked) -->
       <aside class="agent-drawer collapsed" id="agent-drawer">
         <div class="drawer-top">
           <div>
@@ -693,79 +492,35 @@
           </div>
           <button class="collapse-btn" onclick="toggleDrawer()" title="Collapse Drawer">◀</button>
         </div>
-        <div class="drawer-sec-lbl">Reports &amp; Agents</div>
+        <div class="drawer-sec-lbl">Click Agent to Experience Live</div>
         <div class="agent-report-list" id="agent-report-list"></div>
       </aside>
 
-      <!-- 3. Main Right Area -->
+      <!-- 3. Full-Screen Main Canvas -->
       <main class="agent-main-canvas">
-
-        <!-- VIEW A: AI AGENT SUITE LANDING PAGE (Default First View) -->
-        <div id="suite-landing-view">
-          <div class="suite-hero">
-            <div class="suite-hero-top">
-              <div>
-                <div class="suite-eyebrow">FORTIFAI SARA · MULTI-AGENT ENTERPRISE CONTROL TOWER</div>
-                <h1>The Autonomous AI Agent Suite — One ERP Spine, Four Executive Buyers</h1>
-                <p>Every Fortifai agent connects read-only to your core ERP tables inside your private VPC with zero data egress. Start by filtering the suite by Economic Buyer below—or click any agent card to launch its live, full-screen interactive workbench.</p>
-              </div>
-            </div>
-            <div class="suite-kpis">
-              <div class="s-kpi">
-                <div class="s-kpi-val">100% Population</div>
-                <div class="s-kpi-lbl">Continuous ERP Telemetry (Zero Sampling Gap)</div>
-              </div>
-              <div class="s-kpi">
-                <div class="s-kpi-val">3-Arm Detection</div>
-                <div class="s-kpi-lbl">Deterministic SQL + Pattern ML + D7 Entity Graph</div>
-              </div>
-              <div class="s-kpi">
-                <div class="s-kpi-val">4-Rung Waterfall</div>
-                <div class="s-kpi-lbl">Zero Double-Counting Across EBITDA &amp; Cash</div>
-              </div>
-              <div class="s-kpi">
-                <div class="s-kpi-val">Zero Data Egress</div>
-                <div class="s-kpi-lbl">100% Client-Hosted (VPC / On-Prem / GovCloud)</div>
-              </div>
+        <header class="canvas-topbar">
+          <div class="canvas-title-wrap">
+            <button class="expand-drawer-btn" id="expand-btn" onclick="toggleDrawer()">▶ Show Persona Agents</button>
+            <div class="report-icon" id="top-agent-icon">15</div>
+            <div class="canvas-agent-title">
+              <h2 id="top-agent-name">Fortifai AI Agent Suite Overview</h2>
+              <p id="top-agent-role">Step 1: Review the full 15-Agent Suite below, then click a Buyer Persona to launch live agents</p>
             </div>
           </div>
 
-          <div class="buyer-filter-bar">
-            <div class="filter-pills">
-              <button class="filter-pill active" onclick="filterSuiteGrid('ALL', this)">All Domain Agents (10)</button>
-              <button class="filter-pill" onclick="filterSuiteGrid('CFO', this)">1. CFO · Finance &amp; Close (4)</button>
-              <button class="filter-pill" onclick="filterSuiteGrid('CPO', this)">2. CPO · Procurement (4)</button>
-              <button class="filter-pill" onclick="filterSuiteGrid('CCO', this)">3. CCO · Compliance &amp; GC (3)</button>
-              <button class="filter-pill" onclick="filterSuiteGrid('CAE', this)">4. CAE · Internal Audit (4)</button>
-            </div>
-            <span style="font-size:12px; color:var(--text-muted);">Click any agent card below to experience the full agent live →</span>
+          <!-- Quick-Jump Persona Buttons Always Visible in Top Bar -->
+          <div class="canvas-controls">
+            <button class="persona-jump-btn" onclick="selectBuyerDomain('CFO', document.querySelector('[data-domain=CFO]'))">Try CFO Agents →</button>
+            <button class="persona-jump-btn" onclick="selectBuyerDomain('CPO', document.querySelector('[data-domain=CPO]'))">Try CPO Agents →</button>
+            <button class="persona-jump-btn" onclick="selectBuyerDomain('CCO', document.querySelector('[data-domain=CCO]'))">Try CCO Agents →</button>
+            <button class="persona-jump-btn" onclick="selectBuyerDomain('CAE', document.querySelector('[data-domain=CAE]'))">Try CAE Agents →</button>
+            <button class="fullscreen-btn" id="toggle-width-btn" style="display:none;" onclick="toggleDrawer()">⤢ Expand Full Width</button>
           </div>
+        </header>
 
-          <div class="suite-grid" id="suite-grid"></div>
+        <div class="iframe-stage">
+          <iframe id="agent-frame" class="agent-iframe" src="about:blank"></iframe>
         </div>
-
-        <!-- VIEW B: FULL-SCREEN AGENT WORKSPACE (Shown When an Agent Is Selected) -->
-        <div id="agent-workspace-view">
-          <header class="canvas-topbar">
-            <div class="canvas-title-wrap">
-              <button class="expand-drawer-btn" id="expand-btn" onclick="toggleDrawer()">▶ Show Persona Agents</button>
-              <div class="report-icon" id="top-agent-icon">FC</div>
-              <div class="canvas-agent-title">
-                <h2 id="top-agent-name">Crystal</h2>
-                <p id="top-agent-role">Balance Sheet Assurance &amp; Close Integrity</p>
-              </div>
-            </div>
-            <div class="canvas-controls">
-              <button class="fullscreen-btn" onclick="showSuiteLanding()">← Back to Agent Suite Overview</button>
-              <button class="fullscreen-btn" onclick="toggleDrawer()" id="toggle-width-btn">⤢ Expand Full Width</button>
-            </div>
-          </header>
-
-          <div class="iframe-stage">
-            <iframe id="agent-frame" class="agent-iframe" src="about:blank"></iframe>
-          </div>
-        </div>
-
       </main>
     </div>
   </section>
@@ -775,116 +530,69 @@
   const LOG_WEBHOOK_URL = "https://formspree.io/f/myeeodjv";
   const BLOCKED_DOMAINS = ["@gmail.com", "@yahoo.com", "@hotmail.com", "@outlook.com", "@icloud.com"];
 
+  // Directly loads the existing Agent Suite page from overview.fortifai.io as the first landing view!
+  const SUITE_OVERVIEW_URL = "https://overview.fortifai.io/agent-suite.html";
+
   // Exact 10 filenames from your cleaned FortifAI-io/SARA_reports repository
   const AGENT_CATALOG = {
     Crystal: {
       code: "FC",
       name: "Crystal",
       role: "Balance Sheet & Close Assurance",
-      buyerTag: "CFO · CAE",
-      primaryDomain: "CFO",
-      desc: "Automates routine GL reconciliations (clearing 70%+ of accounts untouched) while isolating high-risk top-side manual journals, aged GR/IR items, and cut-off anomalies.",
-      lineage: "SAP Tables: ACDOCA · BKPF · BSEG · EKBE",
-      impact: "Rung 1 Close Integrity & SOX 404 Guard",
       file: "Crystal_v14.html"
     },
     Moneta: {
       code: "FM",
       name: "Moneta",
       role: "Working Capital Command Centre",
-      buyerTag: "CFO · Treasurer",
-      primaryDomain: "CFO",
-      desc: "Optimises DPO across vendor payment terms, blocks cross-entity fuzzy duplicate invoices prior to SAP F110 payment runs, and captures early-pay cash release.",
-      lineage: "SAP Tables: BSIK · BSAK · REGUH · REGUP",
-      impact: "Rung 3 Cash Release & Pre-F110 Guard",
       file: "Moneta_Working_Capital_Command_Centre.html"
     },
     Kuber: {
       code: "FK",
       name: "Kuber",
-      role: "Procurement Cost Optimisation",
-      buyerTag: "CFO · CPO",
-      primaryDomain: "CPO",
-      desc: "Normalises payment terms and freight into a Terms-Adjusted Effective Price (P_eff) to uncover commodity index pass-through lags, cross-plant price arbitrage, and Zero-Headcount middlemen.",
-      lineage: "SAP Tables: EKKO · EKPO · RBKP · RSEG + D7",
-      impact: "₹142.0 Cr ($17.1M) Cost Opportunity",
+      role: "Procurement Cost Saving",
       file: "Kuber-Procurement-Cost-Optimisation-v2.html"
     },
     EarlyPay: {
       code: "EP",
       name: "Early Payment Arbitrage",
       role: "Treasury Cash Discount Capture",
-      buyerTag: "CFO · Treasury",
-      primaryDomain: "CFO",
-      desc: "Identifies missed 2/10 Net 30 cash discounts, late-payment APR leakage, and invoices paid ahead of contractual due dates without discount capture.",
-      lineage: "SAP Tables: BSIK · BSAK · T052 · REGUP",
-      impact: "Risk-Free Treasury Yield Uplift",
       file: "FRP005_Early_Payment_Report_v3.html"
     },
     AEWAC: {
       code: "AW",
       name: "Aewac",
-      role: "Procurement Abuse & Risk Monitoring",
-      buyerTag: "CPO · CAE",
-      primaryDomain: "CPO",
-      desc: "Continuous full-population P2P control surveillance detecting split purchase orders, retroactive PO creation, disabled 3-way match tolerances, and single-bid awards.",
-      lineage: "SAP Tables: EBAN · EKKO · CDHDR · T169G",
-      impact: "100% P2P Policy & ICFR Enforcement",
+      role: "Procurement Abuse Monitoring",
       file: "AEWAC-procurement-risk-monitoring-v2.html"
     },
     Tender: {
       code: "TD",
       name: "Tender",
-      role: "RFP Bidding & Collusion Monitoring",
-      buyerTag: "CPO · Audit",
-      primaryDomain: "CPO",
-      desc: "Screens RFQ/RFP bid submissions for cover bidding, rotating winners, compressed bid-to-award windows, and shared vendor metadata across bidders.",
-      lineage: "SAP Tables: EKKO · EKPO · RFQ/Bid Logs + D7",
-      impact: "Competitive Sourcing & Bid Integrity",
+      role: "RFP Bidding Risk Monitoring",
       file: "Holcim_GHBS_Tender_Prototype_v7.html"
     },
     DocIntel: {
       code: "DI",
       name: "Codex DocIntel",
       role: "Contract & Document Intelligence",
-      buyerTag: "CPO · Legal",
-      primaryDomain: "CPO",
-      desc: "Extracts commercial rate cards, rebate tiers, SLA penalty clauses, and PDF metadata tampering signals to reconcile actual ERP billing against signed contracts.",
-      lineage: "Contracts + SAP EKKO · RBKP · VBRK",
-      impact: "Automated Contract-to-Invoice Assurance",
       file: "Codex_DocIntel_Holcim_GHBS_Q1FY26_1.html"
     },
     Aegis: {
       code: "FA",
       name: "Aegis",
       role: "Export Control & Trade Diversion",
-      buyerTag: "CCO · General Counsel",
-      primaryDomain: "CCO",
-      desc: "Monitors 100% of ECCN/dual-use shipments AFTER initial SAP GTS order clearance—catching mid-flight Ship-To country flips, transshipment hubs, and freight-forwarder masking.",
-      lineage: "SAP Tables: VBAK · VBPA · LIKP · CDPOS + D7",
-      impact: "EAR / ITAR / OFAC Post-Gate Sentinel",
       file: "Aegis_Prototype_v30.html"
     },
     Veritas: {
       code: "FVr",
       name: "Veritas (FCPA)",
-      role: "Anti-Bribery, FCPA & T&E Surveillance",
-      buyerTag: "CCO · General Counsel",
-      primaryDomain: "CCO",
-      desc: "Correlates offshore consulting disbursements, PO-exempt fees in high-CPI regions, and Concur T&E hospitality spikes around state-owned tender awards under 'Signals, Not Verdicts'.",
-      lineage: "SAP BSEG · RBKP + Concur T&E + D7 PEP",
-      impact: "DOJ ECCP & FCPA Books-and-Records Guard",
+      role: "Bribery, FCPA & T&E Monitoring",
       file: "FCPA_PROC0460_Module_v9.html"
     },
     Argus: {
       code: "FAr",
       name: "Argus",
-      role: "Internal Investigations & Collusion",
-      buyerTag: "CCO · CAE · Forensics",
-      primaryDomain: "CAE",
-      desc: "Turns whistleblower tips and multi-signal anomalies into court-ready dossiers—cross-linking HR master records (PA0006) with vendor bank/address attributes and SoD collisions.",
-      lineage: "SAP PA0006 · LFA1 · LFBK · USR02 · CDHDR",
-      impact: "1-Click Sealed Forensic Investigation Pack",
+      role: "Forensic Investigation Agent",
       file: "Argus_Investigation_Agent.html"
     }
   };
@@ -940,7 +648,7 @@
 
     document.getElementById('gate-screen').style.display = 'none';
     document.getElementById('sara-platform').style.display = 'flex';
-    showSuiteLanding();
+    loadSuiteOverview();
   }
 
   function unlockCockpit(e) {
@@ -973,58 +681,20 @@
     launchApp(name, email);
   }
 
-  // Show the Default First Landing Page: Full AI Agent Suite Overview
-  function showSuiteLanding() {
+  // Step 1 Default Landing Page: Renders your existing agent-suite.html from overview.fortifai.io
+  function loadSuiteOverview() {
     document.getElementById('nav-suite-home').classList.add('active-overview');
     document.querySelectorAll('.buyer-subitem').forEach(b => b.classList.remove('active'));
+
     document.getElementById('agent-drawer').classList.add('collapsed');
-    document.getElementById('suite-landing-view').style.display = 'block';
-    document.getElementById('agent-workspace-view').style.display = 'none';
-    filterSuiteGrid('ALL', document.querySelector('.filter-pill'));
-  }
+    document.getElementById('expand-btn').style.display = 'none';
+    document.getElementById('toggle-width-btn').style.display = 'none';
 
-  function filterSuiteGrid(filterKey, btn) {
-    if (btn) {
-      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-      btn.classList.add('active');
-    }
+    document.getElementById('top-agent-icon').textContent = '15';
+    document.getElementById('top-agent-name').textContent = 'Fortifai AI Agent Suite Overview';
+    document.getElementById('top-agent-role').textContent = 'Step 1: Review the full 15-Agent Suite below, then click a Buyer Persona to launch live agents';
 
-    const keys = (filterKey === 'ALL')
-      ? Object.keys(AGENT_CATALOG)
-      : BUYER_DOMAINS[filterKey].agents;
-
-    const grid = document.getElementById('suite-grid');
-    grid.innerHTML = keys.map(agKey => {
-      const ag = AGENT_CATALOG[agKey];
-      const targetDomain = (filterKey === 'ALL') ? ag.primaryDomain : filterKey;
-      return `
-        <div class="suite-card" onclick="launchAgentFromLanding('${targetDomain}', '${agKey}')">
-          <div>
-            <div class="sc-top">
-              <div class="sc-badge-wrap">
-                <div class="sc-icon">${ag.code}</div>
-                <div>
-                  <div class="sc-name">${ag.name}</div>
-                  <div class="sc-role">${ag.role}</div>
-                </div>
-              </div>
-              <span class="sc-buyer-tag">${ag.buyerTag}</span>
-            </div>
-            <div class="sc-desc">${ag.desc}</div>
-            <div class="sc-meta">${ag.lineage}</div>
-          </div>
-          <div class="sc-footer">
-            <span class="sc-impact">${ag.impact}</span>
-            <button class="sc-launch-btn">Launch Agent →</button>
-          </div>
-        </div>
-      `;
-    }).join('');
-  }
-
-  function launchAgentFromLanding(domKey, agKey) {
-    const navEl = document.querySelector(`[data-domain="${domKey}"]`);
-    selectBuyerDomain(domKey, navEl, agKey);
+    document.getElementById('agent-frame').src = SUITE_OVERVIEW_URL;
   }
 
   function toggleDrawer() {
@@ -1037,33 +707,27 @@
     btn.textContent = isCollapsed ? '⤡ Restore Sidebar' : '⤢ Expand Full Width';
   }
 
-  function selectBuyerDomain(domKey, el, specificAgentKey) {
+  function selectBuyerDomain(domKey, el) {
     document.getElementById('nav-suite-home').classList.remove('active-overview');
     document.querySelectorAll('.buyer-subitem').forEach(b => b.classList.remove('active'));
     if (el) el.classList.add('active');
 
-    // Switch from Suite Landing View to Full Agent Workspace View
-    document.getElementById('suite-landing-view').style.display = 'none';
-    document.getElementById('agent-workspace-view').style.display = 'flex';
-
-    // Open the secondary white drawer so the buyer sees their persona's agent list
     const dr = document.getElementById('agent-drawer');
     dr.classList.remove('collapsed');
     document.getElementById('expand-btn').style.display = 'none';
-    document.getElementById('toggle-width-btn').textContent = '⤢ Expand Full Width';
+    const widthBtn = document.getElementById('toggle-width-btn');
+    widthBtn.style.display = 'inline-block';
+    widthBtn.textContent = '⤢ Expand Full Width';
 
     const dom = BUYER_DOMAINS[domKey];
     document.getElementById('drawer-domain-title').textContent = dom.title;
     document.getElementById('drawer-domain-sub').textContent = dom.sub;
 
-    const targetAgent = specificAgentKey || dom.agents[0];
-
     const list = document.getElementById('agent-report-list');
-    list.innerHTML = dom.agents.map(agKey => {
+    list.innerHTML = dom.agents.map((agKey, idx) => {
       const ag = AGENT_CATALOG[agKey];
-      const isSelected = (agKey === targetAgent);
       return `
-        <div class="agent-report-item ${isSelected ? 'active' : ''}" data-agent="${agKey}" onclick="loadAgentFile('${agKey}', this)">
+        <div class="agent-report-item ${idx === 0 ? 'active' : ''}" onclick="loadAgentFile('${agKey}', this)">
           <div class="report-icon">${ag.code}</div>
           <div>
             <div class="report-name">${ag.name}</div>
@@ -1073,8 +737,7 @@
       `;
     }).join('');
 
-    const activeEl = list.querySelector(`[data-agent="${targetAgent}"]`) || list.querySelector('.agent-report-item');
-    loadAgentFile(targetAgent, activeEl);
+    loadAgentFile(dom.agents[0], list.querySelector('.agent-report-item'));
   }
 
   function loadAgentFile(agKey, el) {
