@@ -410,7 +410,7 @@
   .report-name { font-size: 12.5px; font-weight: 600; color: var(--text-main); }
   .report-desc { font-size: 10.5px; color: var(--text-muted); margin-top: 1px; line-height: 1.25; }
 
-  /* 3. Main Full-Screen Agent Canvas (Ultra-Clean 40px Single-Row Header) */
+  /* 3. Main Full-Screen Agent Canvas */
   .agent-main-canvas {
     flex: 1;
     background: #FFFFFF;
@@ -418,6 +418,7 @@
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
+    position: relative;
   }
   .canvas-topbar {
     height: 40px;
@@ -456,6 +457,17 @@
   }
   .bar-btn.accent:hover {
     background: var(--deep-blue);
+    color: #FFFFFF;
+  }
+  .bar-btn.playbook-pill {
+    background: #FFF7ED;
+    border-color: #FED7AA;
+    color: #C2410C;
+  }
+  .bar-btn.playbook-pill:hover,
+  .bar-btn.playbook-pill.active {
+    background: #EA580C;
+    border-color: #EA580C;
     color: #FFFFFF;
   }
   .bar-btn.guide-pill {
@@ -514,10 +526,76 @@
     flex-shrink: 0;
   }
 
+  /* ================= PER-AGENT "WHAT TO CLICK" PLAYBOOK BAR ================= */
+  .agent-playbook-drawer {
+    display: none;
+    background: #0D1520;
+    color: #FFFFFF;
+    border-bottom: 2px solid var(--brand-blue);
+    padding: 10px 18px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-shrink: 0;
+    z-index: 25;
+  }
+  .pb-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+    flex-wrap: wrap;
+  }
+  .pb-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    background: rgba(102, 153, 204, 0.2);
+    color: #93C5FD;
+    border: 1px solid rgba(102, 153, 204, 0.4);
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .pb-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    flex: 1;
+  }
+  .pb-step {
+    background: #131F30;
+    border: 1px solid #263548;
+    border-left: 3px solid var(--brand-blue);
+    border-radius: 5px;
+    padding: 7px 10px;
+    font-size: 11.5px;
+    color: #CBD5E1;
+    line-height: 1.35;
+  }
+  .pb-step strong {
+    color: #FFFFFF;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .pb-close {
+    background: transparent;
+    border: 1px solid #334155;
+    color: #94A3B8;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .pb-close:hover { color: #FFFFFF; border-color: #64748B; }
+
   .iframe-stage {
     flex: 1;
     width: 100%;
-    height: calc(100vh - 40px);
     position: relative;
     background: #FFFFFF;
   }
@@ -881,11 +959,21 @@
           </div>
 
           <div class="canvas-right" id="agent-view-controls" style="display:none;">
-            <button class="bar-btn guide-pill" onclick="openGuideModal()">? Guide</button>
+            <button class="bar-btn playbook-pill" id="playbook-toggle-btn" onclick="toggleAgentPlaybook()">💡 What to Click in <span id="pb-btn-agent-name">Agent</span></button>
+            <button class="bar-btn guide-pill" onclick="openGuideModal()">? Cockpit Guide</button>
             <button class="bar-btn" onclick="loadSuiteOverview()">← Suite Overview</button>
             <button class="bar-btn accent" id="zen-mode-btn" onclick="toggleZenMode()">⤢ Full Screen</button>
           </div>
         </header>
+
+        <!-- Dynamic Per-Agent "What to Click" Playbook Bar (Zero Edits Needed Inside Individual Agent HTML Files!) -->
+        <div class="agent-playbook-drawer" id="agent-playbook-drawer">
+          <div class="pb-left">
+            <span class="pb-badge" id="pb-badge-title">How to Test-Drive Crystal</span>
+            <div class="pb-steps" id="pb-steps-container"></div>
+          </div>
+          <button class="pb-close" onclick="toggleAgentPlaybook(false)">Hide Tips ✕</button>
+        </div>
 
         <div class="iframe-stage">
           <iframe id="agent-frame" class="agent-iframe" src="about:blank"></iframe>
@@ -918,9 +1006,9 @@
               <div class="g-step-desc">Select your executive role in the left navigation bar to unlock the curated AI agents built for your function (e.g., <strong>Crystal, Moneta &amp; Kuber</strong> for CFO; <strong>Aegis &amp; Veritas</strong> for CCO).</div>
             </div>
             <div class="g-step-card">
-              <div class="g-step-num">Step 03 · Hands-On Agent Exploration</div>
-              <div class="g-step-title">Click Sub-Tabs, ⌘K Copilot &amp; Case Rows</div>
-              <div class="g-step-desc">Each agent is a 100% live interactive application. Click internal tabs, inspect <strong>3-Arm forensic evidence</strong>, test <strong>Ask Agent (⌘K)</strong> queries, toggle <strong>INR / USD</strong>, and open <strong>Board Reports</strong>.</div>
+              <div class="g-step-num">Step 03 · Per-Agent "What to Click" Tips</div>
+              <div class="g-step-title">Use the "💡 What to Click" Bar Inside Any Agent</div>
+              <div class="g-step-desc">Whenever you open an agent, a 3-step playbook strip at the top tells you the exact sub-tabs, <strong>3-Arm forensic evidence rows</strong>, <strong>⌘K Copilot queries</strong>, and <strong>Board Reports</strong> to try inside that agent.</div>
             </div>
             <div class="g-step-card">
               <div class="g-step-num">Step 04 · Full-Screen &amp; Fast Switching</div>
@@ -964,20 +1052,90 @@
   const LOG_WEBHOOK_URL = "https://formspree.io/f/myeeodjv";
   const BLOCKED_DOMAINS = ["@gmail.com", "@yahoo.com", "@hotmail.com", "@outlook.com", "@icloud.com"];
 
-  // Exact filename on overview.fortifai.io (agent-suit.html)
-  const SUITE_OVERVIEW_URL = "https://overview.fortifai.io/agent-suit.html";
+  // Confirmed from your overview.fortifai.io repo: agent-suite.html
+  const SUITE_OVERVIEW_URL = "https://overview.fortifai.io/agent-suite.html";
 
   const AGENT_CATALOG = {
-    Crystal:  { code: "FC",  name: "Crystal",  role: "Balance Sheet & Close Assurance",       file: "Crystal_v14.html" },
-    Moneta:   { code: "FM",  name: "Moneta",   role: "Working Capital Command Centre",        file: "Moneta_Working_Capital_Command_Centre.html" },
-    Kuber:    { code: "FK",  name: "Kuber",    role: "Procurement Cost Saving",               file: "Kuber-Procurement-Cost-Optimisation-v2.html" },
-    EarlyPay: { code: "EP",  name: "Early Payment", role: "Treasury Cash Discount Capture",   file: "FRP005_Early_Payment_Report_v3.html" },
-    AEWAC:    { code: "AW",  name: "Aewac",    role: "Procurement Abuse Monitoring",          file: "AEWAC-procurement-risk-monitoring-v2.html" },
-    Tender:   { code: "TD",  name: "Tender",   role: "RFP Bidding Risk Monitoring",           file: "Holcim_GHBS_Tender_Prototype_v7.html" },
-    DocIntel: { code: "DI",  name: "Codex DocIntel", role: "Contract & Document Intelligence", file: "Codex_DocIntel_Holcim_GHBS_Q1FY26_1.html" },
-    Aegis:    { code: "FA",  name: "Aegis",    role: "Export Control & Trade Diversion",      file: "Aegis_Prototype_v30.html" },
-    Veritas:  { code: "FVr", name: "Veritas (FCPA)", role: "Bribery, FCPA & T&E Monitoring",  file: "FCPA_PROC0460_Module_v9.html" },
-    Argus:    { code: "FAr", name: "Argus",    role: "Forensic Investigation Agent",          file: "Argus_Investigation_Agent.html" }
+    Crystal: {
+      code: "FC", name: "Crystal", role: "Balance Sheet & Close Assurance", file: "Crystal_v14.html",
+      tips: [
+        { title: "1. Explore Auto-Triage vs. Overrides", text: "Click 'Review Workbench (177)' to see 60 auto-cleared routine accruals vs. 21 top-side manual journals." },
+        { title: "2. Check Account & Intercompany Drift", text: "Click the 'Account Trends' and 'Intercompany' tabs to inspect out-of-balance entities across regions." },
+        { title: "3. Switch Entity Scope & Role View", text: "Use the top-right 'SCOPE' dropdown and 'GL Analyst / Controller' switcher inside Crystal's dark banner." }
+      ]
+    },
+    Moneta: {
+      code: "FM", name: "Moneta", role: "Working Capital Command Centre", file: "Moneta_Working_Capital_Command_Centre.html",
+      tips: [
+        { title: "1. Inspect DPO & Cash Release Levers", text: "Click across the working capital sub-tabs to see term harmonisation, early-pay arbitrage, and duplicate blocks." },
+        { title: "2. Drill Into Pre-F110 Holds", text: "Click any flagged vendor row to view open unpaid payables (BSIK) intercepted before the next payment run." },
+        { title: "3. Export Treasury Action Pack", text: "Use the header buttons inside Moneta to preview the CFO working capital board summary." }
+      ]
+    },
+    Kuber: {
+      code: "FK", name: "Kuber", role: "Procurement Cost Saving", file: "Kuber-Procurement-Cost-Optimisation-v2.html",
+      tips: [
+        { title: "1. Drill Into the 4 Cost Levers", text: "Click 'Price Optimisation', 'Spend Consolidation', and 'Contract & Compliance' tabs below the ₹142 Cr banner." },
+        { title: "2. Toggle INR / USD & Ask Kuber ⌘K", text: "Click '₹ INR / $ USD' or 'Ask Kuber ⌘K' in Kuber's dark navy header to query SAP procurement tables." },
+        { title: "3. Open the CFO Board Report", text: "Click the blue '▤ Board Report' button in Kuber's header to view the executive sign-off deck." }
+      ]
+    },
+    EarlyPay: {
+      code: "EP", name: "Early Payment", role: "Treasury Cash Discount Capture", file: "FRP005_Early_Payment_Report_v3.html",
+      tips: [
+        { title: "1. Review Missed 2/10 Net 30 Discounts", text: "Explore invoices paid early without discount capture or paid late incurring high effective APR." },
+        { title: "2. Filter by Vendor & Payment Term", text: "Click through the vendor breakdown tables to see immediate treasury yield opportunities." },
+        { title: "3. Stage Term Re-Negotiation List", text: "Use the action schedule to export vendors ready for dynamic discounting." }
+      ]
+    },
+    AEWAC: {
+      code: "AW", name: "Aewac", role: "Procurement Abuse Monitoring", file: "AEWAC-procurement-risk-monitoring-v2.html",
+      tips: [
+        { title: "1. Inspect Full-Population P2P Breaches", text: "Click through split POs, retroactive orders, and disabled 3-way match tolerance exceptions." },
+        { title: "2. View 3-Arm Forensic Evidence", text: "Click any flagged PO or invoice row to inspect SAP change logs (CDHDR/CDPOS) and vendor links." },
+        { title: "3. Filter by Severity & Control", text: "Use the severity and control filters to isolate CRITICAL procurement policy overrides." }
+      ]
+    },
+    Tender: {
+      code: "TD", name: "Tender", role: "RFP Bidding Risk Monitoring", file: "Holcim_GHBS_Tender_Prototype_v7.html",
+      tips: [
+        { title: "1. Screen High-Risk RFPs & Tenders", text: "Click through flagged tender packages showing cover bidding, rotating winners, or compressed timelines." },
+        { title: "2. Inspect Bidder Collusion Graph", text: "Select a tender to view shared metadata, IP/phone links, and historical bid spread anomalies." },
+        { title: "3. Generate Sourcing Veto Dossier", text: "Review the audit-ready procurement governance recommendation before contract award." }
+      ]
+    },
+    DocIntel: {
+      code: "DI", name: "Codex DocIntel", role: "Contract & Document Intelligence", file: "Codex_DocIntel_Holcim_GHBS_Q1FY26_1.html",
+      tips: [
+        { title: "1. Contract-to-Invoice Reconciliation", text: "See how extracted PDF rate cards and SLA clauses compare against actual SAP billing lines." },
+        { title: "2. Document Tampering & Metadata Signals", text: "Click flagged documents to inspect font, creation-timestamp, and clause deviation alerts." },
+        { title: "3. Side-by-Side Clause Evidence", text: "Review the highlighted contract clause alongside the overbilled ERP voucher." }
+      ]
+    },
+    Aegis: {
+      code: "FA", name: "Aegis", role: "Export Control & Trade Diversion", file: "Aegis_Prototype_v30.html",
+      tips: [
+        { title: "1. Inspect Post-GTS Mid-Flight Flips", text: "Click flagged shipments where the Ship-To country or consignee changed AFTER initial GTS clearance." },
+        { title: "2. Trace Transshipment & Entity Graph", text: "Examine ECCN dual-use items routed through high-risk freight forwarders or BIS Entity List affiliates." },
+        { title: "3. Privileged Legal Escalation", text: "Test the delivery hold (VL02N) and General Counsel privileged review workflow." }
+      ]
+    },
+    Veritas: {
+      code: "FVr", name: "Veritas (FCPA)", role: "Bribery, FCPA & T&E Monitoring", file: "FCPA_PROC0460_Module_v9.html",
+      tips: [
+        { title: "1. Explore Active Workbench vs. Privileged Queue", text: "Switch between the active risk workbench, privileged legal queue, and dismissed false-positive memory." },
+        { title: "2. Inspect Cross-Ledger ABAC Signals", text: "Click a flagged intermediary to see retroactive consulting POs correlated with PEP ownership and T&E spikes." },
+        { title: "3. Signals, Not Verdicts Disposition", text: "Test escalating a case to Counsel or dismissing with logged exclusion memory." }
+      ]
+    },
+    Argus: {
+      code: "FAr", name: "Argus", role: "Forensic Investigation Agent", file: "Argus_Investigation_Agent.html",
+      tips: [
+        { title: "1. Walk Through a Multi-Hop Case File", text: "Click an active investigation to see how employee HR records (PA0006) link to vendor bank/director data." },
+        { title: "2. Review Timeline & Chain of Custody", text: "Inspect the chronological sequence of split POs, SoD bypasses, and vendor master edits." },
+        { title: "3. Generate Court-Ready Evidence Pack", text: "Preview the sealed forensic investigation dossier with raw SAP table lineage." }
+      ]
+    }
   };
 
   const BUYER_DOMAINS = {
@@ -1020,7 +1178,6 @@
     document.getElementById('sara-platform').style.display = 'flex';
     loadSuiteOverview();
 
-    // Auto-show the Quick-Start Cockpit Guide on a user's first visit in this session
     if (!sessionStorage.getItem('fortifai_guide_seen')) {
       sessionStorage.setItem('fortifai_guide_seen', 'true');
       openGuideModal();
@@ -1065,7 +1222,14 @@
     document.getElementById('guide-backdrop').style.display = 'none';
   }
 
-  // Interactive 3-Step Guided Tour
+  function toggleAgentPlaybook(forceShow) {
+    const drawer = document.getElementById('agent-playbook-drawer');
+    const btn = document.getElementById('playbook-toggle-btn');
+    const isVisible = (typeof forceShow === 'boolean') ? forceShow : (drawer.style.display !== 'flex');
+    drawer.style.display = isVisible ? 'flex' : 'none';
+    btn.classList.toggle('active', isVisible);
+  }
+
   const TOUR_STEPS = [
     {
       badge: "Tour 1 / 3 · Suite Overview",
@@ -1073,13 +1237,13 @@
       action: () => { loadSuiteOverview(); }
     },
     {
-      badge: "Tour 2 / 3 · Buyer Lens & Agents",
-      text: "We switched to the CFO Lens! Notice the left bar slimmed into an icon rail and opened Crystal (Balance Sheet Close Assurance), Moneta, and Kuber.",
-      action: () => { selectBuyerDomain('CFO', document.querySelector('[data-domain=CFO]')); }
+      badge: "Tour 2 / 3 · Buyer Lens & Agent Playbook",
+      text: "We switched to the CFO Lens and opened Crystal! Notice the 'How to Test-Drive Crystal' strip at the top showing the exact tabs to click inside this agent.",
+      action: () => { selectBuyerDomain('CFO', document.querySelector('[data-domain=CFO]')); toggleAgentPlaybook(true); }
     },
     {
       badge: "Tour 3 / 3 · Full-Screen Mode",
-      text: "We activated Full-Screen Mode! The agent now fills 96% of your screen, and you can switch between Crystal, Moneta, Kuber, and Early Payment using the top bar pills.",
+      text: "We activated Full-Screen Mode! The agent fills your screen, and you can switch between Crystal, Moneta, Kuber, and Early Payment using the top-bar pills.",
       action: () => { toggleLeftRail(true); toggleDrawer(true); }
     }
   ];
@@ -1156,6 +1320,7 @@
     activeDomainKey = null;
     activeAgentKey = null;
     toggleLeftRail(false);
+    toggleAgentPlaybook(false);
 
     document.getElementById('nav-suite-home').classList.add('active-overview');
     document.querySelectorAll('.buyer-subitem').forEach(b => b.classList.remove('active'));
@@ -1208,10 +1373,10 @@
     }).join('');
 
     toggleDrawer(false);
-    loadAgentFile(dom.agents[0]);
+    loadAgentFile(dom.agents[0], true);
   }
 
-  function loadAgentFile(agKey) {
+  function loadAgentFile(agKey, isFirstInDomain) {
     activeAgentKey = agKey;
     document.querySelectorAll('.agent-report-item').forEach(i => {
       i.classList.toggle('active', i.getAttribute('data-ag') === agKey);
@@ -1223,6 +1388,22 @@
     const ag = AGENT_CATALOG[agKey];
     document.getElementById('top-agent-name').textContent = ag.name;
     document.getElementById('top-agent-role').textContent = `— ${ag.role}`;
+    document.getElementById('pb-btn-agent-name').textContent = ag.name;
+    document.getElementById('pb-badge-title').textContent = `How to Test-Drive ${ag.name}`;
+
+    // Populate the 3-Step Per-Agent Playbook
+    document.getElementById('pb-steps-container').innerHTML = ag.tips.map(t => `
+      <div class="pb-step">
+        <strong>${t.title}</strong>
+        <span>${t.text}</span>
+      </div>
+    `).join('');
+
+    // Auto-open the "What to Click" strip the first time a buyer opens a domain
+    if (isFirstInDomain && !sessionStorage.getItem('fortifai_pb_seen_' + agKey)) {
+      sessionStorage.setItem('fortifai_pb_seen_' + agKey, 'true');
+      toggleAgentPlaybook(true);
+    }
 
     document.getElementById('agent-frame').src = `./${ag.file}`;
   }
@@ -1233,6 +1414,7 @@
     }
     if (e.key === 'Escape') {
       closeGuideModal();
+      toggleAgentPlaybook(false);
     }
   });
 
