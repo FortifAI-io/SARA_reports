@@ -665,20 +665,9 @@
     background: #FFFFFF;
     border-top: 1px solid var(--border);
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
   }
-  .btn-tour-start {
-    background: #F1F5F9;
-    border: 1px solid #CBD5E1;
-    color: var(--text-main);
-    padding: 8px 14px;
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .btn-tour-start:hover { background: #E2E8F0; }
   .btn-guide-done {
     background: var(--deep-blue);
     border: 1px solid var(--brand-blue);
@@ -690,62 +679,6 @@
     cursor: pointer;
   }
   .btn-guide-done:hover { background: #23476E; }
-
-  /* ================= FLOATING INTERACTIVE TOUR COACH BAR ================= */
-  .tour-coach-bar {
-    display: none;
-    position: fixed;
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #0D1520;
-    color: #FFFFFF;
-    border: 1px solid var(--brand-blue);
-    border-radius: 8px;
-    padding: 12px 18px;
-    z-index: 940;
-    box-shadow: 0 14px 36px rgba(0,0,0,0.45);
-    align-items: center;
-    gap: 16px;
-    max-width: 680px;
-    width: 92%;
-  }
-  .tour-step-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 10.5px;
-    background: var(--deep-blue);
-    color: #FFFFFF;
-    padding: 4px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-    border: 1px solid var(--brand-blue);
-  }
-  .tour-text {
-    font-size: 12.5px;
-    color: #E2E8F0;
-    line-height: 1.4;
-    flex: 1;
-  }
-  .tour-actions {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-  .t-btn {
-    background: var(--deep-blue);
-    color: #FFFFFF;
-    border: 1px solid var(--brand-blue);
-    padding: 6px 11px;
-    border-radius: 4px;
-    font-size: 11.5px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .t-btn.ghost {
-    background: transparent;
-    border-color: #334155;
-    color: #94A3B8;
-  }
 </style>
 </head>
 <body>
@@ -753,7 +686,9 @@
   <!-- ================= STEP 1: NDA GATE ================= -->
   <main id="gate-screen">
     <div class="gate-card">
+      <span class="stage-pill">Stage 2 Evaluation · Post-NDA Sandbox</span>
       <h1>Fortifai Interactive Agent Cockpit</h1>
+      <p class="sub">Start with the complete 15-Agent Suite Overview, then click into any Executive Buyer Persona (CFO, CPO, CCO, CAE) to experience live, full-screen agents first-hand.</p>
 
       <form onsubmit="unlockCockpit(event)">
         <div class="form-grid">
@@ -771,13 +706,13 @@
           <input type="password" id="access-code" placeholder="Enter post-NDA access code (e.g. NDA2026)" required />
         </div>
         <div class="terms-box">
-          <strong>PROPRIETARY SANDBOX &amp; NON-REPLICATION AGREEMENT</strong><br><br>
-          1. <strong>Governed Environment:</strong> All full-page agent interfaces, 4-Lever waterfall calculations, SAP/Oracle SQL queries, and 3-Arm detection methodologies in this cockpit are proprietary IP of Fortifai Inc.<br><br>
-          2. <strong>Non-Replication:</strong> Recipient agrees not to copy, screen-record, or use any UI layouts or forensic rule taxonomies for internal software development or competitive replication.
+          <strong>EXECUTIVE PREVIEW &amp; CONFIDENTIALITY NOTE</strong><br><br>
+          1. <strong>Shared in Confidence:</strong> This interactive cockpit provides a hands-on preview of Fortifai’s multi-agent workflows, detection methodologies, and sample ERP analytics. All materials are shared under our mutual confidentiality commitments to support your team’s evaluation of Fortifai.<br><br>
+          2. <strong>Evaluation Use:</strong> We kindly ask that access remain within your authorized evaluation team and that these workflows and methodologies be used solely for exploring a potential deployment or partnership with Fortifai.
         </div>
         <label class="checkbox-row">
           <input type="checkbox" id="accept-terms" required />
-          <span>I agree to the above terms.</span>
+          <span>I agree to the Executive Preview &amp; Confidentiality Covenants above.</span>
         </label>
         <button type="submit" class="btn-unlock">Launch Agent Suite &amp; Interactive Cockpit</button>
         <div class="error-msg" id="error-msg">Please enter a corporate email and valid Stage 2 code (NDA2026 / COCKPIT2026 / FORTIFAI2026).</div>
@@ -907,18 +842,18 @@
           <div class="guide-steps-grid">
             <div class="g-step-card">
               <div class="g-step-num">Step 01 · Architecture &amp; Suite</div>
-              <div class="g-step-title">Start with the 15-Agent Suite Overview</div>
-              <div class="g-step-desc">Review the 15 agents currently active, the Cross-Agent Interlock Map, and the 4-Rung Precedence Waterfall that eliminates double-counting.</div>
+              <div class="g-step-title">Start on the 15-Agent Suite Overview</div>
+              <div class="g-step-desc">Review how all 15 agents share one read-only ERP data spine, the Cross-Agent Interlock Map, and the 4-Rung Precedence Waterfall that eliminates double-counting.</div>
             </div>
             <div class="g-step-card">
               <div class="g-step-num">Step 02 · Choose Your Buyer Lens</div>
               <div class="g-step-title">Click CFO, CPO, CCO, or CAE (Left Rail)</div>
-              <div class="g-step-desc">Select your executive role in the left navigation bar to unlock the curated AI agents built for your function</div>
+              <div class="g-step-desc">Select your executive role in the left navigation bar to unlock the curated AI agents built for your function (e.g., <strong>Crystal, Moneta &amp; Kuber</strong> for CFO; <strong>Aegis &amp; Veritas</strong> for CCO).</div>
             </div>
             <div class="g-step-card">
               <div class="g-step-num">Step 03 · Hands-On Agent Exploration</div>
               <div class="g-step-title">Click Sub-Tabs, ⌘K Copilot &amp; Case Rows</div>
-              <div class="g-step-desc">Each agent is a 100% live interactive application.</div>
+              <div class="g-step-desc">Each agent is a 100% live interactive application. Click internal tabs, inspect <strong>3-Arm forensic evidence</strong>, test <strong>Ask Agent (⌘K)</strong> queries, toggle <strong>INR / USD</strong>, and open <strong>Board Reports</strong>.</div>
             </div>
             <div class="g-step-card">
               <div class="g-step-num">Step 04 · Full-Screen &amp; Fast Switching</div>
@@ -939,19 +874,8 @@
         </div>
 
         <div class="guide-footer">
-          <button class="btn-tour-start" onclick="startInteractiveTour()">✨ Take 3-Step Guided Tour</button>
           <button class="btn-guide-done" onclick="closeGuideModal()">Got It — Explore Cockpit</button>
         </div>
-      </div>
-    </div>
-
-    <!-- ================= INTERACTIVE 3-STEP TOUR COACH BAR ================= -->
-    <div class="tour-coach-bar" id="tour-coach-bar">
-      <span class="tour-step-badge" id="tour-step-badge">Step 1 of 3</span>
-      <div class="tour-text" id="tour-step-text"></div>
-      <div class="tour-actions">
-        <button class="t-btn ghost" onclick="endInteractiveTour()">Close Tour</button>
-        <button class="t-btn" id="tour-next-btn" onclick="nextTourStep()">Next Step →</button>
       </div>
     </div>
 
@@ -962,8 +886,8 @@
   const LOG_WEBHOOK_URL = "https://formspree.io/f/myeeodjv";
   const BLOCKED_DOMAINS = ["@gmail.com", "@yahoo.com", "@hotmail.com", "@outlook.com", "@icloud.com"];
 
-  // Exact filename on overview.fortifai.io (agent-suite.html)
-  const SUITE_OVERVIEW_URL = "https://overview.fortifai.io/agent-suite.html";
+  // Matches the exact filename in vmowar/Fortifai-Demo-Material: agent-suit.html
+  const SUITE_OVERVIEW_URL = "https://overview.fortifai.io/agent-suit.html";
 
   const AGENT_CATALOG = {
     Crystal:  { code: "FC",  name: "Crystal",  role: "Balance Sheet & Close Assurance",       file: "Crystal_v14.html" },
@@ -987,7 +911,6 @@
 
   let activeDomainKey = null;
   let activeAgentKey = null;
-  let currentTourStep = 0;
 
   const emailInput = document.getElementById('viewer-email');
   if (emailInput) {
@@ -1018,7 +941,6 @@
     document.getElementById('sara-platform').style.display = 'flex';
     loadSuiteOverview();
 
-    // Auto-show the Quick-Start Cockpit Guide on a user's first visit in this session
     if (!sessionStorage.getItem('fortifai_guide_seen')) {
       sessionStorage.setItem('fortifai_guide_seen', 'true');
       openGuideModal();
@@ -1061,53 +983,6 @@
 
   function closeGuideModal() {
     document.getElementById('guide-backdrop').style.display = 'none';
-  }
-
-  // Interactive 3-Step Guided Tour
-  const TOUR_STEPS = [
-    {
-      badge: "Tour 1 / 3 · Suite Overview",
-      text: "You are viewing the 15-Agent Suite Overview. Scroll to see the Cross-Agent Interlock Map and 4-Rung Waterfall, or click 'Next Step →' to open the CFO Lens.",
-      action: () => { loadSuiteOverview(); }
-    },
-    {
-      badge: "Tour 2 / 3 · Buyer Lens & Agents",
-      text: "We switched to the CFO Lens! Notice the left bar slimmed into an icon rail and opened Crystal (Balance Sheet Close Assurance), Moneta, and Kuber.",
-      action: () => { selectBuyerDomain('CFO', document.querySelector('[data-domain=CFO]')); }
-    },
-    {
-      badge: "Tour 3 / 3 · Full-Screen Mode",
-      text: "We activated Full-Screen Mode! The agent now fills 96% of your screen, and you can switch between Crystal, Moneta, Kuber, and Early Payment using the top bar pills.",
-      action: () => { toggleLeftRail(true); toggleDrawer(true); }
-    }
-  ];
-
-  function startInteractiveTour() {
-    closeGuideModal();
-    currentTourStep = 0;
-    document.getElementById('tour-coach-bar').style.display = 'flex';
-    renderTourStep();
-  }
-
-  function renderTourStep() {
-    const step = TOUR_STEPS[currentTourStep];
-    step.action();
-    document.getElementById('tour-step-badge').textContent = step.badge;
-    document.getElementById('tour-step-text').textContent = step.text;
-    document.getElementById('tour-next-btn').textContent = (currentTourStep < TOUR_STEPS.length - 1) ? 'Next Step →' : 'Finish Tour ✓';
-  }
-
-  function nextTourStep() {
-    if (currentTourStep < TOUR_STEPS.length - 1) {
-      currentTourStep++;
-      renderTourStep();
-    } else {
-      endInteractiveTour();
-    }
-  }
-
-  function endInteractiveTour() {
-    document.getElementById('tour-coach-bar').style.display = 'none';
   }
 
   function toggleLeftRail(forceRail) {
