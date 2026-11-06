@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fortifai Manifest · Logistics, Haulage & Weighbridge Risk Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F6F9; --sf:#FFFFFF; --sf2:#F8FAFC; --sf3:#EEF2F6;
+  --bd:#E2E8F0; --bdd:#CBD5E1;
+  --nv:#0D1520; --nm:#2E5A8A; --np:#EFF6FF; --nl:#BFDBFE;
+  --tx:#333333; --ts:#334155; --tm:#64748B; --tf:#94A3B8;
+  --cr:#C62828; --crb:#FEF2F2; --crd:#FECACA;
+  --hi:#D97706; --hib:#FFFBEB; --hid:#FDE68A;
+  --md:#3A4400; --mdb:#F5F7DC; --mdd:#CDD98A;
+  --ok:#15803D; --okb:#F0FDF4; --okd:#BBF7D0;
+  --pat:#6D28D9; --patb:#F5F3FF; --patd:#DDD6FE;
+  --fu:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+  --fd:'DM Mono',monospace;
+  --r:8px; --rl:10px;
+  --sh:0 1px 3px rgba(13,21,32,.05);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:var(--fu);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,select,input,textarea{font-family:inherit;font-size:inherit}
+.mono{font-family:var(--fd)}
+
+/* TOP HEADER BAR — FIXED SINGLE LINE */
+.topbar{
+  background:var(--nv); color:#fff; height:54px; padding:0 22px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  position:sticky; top:0; z-index:100; white-space:nowrap;
+}
+.tb-left{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.brand{font-weight:600;font-size:16px;letter-spacing:-.2px;color:#fff}
+.brand span{color:#EA580C}
+.wm{
+  font-family:'Playfair Display',Georgia,serif; font-style:italic; font-weight:600;
+  font-size:19px; color:#7DD3FC; padding-left:12px; border-left:1px solid rgba(255,255,255,.2);
+}
+.tb-tag{font-size:11.5px;color:#94A3B8;padding-left:4px}
+.tb-right{display:flex;align-items:center;gap:10px;flex-shrink:0;position:relative}
+.tb-sel{
+  height:32px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
+  border-radius:6px; color:#F8FAFC; font-size:12px; padding:0 26px 0 10px; cursor:pointer;
+  appearance:none; outline:none; white-space:nowrap;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 10 10'%3E%3Cpath fill='%23cbd5e1' d='M5 7L0 2h10z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 9px center;
+}
+.tb-sel option{color:#0D1520;background:#fff}
+.tb-btn{
+  height:32px; padding:0 12px; border-radius:6px; background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.18); color:#fff; font-size:12px; font-weight:500;
+  display:inline-flex; align-items:center; gap:6px; cursor:pointer; white-space:nowrap;
+}
+.tb-btn:hover{background:rgba(255,255,255,.16)}
+.tb-live{
+  display:inline-flex; align-items:center; gap:5px; height:26px; padding:0 9px;
+  border-radius:12px; font-family:var(--fd); font-size:10.5px; font-weight:500;
+  background:rgba(16,185,129,.15); color:#34D399; border:1px solid rgba(16,185,129,.35);
+  white-space:nowrap;
+}
+.tb-user{
+  display:inline-flex; align-items:center; gap:8px; height:32px; padding:0 10px 0 6px;
+  border-radius:6px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
+  color:#F8FAFC; cursor:pointer; white-space:nowrap;
+}
+.tb-av{
+  width:22px; height:22px; border-radius:50%; background:var(--nm); color:#fff;
+  display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:600;
+}
+.tb-menu{
+  display:none; position:absolute; top:calc(100% + 8px); right:0; width:255px;
+  background:var(--sf); border:1px solid var(--bd); border-radius:10px;
+  box-shadow:0 12px 32px rgba(15,23,42,.18); padding:6px; z-index:120; white-space:normal;
+}
+.tb-menu.on{display:block}
+.tb-menu-h{font-size:10px;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.4px;padding:6px 10px 4px}
+.tb-menu-i{
+  display:flex; align-items:center; justify-content:space-between; width:100%;
+  text-align:left; background:none; border:none; padding:8px 10px; border-radius:6px;
+  font-size:12px; color:var(--ts); cursor:pointer;
+}
+.tb-menu-i:hover{background:var(--sf2)}
+.tb-menu-i.on{color:var(--nm);font-weight:600;background:var(--np)}
+
+/* SECONDARY NAVIGATION BAR */
+.nav{
+  background:var(--sf); border-bottom:1px solid var(--bd); padding:0 22px;
+  display:flex; align-items:center; gap:6px; position:sticky; top:54px; z-index:90;
+  overflow-x:auto; white-space:nowrap;
+}
+.nav-item{
+  padding:12px 14px; font-size:13px; font-weight:500; color:var(--tm);
+  border:none; background:none; border-bottom:2px solid transparent;
+  cursor:pointer; display:inline-flex; align-items:center; gap:7px; transition:.15s;
+}
+.nav-item:hover{color:var(--nv)}
+.nav-item.on{color:var(--nm);border-bottom-color:var(--nm);font-weight:600}
+.nav-cnt{
+  font-family:var(--fd); font-size:11px; font-weight:500; padding:1px 7px;
+  border-radius:10px; background:var(--sf3); color:var(--ts);
+}
+.nav-item.on .nav-cnt{background:var(--np);color:var(--nm)}
+
+/* MAIN SHELL */
+main{max-width:1360px;margin:0 auto;padding:20px 22px 60px}
+.tab-sec{display:none}
+.tab-sec.on{display:block}
+
+.ph{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;gap:12px;flex-wrap:wrap}
+.pt{font-size:17px;font-weight:600;color:var(--nv)}
+.psub{font-size:12.5px;color:var(--tm);margin-top:2px}
+
+/* COMPOSITE HEALTH SCORE RIBBON (MBR TOP STRIP) */
+.health-ribbon{
+  background:var(--sf); border:1px solid var(--bd); border-radius:var(--rl);
+  padding:16px 20px; margin-bottom:16px; box-shadow:var(--sh);
+  display:grid; grid-template-columns:280px 1fr; gap:22px; align-items:center;
+}
+.hr-left{display:flex;align-items:center;gap:14px;border-right:1px solid var(--bd);padding-right:18px}
+.hr-pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.hr-pil{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:10px 12px}
+.hr-pil-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.hr-pil-name{font-size:11.5px;font-weight:600;color:var(--nv)}
+.hr-pil-score{font-family:var(--fd);font-size:13px;font-weight:600}
+.hr-pil-bar{height:5px;background:var(--sf3);border-radius:3px;overflow:hidden;margin-bottom:5px}
+.hr-pil-sub{font-size:11px;color:var(--tm)}
+
+/* KPI STRIPS */
+.kgrid-6{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:18px}
+.kgrid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.kc{
+  background:var(--sf); border:1px solid var(--bd); border-radius:var(--r);
+  padding:14px 16px; box-shadow:var(--sh);
+}
+.kl{font-size:10.5px;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px}
+.kv{font-family:var(--fd);font-size:21px;font-weight:600;color:var(--nv);line-height:1.1}
+.kv.cr{color:var(--cr)} .kv.hi{color:var(--hi)} .kv.ok{color:var(--ok)} .kv.nm{color:var(--nm)}
+.ks{font-size:11px;color:var(--tm);margin-top:5px}
+
+/* CARDS & PANELS */
+.grid2{display:grid;grid-template-columns:1.1fr 0.9fr;gap:16px;margin-bottom:16px}
+.grid2-eq{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.panel{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:16px;overflow:hidden}
+.panel-h{
+  padding:12px 16px; border-bottom:1px solid var(--bd); background:var(--sf2);
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.panel-t{font-size:13px;font-weight:600;color:var(--nv)}
+.panel-sub{font-size:11.5px;color:var(--tm)}
+.panel-b{padding:16px}
+
+/* CHIPS & BADGES */
+.sv{display:inline-flex;align-items:center;font-family:var(--fd);font-size:10.5px;font-weight:500;padding:2px 8px;border-radius:5px;border:1px solid}
+.sv.Critical{color:var(--cr);background:var(--crb);border-color:var(--crd)}
+.sv.High{color:var(--hi);background:var(--hib);border-color:var(--hid)}
+.sv.Medium{color:var(--md);background:var(--mdb);border-color:var(--mdd)}
+.sv.Low{color:var(--nm);background:var(--np);border-color:var(--nl)}
+
+.pill{font-family:var(--fd);font-size:10.5px;font-weight:500;padding:2px 8px;border-radius:5px;display:inline-block}
+.pill.review{background:var(--hib);color:var(--hi);border:1px solid var(--hid)}
+.pill.pending_checker{background:#F3E8FF;color:#7E22CE;border:1px solid #D8B4FE}
+.pill.escalated{background:var(--crb);color:var(--cr);border:1px solid var(--crd)}
+.pill.confirmed{background:var(--cr);color:#fff;border:1px solid var(--cr)}
+.pill.cleared{background:var(--okb);color:var(--ok);border:1px solid var(--okd)}
+.pill.pat{background:var(--patb);color:var(--pat);border:1px solid var(--patd)}
+
+.btn{
+  height:32px; padding:0 13px; border-radius:6px; font-size:12px; font-weight:500;
+  border:1px solid var(--bdd); background:var(--sf); color:var(--ts);
+  cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:.15s; white-space:nowrap;
+}
+.btn:hover{border-color:var(--nv);color:var(--nv);background:var(--sf2)}
+.btn.pri{background:var(--nm);border-color:var(--nm);color:#fff}
+.btn.pri:hover{background:#1E3A8A}
+.btn.warn{background:var(--hib);border-color:var(--hid);color:#92400E}
+.btn.danger{background:var(--crb);border-color:var(--crd);color:var(--cr)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* TABLES */
+table.clean-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+table.clean-tbl th{
+  text-align:left; font-size:10.5px; font-weight:600; color:var(--tm);
+  text-transform:uppercase; letter-spacing:.3px; padding:10px 12px;
+  background:var(--sf2); border-bottom:1px solid var(--bd);
+}
+table.clean-tbl td{padding:11px 12px;border-bottom:1px solid var(--sf3);vertical-align:middle}
+table.clean-tbl tr:last-child td{border-bottom:none}
+table.clean-tbl tr.click-row{cursor:pointer}
+table.clean-tbl tr.click-row:hover td{background:var(--sf2)}
+.num{font-family:var(--fd);text-align:right;white-space:nowrap}
+
+/* WORKBENCH MASTER-DETAIL */
+.wb-bar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.wb-input{height:34px;padding:0 12px;border:1px solid var(--bdd);border-radius:6px;background:var(--sf);min-width:260px;outline:none}
+.wb-select{height:34px;padding:0 10px;border:1px solid var(--bdd);border-radius:6px;background:var(--sf);outline:none}
+.wb-split{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start}
+.wb-list{display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 220px);overflow-y:auto;padding-right:4px}
+.wb-card{
+  background:var(--sf); border:1px solid var(--bd); border-radius:var(--r);
+  padding:12px 14px; cursor:pointer; transition:.15s;
+}
+.wb-card:hover{border-color:var(--bdd)}
+.wb-card.sel{border-color:var(--nm);background:var(--np);box-shadow:inset 3px 0 0 var(--nm)}
+
+.wb-detail{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.d-head{padding:16px 20px;border-bottom:1px solid var(--bd);background:var(--sf2);display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.d-subnav{display:flex;gap:6px;padding:0 20px;border-bottom:1px solid var(--bd);background:var(--sf)}
+.d-subbtn{
+  padding:11px 12px; border:none; background:none; font-size:12.5px; font-weight:500;
+  color:var(--tm); border-bottom:2px solid transparent; cursor:pointer;
+}
+.d-subbtn.on{color:var(--nm);border-bottom-color:var(--nm);font-weight:600}
+.d-body{padding:20px}
+
+/* 4-STEP VISUAL PIPELINE */
+.pipe-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.pipe-card{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:12px}
+.pipe-card.break{background:var(--crb);border-color:var(--crd);border-top:3px solid var(--cr)}
+.pipe-step{font-family:var(--fd);font-size:10px;font-weight:500;text-transform:uppercase;margin-bottom:4px}
+.pipe-title{font-weight:600;font-size:12.5px;color:var(--nv);margin-bottom:8px}
+.kv-row{display:flex;justify-content:space-between;font-size:11.5px;padding:4px 0;border-bottom:1px dashed var(--bd)}
+.kv-row:last-child{border-bottom:none}
+
+/* SUBTABS FOR ADMIN & REPORTS */
+.subtabs{display:flex;gap:6px;border-bottom:1px solid var(--bd);margin-bottom:16px;flex-wrap:wrap}
+.subtab-btn{
+  padding:10px 16px; border:none; background:none; font-size:13px; font-weight:500;
+  color:var(--tm); border-bottom:2px solid transparent; cursor:pointer;
+}
+.subtab-btn.on{color:var(--nm);border-bottom-color:var(--nm);font-weight:600}
+
+/* REPORT STUDIO CARDS */
+.rpt-selector{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.rpt-card{
+  background:var(--sf); border:1px solid var(--bd); border-radius:var(--r);
+  padding:14px; cursor:pointer; transition:.15s;
+}
+.rpt-card:hover{border-color:var(--bdd)}
+.rpt-card.on{border-color:var(--nm);background:var(--np);box-shadow:inset 0 3px 0 var(--nm)}
+.rpt-paper{
+  background:#fff; border:1px solid var(--bdd); border-radius:var(--r);
+  padding:28px 32px; box-shadow:0 4px 20px rgba(15,23,42,.06);
+}
+
+/* SLIDE-OUT DRAWER */
+.scrim{position:fixed;inset:0;background:rgba(15,23,42,.35);z-index:200;display:none}
+.scrim.on{display:block}
+.drawer{
+  position:fixed; top:0; right:-480px; width:460px; max-width:92vw; height:100vh;
+  background:var(--sf); border-left:1px solid var(--bd); z-index:210;
+  display:flex; flex-direction:column; transition:right .22s ease;
+  box-shadow:-12px 0 32px rgba(15,23,42,.15);
+}
+.drawer.on{right:0}
+.toast{
+  position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+  background:var(--nv); color:#fff; padding:9px 16px; border-radius:8px;
+  font-size:12.5px; z-index:300; opacity:0; pointer-events:none; transition:.2s;
+}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+
+<!-- TOP COMMAND BAR -->
+<header class="topbar">
+  <div class="tb-left">
+    <span class="brand">fortif<span>ai</span></span>
+    <span class="wm">Manifest</span>
+    <span class="tb-tag">Logistics, Haulage &amp; Weighbridge Control Tower</span>
+  </div>
+  <div class="tb-right">
+    <select class="tb-sel" id="scopeSel" onchange="renderAll()">
+      <option value="ALL">Scope: All Plants &amp; Corridors</option>
+      <option value="MIN">Mining &amp; Overburden Division</option>
+      <option value="PEL">Pellet &amp; Bulk Coal Corridor</option>
+      <option value="LOG">Central Logistics &amp; Transfers</option>
+    </select>
+    <select class="tb-sel" id="ccySel" onchange="renderAll()">
+      <option value="INR">FY2025–26 · INR (₹)</option>
+      <option value="USD">FY2025–26 · USD ($)</option>
+    </select>
+    <button class="tb-btn" onclick="openDrawer()">
+      <span class="mono" style="color:#7DD3FC">⌘K</span> Ask Manifest
+    </button>
+    <span class="tb-live">● Live ERP + TMS</span>
+    <div class="tb-user" onclick="toggleRoleMenu(event)">
+      <span class="tb-av" id="userInitials">PN</span>
+      <span id="userNameLabel" style="font-size:12px;font-weight:500">Priya Nair · Analyst</span>
+      <span style="font-size:10px;opacity:.7">▾</span>
+    </div>
+    <div class="tb-menu" id="roleMenu" onclick="event.stopPropagation()">
+      <div class="tb-menu-h">Switch Acting Role (SOX 404)</div>
+      <button class="tb-menu-i on" onclick="switchRole('Priya Nair','Analyst','PN',this)">
+        <span>Priya Nair (Analyst · Maker)</span><span>✓</span>
+      </button>
+      <button class="tb-menu-i" onclick="switchRole('Arjun Rao','Checker','AR',this)">
+        <span>Arjun Rao (Sr. Auditor · Checker)</span><span></span>
+      </button>
+      <button class="tb-menu-i" onclick="switchRole('Marcus Vance','CCO','MV',this)">
+        <span>Marcus Vance (Chief Compliance)</span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- SECONDARY NAVIGATION BAR -->
+<nav class="nav" id="mainNav">
+  <button class="nav-item on" data-tab="dash" onclick="goTab('dash')">Executive MBR Overview</button>
+  <button class="nav-item" data-tab="wb" onclick="goTab('wb')">Forensic Workbench <span class="nav-cnt" id="badgeWb">8</span></button>
+  <button class="nav-item" data-tab="disp" onclick="goTab('disp')">Disposition Queue <span class="nav-cnt" id="badgeDisp">3</span></button>
+  <button class="nav-item" data-tab="pat" onclick="goTab('pat')">Pattern Analysis <span class="nav-cnt" id="badgePat">6</span></button>
+  <button class="nav-item" data-tab="rpt" onclick="goTab('rpt')">Board &amp; CxO Reports</button>
+  <button class="nav-item" data-tab="admin" onclick="goTab('admin')">Methodology &amp; Controls</button>
+</nav>
+
+<main>
+  <section class="tab-sec on" id="sec-dash"></section>
+  <section class="tab-sec" id="sec-wb"></section>
+  <section class="tab-sec" id="sec-disp"></section>
+  <section class="tab-sec" id="sec-pat"></section>
+  <section class="tab-sec" id="sec-rpt"></section>
+  <section class="tab-sec" id="sec-admin"></section>
+</main>
+
+<!-- ASK MANIFEST DRAWER -->
+<div class="scrim" id="drawerScrim" onclick="closeDrawer()"></div>
+<aside class="drawer" id="askDrawer">
+  <div style="padding:14px 18px;background:var(--nv);color:#fff;display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <div style="font-weight:600;font-size:13.5px">Ask Manifest · Copilot (⌘K)</div>
+      <div style="font-size:11px;color:#94A3B8">Query live freight, weighbridge, and rate records</div>
+    </div>
+    <button onclick="closeDrawer()" style="background:none;border:none;color:#fff;font-size:18px;cursor:pointer">✕</button>
+  </div>
+  <div style="padding:16px;flex:1;overflow-y:auto" id="drawerBody"></div>
+  <div style="padding:12px 16px;border-top:1px solid var(--bd);background:var(--sf2);display:flex;gap:8px">
+    <input id="drawerInput" class="wb-input" style="flex:1;min-width:0" placeholder="Ask about unit cost per MT-Km, spot share, weighbridge variance..." onkeydown="if(event.key==='Enter')runCopilotQuery(this.value)">
+    <button class="btn pri" onclick="runCopilotQuery(document.getElementById('drawerInput').value)">Ask</button>
+  </div>
+</aside>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+/* ============================================================================
+   1. DATA SPINE (BALDOTA SAP MANDT 140 + TMS WEIGHBRIDGE + MBR SCORECARDS)
+   ============================================================================ */
+let USER = { name: 'Priya Nair', role: 'Analyst', initials: 'PN' };
+let ACTIVE_TAB = 'dash';
+let SEL_ID = 'MNF-101';
+let WB_SUB = 'summary';
+let ADMIN_SUB = 'rules';
+let RPT_TYPE = 'board';
+
+const CORRIDOR_MBR = [
+  {
+    group: 'MIN', name: 'Mining & Overburden Haulage',
+    volumeMt: '4,12,000 MT', totalSpendInr: 999186150,
+    l1Rate: '₹3.17 / MT-Km', realizedRate: '₹4.42 / MT-Km (+39.4%)',
+    l1CompliancePct: 38.0, spotSharePct: 62.0,
+    avgTatHrs: '16.8 hrs', slaTatHrs: '12.0 hrs',
+    wtVariancePct: '-1.42%', recoverableInr: 33920000,
+    leadCaseId: 'MNF-101'
+  },
+  {
+    group: 'PEL', name: 'Pellet & Imported PCI Coal Corridor',
+    volumeMt: '3,85,000 MT', totalSpendInr: 1142000000,
+    l1Rate: '₹3.10 / MT-Km', realizedRate: '₹3.68 / MT-Km (+18.7%)',
+    l1CompliancePct: 68.4, spotSharePct: 31.6,
+    avgTatHrs: '24.6 hrs', slaTatHrs: '11.0 hrs',
+    wtVariancePct: '-2.65%', recoverableInr: 25910000,
+    leadCaseId: 'MNF-102'
+  },
+  {
+    group: 'PEL', name: 'Iron Ore Fines (<51% Fe) Haulage',
+    volumeMt: '4,90,000 MT', totalSpendInr: 894000000,
+    l1Rate: '₹2.95 / MT-Km', realizedRate: '₹3.54 / MT-Km (+20.0%)',
+    l1CompliancePct: 71.2, spotSharePct: 28.8,
+    avgTatHrs: '14.2 hrs', slaTatHrs: '12.0 hrs',
+    wtVariancePct: '-0.88%', recoverableInr: 12840000,
+    leadCaseId: 'MNF-107'
+  },
+  {
+    group: 'LOG', name: 'Inter-Plant Fuel, Gas & Rail Siding (ZSTO)',
+    volumeMt: '1,34,000 MT', totalSpendInr: 392813850,
+    l1Rate: '₹3.40 / MT-Km', realizedRate: '₹3.91 / MT-Km (+15.0%)',
+    l1CompliancePct: 78.5, spotSharePct: 21.5,
+    avgTatHrs: '21.4 hrs', slaTatHrs: '14.0 hrs',
+    wtVariancePct: '-3.80%', recoverableInr: 4200000,
+    leadCaseId: 'MNF-103'
+  }
+];
+
+const CASES = [
+  {
+    id: 'MNF-101', pin: 1, code: '0002302627', name: 'Tirumala Developers (Haulage Div)',
+    plantGroup: 'MIN', corridor: 'Hospet Mine to Pellet Plant', buyer: 'Badrinatha (M04)',
+    score: 92, d7: 76, quad: 'HH', severity: 'Critical', status: 'pending_checker',
+    age: 5, slaTarget: 3, tat: null,
+    invoiced: 29998215, openAp: 14250000, recovery: 9420000, nextF110: true,
+    escalatedBy: 'Priya Nair', assignee: 'Arjun Rao',
+    headline: 'Open-Market Spot Rate Bypass (+44.6%) & Shared Tipper Fleet',
+    summary: 'Awarded a ₹3.00 Cr lump-sum haulage order without competitive tender at ₹4.58/MT-Km (44.6% above the ₹3.17/MT-Km contracted L1 rate). Gate logs also show 6 of its trucks are simultaneously billed on Vinayaka Enterprises’ monthly dedicated retainer.',
+    benchmarkLabel: '₹4.58 / MT-Km (Spot) vs ₹3.17 / MT-Km (L1 Contract)', spreadPct: '+44.6%',
+    rules: [
+      { id: 'MNF-01', name: 'Open-Market Spot Rate Abuse', score: 85, sev: 'Critical', desc: 'Hired without tender at +44.6% above L1 rate; zero penalty recovered from L1 carrier.' },
+      { id: 'MNF-03', name: 'Dedicated Fleet Double-Billing', score: 90, sev: 'Critical', desc: '6 physical trucks (KA-35-B-9921..4410) are already paid under monthly retainer PO 4700012000.' },
+      { id: 'MNF-10', name: 'Delivered Incoterm Conflict', score: 85, sev: 'High', desc: 'PO terms are FOR (Seller-Paid Delivery), yet separate lump-sum movement charges were billed.' }
+    ],
+    pipeline: [
+      { step: '1 · Indent & PO', break: true, rows: [['PO Number', '4700012314'], ['Buyer', 'Badrinatha (M04)'], ['Award Mode', 'Direct (No Tender)'], ['Rate vs L1', '₹4.58 vs ₹3.17']] },
+      { step: '2 · Gate & Fleet', break: true, rows: [['Weigh Slips', 'WB-MIN-4401..88'], ['Fleet Overlap', '6 Shared Trucks'], ['Billed Unit', '1 Lump-Sum Lot'], ['Actual Tonnage', '41,200 MT']] },
+      { step: '3 · Goods Receipt', break: true, rows: [['Incoterm', 'FOR (Delivered)'], ['L1 Penalty Debit', '₹0 Deducted'], ['Cost Account', 'Loading & Transport'], ['Trip Log', 'Missing on SES']] },
+      { step: '4 · Invoice & Hold', break: true, rows: [['Invoiced Total', '₹3.00 Cr'], ['Next Payment Run', '₹1.42 Cr (Hold)'], ['Rate Overcharge', '₹58.10 L'], ['Duplicate Fleet', '₹36.10 L']] }
+    ],
+    docs: [
+      { type: 'Purchase Order', ref: 'PO 4700012314', date: '14 Jun 2026', owner: 'Badrinatha (M04)', detail: 'Dispatch & Movement Hire · FOR Terms · No Tender', qty: '1 Lot', amt: 29998215 },
+      { type: 'Paired Retainer PO', ref: 'PO 4700012000', date: '09 Jun 2026', owner: 'Badrinatha (M04)', detail: 'Vinayaka Enterprises · Shares 6 physical tipper trucks', qty: '1 Lot', amt: 69079120 }
+    ],
+    d7Pillars: { finance: 78, litigation: 81, compliance: 74, media: 62, aml: 42, pep: 35 }
+  },
+  {
+    id: 'MNF-102', pin: 2, code: '0002303488', name: 'Sri Mahalakshmi Coal & Coke',
+    plantGroup: 'PEL', corridor: 'Port Siding to Pellet Plant', buyer: 'Ramanjaneya (M12)',
+    score: 94, d7: 72, quad: 'HH', severity: 'Critical', status: 'review',
+    age: 2, slaTarget: 3, tat: null,
+    invoiced: 121329483, openAp: 18400000, recovery: 11280000, nextF110: true,
+    escalatedBy: null, assignee: 'Priya Nair',
+    headline: 'Weighbridge vs. GRN Weight Mismatch (+165 MT) & 28.5h Transit Delay',
+    summary: 'Across 28 coal deliveries on PO 4500014466, Gate-02 electronic scale recorded 674.8 MT net weight (with manual keyboard overrides), but store receipts booked 798.0 MT and invoices billed 840.0 MT. Trucks also took 28.5 hours vs the 10.5-hour norm, arriving with 11.8% moisture.',
+    benchmarkLabel: '840.0 MT Invoiced vs 674.8 MT Weighbridge Net Weight', spreadPct: '+24.5%',
+    rules: [
+      { id: 'MNF-07', name: 'Weighbridge vs. GRN vs. Invoice Weight Break', score: 90, sev: 'Critical', desc: '674.8 MT scale weight booked as 798.0 MT in GRN and 840.0 MT on invoice (+165.2 MT phantom tonnage).' },
+      { id: 'MNF-04', name: 'Abnormal Transit Time (TAT) & Moisture Spike', score: 85, sev: 'Critical', desc: '28.5-hour transit time (norm 10.5h) with a 4.8h unscheduled halt and moisture jumping from 4.2% to 11.8%.' }
+    ],
+    pipeline: [
+      { step: '1 · Purchase Order', break: false, rows: [['PO Number', '4500014466'], ['Material', 'Russian PCI Coal'], ['Contract Rate', '₹15,600 / MT'], ['Incoterm', 'FOR (L1 Contract)']] },
+      { step: '2 · Weighbridge Log', break: true, rows: [['Weigh Slips', 'WB-PEL-88412..90'], ['Scale Net Wt', '674.8 MT (28 trips)'], ['Manual Override', 'Yes (Gate-02 Clerk)'], ['Transit Time', '28.5 hrs (Norm 10.5h)']] },
+      { step: '3 · Store GRN (MIGO)', break: true, rows: [['GRN Booked Wt', '798.0 MT'], ['Scale Mismatch', '+123.2 MT (+18.2%)'], ['Same-Day Billing', '76.7% of invoices'], ['Moisture Level', '11.8% (Norm 4.2%)']] },
+      { step: '4 · Vendor Invoice', break: true, rows: [['Invoiced Weight', '840.0 MT'], ['Total Overbilled', '+165.2 MT Phantom'], ['Total Spend', '₹12.13 Cr'], ['Recoverable', '₹1.13 Cr']] }
+    ],
+    docs: [
+      { type: 'Purchase Order', ref: 'PO 4500014466', date: '19 May 2026', owner: 'Ramanjaneya (M12)', detail: '12,000 MT Russian PCI Coal @ ₹15,600/MT (FOR)', qty: '12,000 MT', amt: 187200000 },
+      { type: 'Weighbridge Batch', ref: 'WB-PEL-88412..90', date: '11 Jul 2026', owner: 'Clerk Gate-02', detail: 'Manual scale override active · 28.5h TAT', qty: '674.8 MT', amt: 10526880 },
+      { type: 'Invoice Batch', ref: 'MIRO 5105720911', date: '11 Jul 2026', owner: 'Stores / AP', detail: 'Booked 798 MT in GRN and billed 840 MT on invoice', qty: '840.0 MT', amt: 13104000 }
+    ],
+    d7Pillars: { finance: 74, litigation: 64, compliance: 68, media: 55, aml: 30, pep: 20 }
+  },
+  {
+    id: 'MNF-103', pin: 3, code: '0002303440', name: 'IS29426 Series Freight Vendor (2303440)',
+    plantGroup: 'LOG', corridor: 'Multi-Plant Split Freight Billing', buyer: 'Corporate Logistics',
+    score: 89, d7: 80, quad: 'HH', severity: 'Critical', status: 'escalated',
+    age: 6, slaTarget: 3, tat: null,
+    invoiced: 7911034, openAp: 3250000, recovery: 2640000, nextF110: false,
+    escalatedBy: 'Priya Nair', assignee: 'Arjun Rao',
+    headline: 'Same Lorry Receipts Billed 3x Across Material & Service POs',
+    summary: 'Billed 12 invoice lines totaling ₹79.11 Lakhs with zero recorded quantity. Identical Lorry Receipt numbers (IS2942600228, IS2942600224, IS2942600229) were billed 3 times each across both Material POs (4000007564/66) and Service POs (4700009144/46) with unplanned surcharges added.',
+    benchmarkLabel: '3x Duplicate Billing per Lorry Receipt (IS2942600228 / 224 / 229)', spreadPct: '+50.0%',
+    rules: [
+      { id: 'MNF-06', name: 'Duplicate Lorry Receipt (Bilty) Reuse', score: 90, sev: 'Critical', desc: 'Bilties IS2942600228, IS2942600224, and IS2942600229 each billed 3 times across separate POs.' },
+      { id: 'MNF-09', name: 'Zero-Quantity Freight Billing', score: 85, sev: 'Critical', desc: 'All 12 invoice lines carry 0.00 invoiced quantity while charging ₹79.11 Lakhs.' },
+      { id: 'MNF-11', name: 'Unplanned Delivery Surcharge Padding', score: 70, sev: 'High', desc: 'Unplanned delivery costs stacked on every invoice header without release reset.' }
+    ],
+    pipeline: [
+      { step: '1 · Linked POs', break: true, rows: [['Material POs', '4000007564 / 66 / 68'], ['Service POs', '4700009144 / 9146'], ['Vendor Code', '0002303440'], ['Split Pattern', '1 Bilty -> 3 PO Lines']] },
+      { step: '2 · Lorry Receipts', break: true, rows: [['Bilty #228', 'Billed 3x (₹26.52 L)'], ['Bilty #224', 'Billed 3x (₹8.84 L)'], ['Bilty #229', 'Billed 3x (₹13.26 L)'], ['Other Bilties', 'IS2942600220 / 22 / 23']] },
+      { step: '3 · Receipt Check', break: true, rows: [['Invoiced Qty', '0.00 MT on all 12 lines'], ['Unplanned Cost', 'Added on all 6 headers'], ['Service Receipt', 'No trip sheet attached'], ['Duplicate Share', '33.4% across 4700* POs']] },
+      { step: '4 · Settlement', break: true, rows: [['Invoices', '5105720660..0671'], ['Total Billed', '₹79.11 L'], ['Open Payable', '₹32.50 L'], ['Recoverable', '₹26.40 L']] }
+    ],
+    docs: [
+      { type: 'MIRO Invoice (3x Split)', ref: '5105720666', date: '29 Jun 2026', owner: 'AP Desk', detail: 'Bilty IS2942600228 billed across PO 4000007566 (2x) & 4700009144 (1x)', qty: '0 MT', amt: 2651935 },
+      { type: 'MIRO Invoice (3x Split)', ref: '5105720668 & 0671', date: '30 Jun 2026', owner: 'AP Desk', detail: 'Bilties IS2942600224 & 229 split across Material & Service POs', qty: '0 MT', amt: 2209817 }
+    ],
+    d7Pillars: { finance: 76, litigation: 68, compliance: 80, media: 60, aml: 35, pep: 25 }
+  },
+  {
+    id: 'MNF-104', pin: 4, code: '0003100669', name: 'Rawmet Resources Pvt Ltd',
+    plantGroup: 'PEL', corridor: 'Russian PCI Coal Import Corridor', buyer: 'Malleshayya (M59)',
+    score: 86, d7: 64, quad: 'HH', severity: 'Critical', status: 'review',
+    age: 3, slaTarget: 3, tat: null,
+    invoiced: 112630000, openAp: 28500000, recovery: 14630000, nextF110: false,
+    escalatedBy: null, assignee: 'Priya Nair',
+    headline: 'Buying EXW (Freight Extra) Higher Than Active FOR (Freight Included) Contract',
+    summary: 'Active L1 contract (PO 4500014466) supplies Russian PCI Coal at ₹15,600/MT with freight included (FOR). Yet Buyer Malleshayya (M59) issued untendered PO 4500014671 (7,000 MT) to Rawmet at ₹16,090/MT Ex-Works (EXW)—paying ₹490/MT more for the coal plus ₹1,600/MT extra for road transport.',
+    benchmarkLabel: '₹17,690 / MT Landed (EXW + Freight) vs ₹15,600 / MT (FOR Delivered)', spreadPct: '+13.4%',
+    rules: [
+      { id: 'MNF-10', name: 'Incoterm Landed-Cost Arbitrage (EXW > FOR)', score: 85, sev: 'Critical', desc: 'Paying ₹16,090/MT EXW + ₹1,600/MT road freight while active FOR delivered contract is ₹15,600/MT.' },
+      { id: 'MNF-01', name: 'Untendered Direct Award Bypass', score: 85, sev: 'Critical', desc: 'PO 4500014671 (₹11.26 Cr) awarded without competitive tender justification.' }
+    ],
+    pipeline: [
+      { step: '1 · Active L1 Benchmark', break: false, rows: [['Benchmark PO', '4500014466'], ['Material', 'Russian PCI Coal'], ['Delivered Rate', '₹15,600 / MT (FOR)'], ['Freight Terms', 'Included in Price']] },
+      { step: '2 · Flagged Rawmet PO', break: true, rows: [['Flagged PO', '4500014671 (7,000 MT)'], ['Buyer', 'Malleshayya (M59)'], ['Base Coal Rate', '₹16,090 / MT (+₹490)'], ['Freight Terms', 'EXW (Buyer Pays Extra)']] },
+      { step: '3 · Extra Haulage Cost', break: true, rows: [['Separate Freight', '+₹1,600 / MT Billed'], ['True Landed Cost', '₹17,690 / MT'], ['Net Overpayment', '+₹2,090 / MT (+13.4%)'], ['Volume Impacted', '7,000 MT']] },
+      { step: '4 · Recovery Impact', break: true, rows: [['PO 4500014671', '₹11.26 Cr'], ['PO 4500014628', '₹12.87 Cr (8,000 MT)'], ['Open Payable', '₹2.85 Cr'], ['Recoverable', '₹1.46 Cr']] }
+    ],
+    docs: [
+      { type: 'Flagged EXW PO', ref: 'PO 4500014671', date: '25 Jun 2026', owner: 'Malleshayya (M59)', detail: '7,000 MT PCI Coal @ ₹16,090/MT EXW (Freight Excluded · No Tender)', qty: '7,000 MT', amt: 112630000 },
+      { type: 'Benchmark FOR PO', ref: 'PO 4500014466', date: '19 May 2026', owner: 'Ramanjaneya (M12)', detail: '12,000 MT PCI Coal @ ₹15,600/MT FOR (Freight Included · L1)', qty: '12,000 MT', amt: 187200000 }
+    ],
+    d7Pillars: { finance: 64, litigation: 58, compliance: 72, media: 48, aml: 28, pep: 32 }
+  },
+  {
+    id: 'MNF-105', pin: 5, code: '0003101468', name: 'HSD-Series Secondary Freight (0003101468)',
+    plantGroup: 'LOG', corridor: 'Fuel & Industrial Gas Inter-Plant Transfers', buyer: 'Gas Logistics Desk',
+    score: 82, d7: 68, quad: 'HH', severity: 'High', status: 'review',
+    age: 4, slaTarget: 7, tat: null,
+    invoiced: 3480000, openAp: 840000, recovery: 1140000, nextF110: true,
+    escalatedBy: null, assignee: 'Priya Nair',
+    headline: 'Paired ₹12k + ₹6k Zero-Quantity Freight Splits & 3.8% Transit Shrinkage',
+    summary: 'Posted repetitive same-day paired freight bills (₹12,000 + ₹6,000) under Secondary Freight condition ZFR2 with zero recorded quantity across Bilties HSD-17 to HSD-78, alongside 3.8% unrecovered stock-in-transit shrinkage between sending and receiving plants.',
+    benchmarkLabel: 'Paired ₹12k + ₹6k Split Slabs (Zero Qty) + 3.8% Unclosed Transit Loss', spreadPct: '+32.8%',
+    rules: [
+      { id: 'MNF-11', name: 'Repetitive Split-Slab Freight Billing (ZFR2)', score: 75, sev: 'High', desc: 'Paired ₹12,000 and ₹6,000 ZFR2 bills posted on the same POs with zero invoiced quantity.' },
+      { id: 'MNF-08', name: 'Inter-Plant Stock Transfer (STO) Transit Shrinkage', score: 85, sev: 'Critical', desc: 'Receiving plant receipted 3.8% less fuel/gas than dispatched, with zero shortage deduction from carrier.' }
+    ],
+    pipeline: [
+      { step: '1 · Freight POs', break: false, rows: [['PO Numbers', '4500014437 / 84 / 541'], ['Freight Code', 'ZFR2 (Secondary Road)'], ['Bilty Series', 'HSD-17 through HSD-78'], ['Vendor Code', '0003101468']] },
+      { step: '2 · Paired Split Bills', break: true, rows: [['PO 4500014437', '5105720896 (12k) + 0898 (6k)'], ['PO 4500014484', '5105721605 (12k) + 1621 (6k)'], ['PO 4500014541', '5105721855 (12k) + 1856 (6k)'], ['Invoiced Qty', '0.00 on all lines']] },
+      { step: '3 · STO Transit Loss', break: true, rows: [['Dispatched (641)', '410.00 KL'], ['Received (101)', '394.42 KL (-3.8% Loss)'], ['Unclosed Transit', '15.58 KL (>35 days)'], ['Shortage Debit', '₹0 Recovered']] },
+      { step: '4 · Recovery Impact', break: true, rows: [['Total Billed', '₹34.80 L'], ['Next Payment Run', '₹8.40 L (Hold)'], ['Split Add-Ons', '₹4.80 L'], ['Transit Loss', '₹6.60 L']] }
+    ],
+    docs: [
+      { type: 'Paired ZFR2 Invoices', ref: '5105720896 & 0898', date: '01 Jul 2026', owner: 'Gas Logistics', detail: 'PO 4500014437 · Bilties HSD-17 & HSD-19 · Zero Qty', qty: '0 KL', amt: 18000 },
+      { type: 'Paired ZFR2 Invoices', ref: '5105721855 & 1856', date: '08 Jul 2026', owner: 'Gas Logistics', detail: 'PO 4500014541 · Bilties HSD-27 & HSD-30 · Zero Qty', qty: '0 KL', amt: 18000 }
+    ],
+    d7Pillars: { finance: 70, litigation: 62, compliance: 75, media: 45, aml: 25, pep: 20 }
+  },
+  {
+    id: 'MNF-106', pin: 6, code: '0002303988', name: 'Vinay Lad Enterprises (0002303988)',
+    plantGroup: 'MIN', corridor: 'Sandur–Hospet Overburden Haulage', buyer: 'Badrinatha (M04)',
+    score: 97, d7: 90, quad: 'HH', severity: 'Critical', status: 'confirmed',
+    age: 9, slaTarget: 3, tat: 2.4,
+    invoiced: 69920400, openAp: 24500000, recovery: 24500000, nextF110: false,
+    escalatedBy: 'Priya Nair', assignee: 'Arjun Rao',
+    headline: '₹6.99 Cr Awarded 24 Hours After Onboarding; PAN & GST Deleted Post-Award',
+    summary: 'Awarded ₹6.99 Cr across 4 service POs just 1 day after vendor master creation by buyer Badrinatha, with zero weighbridge trip records and subsequent deletion of both PAN and GSTIN from the vendor master.',
+    benchmarkLabel: '₹6.99 Cr Billed with 0 Weighbridge Trips & Scrubbed Tax IDs', spreadPct: '100% Hold',
+    rules: [
+      { id: 'MNF-12', name: 'Post-Award Tax ID Deletion & 1-Day Award Velocity', score: 90, sev: 'Critical', desc: 'PAN and GSTIN deleted from master after ₹6.99 Cr PO release; 24-hour onboarding-to-award velocity.' },
+      { id: 'MNF-09', name: 'Unverified Haulage Billing (Zero Gate/Scale Logs)', score: 85, sev: 'Critical', desc: '100% free-text service lines with zero physical truck trips in plant weighbridge logs.' }
+    ],
+    pipeline: [
+      { step: '1 · Vendor Master', break: true, rows: [['Vendor Code', '0002303988'], ['Creation to PO', '1.0 Day (₹6.99 Cr)'], ['PAN / GST Status', 'Deleted Post-Award'], ['Buyer', 'Badrinatha (M04)']] },
+      { step: '2 · Gate & Scale Log', break: true, rows: [['Weighbridge Slips', '0 Slips Found'], ['Gate RFID Scans', '0 Scans Found'], ['Registered Trucks', 'None'], ['Verified Tonnage', '0.00 MT']] },
+      { step: '3 · PO Structure', break: true, rows: [['Orders Issued', '4 Service POs'], ['Line Type', '100% Free-Text'], ['Tender Link', 'None (Direct)'], ['Payee Routing', 'Divergent Payee Flag']] },
+      { step: '4 · Audit Lock', break: true, rows: [['Total Billed', '₹6.99 Cr'], ['Frozen Payable', '₹2.45 Cr (Locked)'], ['Checker Sign-Off', 'Arjun Rao (Verified)'], ['Closed TAT', '2.4 Days']] }
+    ],
+    docs: [
+      { type: 'Master Change Log', ref: 'XK02 / 0002303988', date: '12 Jun 2026', owner: 'System Admin', detail: 'PAN & GSTIN overwritten to blank after PO release', qty: '—', amt: 0 },
+      { type: 'Service PO Batch', ref: 'PO 4700012410..13', date: '12 Jun 2026', owner: 'Badrinatha (M04)', detail: '4 Haulage Service POs · Zero weighbridge receipts', qty: '4 Lots', amt: 69920400 }
+    ],
+    d7Pillars: { finance: 92, litigation: 84, compliance: 95, media: 78, aml: 85, pep: 60 }
+  },
+  {
+    id: 'MNF-107', pin: 7, code: '0003200003', name: 'MSPL KIOM LMC Fines (0003200003)',
+    plantGroup: 'PEL', corridor: 'KIOM Mine to Pellet Plant', buyer: 'Ramanjaneya (M12)',
+    score: 78, d7: 34, quad: 'HL', severity: 'High', status: 'review',
+    age: 3, slaTarget: 7, tat: null,
+    invoiced: 296293100, openAp: 31200000, recovery: 12840000, nextF110: false,
+    escalatedBy: null, assignee: 'Priya Nair',
+    headline: 'Untendered 10-PO Price Staircase (+27.8%) & Tipper Capacity Splitting',
+    summary: 'Buyer Ramanjaneya (M12) issued 10 separate untendered EXW orders for the exact same Low-Grade Iron Ore Fines (<51% Fe, 20,000 MT each), stepping unit prices from ₹2,054.25/MT up to ₹2,624.95/MT (+27.8%) while dispatching 16-MT tippers instead of contracted 32-MT bulkers.',
+    benchmarkLabel: '₹2,624.95 / MT (Peak POs) vs ₹2,054.25 / MT (Baseline POs)', spreadPct: '+27.8%',
+    rules: [
+      { id: 'MNF-05', name: 'Untendered Multi-PO Rate Staircase', score: 75, sev: 'High', desc: '10 sequential POs for identical Iron Ore SKU stepped from ₹2,054/MT to ₹2,625/MT without tender.' },
+      { id: 'MNF-02', name: 'Vehicle Capacity Downgrade (32T to 16T Split)', score: 70, sev: 'High', desc: '32-MT bulker loads split across 16-MT tippers, doubling per-trip fixed gate and handling charges.' }
+    ],
+    pipeline: [
+      { step: '1 · Baseline Orders', break: false, rows: [['PO Numbers', '4900000489 & 490'], ['Material', 'Iron Ore Fines <51%'], ['Base Price', '₹2,054.25 / MT'], ['Volume', '40,000 MT']] },
+      { step: '2 · Stepped Orders', break: true, rows: [['PO Numbers', '4900000465 / 67 / 68'], ['Peak Price', '₹2,624.95 / MT (+27.8%)'], ['Tender Basis', 'None (Direct Split)'], ['Volume', '70,000 MT']] },
+      { step: '3 · Fleet Execution', break: true, rows: [['Contracted Truck', '32-MT Multi-Axle'], ['Actual Truck', '16-MT 10-Wheeler'], ['Trip Multiplier', '2.0x Trips Billed'], ['Extra Slab Cost', '₹184 / MT']] },
+      { step: '4 · Commercial Impact', break: true, rows: [['Total Invoiced', '₹29.63 Cr'], ['Open Payable', '₹3.12 Cr'], ['Rate & Slab Leak', '₹1.28 Cr'], ['D7 Screening', 'Clean (34/100)']] }
+    ],
+    docs: [
+      { type: 'Baseline Ore POs', ref: 'PO 4900000489 & 490', date: '02 Jun 2026', owner: 'Ramanjaneya (M12)', detail: '40,000 MT Iron Ore Fines <51% @ ₹2,054.25/MT', qty: '40,000 MT', amt: 82170000 },
+      { type: 'Peak Stepped POs', ref: 'PO 4900000465..468', date: '19 Jun 2026', owner: 'Ramanjaneya (M12)', detail: '70,000 MT Iron Ore Fines <51% @ ₹2,624.95/MT (+27.8%)', qty: '70,000 MT', amt: 183696200 }
+    ],
+    d7Pillars: { finance: 28, litigation: 32, compliance: 38, media: 25, aml: 15, pep: 22 }
+  },
+  {
+    id: 'MNF-108', pin: 8, code: '0002300077', name: 'Siding Handling & Cartage (0002300077)',
+    plantGroup: 'LOG', corridor: 'Bellary Railway Siding Unloading', buyer: 'Pellet Logistics',
+    score: 64, d7: 78, quad: 'LH', severity: 'Medium', status: 'cleared',
+    age: 4, slaTarget: 14, tat: 3.1,
+    invoiced: 3177230, openAp: 0, recovery: 420000, nextF110: false,
+    escalatedBy: 'Priya Nair', assignee: 'Arjun Rao',
+    headline: 'Siding Detention Surcharge (ZHC4) & 11 Sequential ₹1,750 Bilties',
+    summary: 'Billed ZHC4 detention/handling on 1,463.66 MT (MIRO 5105721134) plus 11 sequential ₹1,750 freight bills (Bilties 153..165) with zero quantity. Cleared after verifying official tippler breakdown waiver (PM-4000192) and issuing a ₹4.20 L debit note for unwaived hours.',
+    benchmarkLabel: 'Cleared under Official Siding Breakdown Waiver (4 Drift Tripwires Active)', spreadPct: 'Monitored',
+    rules: [
+      { id: 'MNF-04', name: 'In-Plant Siding Detention Surcharge (ZHC4)', score: 75, sev: 'High', desc: '31.0-hour siding wait billed on MIRO 5105721134 (24.5h waived due to tippler breakdown; 6.5h disallowed).' },
+      { id: 'MNF-11', name: 'Sequential Zero-Quantity Micro-Bills (Bilties 153..165)', score: 65, sev: 'Medium', desc: '11 consecutive ₹1,750 ZFR2 bills on PO 4500014432 with zero quantity.' }
+    ],
+    pipeline: [
+      { step: '1 · Siding Orders', break: false, rows: [['PO Numbers', '4500013106 & 14432'], ['Conditions', 'ZHC4 & ZFR2'], ['Bilty Refs', '02/26-27 & 153..165'], ['Tonnage', '1,463.66 MT']] },
+      { step: '2 · Breakdown Waiver', break: false, rows: [['Claimed Wait', '31.0 Hours'], ['Maint Order', 'PM-4000192 (Tippler)'], ['Approved Waiver', '24.5 Hours'], ['Disallowed Excess', '6.5 Hours (₹4.20 L)']] },
+      { step: '3 · D7 Floor Rule', break: true, rows: [['Average D7 Score', '2.77 (Apparent Low)'], ['Litigation Pillar', '78/100 (3x Sec 138)'], ['EPFO Staff', '0 Employees'], ['Floor Override', '78 / 100 (Watched)']] },
+      { step: '4 · Exception Memory', break: false, rows: [['Status', 'Cleared w/ Monitoring'], ['Debit Issued', '₹4.20 L Recovered'], ['Drift Tripwires', '4 / 4 Armed & Green'], ['Closed TAT', '3.1 Days']] }
+    ],
+    docs: [
+      { type: 'Detention Invoice', ref: 'MIRO 5105721134', date: '02 Jul 2026', owner: 'Pellet Logistics', detail: 'PO 4500013106 · Condition ZHC4 · Bilty 02/26-27', qty: '1,463.7 MT', amt: 3157980 },
+      { type: '11x ZFR2 Invoices', ref: 'MIRO 5105721334..982', date: '09 Jul 2026', owner: 'Pellet Logistics', detail: 'PO 4500014432 · Bilties 153..165 @ ₹1,750 each', qty: '0 MT', amt: 19250 }
+    ],
+    d7Pillars: { finance: 65, litigation: 82, compliance: 72, media: 40, aml: 22, pep: 18 }
+  }
+];
+
+const PATTERNS = [
+  {
+    id: 'MNF-P1', name: 'Buyer Spot-Award Concentration Drift',
+    method: 'Temporal HHI & Robust Z-Score (Median + MAD)',
+    scope: 'Mining & Haulage Division · Buyer Badrinatha (M04)',
+    history: '4 Rolling Quarters · 28 Haulage Orders (N = 28)',
+    baseline: 'Peer Buyers: 18% untendered spot share (Median HHI 0.18, MAD 0.05)',
+    observed: 'Buyer M04 routed 68% of untendered orders (₹9.91 Cr across PO 4700012000 & 4700012314) to 2 linked contractors (Robust-Z: +4.48σ)',
+    trips: '28 Haulage Orders (Supported)', exposure: 99077335, recovery: 14200000, promoted: false
+  },
+  {
+    id: 'MNF-P2', name: 'Empty Truck Tare-Weight Creep by Weighbridge Clerk',
+    method: 'Vehicle Chassis Tare-Weight MAD + Operator Graph',
+    scope: 'Pellet Plant Gate-02 Weighbridge · Clerk Suresh',
+    history: '6 Months · 34 Inbound Trips on Truck KA-35-B-9921 (N = 34)',
+    baseline: 'Truck KA-35-B-9921 Empty Steel Chassis Weight: 11.42 MT (±0.08 MT)',
+    observed: 'Recorded empty tare dropped to 9.96 MT (-1.46 MT drift, Robust-Z: +4.12σ) under Clerk Suresh—inflating net delivered coal by 1.46 MT/trip',
+    trips: '34 Inbound Coal Trips (Supported)', exposure: 48200000, recovery: 6840000, promoted: false
+  },
+  {
+    id: 'MNF-P3', name: 'Inter-Plant Transfer "Tolerance Shaving" (-0.42% to -0.49%)',
+    method: 'Distribution Skewness & L1-02 Tolerance-Band Hugging',
+    scope: 'Inter-Plant Fuel & Mineral Transfers (1,415 STOs)',
+    history: 'FY2025–26 · 142 Tanker/Bulker Transfers (N = 142)',
+    baseline: 'Natural Scale Variance: Symmetric around 0.00% (-0.15% to +0.15%)',
+    observed: '94.2% of trips land between -0.42% and -0.49% loss (zero positive variances, Robust-Z: +3.85σ)—skimming ~160 kg/truck below the 0.50% gate',
+    trips: '142 Stock Transfers (Supported)', exposure: 64500000, recovery: 5120000, promoted: false
+  },
+  {
+    id: 'MNF-P4', name: '"Lowball L1 Bid, Post-Award Surcharge Bleed"',
+    method: 'Bivariate Ratio Outlier (Base Bid vs. Post-Award BEZNK/ZHC%)',
+    scope: 'Siding Handling & Bulk Haulage Cohort',
+    history: 'FY2025–26 · 46 MIRO Invoices (N = 46)',
+    baseline: 'Peer Post-Award Surcharge Ratio: Median 1.8% of base freight (MAD 0.9%)',
+    observed: 'Surcharges average 9.4% across 46 consecutive invoices (Robust-Z: +3.60σ), staying at 9.1%–9.6% to evade the 10% single-invoice rule',
+    trips: '46 Invoices (Supported)', exposure: 31200000, recovery: 2940000, promoted: false
+  },
+  {
+    id: 'MNF-P5', name: 'Unloading Yard 24-Hour Detention Cut-Off Clustering',
+    method: 'Kernel Density Discontinuity around Free-Time Limit',
+    scope: 'Hospet Pellet Plant Unloading Yard',
+    history: 'Q2–Q3 FY26 · 31 Unloading Events (N = 31)',
+    baseline: 'Median Yard Unloading Turnaround: 6.4 Hours (Free Limit: 24.0h)',
+    observed: '31 trucks clocked Gate-Out between 24.15h and 24.60h (6.2x density jump immediately past the 24.0h trigger to claim full-day halting)',
+    trips: '31 Unloading Events (Supported)', exposure: 18500000, recovery: 2180000, promoted: false
+  },
+  {
+    id: 'MNF-P6', name: 'Shared-Fleet Cartel (L1 Default to Sister Spot Broker)',
+    method: 'Multi-Relational Bipartite Graph (Vendor ↔ Truck Plate ↔ Bank)',
+    scope: 'Tirumala Developers (0002302627) ↔ Vinayaka Enterprises (0002300376)',
+    history: 'Structural Network Resolution · 18 Physical Trucks',
+    baseline: 'Expected Fleet Overlap Between Independent Competitors: 0.0%',
+    observed: '68.4% of physical tipper trucks (KA-35-B-9921..4410) and Hospet bank branch are shared between both contractors under Buyer M04',
+    trips: '18 Shared Trucks (Supported)', exposure: 99077335, recovery: 13030000, promoted: false
+  }
+];
+
+const AUDIT_TRAIL = [
+  { time: '29 Oct 2026 · 14:20', caseId: 'MNF-106', action: 'Confirmed Risk & Locked', actor: 'Arjun Rao', role: 'Checker', note: 'Confirmed ₹2.45 Cr AP lock on 0002303988 after verifying post-award PAN/GST deletion and zero weighbridge logs.' },
+  { time: '29 Oct 2026 · 11:05', caseId: 'MNF-101', action: 'Submitted for Checker Sign-Off', actor: 'Priya Nair', role: 'Analyst', note: 'Escalated PO 4700012314 (+44.6% spot rate bypass & 6 shared trucks with Vinayaka PO 4700012000).' },
+  { time: '28 Oct 2026 · 17:40', caseId: 'MNF-103', action: 'Escalated to Audit & Counsel', actor: 'Priya Nair', role: 'Analyst', note: 'Flagged 3x duplicate billing of Bilties IS2942600228, 224, and 229 across Material and Service POs.' },
+  { time: '28 Oct 2026 · 15:12', caseId: 'MNF-108', action: 'Cleared with Drift Monitoring', actor: 'Arjun Rao', role: 'Checker', note: 'Verified tippler breakdown order PM-4000192; issued ₹4.20 L debit note for excess hours; 4 drift tripwires armed.' }
+];
+
+/* ============================================================================
+   2. CORE UTILITIES
+   ============================================================================ */
+const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function fmt(inrVal) {
+  const ccy = document.getElementById('ccySel')?.value || 'INR';
+  if (ccy === 'USD') {
+    const u = inrVal / 86.5;
+    return '$' + (u >= 1e6 ? (u / 1e6).toFixed(2) + 'M' : u >= 1e3 ? (u / 1e3).toFixed(0) + 'K' : Math.round(u));
+  }
+  if (inrVal >= 1e7) return '₹' + (inrVal / 1e7).toFixed(2) + ' Cr';
+  if (inrVal >= 1e5) return '₹' + (inrVal / 1e5).toFixed(2) + ' L';
+  return '₹' + Math.round(inrVal).toLocaleString('en-IN');
+}
+
+function statusName(st) {
+  return {
+    review: 'Under Review',
+    pending_checker: 'Awaiting Checker',
+    escalated: 'Escalated',
+    confirmed: 'Confirmed & Locked',
+    cleared: 'Cleared (Monitored)'
+  }[st] || st;
+}
+
+function getScopedCases() {
+  const sc = document.getElementById('scopeSel')?.value || 'ALL';
+  return sc === 'ALL' ? CASES : CASES.filter(c => c.plantGroup === sc);
+}
+
+function toast(msg) {
+  const el = document.getElementById('toastEl');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('on'), 2500);
+}
+
+function toggleRoleMenu(e) {
+  e.stopPropagation();
+  document.getElementById('roleMenu').classList.toggle('on');
+}
+document.addEventListener('click', () => document.getElementById('roleMenu')?.classList.remove('on'));
+
+function switchRole(name, role, initials, btnEl) {
+  USER = { name, role, initials };
+  document.getElementById('userInitials').textContent = initials;
+  document.getElementById('userNameLabel').textContent = `${name} · ${role}`;
+  document.querySelectorAll('#roleMenu .tb-menu-i').forEach(b => {
+    b.classList.remove('on');
+    b.lastElementChild.textContent = '';
+  });
+  btnEl.classList.add('on');
+  btnEl.lastElementChild.textContent = '✓';
+  document.getElementById('roleMenu').classList.remove('on');
+  toast(`Active Role: ${name} (${role})`);
+  renderAll();
+}
+
+function goTab(t) {
+  ACTIVE_TAB = t;
+  document.querySelectorAll('#mainNav .nav-item').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
+  document.querySelectorAll('main .tab-sec').forEach(s => s.classList.toggle('on', s.id === 'sec-' + t));
+  window.scrollTo(0, 0);
+}
+
+/* ============================================================================
+   3. TAB 1: MONTHLY BUSINESS REVIEW (MBR) EXECUTIVE CONTROL TOWER
+   ============================================================================ */
+function renderDash() {
+  const list = getScopedCases();
+  const sc = document.getElementById('scopeSel')?.value || 'ALL';
+  const corridors = sc === 'ALL' ? CORRIDOR_MBR : CORRIDOR_MBR.filter(c => c.group === sc);
+  const totSpend = corridors.reduce((a, c) => a + c.totalSpendInr, 0);
+  const totRec = list.reduce((a, c) => a + c.recovery, 0);
+  const totHold = list.filter(c => c.nextF110).reduce((a, c) => a + c.openAp, 0);
+
+  document.getElementById('sec-dash').innerHTML = `
+    <div class="ph">
+      <div>
+        <div class="pt">Monthly Business Review (MBR) · Logistics, Haulage &amp; Weighbridge Control Tower</div>
+        <div class="psub">Executive unit-economics, L1 contract compliance, plant turnaround efficiency, and EBITDA recovery across bulk freight operations.</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn warn" onclick="openCaseInWb('MNF-101')">⚠ F110 Pre-Payment Hold Queue (${fmt(totHold)})</button>
+        <button class="btn pri" onclick="RPT_TYPE='board';goTab('rpt');renderRpt()">Export MBR Executive Pack &rarr;</button>
+      </div>
+    </div>
+
+    <!-- ROW 1: COMPOSITE LOGISTICS & FREIGHT HEALTH SCORE RIBBON -->
+    <div class="health-ribbon">
+      <div class="hr-left">
+        <svg width="68" height="68" viewBox="0 0 68 68" style="flex-shrink:0">
+          <circle cx="34" cy="34" r="28" fill="none" stroke="#E2E8F0" stroke-width="6"/>
+          <circle cx="34" cy="34" r="28" fill="none" stroke="#D97706" stroke-width="6" stroke-dasharray="176" stroke-dashoffset="${176 - (176 * 0.58)}" stroke-linecap="round" transform="rotate(-90 34 34)"/>
+          <text x="34" y="38" text-anchor="middle" font-family="DM Mono" font-size="18" font-weight="600" fill="#0D1520">58</text>
+        </svg>
+        <div>
+          <div style="font-size:10.5px;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:.3px">Logistics Health Index</div>
+          <div style="font-size:15px;font-weight:600;color:var(--nv);margin:2px 0">58 / 100 · Watch</div>
+          <div style="font-size:11px;color:var(--cr);font-weight:500">-6.4 pts vs Prior Quarter</div>
+        </div>
+      </div>
+
+      <div class="hr-pillars">
+        <div class="hr-pil">
+          <div class="hr-pil-top"><span class="hr-pil-name">1 · Tariff &amp; Sourcing</span><span class="hr-pil-score" style="color:var(--cr)">49/100</span></div>
+          <div class="hr-pil-bar"><div style="width:49%;height:100%;background:var(--cr)"></div></div>
+          <div class="hr-pil-sub">L1 usage 64.2% (Target 85%)</div>
+        </div>
+        <div class="hr-pil">
+          <div class="hr-pil-top"><span class="hr-pil-name">2 · Weighbridge &amp; Qty</span><span class="hr-pil-score" style="color:var(--hi)">56/100</span></div>
+          <div class="hr-pil-bar"><div style="width:56%;height:100%;background:var(--hi)"></div></div>
+          <div class="hr-pil-sub">-1.84% net scale/STO gap</div>
+        </div>
+        <div class="hr-pil">
+          <div class="hr-pil-top"><span class="hr-pil-name">3 · Fleet &amp; Plant TAT</span><span class="hr-pil-score" style="color:var(--hi)">62/100</span></div>
+          <div class="hr-pil-bar"><div style="width:62%;height:100%;background:var(--hi)"></div></div>
+          <div class="hr-pil-sub">Avg TAT 18.4h vs 12.0h SLA</div>
+        </div>
+        <div class="hr-pil">
+          <div class="hr-pil-top"><span class="hr-pil-name">4 · Billing &amp; Settlement</span><span class="hr-pil-score" style="color:var(--nm)">66/100</span></div>
+          <div class="hr-pil-bar"><div style="width:66%;height:100%;background:var(--nm)"></div></div>
+          <div class="hr-pil-sub">99.2% duplicate LR block rate</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 2: 6 CORE MBR HEADLINE KPI TILES (CFO, CPO & CLO METRICS) -->
+    <div class="kgrid-6">
+      <div class="kc">
+        <div class="kl">Total Freight Spend</div>
+        <div class="kv">${fmt(totSpend)}</div>
+        <div class="ks">1.42M MT · <b>₹3.82/MT-Km</b> (Plan ₹3.18)</div>
+      </div>
+      <div class="kc">
+        <div class="kl">Identified EBITDA Leak</div>
+        <div class="kv cr">${fmt(totRec)}</div>
+        <div class="ks"><b>2.24%</b> of monitored freight spend</div>
+      </div>
+      <div class="kc">
+        <div class="kl">Pre-Payment Hold (F110)</div>
+        <div class="kv cr">${fmt(totHold)}</div>
+        <div class="ks">100% collectible via Open AP set-off</div>
+      </div>
+      <div class="kc">
+        <div class="kl">L1 Contract Compliance</div>
+        <div class="kv hi">64.2%</div>
+        <div class="ks">Target: <b>85.0%</b> · 35.8% Open-Mkt Spot</div>
+      </div>
+      <div class="kc">
+        <div class="kl">Accessorial &amp; Detention %</div>
+        <div class="kv hi">8.6%</div>
+        <div class="ks">Target: <b>&lt;2.5%</b> · ₹29.4 Cr surcharges</div>
+      </div>
+      <div class="kc">
+        <div class="kl">Weighbridge / STO Gap</div>
+        <div class="kv cr">-1.84%</div>
+        <div class="ks">Target: <b>&lt;0.50%</b> · 26,120 MT variance</div>
+      </div>
+    </div>
+
+    <!-- ROW 3: TWO EXECUTIVE MBR CHARTS (UNIT COST TREND + CFO WATERFALL) -->
+    <div class="grid2">
+      <div class="panel" style="margin-bottom:0">
+        <div class="panel-h">
+          <div>
+            <div class="panel-t">6-Month Unit Freight Cost Trend: Contracted L1 vs. Realised Paid (₹ / MT-Km)</div>
+            <div class="panel-sub">Shaded wedge isolates cost inflation driven by Open-Market Spot indents and Unplanned Detention (BEZNK / ZHC4)</div>
+          </div>
+          <span class="sv Critical">+₹0.64 / MT-Km Spread</span>
+        </div>
+        <div class="panel-b">
+          ${renderUnitCostTrendSVG()}
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:0">
+        <div class="panel-h">
+          <div>
+            <div class="panel-t">CFO EBITDA Recovery Bridge by Operational Driver (${fmt(totRec)})</div>
+            <div class="panel-sub">Click any driver bar to filter the Forensic Workbench to those underlying vendor dossiers</div>
+          </div>
+        </div>
+        <div class="panel-b">
+          ${[
+            ['1 · Spot-Rate Bypass & EXW/FOR Incoterm Spread', 36890000, 48, 'var(--nm)', 'CPO Lever: Enforce L1 rate card & convert EXW coal lots to FOR delivered parity', 'MNF-104'],
+            ['2 · Unverified Haulage & Post-PO Tax-ID Deletion', 24500000, 32, 'var(--cr)', 'CFO Lever: Freeze ₹2.45 Cr open payable on 1-day onboarded contractor (0002303988)', 'MNF-106'],
+            ['3 · Weighbridge Override & Inter-Plant STO Loss', 12420000, 16, 'var(--hi)', 'CLO Lever: Lock Gate-02 manual scale keystrokes & deduct 3.8% STO transit loss', 'MNF-102'],
+            ['4 · Duplicate Lorry Receipts & Excess Siding Wait', 3060000, 4, 'var(--ok)', 'AP Lever: Block cross-PO reuse of IS29426* Bilties & unwaived siding hours', 'MNF-103']
+          ].map(d => `
+            <div style="padding:9px 0;border-bottom:1px solid var(--sf3);cursor:pointer" onclick="openCaseInWb('${d[5]}')">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                <span style="font-weight:600;font-size:12.5px;color:var(--nv)">${d[0]}</span>
+                <span class="mono" style="font-weight:600;color:var(--cr)">${fmt(d[1])} (${d[2]}%)</span>
+              </div>
+              <div style="height:8px;background:var(--sf3);border-radius:4px;overflow:hidden;margin-bottom:4px">
+                <div style="width:${d[2]}%;height:100%;background:${d[3]}"></div>
+              </div>
+              <div style="font-size:11px;color:var(--tm)">${d[4]}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 4: CORRIDOR & DIVISION MBR PERFORMANCE SCORECARD TABLE -->
+    <div class="panel" style="margin-top:16px;margin-bottom:0">
+      <div class="panel-h">
+        <div>
+          <div class="panel-t">Corridor &amp; Division Monthly Business Review (MBR) Performance Scorecard</div>
+          <div class="panel-sub">Compares unit economics (₹/MT-Km), L1 contract compliance, plant turnaround time (TAT), and physical weight variance across operating divisions</div>
+        </div>
+      </div>
+      <table class="clean-tbl">
+        <thead>
+          <tr>
+            <th>Operating Corridor / Division</th>
+            <th class="num">Volume Hauled</th>
+            <th class="num">Monitored Spend</th>
+            <th>Contracted L1 vs. Realised ₹/MT-Km</th>
+            <th class="num">L1 Contract %</th>
+            <th class="num">Avg Plant TAT</th>
+            <th class="num">Weight / STO Gap</th>
+            <th class="num">Recoverable EBITDA</th>
+            <th class="num">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${corridors.map(c => `
+            <tr class="click-row" onclick="openCaseInWb('${c.leadCaseId}')">
+              <td><b>${esc(c.name)}</b><div class="mono" style="font-size:11px;color:var(--tm)">Division: ${c.group}</div></td>
+              <td class="num">${c.volumeMt}</td>
+              <td class="num">${fmt(c.totalSpendInr)}</td>
+              <td class="mono" style="font-size:11.5px"><span style="color:var(--ok)">${c.l1Rate}</span> &rarr; <b style="color:var(--cr)">${c.realizedRate}</b></td>
+              <td class="num">
+                <span class="sv ${c.l1CompliancePct < 50 ? 'Critical' : c.l1CompliancePct < 75 ? 'High' : 'Low'}">${c.l1CompliancePct.toFixed(1)}% L1</span>
+              </td>
+              <td class="num"><span class="mono" style="color:${parseFloat(c.avgTatHrs)>18?'var(--cr)':'var(--ts)'};font-weight:600">${c.avgTatHrs}</span> <span style="font-size:10.5px;color:var(--tm)">(SLA ${c.slaTatHrs})</span></td>
+              <td class="num" style="color:var(--cr);font-weight:600">${c.wtVariancePct}</td>
+              <td class="num" style="color:var(--cr);font-weight:600">${fmt(c.recoverableInr)}</td>
+              <td class="num"><button class="btn" onclick="event.stopPropagation();openCaseInWb('${c.leadCaseId}')">Drill Down &rarr;</button></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderUnitCostTrendSVG() {
+  // 6 months: May, Jun, Jul, Aug, Sep, Oct
+  // L1 Contracted Rate: [3.14, 3.15, 3.16, 3.16, 3.17, 3.18]
+  // Realised Paid Rate: [3.28, 3.41, 3.55, 3.69, 3.76, 3.82]
+  const W = 560, H = 220, padL = 42, padR = 24, padT = 18, padB = 32;
+  const months = ['May 26', 'Jun 26', 'Jul 26', 'Aug 26', 'Sep 26', 'Oct 26'];
+  const l1 = [3.14, 3.15, 3.16, 3.16, 3.17, 3.18];
+  const real = [3.28, 3.41, 3.55, 3.69, 3.76, 3.82];
+  const minY = 2.90, maxY = 4.05;
+  const x = i => padL + (i / (months.length - 1)) * (W - padL - padR);
+  const y = v => (H - padB) - ((v - minY) / (maxY - minY)) * (H - padT - padB);
+
+  const l1Pts = l1.map((v, i) => `${x(i)},${y(v)}`).join(' ');
+  const realPts = real.map((v, i) => `${x(i)},${y(v)}`).join(' ');
+  const areaPts = `${real.map((v, i) => `${x(i)},${y(v)}`).join(' ')} ${l1.slice().reverse().map((v, i) => `${x(months.length - 1 - i)},${y(v)}`).join(' ')}`;
+
+  return `
+    <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">
+      <!-- Grid lines -->
+      ${[3.00, 3.25, 3.50, 3.75, 4.00].map(val => `
+        <line x1="${padL}" y1="${y(val)}" x2="${W-padR}" y2="${y(val)}" stroke="#E2E8F0" stroke-dasharray="3 3"/>
+        <text x="${padL-6}" y="${y(val)+3}" text-anchor="end" font-family="DM Mono" font-size="9.5" fill="#64748B">₹${val.toFixed(2)}</text>
+      `).join('')}
+
+      <!-- Shaded Spot & Accessorial Leakage Wedge -->
+      <polygon points="${areaPts}" fill="#FEF2F2" opacity="0.85"/>
+
+      <!-- Contracted L1 Line -->
+      <polyline fill="none" stroke="#15803D" stroke-width="2.2" stroke-dasharray="5 3" points="${l1Pts}"/>
+      <!-- Realised Paid Line -->
+      <polyline fill="none" stroke="#C62828" stroke-width="2.6" points="${realPts}"/>
+
+      <!-- Points & Labels -->
+      ${months.map((m, i) => `
+        <text x="${x(i)}" y="${H-10}" text-anchor="middle" font-family="DM Mono" font-size="9.5" fill="#64748B">${m}</text>
+        <circle cx="${x(i)}" cy="${y(l1[i])}" r="3.5" fill="#15803D"/>
+        <circle cx="${x(i)}" cy="${y(real[i])}" r="4" fill="#C62828" stroke="#fff" stroke-width="1.2"/>
+        <text x="${x(i)}" y="${y(real[i])-8}" text-anchor="middle" font-family="DM Mono" font-size="9.5" font-weight="600" fill="#C62828">₹${real[i].toFixed(2)}</text>
+      `).join('')}
+
+      <!-- Legend Annotations -->
+      <text x="${x(3)}" y="${(y(real[3])+y(l1[3]))/2 + 4}" text-anchor="middle" font-family="DM Sans" font-size="10.5" font-weight="600" fill="#C62828">Spot &amp; Detention Leakage Wedge (+20.1%)</text>
+      <text x="${x(1)}" y="${y(l1[1])+15}" font-family="DM Mono" font-size="9.5" font-weight="500" fill="#15803D">Contracted L1 Baseline (₹3.18/MT-Km)</text>
+    </svg>
+  `;
+}
+
+/* ============================================================================
+   4. TAB 2: FORENSIC WORKBENCH (WITH KPI STRIP & 360° DOSSIER)
+   ============================================================================ */
+function openCaseInWb(id) {
+  SEL_ID = id;
+  goTab('wb');
+  renderWb();
+}
+
+function renderWb() {
+  const list = getScopedCases();
+  const totInv = list.reduce((a, c) => a + c.invoiced, 0);
+  const totRec = list.reduce((a, c) => a + c.recovery, 0);
+  const totHold = list.reduce((a, c) => a + c.openAp, 0);
+
+  document.getElementById('sec-wb').innerHTML = `
+    <div class="ph">
+      <div>
+        <div class="pt">Forensic Case Workbench</div>
+        <div class="psub">Select any transporter on the left to inspect its 4-stage physical-to-financial reconciliation and take action.</div>
+      </div>
+    </div>
+
+    <div class="kgrid-4">
+      <div class="kc"><div class="kl">Open Cases in Queue</div><div class="kv">${list.length}</div><div class="ks">${list.filter(c=>c.severity==='Critical').length} Critical · ${list.filter(c=>c.severity==='High').length} High</div></div>
+      <div class="kc"><div class="kl">Flagged Freight Spend</div><div class="kv">${fmt(totInv)}</div><div class="ks">Deduplicated across invoices</div></div>
+      <div class="kc"><div class="kl">Recoverable Overcharge</div><div class="kv cr">${fmt(totRec)}</div><div class="ks">Verified rate, weight &amp; LR breaks</div></div>
+      <div class="kc"><div class="kl">Open Payable At Risk</div><div class="kv hi">${fmt(totHold)}</div><div class="ks">Eligible for pre-payment hold</div></div>
+    </div>
+
+    <div class="wb-bar">
+      <input id="wbSearch" class="wb-input" placeholder="Search vendor, PO (4700012314), Bilty (IS29426)..." oninput="renderWbList()">
+      <select id="wbQuadFilter" class="wb-select" onchange="renderWbList()">
+        <option value="">All Risk Quadrants (${list.length})</option>
+        <option value="HH">Primary Convergence Leads (HH)</option>
+        <option value="HL">Rate / Slab Drift on Clean Vendor (HL)</option>
+        <option value="LH">Counterparty Watchlist (LH)</option>
+      </select>
+      <span class="mono" style="margin-left:auto;font-size:11.5px;color:var(--tm)">Keyboard: <b>j / k</b> to navigate · <b>⌘K</b> Copilot</span>
+    </div>
+
+    <div class="wb-split">
+      <div class="wb-list" id="wbListBox"></div>
+      <div class="wb-detail" id="wbDetailBox"></div>
+    </div>
+  `;
+  renderWbList();
+  renderWbDetail();
+}
+
+function getFilteredWbList() {
+  const q = (document.getElementById('wbSearch')?.value || '').toLowerCase();
+  const quad = document.getElementById('wbQuadFilter')?.value || '';
+  return getScopedCases().filter(c => {
+    const matchQ = !q || (c.name + ' ' + c.id + ' ' + c.code + ' ' + c.headline + ' ' + JSON.stringify(c.docs)).toLowerCase().includes(q);
+    const matchQuad = !quad || c.quad === quad;
+    return matchQ && matchQuad;
+  });
+}
+
+function renderWbList() {
+  const rows = getFilteredWbList();
+  const box = document.getElementById('wbListBox');
+  if (!box) return;
+  box.innerHTML = rows.map(c => `
+    <div class="wb-card ${c.id === SEL_ID ? 'sel' : ''}" onclick="SEL_ID='${c.id}';renderWbList();renderWbDetail()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="sv ${c.severity}">${c.severity}</span>
+          <span class="mono" style="font-size:11px;font-weight:600;color:var(--nm)">${c.id}</span>
+        </div>
+        <span class="mono" style="font-size:12px;font-weight:600;color:var(--cr)">${fmt(c.recovery)}</span>
+      </div>
+      <div style="font-weight:600;font-size:13px;color:var(--nv)">${esc(c.name)}</div>
+      <div style="font-size:11.5px;color:var(--tm);margin:2px 0 6px">${esc(c.headline)}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="pill ${c.status}">${statusName(c.status)}</span>
+        <span class="mono" style="font-size:11px;color:var(--tm)">${c.tat ? `Closed TAT: ${c.tat}d` : `Open Age: ${c.age}d (SLA ${c.slaTarget}d)`}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function setWbSub(sub) {
+  WB_SUB = sub;
+  renderWbDetail();
+}
+
+function renderWbDetail() {
+  const c = CASES.find(x => x.id === SEL_ID) || CASES[0];
+  const box = document.getElementById('wbDetailBox');
+  if (!c || !box) return;
+
+  const isSameMaker = (c.escalatedBy === USER.name);
+  const canCheckerApprove = (USER.role === 'Checker' || USER.role === 'CCO') && !isSameMaker;
+
+  let subHtml = '';
+  if (WB_SUB === 'summary') {
+    subHtml = `
+      <div style="background:var(--np);border:1px solid var(--nl);border-radius:var(--r);padding:13px 16px;margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:var(--nm);text-transform:uppercase;margin-bottom:4px">
+          <span>Case Summary &amp; Operational Context</span>
+          <span class="mono" style="font-weight:400">Grounded in SAP &amp; Weighbridge Logs</span>
+        </div>
+        <p style="font-size:13px;color:var(--ts);line-height:1.55">${esc(c.summary)}</p>
+      </div>
+
+      <div style="font-weight:600;font-size:12.5px;color:var(--nv);margin-bottom:8px">4-Stage Physical-to-Financial Reconciliation</div>
+      <div class="pipe-grid">
+        ${c.pipeline.map(p => `
+          <div class="pipe-card ${p.break ? 'break' : ''}">
+            <div class="pipe-step" style="color:${p.break ? 'var(--cr)' : 'var(--ok)'}">${p.break ? '⚠ Mismatch' : '✓ Verified'}</div>
+            <div class="pipe-title">${esc(p.step)}</div>
+            ${p.rows.map(r => `<div class="kv-row"><span style="color:var(--tm)">${esc(r[0])}</span><span class="mono" style="font-weight:500;color:${p.break?'var(--cr)':'var(--ts)'}">${esc(r[1])}</span></div>`).join('')}
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="font-weight:600;font-size:12.5px;color:var(--nv);margin:16px 0 8px">Triggered Detection Rules (Score: ${c.score}/100)</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${c.rules.map(r => `
+          <div style="padding:10px 14px;border:1px solid var(--bd);border-radius:var(--r);background:var(--sf2);display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <div>
+              <div style="font-weight:600;font-size:12.5px;color:var(--nv)"><span class="mono" style="color:var(--nm)">${r.id}</span> · ${esc(r.name)}</div>
+              <div style="font-size:12px;color:var(--tm);margin-top:2px">${esc(r.desc)}</div>
+            </div>
+            <span class="sv ${r.sev}">${r.score} pts</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if (WB_SUB === 'docs') {
+    subHtml = `
+      <div style="font-size:12.5px;color:var(--tm);margin-bottom:12px">Underlying Purchase Orders, Weighbridge Slips, and Invoice Records:</div>
+      <table class="clean-tbl">
+        <thead>
+          <tr><th>Record Type</th><th>Document / Slip Key</th><th>Date</th><th>Owner / Buyer</th><th>Details</th><th class="num">Quantity</th><th class="num">Amount</th></tr>
+        </thead>
+        <tbody>
+          ${c.docs.map(d => `
+            <tr>
+              <td><span class="pill pat">${esc(d.type)}</span></td>
+              <td class="mono" style="font-weight:600">${esc(d.ref)}</td>
+              <td class="mono">${esc(d.date)}</td>
+              <td>${esc(d.owner)}</td>
+              <td>${esc(d.detail)}</td>
+              <td class="num">${esc(d.qty)}</td>
+              <td class="num" style="font-weight:600">${fmt(d.amt)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } else if (WB_SUB === 'd7') {
+    const p = c.d7Pillars;
+    subHtml = `
+      <div class="grid2-eq">
+        <div style="border:1px solid var(--bd);border-radius:var(--r);padding:14px">
+          <div style="font-weight:600;font-size:12.5px;color:var(--nv);margin-bottom:10px">D7 Counterparty Screening Breakdown (Overall: ${c.d7}/100)</div>
+          ${[
+            ['Financial Capacity & EPFO Staff', p.finance],
+            ['Litigation & Sec 138 Cheque Bounce', p.litigation],
+            ['GST, PAN & MCA Compliance', p.compliance],
+            ['Adverse Media Checks', p.media],
+            ['AML & Sanctions', p.aml],
+            ['Political / PEP Exposure', p.pep]
+          ].map(row => `
+            <div class="kv-row" style="padding:6px 0">
+              <span>${row[0]}</span>
+              <span class="mono" style="font-weight:600;color:${row[1]>=70?'var(--cr)':row[1]>=50?'var(--hi)':'var(--ok)'}">${row[1]} / 100</span>
+            </div>
+          `).join('')}
+        </div>
+        <div style="border:1px solid var(--bd);border-radius:var(--r);padding:14px;background:var(--sf2)">
+          <div style="font-weight:600;font-size:12.5px;color:var(--nv);margin-bottom:10px">Options for Review &amp; Verification (AI-Structured)</div>
+          <ol style="padding-left:18px;font-size:12.5px;color:var(--ts);display:flex;flex-direction:column;gap:8px">
+            <li><b>Hold Open Payable (${fmt(c.openAp)}):</b> Freeze scheduled disbursement in AP pending original weighbridge slip and Lorry Receipt verification.</li>
+            <li><b>Issue Commercial Debit Note (${fmt(c.recovery)}):</b> Deduct verified rate/weight overcharge from current running bills.</li>
+            <li><b>Verify Tender Exception Note:</b> Inspect approval note signed by buyer <b>${esc(c.buyer)}</b> for bypassing active L1 contract.</li>
+          </ol>
+        </div>
+      </div>
+    `;
+  }
+
+  box.innerHTML = `
+    <div class="d-head">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span class="sv ${c.severity}">${c.severity}</span>
+          <span class="mono" style="font-size:12px;font-weight:600;color:var(--nm)">${c.id}</span>
+          <span class="pill ${c.status}">${statusName(c.status)}</span>
+        </div>
+        <div style="font-size:16px;font-weight:600;color:var(--nv)">${esc(c.name)}</div>
+        <div style="font-size:12px;color:var(--tm);margin-top:2px">Vendor ID: <span class="mono">${c.code}</span> · Corridor: ${esc(c.corridor)} · Buyer: ${esc(c.buyer)}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;color:var(--tm);text-transform:uppercase">Recoverable Overcharge</div>
+        <div class="mono" style="font-size:20px;font-weight:600;color:var(--cr)">${fmt(c.recovery)}</div>
+        <div class="mono" style="font-size:11px;color:var(--tm)">Invoiced: ${fmt(c.invoiced)} · Open AP: ${fmt(c.openAp)}</div>
+      </div>
+    </div>
+
+    <div class="d-subnav">
+      <button class="d-subbtn ${WB_SUB==='summary'?'on':''}" onclick="setWbSub('summary')">1 · Reconciliation &amp; Rules</button>
+      <button class="d-subbtn ${WB_SUB==='docs'?'on':''}" onclick="setWbSub('docs')">2 · PO, Weighbridge &amp; Invoice Records (${c.docs.length})</button>
+      <button class="d-subbtn ${WB_SUB==='d7'?'on':''}" onclick="setWbSub('d7')">3 · Counterparty Screening &amp; Next Steps</button>
+    </div>
+
+    <div class="d-body">
+      ${subHtml}
+
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <button class="btn warn" onclick="actCase('escalate','${c.id}')">Escalate for Review</button>
+        <button class="btn" onclick="actCase('clear','${c.id}')">Clear with Waiver Archetype</button>
+        ${c.status === 'confirmed'
+          ? `<button class="btn" disabled>🔒 Confirmed &amp; Locked</button>`
+          : `<button class="btn pri" ${!canCheckerApprove && (c.status==='pending_checker'||c.status==='escalated') ? 'disabled title="SOX 404: Switch Role to Arjun Rao (Checker) to approve"' : ''} onclick="actCase('confirm','${c.id}')">
+              ${canCheckerApprove ? '✓ Approve & Lock Recovery (Checker)' : 'Submit for Checker Sign-Off'}
+            </button>`
+        }
+        <span class="mono" style="margin-left:auto;font-size:11px;color:var(--tm)">Assigned to: ${esc(c.assignee)} · ${c.tat ? `Closed TAT: ${c.tat}d` : `Open Age: ${c.age}d`}</span>
+      </div>
+      ${(c.status === 'pending_checker' || c.status === 'escalated') && isSameMaker ? `
+        <div style="margin-top:10px;padding:8px 12px;background:var(--hib);border:1px solid var(--hid);border-radius:6px;font-size:12px;color:#92400E">
+          <b>SOX 404 Segregation of Duties:</b> You escalated this case as <b>${esc(USER.name)}</b>. Switch role in the top-right menu to <b>Arjun Rao (Checker)</b> to approve and lock recovery.
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function actCase(type, id) {
+  const c = CASES.find(x => x.id === id);
+  if (!c) return;
+  if (type === 'escalate') {
+    c.status = 'escalated';
+    c.escalatedBy = USER.name;
+    AUDIT_TRAIL.unshift({ time: 'Just now', caseId: id, action: 'Escalated', actor: USER.name, role: USER.role, note: `Escalated ${c.name} for secondary review.` });
+    toast(`${id} escalated to Audit Checker queue.`);
+  } else if (type === 'clear') {
+    c.status = 'cleared';
+    c.tat = c.age;
+    AUDIT_TRAIL.unshift({ time: 'Just now', caseId: id, action: 'Cleared (Drift Armed)', actor: USER.name, role: USER.role, note: `Cleared under operational waiver; 4 drift tripwires active.` });
+    toast(`${id} cleared with continuous drift monitoring.`);
+  } else if (type === 'confirm') {
+    if (USER.role === 'Analyst') {
+      c.status = 'pending_checker';
+      c.escalatedBy = USER.name;
+      toast(`${id} submitted for 2nd Checker confirmation (switch role to Arjun Rao to lock).`);
+    } else {
+      c.status = 'confirmed';
+      c.tat = c.age;
+      AUDIT_TRAIL.unshift({ time: 'Just now', caseId: id, action: 'Confirmed & Locked', actor: USER.name, role: USER.role, note: `Locked recovery of ${fmt(c.recovery)}.` });
+      toast(`Recovery of ${fmt(c.recovery)} confirmed and locked by ${USER.name}.`);
+    }
+  }
+  renderAll();
+}
+
+/* ============================================================================
+   5. TAB 3: DISPOSITION QUEUE (INTERNAL WORKFLOW, SOX 404 & DRIFT MONITOR)
+   ============================================================================ */
+function renderDisp() {
+  const awaiting = CASES.filter(c => c.status === 'pending_checker' || c.status === 'escalated');
+  const confirmed = CASES.filter(c => c.status === 'confirmed');
+  const cleared = CASES.filter(c => c.status === 'cleared');
+  const totLockedRec = confirmed.reduce((a, c) => a + c.recovery, 0);
+  const totPendingRec = awaiting.reduce((a, c) => a + c.recovery, 0);
+
+  document.getElementById('sec-disp').innerHTML = `
+    <div class="ph">
+      <div>
+        <div class="pt">Internal Disposition &amp; SOX-404 Sign-Off Queue</div>
+        <div class="psub">Operational workflow for Maker-Checker review, SLA aging on open cases, and continuous drift surveillance on cleared waivers.</div>
+      </div>
+    </div>
+
+    <div class="kgrid-4">
+      <div class="kc"><div class="kl">Awaiting Checker Sign-Off</div><div class="kv hi">${awaiting.length} Cases</div><div class="ks">${fmt(totPendingRec)} pending approval</div></div>
+      <div class="kc"><div class="kl">Confirmed &amp; Locked Recovery</div><div class="kv cr">${fmt(totLockedRec)}</div><div class="ks">${confirmed.length} case(s) locked for debit note</div></div>
+      <div class="kc"><div class="kl">Cleared Under Waiver</div><div class="kv ok">${cleared.length} Cases</div><div class="ks">4 automated drift tripwires armed</div></div>
+      <div class="kc"><div class="kl">Active Acting Role</div><div class="kv nm" style="font-size:18px">${esc(USER.name)}</div><div class="ks">Role: ${esc(USER.role)} (SOX-404 Enforced)</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">
+        <div class="panel-t">Active Case Disposition Register (Maker-Checker &amp; SLA Tracker)</div>
+        <div class="panel-sub">Age is tracked on open cases (SLA: Critical 3d · High 7d); TAT is recorded upon closure</div>
+      </div>
+      <table class="clean-tbl">
+        <thead>
+          <tr><th>Case ID</th><th>Vendor</th><th>Primary Finding</th><th class="num">Recoverable</th><th>Escalated By (Maker)</th><th>Age / Closed TAT</th><th>Status</th><th class="num">Action</th></tr>
+        </thead>
+        <tbody>
+          ${CASES.map(c => {
+            const canApprove = (USER.role === 'Checker' || USER.role === 'CCO') && c.escalatedBy !== USER.name;
+            const pastSla = !c.tat && c.age > c.slaTarget;
+            return `
+              <tr>
+                <td class="mono" style="font-weight:600;color:var(--nm)">${c.id}</td>
+                <td><b>${esc(c.name)}</b><div class="mono" style="font-size:11px;color:var(--tm)">${c.code}</div></td>
+                <td>${esc(c.headline)}</td>
+                <td class="num" style="color:var(--cr);font-weight:600">${fmt(c.recovery)}</td>
+                <td>${esc(c.escalatedBy || '—')}</td>
+                <td class="mono" style="color:${pastSla?'var(--cr)':'var(--ts)'};font-weight:${pastSla?'600':'400'}">
+                  ${c.tat ? `Closed TAT: ${c.tat}d` : `Open Age: ${c.age}d ${pastSla ? '(Past SLA)' : `(SLA ${c.slaTarget}d)`}`}
+                </td>
+                <td><span class="pill ${c.status}">${statusName(c.status)}</span></td>
+                <td class="num">
+                  ${c.status === 'confirmed'
+                    ? `<span class="mono" style="font-size:11px;color:var(--tm)">Locked ✓</span>`
+                    : canApprove && (c.status === 'pending_checker' || c.status === 'escalated')
+                      ? `<button class="btn pri" onclick="actCase('confirm','${c.id}')">Approve &amp; Lock</button>`
+                      : `<button class="btn" onclick="openCaseInWb('${c.id}')">Inspect &rarr;</button>`
+                  }
+                </td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">
+        <div>
+          <div class="panel-t">Stage-2 Exception Memory &amp; Structural-Drift Surveillance</div>
+          <div class="panel-sub">Vendors cleared under a valid operational archetype are silenced from repeat alerts unless one of 4 drift tripwires fires</div>
+        </div>
+        <span class="pill cleared">4 / 4 Tripwires Armed</span>
+      </div>
+      <table class="clean-tbl">
+        <thead>
+          <tr><th>Cleared Vendor</th><th>Exception Archetype</th><th>Tripwire 1: Bank Change</th><th>Tripwire 2: Rate Spread &gt;10%</th><th>Tripwire 3: New Sec 138 / GST</th><th>Tripwire 4: Shared Truck</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Transport Corp of India Ltd (TCI · 0002300367)</b></td>
+            <td>Archetype #1 · Approved L1 Primary Carrier</td>
+            <td><span class="pill cleared">0 Edits</span></td>
+            <td><span class="pill cleared">+1.2% (In Band)</span></td>
+            <td><span class="pill cleared">D7 2.55 Clean</span></td>
+            <td><span class="pill cleared">0 Collisions</span></td>
+            <td><span class="pill cleared">Monitoring Active</span></td>
+          </tr>
+          <tr>
+            <td><b>Siding Handling (0002300077 · MNF-108)</b></td>
+            <td>Archetype #4 · Official Siding Breakdown (PM-4000192)</td>
+            <td><span class="pill cleared">0 Edits</span></td>
+            <td><span class="pill cleared">+4.1% (In Band)</span></td>
+            <td><span class="pill review">Floor 78 Watched</span></td>
+            <td><span class="pill cleared">0 Collisions</span></td>
+            <td><span class="pill cleared">Monitoring Active</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+/* ============================================================================
+   6. TAB 4: PATTERN ANALYSIS (WITH KPI STRIP & PROMOTION)
+   ============================================================================ */
+function renderPat() {
+  const totCohortSpend = PATTERNS.reduce((a, p) => a + p.exposure, 0);
+  const totEstRec = PATTERNS.reduce((a, p) => a + p.recovery, 0);
+  const promotedCnt = PATTERNS.filter(p => p.promoted).length;
+
+  document.getElementById('sec-pat').innerHTML = `
+    <div class="ph">
+      <div>
+        <div class="pt">AI Pattern Analysis (Tier-2 Learned Baselines &amp; Fleet Graphs)</div>
+        <div class="psub">Non-parametric statistical models (Median + MAD / Robust-Z) and multi-entity fleet graphs that catch slow-burn collusion below single-invoice thresholds.</div>
+      </div>
+      <button class="btn" onclick="ADMIN_SUB='patterns';goTab('admin');renderAdmin()">View Baseline Reference Table in Methodology &rarr;</button>
+    </div>
+
+    <div class="kgrid-4">
+      <div class="kc"><div class="kl">Behavioral Pattern Leads</div><div class="kv nm">${PATTERNS.length}</div><div class="ks">All pass N &ge; 5 minimum trip gate</div></div>
+      <div class="kc"><div class="kl">Cohort Spend Monitored</div><div class="kv">${fmt(totCohortSpend)}</div><div class="ks">Across mining, coal &amp; STO lanes</div></div>
+      <div class="kc"><div class="kl">Estimated Pattern Recovery</div><div class="kv cr">${fmt(totEstRec)}</div><div class="ks">Cumulative multi-trip leakage</div></div>
+      <div class="kc"><div class="kl">Promoted to Workbench</div><div class="kv ok">${promotedCnt} / ${PATTERNS.length}</div><div class="ks">Hydrated with full trip records</div></div>
+    </div>
+
+    <div class="grid2-eq">
+      ${PATTERNS.map(p => `
+        <div class="panel" style="margin-bottom:0">
+          <div class="panel-h">
+            <div>
+              <span class="mono" style="font-weight:600;color:var(--pat)">${p.id}</span> · <span class="panel-t">${esc(p.name)}</span>
+              <div class="panel-sub">${esc(p.scope)} · <span class="mono">${esc(p.history)}</span></div>
+            </div>
+            <span class="pill pat">Indicative · Tier-2</span>
+          </div>
+          <div class="panel-b">
+            <div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:10px 12px;font-size:12px;margin-bottom:12px">
+              <div style="color:var(--tm)"><b>Learned Baseline ("Normal"):</b> ${esc(p.baseline)}</div>
+              <div style="color:var(--cr);font-weight:600;margin-top:4px"><b>Observed Deviation:</b> ${esc(p.observed)}</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="mono" style="font-size:11.5px;color:var(--ts)">
+                Spend: <b>${fmt(p.exposure)}</b> · Est. Recovery: <b style="color:var(--cr)">${fmt(p.recovery)}</b>
+              </div>
+              ${p.promoted
+                ? `<span class="pill cleared">✓ Promoted to Workbench</span>`
+                : `<button class="btn pri" onclick="promotePatternToWb('${p.id}')">Promote to Workbench &rarr;</button>`
+              }
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function promotePatternToWb(patId) {
+  const p = PATTERNS.find(x => x.id === patId);
+  if (!p || p.promoted) return;
+  p.promoted = true;
+  const newCaseId = 'MNF-10' + (CASES.length + 1);
+  CASES.unshift({
+    id: newCaseId, pin: CASES.length + 1, code: p.id, name: p.name,
+    plantGroup: 'PEL', corridor: p.scope, buyer: 'Multi-Trip Cohort',
+    score: 84, d7: 60, quad: 'HH', severity: 'High', status: 'review',
+    age: 1, slaTarget: 7, tat: null,
+    invoiced: p.exposure, openAp: p.recovery, recovery: p.recovery, nextF110: false,
+    escalatedBy: null, assignee: USER.name,
+    headline: `[Promoted Pattern ${p.id}] ${p.observed.slice(0, 75)}...`,
+    summary: `Promoted from Pattern Analysis (${p.method}). Learned Baseline: ${p.baseline}. Observed: ${p.observed}.`,
+    benchmarkLabel: p.baseline, spreadPct: 'Pattern Cohort',
+    rules: [{ id: p.id, name: p.name, score: 84, sev: 'High', desc: p.observed }],
+    pipeline: [
+      { step: '1 · Corridor Baseline', break: false, rows: [['Pattern ID', p.id], ['Sample Size', p.trips.split('(')[0]], ['Sufficiency', 'Passed (N >= 5)']] },
+      { step: '2 · Observed Drift', break: true, rows: [['Scope', p.scope.slice(0,22)], ['Method', p.method.slice(0,22)], ['Promoted By', USER.name]] },
+      { step: '3 · Cohort Exposure', break: true, rows: [['Cohort Spend', fmt(p.exposure)], ['Open Payable', fmt(p.recovery)], ['Status', 'Under Review']] },
+      { step: '4 · Target Recovery', break: true, rows: [['Est. Clawback', fmt(p.recovery)], ['Next Step', 'Checker Sign-Off'], ['Audit Trail', 'Logged']] }
+    ],
+    docs: [{ type: 'Pattern Cohort', ref: newCaseId, date: '29 Oct 2026', owner: USER.name, detail: p.observed, qty: p.trips.split('(')[0], amt: p.exposure }],
+    d7Pillars: { finance: 60, litigation: 50, compliance: 65, media: 40, aml: 20, pep: 15 }
+  });
+  AUDIT_TRAIL.unshift({ time: 'Just now', caseId: newCaseId, action: `Promoted Pattern ${p.id}`, actor: USER.name, role: USER.role, note: `Promoted ${p.name} into Workbench.` });
+  toast(`Promoted ${p.id} to Workbench as ${newCaseId}`);
+  renderAll();
+  openCaseInWb(newCaseId);
+}
+
+/* ============================================================================
+   7. TAB 5: BOARD & CxO REPORTS STUDIO (4 DISTINCT CIRCULATABLE PACKS)
+   ============================================================================ */
+function selectReport(type) {
+  RPT_TYPE = type;
+  renderRpt();
+}
+
+function copyReportSummary() {
+  navigator.clipboard?.writeText(`fortifai Manifest Executive MBR Report (${RPT_TYPE.toUpperCase()}): Total Freight Monitored ₹342.80 Cr | Realised Cost ₹3.82/MT-Km vs ₹3.18 Plan | Verified EBITDA Recovery ₹7.69 Cr | Immediate F110 Payment Hold: ₹3.35 Cr.`);
+  toast('Executive MBR summary copied to clipboard for email circulation');
+}
+
+function renderRpt() {
+  const totInv = CASES.reduce((a, c) => a + c.invoiced, 0);
+  const totRec = CASES.reduce((a, c) => a + c.recovery, 0);
+  const totHold = CASES.filter(c => c.nextF110).reduce((a, c) => a + c.openAp, 0);
+
+  let paperHtml = '';
+  if (RPT_TYPE === 'board') {
+    paperHtml = `
+      <div style="border-bottom:2px solid var(--nv);padding-bottom:14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-end">
+        <div>
+          <div class="mono" style="font-size:10.5px;color:var(--nm);font-weight:600">REPORT TYPE A · BOARD AUDIT COMMITTEE &amp; CEO BRIEFING</div>
+          <h2 style="font-size:19px;font-weight:600;color:var(--nv);margin-top:2px">Monthly Business Review — Logistics, Haulage &amp; Weighbridge Integrity</h2>
+          <div style="font-size:12px;color:var(--tm)">Prepared for: Board Audit Committee &amp; Chief Executive Officer · Period: FY2025–26</div>
+        </div>
+        <div class="mono" style="font-size:11px;color:var(--tm);text-align:right">DOC ID: FORT-BRD-2026-Q3<br>HEALTH INDEX: 58 / 100</div>
+      </div>
+
+      <div style="background:var(--sf2);border-left:4px solid var(--nm);padding:11px 14px;font-size:12px;color:var(--ts);margin-bottom:18px">
+        <b>Standard of Review (AICPA SSFS No. 1):</b> This briefing presents deterministic signals of freight rate arbitrage, weighbridge-to-GRN weight variances, and counterparty screening risks derived from enterprise ERP and plant weighbridge records. It constitutes forensic intelligence for governance review and does not assert legal determinations of guilt.
+      </div>
+
+      <div class="kgrid-4" style="margin-bottom:18px">
+        <div class="kc"><div class="kl">Total Freight Monitored</div><div class="kv">${fmt(3428000000)}</div><div class="ks">1.42M MT · ₹3.82/MT-Km</div></div>
+        <div class="kc"><div class="kl">Flagged Exposure</div><div class="kv">${fmt(totInv)}</div><div class="ks">${CASES.length} primary dossiers</div></div>
+        <div class="kc"><div class="kl">Verified EBITDA Recovery</div><div class="kv cr">${fmt(totRec)}</div><div class="ks">2.24% of monitored spend</div></div>
+        <div class="kc"><div class="kl">Confirmed &amp; Locked</div><div class="kv ok">${fmt(24500000)}</div><div class="ks">Dual Maker-Checker signed</div></div>
+      </div>
+
+      <h4 style="font-size:13.5px;font-weight:600;color:var(--nv);margin-bottom:8px">1. Key Systemic Control Findings for Audit Committee Attention</h4>
+      <table class="clean-tbl" style="margin-bottom:18px">
+        <thead><tr><th>Control Domain</th><th>Systemic Observation</th><th>Quantified Impact</th><th>Recommended Governance Mandate</th></tr></thead>
+        <tbody>
+          <tr><td><b>1. Sourcing &amp; L1 Tender Bypass</b></td><td>L1 contract compliance dropped to 64.2% (target 85%); 222 ZLOG POs and ₹9.91 Cr of mining hire orders were issued with blank tender basis.</td><td class="num" style="color:var(--cr);font-weight:600">${fmt(36890000)}</td><td>Mandate compulsory L1/Spot reason code in SAP before PO release.</td></tr>
+          <tr><td><b>2. Onboarding &amp; Master Integrity</b></td><td>Vendor 0002303988 received ₹6.99 Cr 24 hours after creation, followed by post-award deletion of PAN and GSTIN.</td><td class="num" style="color:var(--cr);font-weight:600">${fmt(24500000)}</td><td>Lock XK02 tax-ID edits on active vendors with open POs.</td></tr>
+          <tr><td><b>3. Plant Weighbridge &amp; STO Custody</b></td><td>Manual scale overrides at Gate-02 created 165.2 MT of phantom coal receipts; 3.8% STO fuel loss went unrecovered.</td><td class="num" style="color:var(--cr);font-weight:600">${fmt(12420000)}</td><td>Disable manual keyboard weight entry on Gate-02 serial feed.</td></tr>
+        </tbody>
+      </table>
+    `;
+  } else if (RPT_TYPE === 'cfo') {
+    paperHtml = `
+      <div style="border-bottom:2px solid var(--nv);padding-bottom:14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-end">
+        <div>
+          <div class="mono" style="font-size:10.5px;color:var(--cr);font-weight:600">REPORT TYPE B · CFO &amp; AP CONTROLLER ACTION SCHEDULE</div>
+          <h2 style="font-size:19px;font-weight:600;color:var(--nv);margin-top:2px">Pre-Payment F110 Hold Directive &amp; Commercial Debit-Note Schedule</h2>
+          <div style="font-size:12px;color:var(--tm)">Prepared for: Chief Financial Officer, VP Finance &amp; Head of Accounts Payable</div>
+        </div>
+        <div class="mono" style="font-size:11px;color:var(--cr);font-weight:600;text-align:right">IMMEDIATE HOLD: ${fmt(totHold)}<br>TOTAL CLAWBACK: ${fmt(totRec)}</div>
+      </div>
+
+      <h4 style="font-size:13.5px;font-weight:600;color:var(--nv);margin-bottom:8px">Part 1 — Immediate Pre-Payment Hold List (Tomorrow's F110 / REGUH Run)</h4>
+      <table class="clean-tbl" style="margin-bottom:18px">
+        <thead><tr><th>Case ID</th><th>Vendor Name &amp; SAP Code</th><th>PO / Invoice Reference</th><th>Reason for Pre-Settlement Hold</th><th class="num">Open AP to Hold</th><th class="num">Verified Debit Note</th></tr></thead>
+        <tbody>
+          ${CASES.filter(c => c.nextF110).map(c => `
+            <tr>
+              <td class="mono" style="font-weight:600">${c.id}</td>
+              <td><b>${esc(c.name)}</b> (<span class="mono">${c.code}</span>)</td>
+              <td class="mono">${esc(c.docs[0].ref)}</td>
+              <td>${esc(c.headline)}</td>
+              <td class="num" style="color:var(--hi);font-weight:600">${fmt(c.openAp)}</td>
+              <td class="num" style="color:var(--cr);font-weight:600">${fmt(c.recovery)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+
+      <h4 style="font-size:13.5px;font-weight:600;color:var(--nv);margin-bottom:8px">Part 2 — Full Commercial Debit-Note &amp; Recovery Schedule (All Flagged Vendors)</h4>
+      <table class="clean-tbl">
+        <thead><tr><th>Case ID</th><th>Vendor</th><th>Corridor</th><th>Recovery Calculation Basis</th><th class="num">Invoiced Spend</th><th class="num">Recoverable Amount</th><th>Approval Status</th></tr></thead>
+        <tbody>
+          ${CASES.map(c => `
+            <tr>
+              <td class="mono">${c.id}</td>
+              <td><b>${esc(c.name)}</b></td>
+              <td>${esc(c.corridor)}</td>
+              <td class="mono" style="font-size:11.5px">${esc(c.benchmarkLabel)}</td>
+              <td class="num">${fmt(c.invoiced)}</td>
+              <td class="num" style="color:var(--cr);font-weight:600">${fmt(c.recovery)}</td>
+              <td><span class="pill ${c.status}">${statusName(c.status)}</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } else if (RPT_TYPE === 'cpo') {
+    paperHtml = `
+      <div style="border-bottom:2px solid var(--nv);padding-bottom:14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-end">
+        <div>
+          <div class="mono" style="font-size:10.5px;color:var(--nm);font-weight:600">REPORT TYPE C · CPO &amp; CLO MONTHLY OPERATIONS PACK</div>
+          <h2 style="font-size:19px;font-weight:600;color:var(--nv);margin-top:2px">Corridor Unit Economics, L1 Contract Compliance &amp; Weighbridge Operations</h2>
+          <div style="font-size:12px;color:var(--tm)">Prepared for: Chief Procurement Officer, Chief Logistics Officer &amp; Plant Heads</div>
+        </div>
+        <div class="mono" style="font-size:11px;color:var(--tm);text-align:right">AVG COST: ₹3.82 / MT-KM<br>L1 COMPLIANCE: 64.2%</div>
+      </div>
+
+      <h4 style="font-size:13.5px;font-weight:600;color:var(--nv);margin-bottom:8px">1. Corridor Unit-Cost &amp; Turnaround Time (TAT) Scorecard</h4>
+      <table class="clean-tbl" style="margin-bottom:18px">
+        <thead><tr><th>Corridor / Division</th><th class="num">Volume</th><th class="num">Spend</th><th>L1 vs. Paid ₹/MT-Km</th><th class="num">L1 %</th><th class="num">Avg TAT</th><th class="num">Wt Gap</th><th class="num">Recoverable</th></tr></thead>
+        <tbody>
+          ${CORRIDOR_MBR.map(c => `
+            <tr>
+              <td><b>${esc(c.name)}</b></td>
+              <td class="num">${c.volumeMt}</td>
+              <td class="num">${fmt(c.totalSpendInr)}</td>
+              <td class="mono">${c.l1Rate} &rarr; <b style="color:var(--cr)">${c.realizedRate}</b></td>
+              <td class="num">${c.l1CompliancePct}%</td>
+              <td class="num">${c.avgTatHrs}</td>
+              <td class="num" style="color:var(--cr)">${c.wtVariancePct}</td>
+              <td class="num" style="color:var(--cr);font-weight:600">${fmt(c.recoverableInr)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+
+      <h4 style="font-size:13.5px;font-weight:600;color:var(--nv);margin-bottom:8px">2. Buyer Sourcing Concentration &amp; Untendered Spot Awards</h4>
+      <table class="clean-tbl">
+        <thead><tr><th>Buyer Name &amp; Code</th><th>Division</th><th class="num">Monitored Spend</th><th class="num">Untendered Spot Share</th><th>Primary Linked Contractors &amp; Fleet Findings</th></tr></thead>
+        <tbody>
+          <tr><td><b>Badrinatha (M04)</b></td><td>Mining &amp; Haulage</td><td class="num">₹16.90 Cr</td><td class="num" style="color:var(--cr);font-weight:600">94.0%</td><td>Awarded PO 4700012000 (Vinayaka ₹6.91 Cr) &amp; PO 4700012314 (Tirumala ₹3.00 Cr) sharing 6 tipper trucks; plus 0002303988 (₹6.99 Cr in 1 day).</td></tr>
+          <tr><td><b>Malleshayya (M59)</b></td><td>Pellet &amp; Coal</td><td class="num">₹11.26 Cr</td><td class="num" style="color:var(--cr);font-weight:600">89.0%</td><td>Issued PO 4500014671 (Rawmet Coal) at ₹16,090/MT EXW while active FOR delivered contract existed at ₹15,600/MT.</td></tr>
+          <tr><td><b>Ramanjaneya (M12)</b></td><td>Bulk Ore &amp; Coal</td><td class="num">₹81.20 Cr</td><td class="num" style="color:var(--hi);font-weight:600">76.0%</td><td>10 untendered EXW POs for KIOM Iron Ore stepping unit rates from ₹2,054/MT to ₹2,625/MT (+27.8%).</td></tr>
+        </tbody>
+      </table>
+    `;
+  } else {
+    paperHtml = `
+      <div style="border-bottom:2px solid var(--nv);padding-bottom:14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:flex-end">
+        <div>
+          <div class="mono" style="font-size:10.5px;color:var(--nm);font-weight:600">REPORT TYPE D · CCO, GENERAL COUNSEL &amp; BIG-4 AUDIT EVIDENCE INDEX</div>
+          <h2 style="font-size:19px;font-weight:600;color:var(--nv);margin-top:2px">Primary-Key Lineage, Maker-Checker Attestation &amp; Schema Availability Index</h2>
+          <div style="font-size:12px;color:var(--tm)">Prepared for: Chief Compliance Officer, Legal Counsel &amp; Statutory Auditors (PCAOB AS 1105 / SOX 404)</div>
+        </div>
+        <div class="mono" style="font-size:11px;color:var(--ok);font-weight:600;text-align:right">SHA-256 VERIFIED<br>READ-ONLY REPLICA</div>
+      </div>
+
+      <h4 style="font-size:13.5px;font-weight:600;color:var(--nv);margin-bottom:8px">1. Primary-Key ERP &amp; Weighbridge Document Lineage Index</h4>
+      <table class="clean-tbl" style="margin-bottom:18px">
+        <thead><tr><th>Case ID</th><th>SAP Vendor Key</th><th>Primary SAP / Weighbridge Document Keys</th><th>Rules Fired</th><th>Maker (Analyst)</th><th>Checker (Reviewer)</th><th>Disposition</th></tr></thead>
+        <tbody>
+          ${CASES.map(c => `
+            <tr>
+              <td class="mono" style="font-weight:600">${c.id}</td>
+              <td class="mono">${c.code}</td>
+              <td class="mono" style="font-size:11px">${c.docs.map(d => d.ref).join(' · ')}</td>
+              <td class="mono">${c.rules.map(r => r.id).join(', ')}</td>
+              <td>${esc(c.escalatedBy || 'Priya Nair')}</td>
+              <td>${c.status==='confirmed'||c.status==='cleared' ? 'Arjun Rao (Verified)' : 'Pending Checker'}</td>
+              <td><span class="pill ${c.status}">${statusName(c.status)}</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+
+      <h4 style="font-size:13.5px;font-weight:600;color:var(--nv);margin-bottom:8px">2. Data Availability &amp; Dropped-Signal Attestation (Baldota MANDT 140)</h4>
+      <div style="font-size:12px;color:var(--ts);background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:12px">
+        • <b>Populated &amp; Verified Signals:</b> EKKO/EKPO (1,415 ZSTO POs, 222 ZLOG POs, INCO1, ZBUYER_CODE, ZPUR_BASIS), RSEG/RBKP (KSCHL ZFR2/ZHC4, BNKAN, BEZNK, XBLNR Bilty refs), EKBE/MARD (Mvt 101/641, UMLME), CDPOS (KRED master changes), and D7 CDD Register.<br>
+        • <b>Explicitly Dropped Unpopulated Fields:</b> SAP VTTK/VTTP shipment tables and EKKO.truck_number are 100% NULL in the tenant extract and are excluded from scoring to guarantee zero false-positive fabrication.
+      </div>
+    `;
+  }
+
+  document.getElementById('sec-rpt').innerHTML = `
+    <div class="ph">
+      <div>
+        <div class="pt">Board, CxO &amp; External Audit Report Studio</div>
+        <div class="psub">Select any of the 4 formal report packs below to preview, print to PDF, or circulate to executive stakeholders.</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="copyReportSummary()">📋 Copy Summary for Email</button>
+        <button class="btn pri" onclick="window.print()">🖨 Print / Export Selected Report (PDF)</button>
+      </div>
+    </div>
+
+    <div class="rpt-selector">
+      <div class="rpt-card ${RPT_TYPE==='board'?'on':''}" onclick="selectReport('board')">
+        <div class="mono" style="font-size:10px;font-weight:600;color:var(--nm)">REPORT TYPE A · BOARD / CEO</div>
+        <div style="font-weight:600;font-size:13.5px;color:var(--nv);margin:4px 0">Audit Committee MBR Briefing</div>
+        <div style="font-size:11.5px;color:var(--tm)">Health Index (58/100), macro exposure, systemic control gaps &amp; remediation mandate.</div>
+      </div>
+      <div class="rpt-card ${RPT_TYPE==='cfo'?'on':''}" onclick="selectReport('cfo')">
+        <div class="mono" style="font-size:10px;font-weight:600;color:var(--cr)">REPORT TYPE B · CFO / AP HEAD</div>
+        <div style="font-weight:600;font-size:13.5px;color:var(--nv);margin:4px 0">F110 Payment Hold &amp; Debit-Note Pack</div>
+        <div style="font-size:11.5px;color:var(--tm)">Tomorrow's ₹3.35 Cr payout hold list + itemized ₹7.69 Cr vendor clawback schedule.</div>
+      </div>
+      <div class="rpt-card ${RPT_TYPE==='cpo'?'on':''}" onclick="selectReport('cpo')">
+        <div class="mono" style="font-size:10px;font-weight:600;color:var(--hi)">REPORT TYPE C · CPO / CLO</div>
+        <div style="font-weight:600;font-size:13.5px;color:var(--nv);margin:4px 0">Corridor Unit Cost &amp; Weighbridge Pack</div>
+        <div style="font-size:11.5px;color:var(--tm)">Corridor ₹/MT-Km scorecard, L1 compliance %, TAT hours &amp; Gate-02 scale audit.</div>
+      </div>
+      <div class="rpt-card ${RPT_TYPE==='audit'?'on':''}" onclick="selectReport('audit')">
+        <div class="mono" style="font-size:10px;font-weight:600;color:var(--ok)">REPORT TYPE D · CCO / BIG-4 AUDIT</div>
+        <div style="font-weight:600;font-size:13.5px;color:var(--nv);margin:4px 0">Forensic Evidence &amp; Lineage Index</div>
+        <div style="font-size:11.5px;color:var(--tm)">Primary-key document trace, SOX-404 Maker-Checker log &amp; schema availability.</div>
+      </div>
+    </div>
+
+    <div class="rpt-paper">${paperHtml}</div>
+  `;
+}
+
+/* ============================================================================
+   8. TAB 6: METHODOLOGY & CONTROLS (WITH AI PATTERNS & LEARNED BASELINES)
+   ============================================================================ */
+function setAdminSub(sub) {
+  ADMIN_SUB = sub;
+  renderAdmin();
+}
+
+function renderAdmin() {
+  let content = '';
+  if (ADMIN_SUB === 'rules') {
+    content = `
+      <div class="panel-b" style="border-bottom:1px solid var(--bd);background:var(--sf2)">
+        <b>Tier-1 Deterministic Rule Registry (MNF-01 to MNF-12):</b> Executes reproducible SQL over SAP and TMS tables. Multiple rules firing on the same vendor/corridor roll up via <span class="mono">Case Score = min(100, max(Score) + 0.15 × sum(other))</span>.
+      </div>
+      <table class="clean-tbl">
+        <thead>
+          <tr><th>Rule ID</th><th>Rule Name</th><th>Control Plane</th><th>Default Threshold Knob</th><th class="num">Weight</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">MNF-01</td><td><b>Open-Market Spot Rate Abuse (L1 Bypass)</b></td><td>1 · Indent &amp; Rate</td><td class="mono">&gt; 15% above active L1 rate + ₹0 penalty debit</td><td class="num">85</td></tr>
+          <tr><td class="mono">MNF-02</td><td><b>Vehicle Capacity Downgrade (32T to 16T Split)</b></td><td>1 · Indent &amp; Rate</td><td class="mono">&lt; 65% payload utilization on FTL slab</td><td class="num">70</td></tr>
+          <tr><td class="mono">MNF-03</td><td><b>Dedicated Fleet Double-Billing (Retainer + Spot)</b></td><td>1 · Indent &amp; Rate</td><td class="mono">Active roster truck plate overlap</td><td class="num">90</td></tr>
+          <tr><td class="mono">MNF-04</td><td><b>Abnormal Transit Time (TAT) &amp; Detention Padding</b></td><td>2 · TAT &amp; Route</td><td class="mono">&gt; 2.0x lane TAT norm or unverified wait</td><td class="num">85</td></tr>
+          <tr><td class="mono">MNF-05</td><td><b>Distance Slab Inflation &amp; Multi-PO Price Step</b></td><td>2 · TAT &amp; Route</td><td class="mono">&gt; 12% distance / &gt;20% untendered price step</td><td class="num">75</td></tr>
+          <tr><td class="mono">MNF-06</td><td><b>Duplicate Lorry Receipt (Bilty) Reuse</b></td><td>2 · TAT &amp; Route</td><td class="mono">&ge; 2 invoices or POs sharing same LR (XBLNR)</td><td class="num">90</td></tr>
+          <tr><td class="mono">MNF-07</td><td><b>Weighbridge vs. GRN vs. Invoice Weight Break</b></td><td>3 · Weighbridge &amp; GRN</td><td class="mono">&gt; 0.5% weight break or manual scale override</td><td class="num">90</td></tr>
+          <tr><td class="mono">MNF-08</td><td><b>Inter-Plant Transfer (STO) Transit Shrinkage</b></td><td>3 · Weighbridge &amp; GRN</td><td class="mono">&gt; 0.5% unrecovered loss (Mvt 641 vs 101)</td><td class="num">85</td></tr>
+          <tr><td class="mono">MNF-09</td><td><b>Ghost Freight &amp; Zero-Quantity Billing</b></td><td>3 · Weighbridge &amp; GRN</td><td class="mono">Invoiced qty = 0 or missing GRN/SES</td><td class="num">85</td></tr>
+          <tr><td class="mono">MNF-10</td><td><b>Incoterm Freight Double-Billing (FOR / EXW)</b></td><td>4 · Settlement</td><td class="mono">Freight billed on FOR/CIF or EXW &gt; FOR price</td><td class="num">85</td></tr>
+          <tr><td class="mono">MNF-11</td><td><b>Unplanned Delivery Cost Padding &amp; Split Slabs</b></td><td>4 · Settlement</td><td class="mono">&gt; 10% BEZNK surcharge or paired ZFR2 splits</td><td class="num">70</td></tr>
+          <tr><td class="mono">MNF-12</td><td><b>Vendor Master Tax ID Scrubbing &amp; Bank Swap</b></td><td>4 · Master Data</td><td class="mono">Post-PO PAN/GST deletion or bank swap &le;10d</td><td class="num">90</td></tr>
+        </tbody>
+      </table>
+    `;
+  } else if (ADMIN_SUB === 'patterns') {
+    content = `
+      <div class="panel-b" style="border-bottom:1px solid var(--bd);background:var(--sf2)">
+        <div style="font-weight:600;color:var(--nv);margin-bottom:4px">Tier-2 AI Pattern Catalogue &amp; Responsible-AI Baseline Architecture</div>
+        <div style="font-size:12px;color:var(--ts)">
+          <b>Deterministic Statistics, Never a Black Box:</b> While Tier-1 rules test fixed single-invoice thresholds, Tier-2 AI patterns learn what is normal for each corridor, vehicle chassis, and buyer from the client's own history using non-parametric statistics (<b>Median + Median Absolute Deviation [MAD] / Robust Z-Score</b>) and <b>Bipartite Graph Resolution</b>. Every pattern exposes the exact baseline it scored against, enforces a minimum sample sufficiency gate (<span class="mono">N &ge; 5</span>), and requires human promotion to enter the Workbench.
+        </div>
+      </div>
+
+      <div style="padding:14px 16px 6px;font-weight:600;font-size:12.5px;color:var(--nv)">1. AI Pattern Catalogue (MNF-P1 to MNF-P6)</div>
+      <table class="clean-tbl" style="margin-bottom:18px">
+        <thead>
+          <tr><th>Pattern ID</th><th>Pattern Name</th><th>Baseline (The "Normal")</th><th>Statistical / Graph Method</th><th>Feasibility</th></tr>
+        </thead>
+        <tbody>
+          ${PATTERNS.map(p => `
+            <tr>
+              <td class="mono" style="font-weight:600;color:var(--pat)">${p.id}</td>
+              <td><b>${esc(p.name)}</b></td>
+              <td>${esc(p.baseline)}</td>
+              <td class="mono" style="font-size:11.5px">${esc(p.method)}</td>
+              <td><span class="pill cleared">SUPPORTED</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+
+      <div style="padding:8px 16px 6px;font-weight:600;font-size:12.5px;color:var(--nv)">2. Learned Baselines, Shown (The Reference Each Pattern Scored Against)</div>
+      <table class="clean-tbl">
+        <thead>
+          <tr><th>Scope / Corridor</th><th>Subject Cohort</th><th>History &amp; Sample Gate</th><th>Learned Normal Distribution</th><th>Observed Tail Deviation Flagged</th></tr>
+        </thead>
+        <tbody>
+          ${PATTERNS.map(p => `
+            <tr>
+              <td><b>${esc(p.id)}</b> · ${esc(p.scope.split('·')[0])}</td>
+              <td>${esc(p.scope.split('·')[1] || p.name)}</td>
+              <td class="mono" style="font-size:11px">${esc(p.history)}</td>
+              <td>${esc(p.baseline)}</td>
+              <td style="color:var(--cr);font-weight:500">${esc(p.observed)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  } else if (ADMIN_SUB === 'fp') {
+    content = `
+      <div class="panel-b" style="border-bottom:1px solid var(--bd);background:var(--sf2)">
+        <b>Two-Stage False-Positive Control:</b> 12 automated pre-scoring SQL filters eliminate 4,381 benign operational trips before scoring; post-review Exception Archetypes silence cleared vendors unless a structural-drift tripwire fires.
+      </div>
+      <table class="clean-tbl">
+        <thead>
+          <tr><th>Gate ID</th><th>False-Positive Filter</th><th>What It Excludes Before Scoring</th><th class="num">Trips Filtered</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">L1-01</td><td><b>Reversed &amp; Cancelled Documents</b></td><td>Invoices or GRNs already reversed by Accounts Payable or Stores (STBLG / Mvt 102)</td><td class="num">314</td></tr>
+          <tr><td class="mono">L1-02</td><td><b>Natural Bulk Moisture Tolerance (&le; 0.5%)</b></td><td>Single-trip bulk coal/ore evaporation within 0.5% scale tolerance (routed to MNF-P3)</td><td class="num">1,120</td></tr>
+          <tr><td class="mono">L1-03</td><td><b>Verified L1 Penalty Recovery</b></td><td>Spot hiring where &ge;80% of rate spread was deducted from defaulting L1 carrier</td><td class="num">42</td></tr>
+          <tr><td class="mono">L1-04</td><td><b>Official Plant Breakdown Waiver (AUFK)</b></td><td>Truck waiting time caused by verified crusher/tippler maintenance breakdown order</td><td class="num">68</td></tr>
+          <tr><td class="mono">L1-05</td><td><b>Sovereign Mines &amp; Statutory Rail (NMDC / KSMC)</b></td><td>PSU mineral corporations (NMDC 0002302043, KSMC) and Indian Railways FOIS freight</td><td class="num">490</td></tr>
+          <tr><td class="mono">L1-06</td><td><b>Automated ERS Batch Settlements</b></td><td>System batch postings where Evaluated Receipt Settlement (LFM1.XERSY) is active</td><td class="num">215</td></tr>
+          <tr><td class="mono">L1-07</td><td><b>Standard Ex-Works Buyer-Paid Freight</b></td><td>Normal EXW orders when base commodity price is below FOR delivered benchmark</td><td class="num">840</td></tr>
+          <tr><td class="mono">L1-08</td><td><b>Mine-Head Terrain Tipper Restriction</b></td><td>Narrow mine-bench corridors legally restricting 32-MT multi-axle trailers</td><td class="num">94</td></tr>
+          <tr><td class="mono">L1-09..12</td><td><b>Intercompany, De-Minimis &amp; Empty Cylinder Returns</b></td><td>Group affiliates (VBUND), &lt;₹5L cartage, Sec 194J professionals, and empty gas cylinder backhauls</td><td class="num">1,198</td></tr>
+        </tbody>
+      </table>
+    `;
+  } else {
+    content = `
+      <table class="clean-tbl">
+        <thead>
+          <tr><th>Timestamp</th><th>Case ID</th><th>Action</th><th>User</th><th>Role</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          ${AUDIT_TRAIL.map(a => `
+            <tr>
+              <td class="mono">${esc(a.time)}</td>
+              <td class="mono" style="font-weight:600;color:var(--nm)">${esc(a.caseId)}</td>
+              <td><b>${esc(a.action)}</b></td>
+              <td>${esc(a.actor)}</td>
+              <td class="mono">${esc(a.role)}</td>
+              <td>${esc(a.note)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  document.getElementById('sec-admin').innerHTML = `
+    <div class="ph">
+      <div>
+        <div class="pt">Methodology, AI Pattern Baselines &amp; False-Positive Controls</div>
+        <div class="psub">Complete transparency into the 12 deterministic rules, the 6 Tier-2 AI pattern models &amp; learned baselines, and the 12 false-positive gates.</div>
+      </div>
+    </div>
+
+    <div class="subtabs">
+      <button class="subtab-btn ${ADMIN_SUB==='rules'?'on':''}" onclick="setAdminSub('rules')">1 · 12 Detection Rules (Tier-1)</button>
+      <button class="subtab-btn ${ADMIN_SUB==='patterns'?'on':''}" onclick="setAdminSub('patterns')">2 · AI Pattern Catalogue &amp; Learned Baselines (Tier-2)</button>
+      <button class="subtab-btn ${ADMIN_SUB==='fp'?'on':''}" onclick="setAdminSub('fp')">3 · 12 False-Positive Filters (4,381 Filtered)</button>
+      <button class="subtab-btn ${ADMIN_SUB==='audit'?'on':''}" onclick="setAdminSub('audit')">4 · Immutable Audit Log (${AUDIT_TRAIL.length})</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-b" style="padding:0">${content}</div>
+    </div>
+  `;
+}
+
+/* ============================================================================
+   9. COPILOT DRAWER (⌘K) & GLOBAL REFRESH
+   ============================================================================ */
+function openDrawer() {
+  document.getElementById('drawerScrim').classList.add('on');
+  document.getElementById('askDrawer').classList.add('on');
+  const body = document.getElementById('drawerBody');
+  if (!body.innerHTML) {
+    body.innerHTML = `
+      <div style="font-size:12px;color:var(--tm);margin-bottom:10px">Click a governed MBR or forensic query:</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
+        <button class="btn" onclick="runCopilotQuery('Why did unit freight cost rise to ₹3.82/MT-Km?')">1 · Why did unit freight cost rise to ₹3.82/MT-Km?</button>
+        <button class="btn" onclick="runCopilotQuery('Compare Russian PCI Coal EXW vs FOR landed cost')">2 · Compare Russian PCI Coal EXW vs FOR landed cost</button>
+        <button class="btn" onclick="runCopilotQuery('Show duplicate Lorry Receipts IS29426')">3 · Show duplicate Lorry Receipts (IS29426*)</button>
+        <button class="btn" onclick="runCopilotQuery('Summarize Weighbridge vs GRN mismatch on Coal')">4 · Summarize Weighbridge vs GRN mismatch on Coal</button>
+      </div>
+      <div id="copilotAnswers"></div>
+    `;
+  }
+}
+
+function closeDrawer() {
+  document.getElementById('drawerScrim').classList.remove('on');
+  document.getElementById('askDrawer').classList.remove('on');
+}
+
+function runCopilotQuery(q) {
+  if (!q) return;
+  const box = document.getElementById('copilotAnswers');
+  const s = q.toLowerCase();
+  let ans = '';
+  if (s.includes('mt-km') || s.includes('3.82') || s.includes('unit')) {
+    ans = `<b>MBR Unit Cost Variance (₹3.82 vs ₹3.18 / MT-Km Plan):</b><br>• <b>Spot-Truck Bypass (+₹0.41/MT-Km):</b> L1 compliance dropped to 64.2% (Mining division at 38% L1 compliance).<br>• <b>Accessorial &amp; Detention Bleed (+₹0.23/MT-Km):</b> Unplanned BEZNK and ZHC4 surcharges reached 8.6% of base freight.<br>• <b>Total Recoverable:</b> <b>₹7.69 Cr</b>.`;
+  } else if (s.includes('coal') || s.includes('exw')) {
+    ans = `<b>PCI Coal Landed Cost Comparison (SKU 15009571):</b><br>• <b>Sri Mahalakshmi (PO 4500014466):</b> ₹15,600/MT on FOR (Freight Included) terms.<br>• <b>Rawmet Resources (PO 4500014671):</b> ₹16,090/MT on EXW (Freight Excluded) + ₹1,600/MT road freight = ₹17,690/MT.<br>• <b>Recoverable Overpayment:</b> ₹2,090/MT × 7,000 MT = <b>₹1.46 Cr</b>.`;
+  } else if (s.includes('lorry') || s.includes('is29426')) {
+    ans = `<b>Duplicate Lorry Receipt Audit (Vendor 0002303440):</b><br>• Bilties <b>IS2942600228</b>, <b>IS2942600224</b>, and <b>IS2942600229</b> were each billed 3 times across Material POs (4000007564/66) and Service POs (4700009144/46) with 0 recorded quantity.<br>• <b>Recoverable Duplicate Billing:</b> <b>₹26.40 Lakhs</b>.`;
+  } else {
+    ans = `<b>Gate-02 Weighbridge vs. Store GRN (MNF-102):</b><br>• Physical scale net weight across 28 trips = <b>674.8 MT</b>.<br>• Store GRN booked = <b>798.0 MT</b>; Invoice billed = <b>840.0 MT</b> (+165.2 MT phantom coal).<br>• <b>Recoverable Amount:</b> <b>₹1.13 Cr</b>.`;
+  }
+  box.innerHTML = `<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:12px;margin-bottom:10px;font-size:12.5px;line-height:1.5">${ans}</div>` + box.innerHTML;
+  document.getElementById('drawerInput').value = '';
+}
+
+function renderAll() {
+  document.getElementById('badgeWb').textContent = getScopedCases().length;
+  document.getElementById('badgeDisp').textContent = CASES.filter(c => c.status === 'pending_checker' || c.status === 'escalated').length;
+  document.getElementById('badgePat').textContent = PATTERNS.length;
+  renderDash();
+  renderWb();
+  renderDisp();
+  renderPat();
+  renderRpt();
+  renderAdmin();
+}
+
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    document.getElementById('askDrawer').classList.contains('on') ? closeDrawer() : openDrawer();
+  }
+  if (e.key === 'Escape') closeDrawer();
+  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+  if (ACTIVE_TAB === 'wb') {
+    const rows = getFilteredWbList();
+    const idx = rows.findIndex(c => c.id === SEL_ID);
+    if (e.key === 'j' && idx < rows.length - 1) { SEL_ID = rows[idx + 1].id; renderWbList(); renderWbDetail(); }
+    if (e.key === 'k' && idx > 0) { SEL_ID = rows[idx - 1].id; renderWbList(); renderWbDetail(); }
+  }
+});
+
+renderAll();
+</script>
+</body>
+</html>
