@@ -155,7 +155,7 @@ reports:
     level: procurement
     priority: 1
     active: true
- - file: manifest-v3.html
+  - file: manifest-v3.html
   # report_master.id 21
     title: Manifest
     component_key: manifest-logistics-cost-saving
