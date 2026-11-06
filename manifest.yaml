@@ -3,164 +3,130 @@
 # Required: file, title, component_key, level (a level_key from report_level_master, or a list of them).
 # Optional: report_code (default: component_key), subtitle (default: title),
 #           active (default: true), priority (default: last in level).
-# component_key must match the case label in ReportsPageV4.tsx, if one exists.
-# Retire a report with `active: false`; never delete an entry.
 
 reports:
 ############## Procurement
-# cfo-procurement 
-#   report_master.id 11
-#   level: procurement
-#   priority 10
-  - file: EWAC_Procurement_Risk_Monitoring_v2.html
-  # report_master.id 32
-    title: EWAC Procurement Risk Monitoring
-    component_key: EWAC_Procurement_Risk_Monitoring_v2
-    level: procurement
-    priority: 1
-    active: false
-  - file: apex_v9.html
-  # report_master.id 25
-    title: Apex
-    component_key: apex
-    report_code: APEX-001
-    subtitle: Procurement analytics & spend intelligence
-    level: procurement
-    priority: 4
-    active: False
-  - file: Holcim_GHBS_Tender_Prototype_v7.html
-  # report_master.id 29
-    title: Tender
-    component_key: tender
-    subtitle: RFP Bidding Risk Monitoring 
-    level: procurement
-    priority: 3
-    active: False
-  - file: fortifai_exec_dashboard_v6.html
-  # report_master.id 26
-    title: Executive risk summary
-    component_key: fortifai_exec_dashboard_v6
-    level: procurement
-    active: false
-############## Audit
-# r2r-anomaly
-#   report_master.id 14
-#   level: audit
-#   priority: 10
-# vigil-audit-report
-#   report_master.id 20
-#   level: audit
-#   priority: 20
-  - file: Argus_Investigation_Agent.html
-  # report_master.id 33
-    title: Argus
-    subtitle: Internal Investgation Agent
-    component_key: Argus_Investigation_Agent
-    level: audit
-    priority: 1
-############## Compliance
-  - file: Aegis_Prototype_v30.html
-  # report_master.id 30
-    title: Aegis
-    component_key: Aegis-Prototype-v30
-    subtitle: Trade Diversion Monitoring
-    level: compliance
-    priority: 1
-  - file: Ta_Agent_Prototype_v11.html
-  # report_master.id 28
-    title: Aegis For Exports
-    component_key: Ta_Agent_Prototype_v5
-    subtitle: Export Control Monitoring
-    level: compliance
-    priority: 2
-  - file: FCPA_PROC0460_Module_v9.html
-  # report_master.id 24
-    title: Veritas
-    component_key: proc0460-bc-report-ui-v4
-    subtitle: Bribery & Corruption Monitoring
-    level: compliance
-    priority: 3
-############## Finance
-# ar-report
-#   report_master.id 7
-#   level: finance
-#   priority: 10
-# cfo-working-capital
-#   report_master.id 12
-#   level: finance
-#   priority: 20
-  - file: Crystal_v14.html
-  # report_master.id 34
-    title: Crystal
-    component_key: Crystal_v14
-    subtitle: Balance Sheet CLose Risk
-    level: finance
-    priority: 1
-  - file: FRP005_Early_Payment_Report_v3.html
-  # report_master.id 27
-    title: Supplier Early Payments
-    component_key: FRP005_Early_Payment_Report_v3
-    subtitle: Working Capital Optimisation
-    level: finance
-    priority: 3
-  # 2. HIDE DUPLICATE #2 (Lowercase m from commit ed0483a)
-  - file: Moneta_Working_Capital_Command_Centre.html
-    title: Moneta
-    component_key: moneta_Working_Capital_Command_Centre
-    level: finance
-    active: false
-  # 3. HIDE DUPLICATE #1 (Original AESA key from commit 66eeccb with "Workimng" typo)
-  - file: Moneta_Working_Capital_Command_Centre.html
-    title: Moneta
-    component_key: AESA_Working_Capital_Command_Centre
-    level: finance
-    active: false
-############## sales
-# channel-stuffing
-#   report_master.id 2
-#   level: sales
-#   priority: 10
-  - file: Surge_Channel_Stuffing.html
-  # report_master.id 35
-    title: Surge
-    component_key: Surge_Channel_Stuffing
-    subtitle: Channel Stuffing Monitoring
-    level: sales
-    priority: 1
-  - file: Codex_DocIntel_Holcim_GHBS_Q1FY26_1.html
-  # report_master.id 22
-    title: Codex
-    component_key: codex-doc-intel-holcim
-    subtitle: Pre-Posting Document Intelligence
-    level: cross
-    active: false
-  - file: Tender_BidIntegrity_Holcim_GHBS_Q1FY26_5.html
-  # report_master.id 21
-    title: Tender
-    component_key: tender-bid-integrity-holcim
-    subtitle: Pre-Award Bid Integrity
-    level: cross
-    active: false
-  - file: AEWAC-procurement-risk-monitoring-v2.html
-  # report_master.id 21
-    title: Aewac
-    component_key: AEWAC-procurement-risk-monitoring
-    subtitle: Procurement Abuse Monitoring
-    level: procurement
-    priority: 2
   - file: Kuber-Procurement-Cost-Optimisation-v2.html
-  # report_master.id 21
     title: Kuber
     component_key: kuber-procurement-risk-monitoring
     subtitle: Procurement Cost Saving
     level: procurement
     priority: 1
     active: true
+
+  - file: AEWAC-procurement-risk-monitoring-v2.html
+    title: Aewac
+    component_key: AEWAC-procurement-risk-monitoring
+    subtitle: Procurement Abuse Monitoring
+    level: procurement
+    priority: 2
+    active: true
+
   - file: manifest-v3.html
-  # report_master.id 21
     title: Manifest
     component_key: manifest-logistics-cost-saving
     subtitle: Logistics Cost Optimisation
     level: procurement
+    priority: 3
+    active: true
+
+############## Audit
+  - file: Argus_Investigation_Agent.html
+    title: Argus
+    subtitle: Internal Investigation Agent
+    component_key: Argus_Investigation_Agent
+    level: audit
+    priority: 1
+    active: true
+
+  - file: Vigil_Comprehensive.html
+  # report_master.id 20
+    title: "Vigil - Continuous Audit Monitoring"
+    subtitle: Audit Automation
+    component_key: vigil-audit-report
+    level: audit
     priority: 2
     active: true
+
+
+############## Compliance
+  - file: Aegis_Prototype_v30.html
+    title: Aegis
+    component_key: Aegis-Prototype-v30
+    subtitle: Trade Diversion Monitoring
+    level: compliance
+    priority: 1
+    active: true
+
+  - file: Ta_Agent_Prototype_v11.html
+    title: Aegis For Exports
+    component_key: Ta_Agent_Prototype_v5
+    subtitle: Export Control Monitoring
+    level: compliance
+    priority: 2
+    active: true
+
+  - file: FCPA_PROC0460_Module_v9.html
+    title: Veritas
+    component_key: proc0460-bc-report-ui-v4
+    subtitle: Bribery & Corruption Monitoring
+    level: compliance
+    priority: 3
+    active: true
+
+############## Finance
+  - file: Crystal_v14.html
+    title: Crystal
+    component_key: Crystal_v14
+    subtitle: Balance Sheet Close Risk
+    level: finance
+    priority: 1
+    active: true
+
+  - file: Moneta_Working_Capital_Command_Centre.html
+    title: Moneta
+    component_key: Moneta_Working_Capital_Command_Centre
+    subtitle: Working Capital Optimisation Agent
+    level: finance
+    priority: 2
+    active: true
+
+  - file: FRP005_Early_Payment_Report_v3.html
+    title: Supplier Early Payments
+    component_key: FRP005_Early_Payment_Report_v3
+    subtitle: Working Capital Optimisation
+    level: finance
+    priority: 3
+    active: true
+
+############## Sales
+  - file: Surge_Channel_Stuffing.html
+    title: Surge
+    component_key: Surge_Channel_Stuffing
+    subtitle: Channel Stuffing Monitoring
+    level: sales
+    priority: 1
+    active: true
+
+    ############## Holcim Prototypes (Set active: true whenever needed for demos)
+  - file: Holcim_GHBS_Tender_Prototype_v7.html
+    title: Tender
+    component_key: tender
+    subtitle: RFP Bidding Risk Monitoring
+    level: procurement
+    priority: 4
+    active: false
+
+  - file: Codex_DocIntel_Holcim_GHBS_Q1FY26_1.html
+    title: Codex
+    component_key: codex-doc-intel-holcim
+    subtitle: Pre-Posting Document Intelligence
+    level: cross
+    active: false
+
+  - file: Tender_BidIntegrity_Holcim_GHBS_Q1FY26_5.html
+    title: Tender
+    component_key: tender-bid-integrity-holcim
+    subtitle: Pre-Award Bid Integrity
+    level: cross
+    active: false
