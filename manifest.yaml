@@ -30,6 +30,15 @@ reports:
     priority: 3
     active: true
 
+# Retire legacy CFO Report (report_master.id 11) replaced by Kuber
+  - file: Holcim_GHBS_Tender_Prototype_v7.html
+    title: Procurement Cost Optimisation
+    component_key: cfo-procurement
+    subtitle: CFO Report
+    level: procurement
+    priority: 10
+    active: false
+
 ############## Audit
   - file: Argus_Investigation_Agent.html
     title: Argus
@@ -98,6 +107,15 @@ reports:
     level: finance
     priority: 3
     active: true
+    
+# Retire legacy Finance CFO Report (report_master.id 12) — replaced by Moneta
+  - file: Moneta_Working_Capital_Command_Centre.html
+    title: Working Capital Optimisation
+    component_key: cfo-working-capital
+    subtitle: CFO Report
+    level: finance
+    priority: 20
+    active: false
 
 ############## Sales
   - file: Surge_Channel_Stuffing.html
