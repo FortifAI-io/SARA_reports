@@ -2549,54 +2549,126 @@ window.FortifaiCompass = (function () {
 })();
 </script>
 <!-- ==================== END FORTIFAI COMPASS AI GUIDE ==================== -->
- <!-- UI/UX PATCH: Side-by-Side Overview Charts (Zero Scroll Fatigue) + Global Currency Sync -->
+<!-- UI/UX PATCH v2: Fix Kuber Single-Line Header Bar, Left-Edge Clipping & Currency Sync -->
 <style>
-  /* Compact KPI & Lever spacing so more content fits above the fold */
-  .chart-grid-2col {
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 16px !important;
-    align-items: stretch !important;
-    margin-bottom: 16px !important;
+  /* 1. Prevent horizontal overflow that clips the left edge ("atform Guide" / "cutive Overview") */
+  html, body {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
   }
-  .chart-grid-2col > div,
-  .chart-card {
-    margin-bottom: 0 !important;
-    height: 100% !important;
-    max-height: 340px !important;
+
+  /* 2. Force the Dark Topbar into a clean, single-row 52px bar matching Manifest */
+  header,
+  .topbar,
+  .header-bar,
+  .app-header,
+  body > div:first-of-type > div:first-of-type {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
   }
-  canvas {
-    max-height: 235px !important;
+
+  /* Target Kuber's dark navy header container specifically */
+  .kuber-topbar-fixed {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+    padding: 0 16px !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  /* Keep left brand title and right action buttons on one crisp horizontal line */
+  .kuber-topbar-fixed > * {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+  }
+
+  /* Compact all header buttons so nothing wraps onto a 2nd row */
+  .kuber-topbar-fixed button,
+  .kuber-topbar-fixed a,
+  .kuber-topbar-fixed span {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  .kuber-topbar-fixed button {
+    padding: 5px 10px !important;
+    font-size: 11.5px !important;
+    line-height: 1.2 !important;
+    height: 30px !important;
   }
 </style>
+
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    // 1. Pair consecutive full-width chart panels on the Overview tab into a clean 2-column grid
-    const overviewTab = document.querySelector("#tab-overview, .tab-pane.active, main");
-    if (overviewTab) {
-      const canvases = Array.from(overviewTab.querySelectorAll("canvas"));
-      if (canvases.length >= 2) {
-        const card1 = canvases[0].closest(".card, .panel, [class*='card'], div[style*='background']");
-        const card2 = canvases[1].closest(".card, .panel, [class*='card'], div[style*='background']");
-        if (card1 && card2 && card1 !== card2 && card1.parentNode === card2.parentNode) {
-          const wrapper = document.createElement("div");
-          wrapper.className = "chart-grid-2col";
-          card1.parentNode.insertBefore(wrapper, card1);
-          wrapper.appendChild(card1);
-          wrapper.appendChild(card2);
+  (function fixKuberHeaderAndCurrency() {
+    function applyFix() {
+      // 1. Locate Kuber's dark header bar by finding the element containing "Ask Kuber" & "Board Report"
+      const askBtn = Array.from(document.querySelectorAll("button, a, div")).find(
+        el => (el.innerText || "").includes("Ask Kuber") && el.children.length <= 3
+      );
+      if (askBtn) {
+        // Walk up to the full-width dark navy bar container
+        let bar = askBtn.parentElement;
+        while (bar && bar !== document.body) {
+          const bg = window.getComputedStyle(bar).backgroundColor;
+          const rect = bar.getBoundingClientRect();
+          if (rect.width > window.innerWidth * 0.7 && bg !== "rgba(0, 0, 0, 0)" && bg !== "rgb(255, 255, 255)") {
+            bar.classList.add("kuber-topbar-fixed");
+            break;
+          }
+          bar = bar.parentElement;
         }
+
+        // Compact the bulky "? Platform Guide" button into a sleek "? Guide" pill
+        const guideBtn = Array.from(document.querySelectorAll("button, a, div")).find(
+          el => (el.innerText || "").trim().replace(/\s+/g, " ") === "? Platform Guide" ||
+                (el.innerText || "").trim() === "Platform Guide"
+        );
+        if (guideBtn && guideBtn.children.length <= 2) {
+          guideBtn.innerHTML = "? Guide";
+          guideBtn.style.padding = "4px 8px";
+          guideBtn.style.fontSize = "11px";
+        }
+
+        // Shorten the long subtitle slightly if screen width < 1350px so buttons never wrap
+        const sub = Array.from(document.querySelectorAll("span, div, p")).find(
+          el => (el.innerText || "").trim() === "Procurement Cost Optimisation & Margin Intelligence" && el.children.length === 0
+        );
+        if (sub && window.innerWidth < 1380) {
+          sub.innerText = "Cost Optimisation & Margin Intelligence";
+        }
+      }
+
+      // 2. Sync Currency with Executive Cockpit localStorage if set
+      const savedCurr = localStorage.getItem("fortifai_currency");
+      if (savedCurr === "USD") {
+        const usdBtn = Array.from(document.querySelectorAll("button, span")).find(
+          el => (el.innerText || "").trim() === "$ USD"
+        );
+        if (usdBtn) usdBtn.click();
       }
     }
 
-    // 2. Sync Currency Toggle with Executive Cockpit preference (defaulting to USD if Cockpit is in USD)
-    const savedCurr = localStorage.getItem("fortifai_currency");
-    if (savedCurr === "USD") {
-      const usdBtn = Array.from(document.querySelectorAll("button, span, a")).find(
-        el => (el.innerText || "").trim() === "$ USD" || (el.innerText || "").trim() === "USD"
-      );
-      if (usdBtn) usdBtn.click();
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", applyFix);
+    } else {
+      applyFix();
     }
-  });
+    setTimeout(applyFix, 300);
+  })();
 </script>
 </body>
 </html>
