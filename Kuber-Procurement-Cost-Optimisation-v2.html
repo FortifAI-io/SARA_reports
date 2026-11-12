@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fortifai Kuber — Procurement Cost Optimisation &amp; Margin Intelligence</title>
 <meta name="fortifai:component_key" content="kuber-procurement-risk-monitoring">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -22,29 +22,33 @@
 }
 body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-height:100vh;font-family:'DM Sans',sans-serif;font-weight:400;-webkit-font-smoothing:antialiased}
 
-/* COMMAND TOPBAR */
-.topbar{background:var(--navy);padding:0 22px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:300;border-bottom:1px solid rgba(255,255,255,.08)}
-.tb-brand{display:flex;align-items:center;gap:10px}
-.tb-logo{width:26px;height:26px;background:var(--dp);border:1px solid rgba(255,255,255,.22);border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:11px;color:#fff;font-family:'DM Mono',monospace}
-.tb-title{color:#fff;font-weight:600;font-size:15px;letter-spacing:-.2px}
-.tb-wm{font-family:'DM Sans',sans-serif;font-weight:500;color:#8AB4E1;font-size:15px;margin-left:2px}
-.tb-sep{color:rgba(255,255,255,.25);font-size:12px}
-.tb-sub{color:rgba(255,255,255,.68);font-size:12px}
-.tb-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.curr-tog{display:flex;border:1px solid rgba(255,255,255,.2);border-radius:5px;overflow:hidden}
-.curr-tog button{background:transparent;border:none;color:rgba(255,255,255,.65);padding:4px 9px;cursor:pointer;font-size:11px;font-weight:500;font-family:'DM Mono',monospace;transition:all .15s}
+/* COMMAND TOPBAR — MANIFEST GOLD STANDARD (52PX SINGLE-ROW FLUID) */
+html,body{max-width:100%;overflow-x:clip}
+.topbar{background:var(--navy);padding:0 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;height:52px;min-height:52px;position:sticky;top:0;z-index:300;border-bottom:1px solid rgba(255,255,255,.08);width:100%}
+.tb-brand{display:flex;align-items:center;gap:9px;min-width:0;flex:1 1 auto;overflow:hidden}
+.tb-wordmark{color:#fff;font-weight:600;font-size:15.5px;letter-spacing:-.3px;white-space:nowrap;flex-shrink:0}
+.tb-wordmark .ai{color:#E65100}
+.tb-div{width:1px;height:18px;background:rgba(255,255,255,.18);flex-shrink:0}
+.tb-agent{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-weight:500;color:#7CC4FA;font-size:18px;letter-spacing:-.1px;white-space:nowrap;flex-shrink:0}
+.tb-sub{color:#94A3B8;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+@media(max-width:1160px){.tb-sub{display:none}}
+.tb-right{display:flex;align-items:center;gap:7px;flex-wrap:nowrap;flex-shrink:0}
+.curr-tog{display:flex;border:1px solid rgba(255,255,255,.2);border-radius:6px;overflow:hidden;flex-shrink:0;height:30px;align-items:center;background:rgba(255,255,255,.04)}
+.curr-tog button{background:transparent;border:none;color:rgba(255,255,255,.7);padding:0 9px;height:100%;cursor:pointer;font-size:11px;font-weight:600;font-family:'DM Mono',monospace;transition:all .15s;white-space:nowrap}
 .curr-tog button.active{background:var(--dp);color:#fff}
-.badge-live{background:rgba(152,170,58,.18);color:#D4E388;border:1px solid rgba(152,170,58,.4);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;font-family:'DM Mono',monospace}
-.tb-btn{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);color:#fff;padding:5px 11px;border-radius:5px;cursor:pointer;font-size:11.5px;font-weight:500;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:5px;transition:background .15s}
-.tb-btn:hover{background:rgba(255,255,255,.18)}
+.badge-live{display:inline-flex;align-items:center;gap:5px;background:rgba(16,185,129,.12);color:#34D399;border:1px solid rgba(16,185,129,.35);padding:0 9px;height:30px;border-radius:15px;font-size:10.5px;font-weight:600;font-family:'DM Mono',monospace;white-space:nowrap;flex-shrink:0}
+.badge-live::before{content:'';width:6px;height:6px;border-radius:50%;background:#10B981;flex-shrink:0}
+@media(max-width:1040px){.badge-live{display:none}}
+.tb-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);color:#fff;padding:0 10px;height:30px;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:500;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:5px;transition:background .15s;white-space:nowrap;flex-shrink:0}
+.tb-btn:hover{background:rgba(255,255,255,.16)}
 .tb-btn.exec{background:var(--dp);border-color:#5B9BD5}
 .tb-btn.exec:hover{background:#23476E}
-.tb-btn.xls{background:rgba(152,170,58,.22);border-color:rgba(152,170,58,.5);color:#E5F0A8}
-.tb-btn.xls:hover{background:rgba(152,170,58,.35)}
-.qq-kbd{font-family:'DM Mono',monospace;font-size:10px;background:rgba(0,0,0,.35);padding:1px 5px;border-radius:3px;color:#D1D5DB}
+.tb-btn.xls{background:rgba(152,170,58,.2);border-color:rgba(152,170,58,.48);color:#E5F0A8}
+.tb-btn.xls:hover{background:rgba(152,170,58,.32)}
+.qq-kbd{font-family:'DM Mono',monospace;font-size:10px;background:rgba(59,130,246,.22);padding:1px 5px;border-radius:3px;color:#93C5FD}
 
 /* HEALTH SCORE BAR */
-.sbar{background:#fff;border-bottom:1px solid var(--border);padding:10px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.sbar{background:#fff;border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;width:100%}
 .sring{position:relative;flex-shrink:0;width:52px;height:52px}
 .sring svg{transform:rotate(-90deg)}
 .snum{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:15px;font-weight:600;font-family:'DM Mono',monospace;color:var(--navy);display:flex;flex-direction:column;align-items:center;line-height:1}
@@ -71,11 +75,11 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-h
 .tcnt{font-family:'DM Mono',monospace;font-size:10.5px;background:var(--bg);color:var(--mid);padding:1px 6px;border-radius:3px;font-weight:600}
 .tab.active .tcnt{background:var(--low-bg);color:var(--dp)}
 
-.tc{display:none;padding:20px 22px 42px;max-width:1360px;margin:0 auto}
+.tc{display:none;padding:18px 20px 42px;max-width:100%;width:100%;margin:0 auto}
 .tc.active{display:block}
 
 /* HEADLINE 4 KPI CARDS (CLEAN 3-LINE DESIGN) */
-.mrow4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.mrow4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}.mrow4>*{min-width:0}
 @media(max-width:1024px){.mrow4{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.mrow4{grid-template-columns:1fr}}
 .mc{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:16px 18px;border-left:3px solid var(--dp)}
@@ -99,7 +103,7 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-h
 .dim-pill.active{background:var(--navy);color:#fff;border-color:var(--navy);font-weight:600}
 
 /* 12 BASELINE KPI CARDS (NON-LINEAR SPARKLINES + SEMANTIC DELTA PILLS + CLICK TRACE) */
-.kpi-matrix-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kpi-matrix-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.kpi-matrix-grid>*{min-width:0}
 @media(max-width:1100px){.kpi-matrix-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:640px){.kpi-matrix-grid{grid-template-columns:1fr}}
 .bm-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:13px 15px;display:flex;flex-direction:column;justify-content:space-between;transition:all .15s;cursor:pointer;position:relative}
@@ -120,7 +124,7 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-h
 .bm-delta-pill.bad{background:var(--crit-bg);color:var(--crit)}
 
 /* 4 LEVER CARDS (CLEAN PLAIN-ENGLISH) */
-.lever-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.lever-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.lever-grid>*{min-width:0}
 @media(max-width:1080px){.lever-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.lever-grid{grid-template-columns:1fr}}
 .lv-card{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:16px 18px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;justify-content:space-between}
@@ -136,8 +140,9 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-h
 .lv-cta{font-size:11px;font-weight:600;color:var(--dp);display:flex;align-items:center;justify-content:flex-end;padding-top:6px;border-top:1px solid var(--border)}
 
 /* IMPACT VS EASE MATRIX & WAVES */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.g-wave{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:16px}
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.g-wave{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:16px;margin-bottom:16px}
+.g2>*,.g-wave>*{min-width:0;overflow:hidden}
 @media(max-width:1024px){.g2,.g-wave{grid-template-columns:1fr}}
 .chart-wrap{position:relative;width:100%}
 
@@ -160,7 +165,7 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-h
 .sb-remaining{background:#E5E7EB;display:flex;align-items:center;justify-content:center;font-size:10.5px;color:var(--text);font-family:'DM Mono',monospace}
 
 /* CONTINUOUS MONITORING STRIP */
-.guard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.guard-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.guard-grid>*{min-width:0}
 @media(max-width:1024px){.guard-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.guard-grid{grid-template-columns:1fr}}
 .guard-box{background:#F8FAFC;border:1px solid var(--border);border-radius:6px;padding:12px 14px}
@@ -178,7 +183,7 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-h
 .wb-sel{border:1px solid var(--border);border-radius:5px;padding:6px 10px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text);background:#fff}
 .wb-search{border:1px solid var(--border);border-radius:5px;padding:6px 11px;font-size:12px;font-family:'DM Sans',sans-serif;width:210px;color:var(--text)}
 
-.wb-grid{display:grid;grid-template-columns:360px 1fr;gap:16px;align-items:start}
+.wb-grid{display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px;align-items:start}.wb-grid>*{min-width:0}
 @media(max-width:1024px){.wb-grid{grid-template-columns:1fr}}
 .wb-list{background:var(--card);border:1px solid var(--border);border-radius:7px;overflow:hidden;max-height:740px;overflow-y:auto}
 .wb-list-hdr{padding:11px 14px;background:var(--bg);border-bottom:1px solid var(--border);font-size:10.5px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;display:flex;justify-content:space-between;position:sticky;top:0;z-index:5}
@@ -191,7 +196,7 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-h
 .wb-sub{font-size:11px;color:var(--mid);display:flex;justify-content:space-between;align-items:center}
 
 .wb-detail{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:22px}
-.ev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.ev-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0}.ev-grid>*{min-width:0}
 @media(max-width:860px){.ev-grid{grid-template-columns:1fr}}
 .ev-box{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px 14px}
 .ev-lbl{font-size:10px;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
@@ -333,20 +338,20 @@ body{background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-h
 <!-- COMMAND TOPBAR -->
 <div class="topbar">
   <div class="tb-brand">
-    <div class="tb-logo">FK</div>
-    <span class="tb-title">fortifai <span class="tb-wm">Kuber</span></span>
-    <span class="tb-sep">|</span>
+    <span class="tb-wordmark">fortif<span class="ai">ai</span></span>
+    <span class="tb-div"></span>
+    <span class="tb-agent">Kuber</span>
     <span class="tb-sub">Procurement Cost Optimisation &amp; Margin Intelligence</span>
   </div>
   <div class="tb-right">
-    <button class="tb-btn exec" onclick="openBoardReport()">Board Report</button>
-    <button class="tb-btn xls" onclick="exportExcel()">Export Excel (.xls)</button>
-    <button class="tb-btn" onclick="toggleQQ()">Ask Kuber <span class="qq-kbd">⌘K</span></button>
-    <span class="badge-live">READ-ONLY SAP REPLICA</span>
     <div class="curr-tog">
       <button id="btn-inr" class="active" onclick="setCurr('INR')">₹ INR</button>
       <button id="btn-usd" onclick="setCurr('USD')">$ USD</button>
     </div>
+    <button class="tb-btn exec" onclick="openBoardReport()">Board Report</button>
+    <button class="tb-btn xls" onclick="exportExcel()">Export (.xls)</button>
+    <button class="tb-btn" onclick="toggleQQ()"><span class="qq-kbd">⌘K</span> Ask Kuber</button>
+    <span class="badge-live">Live SAP</span>
   </div>
 </div>
 
@@ -1867,7 +1872,7 @@ function renderHub(){
         </select>
       </td>
       <td><input type="number" placeholder="₹ Cr" value="${a.out}" step="0.1" style="width:60px;border:1px solid var(--border);border-radius:3px;padding:3px 5px;font-size:11px;font-family:'DM Mono',monospace" onchange="updOut(${i},this.value)"></td>
-      <td><input type="text" placeholder="Add note..." value="${a.note}" style="width:155px;border:1px solid var(--border);border-radius:3px;padding:3px 6px;font-size:11px" onchange="updNote(${i},this.value)"></td>
+      <td><input type="text" placeholder="Add note..." value="${a.note}" style="width:118px;max-width:100%;border:1px solid var(--border);border-radius:3px;padding:3px 6px;font-size:11px" onchange="updNote(${i},this.value)"></td>
     `;
     body.appendChild(tr);
   });
@@ -2043,6 +2048,7 @@ function showToast(msg){
 
 function setCurr(c){
   curr = c;
+  try { localStorage.setItem('fortifai_currency', c); } catch(e){}
   document.getElementById('btn-inr').classList.toggle('active',c==='INR');
   document.getElementById('btn-usd').classList.toggle('active',c==='USD');
   document.querySelectorAll('.cv').forEach(el=>{
@@ -2205,6 +2211,10 @@ document.addEventListener('keydown',e=>{
 });
 
 window.addEventListener('load',()=>{
+  try {
+    const savedC = localStorage.getItem('fortifai_currency');
+    if(savedC === 'USD' || savedC === 'INR') setCurr(savedC);
+  } catch(e){}
   renderBaselineMatrix();
   renderWbList();
   renderHub();
@@ -2461,14 +2471,16 @@ window.FortifaiCompass = (function () {
 
   function injectTopbarButton() {
     if (document.getElementById("compassTriggerBtn")) return;
-    const rightBar = document.querySelector(".tb-right, .topbar-right, .header-actions, .topbar");
+    const rightBar = document.querySelector(".tb-right");
     if (!rightBar) return;
     const btn = document.createElement("button");
     btn.id = "compassTriggerBtn";
     btn.className = "btn-compass-guide";
-    btn.innerHTML = `<span style="font-family:'DM Mono',monospace;color:#93C5FD">?</span> Platform Guide`;
+    btn.title = "Open Kuber Interactive Guide";
+    btn.style.cssText = "height:30px;padding:0 9px;font-size:11.5px;white-space:nowrap;flex-shrink:0;";
+    btn.innerHTML = `<span style="font-family:'DM Mono',monospace;color:#93C5FD">?</span> Guide`;
     btn.onclick = () => FortifaiCompass.openDrawer();
-    rightBar.prepend(btn);
+    rightBar.appendChild(btn);
   }
 
   function renderList(items) {
@@ -2549,126 +2561,5 @@ window.FortifaiCompass = (function () {
 })();
 </script>
 <!-- ==================== END FORTIFAI COMPASS AI GUIDE ==================== -->
-<!-- UI/UX PATCH v2: Fix Kuber Single-Line Header Bar, Left-Edge Clipping & Currency Sync -->
-<style>
-  /* 1. Prevent horizontal overflow that clips the left edge ("atform Guide" / "cutive Overview") */
-  html, body {
-    max-width: 100vw !important;
-    overflow-x: hidden !important;
-    box-sizing: border-box !important;
-  }
-
-  /* 2. Force the Dark Topbar into a clean, single-row 52px bar matching Manifest */
-  header,
-  .topbar,
-  .header-bar,
-  .app-header,
-  body > div:first-of-type > div:first-of-type {
-    box-sizing: border-box !important;
-    max-width: 100% !important;
-  }
-
-  /* Target Kuber's dark navy header container specifically */
-  .kuber-topbar-fixed {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    height: 52px !important;
-    min-height: 52px !important;
-    max-height: 52px !important;
-    padding: 0 16px !important;
-    gap: 10px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-  }
-
-  /* Keep left brand title and right action buttons on one crisp horizontal line */
-  .kuber-topbar-fixed > * {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    gap: 8px !important;
-    white-space: nowrap !important;
-    margin: 0 !important;
-  }
-
-  /* Compact all header buttons so nothing wraps onto a 2nd row */
-  .kuber-topbar-fixed button,
-  .kuber-topbar-fixed a,
-  .kuber-topbar-fixed span {
-    white-space: nowrap !important;
-    flex-shrink: 0 !important;
-  }
-
-  .kuber-topbar-fixed button {
-    padding: 5px 10px !important;
-    font-size: 11.5px !important;
-    line-height: 1.2 !important;
-    height: 30px !important;
-  }
-</style>
-
-<script>
-  (function fixKuberHeaderAndCurrency() {
-    function applyFix() {
-      // 1. Locate Kuber's dark header bar by finding the element containing "Ask Kuber" & "Board Report"
-      const askBtn = Array.from(document.querySelectorAll("button, a, div")).find(
-        el => (el.innerText || "").includes("Ask Kuber") && el.children.length <= 3
-      );
-      if (askBtn) {
-        // Walk up to the full-width dark navy bar container
-        let bar = askBtn.parentElement;
-        while (bar && bar !== document.body) {
-          const bg = window.getComputedStyle(bar).backgroundColor;
-          const rect = bar.getBoundingClientRect();
-          if (rect.width > window.innerWidth * 0.7 && bg !== "rgba(0, 0, 0, 0)" && bg !== "rgb(255, 255, 255)") {
-            bar.classList.add("kuber-topbar-fixed");
-            break;
-          }
-          bar = bar.parentElement;
-        }
-
-        // Compact the bulky "? Platform Guide" button into a sleek "? Guide" pill
-        const guideBtn = Array.from(document.querySelectorAll("button, a, div")).find(
-          el => (el.innerText || "").trim().replace(/\s+/g, " ") === "? Platform Guide" ||
-                (el.innerText || "").trim() === "Platform Guide"
-        );
-        if (guideBtn && guideBtn.children.length <= 2) {
-          guideBtn.innerHTML = "? Guide";
-          guideBtn.style.padding = "4px 8px";
-          guideBtn.style.fontSize = "11px";
-        }
-
-        // Shorten the long subtitle slightly if screen width < 1350px so buttons never wrap
-        const sub = Array.from(document.querySelectorAll("span, div, p")).find(
-          el => (el.innerText || "").trim() === "Procurement Cost Optimisation & Margin Intelligence" && el.children.length === 0
-        );
-        if (sub && window.innerWidth < 1380) {
-          sub.innerText = "Cost Optimisation & Margin Intelligence";
-        }
-      }
-
-      // 2. Sync Currency with Executive Cockpit localStorage if set
-      const savedCurr = localStorage.getItem("fortifai_currency");
-      if (savedCurr === "USD") {
-        const usdBtn = Array.from(document.querySelectorAll("button, span")).find(
-          el => (el.innerText || "").trim() === "$ USD"
-        );
-        if (usdBtn) usdBtn.click();
-      }
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", applyFix);
-    } else {
-      applyFix();
-    }
-    setTimeout(applyFix, 300);
-  })();
-</script>
 </body>
 </html>
