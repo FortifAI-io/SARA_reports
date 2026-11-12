@@ -2549,5 +2549,54 @@ window.FortifaiCompass = (function () {
 })();
 </script>
 <!-- ==================== END FORTIFAI COMPASS AI GUIDE ==================== -->
+ <!-- UI/UX PATCH: Side-by-Side Overview Charts (Zero Scroll Fatigue) + Global Currency Sync -->
+<style>
+  /* Compact KPI & Lever spacing so more content fits above the fold */
+  .chart-grid-2col {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+    align-items: stretch !important;
+    margin-bottom: 16px !important;
+  }
+  .chart-grid-2col > div,
+  .chart-card {
+    margin-bottom: 0 !important;
+    height: 100% !important;
+    max-height: 340px !important;
+  }
+  canvas {
+    max-height: 235px !important;
+  }
+</style>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // 1. Pair consecutive full-width chart panels on the Overview tab into a clean 2-column grid
+    const overviewTab = document.querySelector("#tab-overview, .tab-pane.active, main");
+    if (overviewTab) {
+      const canvases = Array.from(overviewTab.querySelectorAll("canvas"));
+      if (canvases.length >= 2) {
+        const card1 = canvases[0].closest(".card, .panel, [class*='card'], div[style*='background']");
+        const card2 = canvases[1].closest(".card, .panel, [class*='card'], div[style*='background']");
+        if (card1 && card2 && card1 !== card2 && card1.parentNode === card2.parentNode) {
+          const wrapper = document.createElement("div");
+          wrapper.className = "chart-grid-2col";
+          card1.parentNode.insertBefore(wrapper, card1);
+          wrapper.appendChild(card1);
+          wrapper.appendChild(card2);
+        }
+      }
+    }
+
+    // 2. Sync Currency Toggle with Executive Cockpit preference (defaulting to USD if Cockpit is in USD)
+    const savedCurr = localStorage.getItem("fortifai_currency");
+    if (savedCurr === "USD") {
+      const usdBtn = Array.from(document.querySelectorAll("button, span, a")).find(
+        el => (el.innerText || "").trim() === "$ USD" || (el.innerText || "").trim() === "USD"
+      );
+      if (usdBtn) usdBtn.click();
+    }
+  });
+</script>
 </body>
 </html>

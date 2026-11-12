@@ -2600,5 +2600,73 @@ function refreshAll() {
 
 refreshAll();
 </script>
+<!-- UI/UX PATCH: Fix 5-Card KPI Grid Wrapping ("FLFVATFD" Clipping) & 5-Tab Horizontal Overflow -->
+<style>
+  /* 1. Keep all 5 Macro KPI cards on a single row even when the left SARA sidebar is open */
+  #towerMacroRibbon,
+  .kpi-ribbon,
+  .kpi-grid-5,
+  [class*="kpi-grid"],
+  .grid-5 {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+  }
+
+  /* 2. Prevent vertical text clipping on "ELEVATED" & scale headline values responsively */
+  #towerMacroRibbon > div,
+  .kpi-card,
+  .metric-card {
+    height: auto !important;
+    min-height: 118px !important;
+    overflow: visible !important;
+    padding: 14px 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .kpi-val,
+  .metric-val,
+  [class*="kpi-value"] {
+    font-size: clamp(18px, 1.65vw, 25px) !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+  }
+
+  /* 3. Fit all 5 Top Navigation Tabs cleanly on 13"/14" screens without cutting off Tab 5 */
+  .nav-tabs,
+  .tab-bar,
+  [role="tablist"] {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 4px !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+  }
+  .nav-tabs button,
+  .tab-bar button,
+  .tab-btn {
+    padding: 9px 11px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+</style>
+<script>
+  // Sync global currency selection to localStorage so child agents (like Kuber) open in the same currency
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest("button, span, div");
+    if (!btn) return;
+    const txt = (btn.innerText || "").trim();
+    if (txt === "$ USD" || txt === "USD") {
+      localStorage.setItem("fortifai_currency", "USD");
+    } else if (txt === "₹ Cr" || txt === "₹ INR" || txt === "INR") {
+      localStorage.setItem("fortifai_currency", "INR");
+    }
+  });
+</script>
 </body>
 </html>
