@@ -2668,5 +2668,204 @@ refreshAll();
     }
   });
 </script>
+
+<!-- ==================== FORTIFAI EXECUTIVE CLEAN UI UPGRADE ==================== -->
+<style id="fortifai-clean-executive-theme">
+  /* 1. Force Single-Row Sleek Header & Remove Redundant Chrome */
+  html.clean-ui .hbar {
+    padding: 9px 24px !important;
+    flex-wrap: nowrap !important;
+    gap: 12px !important;
+  }
+  html.clean-ui .tower-title .tt-sub,
+  html.clean-ui .htenant,
+  html.clean-ui .huser {
+    display: none !important;
+  }
+  html.clean-ui .hchrome {
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+  }
+  html.clean-ui .hsel,
+  html.clean-ui .hbtn {
+    padding: 5px 10px !important;
+    font-size: 11.5px !important;
+    white-space: nowrap !important;
+  }
+
+  /* 2. Clean Up Tab Bar & Add Breathing Room */
+  html.clean-ui .tabbar {
+    top: 47px !important;
+    padding: 0 24px !important;
+  }
+  html.clean-ui .tab .t-pill {
+    display: none !important;
+  }
+  html.clean-ui .wrap {
+    padding: 24px 28px 60px !important;
+  }
+  html.clean-ui .band {
+    margin-top: 26px !important;
+  }
+
+  /* 3. Turn 6-Element KPI Cards into Clean 3-Element Executive Cards */
+  html.clean-ui .kpi-card {
+    padding: 16px 18px !important;
+    min-height: 104px !important;
+    justify-content: center !important;
+    border-radius: 8px !important;
+    transition: box-shadow 0.18s ease, transform 0.18s ease !important;
+  }
+  html.clean-ui .kpi-card:hover {
+    box-shadow: 0 6px 18px rgba(13, 21, 32, 0.08) !important;
+  }
+  html.clean-ui .kpi-top .tag {
+    display: none !important;
+  }
+  html.clean-ui .kpi-val {
+    font-size: 24px !important;
+    margin-top: 2px !important;
+  }
+  html.clean-ui .kpi-sub {
+    color: var(--mut) !important;
+    font-size: 11.5px !important;
+    margin-top: 5px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  /* Hide noisy bottom KPI micro-footers unless hovered */
+  html.clean-ui .kpi-foot {
+    display: none !important;
+  }
+
+  /* 4. Simplify 5-Stage Savings Pipeline Cards */
+  html.clean-ui .pipe-stage {
+    padding: 14px 16px !important;
+    background: #FFFFFF !important;
+  }
+  html.clean-ui .pipe-stage .ps-meta {
+    display: none !important;
+  }
+  html.clean-ui .pipe-stage .ps-val {
+    font-size: 20px !important;
+    margin: 6px 0 8px !important;
+  }
+
+  /* 5. Declutter Panels, Subtitles, Waterfall Small Text & Accounting Footnotes */
+  html.clean-ui .band-h .hint,
+  html.clean-ui .panel .psub,
+  html.clean-ui .panel-h > .tag,
+  html.clean-ui .warnbox {
+    display: none !important;
+  }
+  html.clean-ui .wf-row .wf-lbl small {
+    display: none !important;
+  }
+  html.clean-ui .wf-row {
+    padding: 4px 0 !important;
+  }
+
+  /* 6. Clean Up Suite Pillar Cards & CEO Synthesis Briefs */
+  html.clean-ui .suite-card .sc-owner,
+  html.clean-ui .suite-card .sc-head .tag,
+  html.clean-ui .suite-card .sc-foot span:first-child {
+    display: none !important;
+  }
+  html.clean-ui .suite-card .sc-foot {
+    justify-content: flex-end !important;
+    border-top: none !important;
+    padding-top: 4px !important;
+    margin-top: 6px !important;
+  }
+  html.clean-ui .eb-header .sub,
+  html.clean-ui .eb-header > span.mono,
+  html.clean-ui .eb-top .eb-src,
+  html.clean-ui .eb-body,
+  html.clean-ui .eb-foot > span.mono {
+    display: none !important;
+  }
+  html.clean-ui .eb-sowhat {
+    margin-top: 10px !important;
+    background: #F8FAFC !important;
+    font-size: 11.5px !important;
+  }
+  html.clean-ui .eb-foot {
+    justify-content: flex-end !important;
+  }
+
+  /* Toggle Pill Styling in Tabbar */
+  .view-density-btn {
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
+    color: #2E5A8A;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 11px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .view-density-btn:hover {
+    background: #2E5A8A;
+    color: #FFFFFF;
+  }
+</style>
+
+<script>
+(function initCleanExecutiveUI() {
+  // Enable Clean UI by default
+  document.documentElement.classList.add('clean-ui');
+
+  // 1. Shorten verbose dropdown & button labels so header stays on 1 clean line
+  const entSel = document.getElementById('entFilter');
+  if (entSel && entSel.options.length >= 4) {
+    entSel.options[0].text = 'Scope: All Entities';
+    entSel.options[1].text = 'North America (USA02)';
+    entSel.options[2].text = 'Latin America (MEX03)';
+    entSel.options[3].text = 'India & APAC (IND01)';
+  }
+  const perSel = document.getElementById('perFilter');
+  if (perSel && perSel.options.length >= 4) {
+    perSel.options[0].text = 'FY 2025–26';
+    perSel.options[1].text = 'Trailing 12M';
+    perSel.options[2].text = 'H2 FY26';
+    perSel.options[3].text = 'Q4 FY26';
+  }
+
+  // Strip "1. ", "2. " numbering from navigation tabs for a cleaner modern look
+  document.querySelectorAll('.tabs-left .tab').forEach(btn => {
+    btn.childNodes.forEach(node => {
+      if (node.nodeType === 3) {
+        node.textContent = node.textContent.replace(/^\s*\d+\.\s*/, '');
+      }
+    });
+  });
+
+  // 2. Add "✦ Simple View / Detailed View" toggle button on the right of the tab bar
+  const spineStatus = document.querySelector('.spine-status');
+  if (spineStatus) {
+    spineStatus.innerHTML = `
+      <button class="view-density-btn" id="densityToggleBtn" onclick="toggleExecutiveDensity()">
+        ✦ Simple View · Switch to Detailed
+      </button>
+    `;
+  }
+
+  window.toggleExecutiveDensity = function() {
+    const isClean = document.documentElement.classList.toggle('clean-ui');
+    const btn = document.getElementById('densityToggleBtn');
+    if (btn) {
+      btn.textContent = isClean
+        ? '✦ Simple View · Switch to Detailed'
+        : '▤ Detailed View · Switch to Simple';
+    }
+  };
+})();
+</script>
+<!-- ==================== END FORTIFAI CLEAN UI UPGRADE ==================== -->
+  
 </body>
 </html>
