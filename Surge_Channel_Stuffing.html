@@ -1343,8 +1343,8 @@ document.addEventListener('keydown',e=>{
 /* ===================== init ===================== */
 (function init(){buildNav();renderDash();})();
 
-</script><!-- FORTIFAI INLINE UAT CLEANER V7 -->
-<style id="fortifai-inline-clean-v7">
+</script><!-- FORTIFAI INLINE UAT CLEANER V8 -->
+<style id="fortifai-inline-clean-v8">
   b, strong, h1, h2, h3, h4, th { font-weight: 600 !important; }
 
   header > div, .hbar, .topbar, .hdr, .app-header, .top-bar, .nav-header {
@@ -1354,7 +1354,13 @@ document.addEventListener('keydown',e=>{
     gap: 10px !important;
   }
 
-  /* Hide subtitles, user/role pills, live ERP pills, KPI footers/tags, and warnboxes */
+  /* Ensure KPI Top Titles are ALWAYS visible */
+  .kpi-top, .kpi-label, .kpi-title, .kc-lbl, .k-lbl, [class*="kpi-label"], [class*="kpi-title"] {
+    display: flex !important;
+    visibility: visible !important;
+  }
+
+  /* Hide subtitles, user/role pills, live ERP pills, KPI footers/corner tags, and warnboxes */
   .tt-sub, .htenant, .huser, .user-pill, .role-pill, .persona-pill, .analyst-pill,
   .hdr-sub, .header-sub, .brand-sub, .brand-tag, .tagline,
   .subtitle, .sub-head, .replica-pill, .audit-pill, .sap-pill, .live-pill, .erp-pill, .status-pill,
@@ -1373,7 +1379,7 @@ document.addEventListener('keydown',e=>{
     display: none !important;
   }
 </style>
-<script id="fortifai-inline-clean-script-v7">
+<script id="fortifai-inline-clean-script-v8">
 (function(){
   const HIDE_REGEX = [
     /\bask\s+(sara|kuber|manifest|crystal|moneta|aegis|veritas|argus|vantage|aewac|surge|vigil|tender|conduit|agent)\b/i,
@@ -1389,7 +1395,7 @@ document.addEventListener('keydown',e=>{
   ];
 
   function nukeClutter() {
-    // 1. Strip Header Pills (including "Live ERP + TMS", "PN Priya Nair · Analyst", "Methodology" tab, etc.)
+    // 1. Strip Header Pills & Action Noise
     document.querySelectorAll('button, a, span, div').forEach(el => {
       if (el.tagName === 'SELECT' || el.closest('table, tbody, .drawer, .modal-card, [class*="modal"], [class*="drawer"]')) return;
       if (el.children.length > 4) return;
@@ -1406,7 +1412,6 @@ document.addEventListener('keydown',e=>{
         return;
       }
 
-      // Hide any remaining status/persona badges inside the top dark bar (keep ONLY Brand + <select> dropdowns + USD/INR)
       const inDarkBar = (() => {
         let p = el.parentElement;
         for (let i = 0; i < 4 && p; i++, p = p.parentElement) {
@@ -1424,7 +1429,7 @@ document.addEventListener('keydown',e=>{
       }
     });
 
-    // 2. Strip numeric count badges inside Tabs
+    // 2. Strip numeric count badges inside Tabs (except "All Waves (12)" filter pills if needed)
     document.querySelectorAll('button, a, div, li, [role="tab"]').forEach(tab => {
       const txt = (tab.textContent || '').replace(/\s+/g, ' ').trim();
       if (tab.children.length >= 1 && tab.children.length <= 4 && txt.length > 4 && txt.length < 44) {
@@ -1436,7 +1441,7 @@ document.addEventListener('keydown',e=>{
       }
     });
 
-    // 3. Fix cramped Health Score sub-cards & hide their bottom grey micro-captions ("L1 usage 64.2%...", "Avg TAT 18.4h...")
+    // 3. Fix cramped Health Score sub-cards & hide ONLY their bottom micro-caption
     document.querySelectorAll('div').forEach(box => {
       if (box.children.length >= 2 && box.children.length <= 4) {
         const firstRow = box.firstElementChild;
@@ -1447,9 +1452,8 @@ document.addEventListener('keydown',e=>{
             firstRow.style.setProperty('flex-direction', 'column', 'important');
             firstRow.style.setProperty('align-items', 'flex-start', 'important');
             firstRow.style.setProperty('gap', '4px', 'important');
-            // Hide the bottom grey micro-note inside each score box so only Title + Score + Progress Bar show!
             const lastEl = box.lastElementChild;
-            if (lastEl && lastEl.children.length === 0 && (lastEl.textContent || '').trim().length > 8) {
+            if (lastEl && lastEl !== firstRow && lastEl.children.length === 0 && (lastEl.textContent || '').trim().length > 8) {
               lastEl.style.setProperty('display', 'none', 'important');
             }
           }
@@ -1457,19 +1461,36 @@ document.addEventListener('keydown',e=>{
       }
     });
 
-    // 4. Hide small grey sub-explanations at the bottom of KPI cards (e.g. "1.42M MT · ₹3.82/MT-Km...", "Target: <2.5%...")
+    // 4. Hide ONLY bottom sub-explanations — NEVER hide KPI card top titles or uppercase eyebrow labels!
     document.querySelectorAll('p, div, small, span').forEach(el => {
       if (el.closest('svg') || el.previousElementSibling?.tagName === 'svg') return;
       if (el.children.length === 0 && !el.closest('.drawer, .modal-card, [class*="modal"], [class*="drawer"], table, tbody, header')) {
         const txt = (el.textContent || '').trim();
         if (!txt) return;
+
+        // PROTECT KPI CARD TITLES:
+        // a) Never hide inside .kpi-top / title classes
+        if (el.closest('.kpi-top, .kpi-label, .kpi-title, .kc-lbl, .k-lbl, [class*="title"], [class*="head"]')) return;
+        // b) Never hide if it is the FIRST element inside a card (or its parent is the first element in a card)
+        const p = el.parentElement;
+        if (el.nextElementSibling && !el.previousElementSibling) return;
+        if (p && p.nextElementSibling && !p.previousElementSibling) return;
+
         const st = window.getComputedStyle(el);
+        // c) Never hide uppercase card eyebrow headers (text-transform: uppercase or ALL CAPS text)
+        if (st.textTransform === 'uppercase' || (txt === txt.toUpperCase() && /[A-Z]/.test(txt))) return;
+
+        const low = txt.toLowerCase();
+        if (low.startsWith('click any kpi') || low.startsWith('click any bubble') || low.startsWith('click any row')) {
+          el.style.setProperty('display', 'none', 'important');
+          return;
+        }
+
         const fs = parseFloat(st.fontSize || '13');
         const col = st.color || '';
         const isMutedGrey = col.includes('100, 116, 139') || col.includes('107, 114, 128') || col.includes('148, 163, 184') || col.includes('71, 85, 105');
 
-        // Hide small muted grey explanation text (<= 11.5px and > 22 chars) inside KPI/summary cards so cards show ONLY Label + Big Number!
-        if (fs <= 11.5 && isMutedGrey && txt.length > 22 && !/^(stage|wave)\s*\d/i.test(txt)) {
+        if (fs <= 11.5 && isMutedGrey && txt.length > 24 && !/^(stage|wave)\s*\d/i.test(txt)) {
           el.style.setProperty('display', 'none', 'important');
         }
       }
@@ -1515,10 +1536,10 @@ document.addEventListener('keydown',e=>{
 
   function wireCurrency() {
     document.querySelectorAll('button, span, a, div').forEach(btn => {
-      if (btn.dataset.curV7 || btn.children.length > 1) return;
+      if (btn.dataset.curV8 || btn.children.length > 1) return;
       const t = (btn.textContent || '').replace(/\s+/g, ' ').trim();
       if (['$ USD', 'USD', '₹ INR', 'INR', '₹ Cr'].includes(t)) {
-        btn.dataset.curV7 = '1';
+        btn.dataset.curV8 = '1';
         btn.addEventListener('click', () => {
           const mode = t.includes('USD') ? 'USD' : 'INR';
           setTimeout(() => convertCurrency(mode), 30);
@@ -1527,10 +1548,10 @@ document.addEventListener('keydown',e=>{
       }
     });
     document.querySelectorAll('select').forEach(sel => {
-      if (sel.dataset.curSelV7) return;
+      if (sel.dataset.curSelV8) return;
       const optsText = Array.from(sel.options).map(o => o.text).join(' ');
       if (optsText.includes('INR') || optsText.includes('USD')) {
-        sel.dataset.curSelV7 = '1';
+        sel.dataset.curSelV8 = '1';
         sel.addEventListener('change', () => {
           const chosen = sel.options[sel.selectedIndex]?.text || '';
           const mode = chosen.includes('USD') || chosen.includes('$') ? 'USD' : 'INR';
@@ -1548,5 +1569,5 @@ document.addEventListener('keydown',e=>{
   new MutationObserver(() => { clearTimeout(tm); tm = setTimeout(boot, 80); }).observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>
-<!-- END FORTIFAI INLINE UAT CLEANER V7 -->
+<!-- END FORTIFAI INLINE UAT CLEANER V8 -->
 </body></html>
