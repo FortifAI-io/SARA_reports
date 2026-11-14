@@ -78,7 +78,57 @@
     'live sap', 'read-only', 'external audit', '? guide', 'user guide', 'methodology'
   ];
 
+  function fixImpactEaseGraph() {
+    const svg = document.getElementById('impactEaseSvg');
+    if (!svg) return;
+
+    svg.setAttribute('viewBox', '0 -10 620 374');
+    svg.style.height = '356px';
+
+    svg.querySelectorAll('text').forEach(t => {
+      const txt = (t.textContent || '').trim();
+
+      if (txt.startsWith('WAVE 1:')) {
+        t.textContent = 'WAVE 1 · QUICK WINS';
+        t.setAttribute('y', '12');
+        t.setAttribute('font-size', '9.5');
+      } else if (txt.startsWith('WAVE 2:')) {
+        t.textContent = 'WAVE 2 · COMMERCIAL RESETS';
+        t.setAttribute('y', '12');
+        t.setAttribute('font-size', '9.5');
+      } else if (txt.startsWith('WAVE 3:')) {
+        t.textContent = 'WAVE 3 · STRUCTURAL';
+        t.setAttribute('y', '306');
+        t.setAttribute('font-size', '9.5');
+      } else if (txt.includes('Implementation Ease Score')) {
+        t.textContent = 'Implementation Ease (25 → 100)';
+        t.setAttribute('y', '352');
+        t.setAttribute('font-size', '10.5');
+      } else if (txt.includes('Impact Score')) {
+        t.textContent = 'Impact Score (55 → 100)';
+        t.setAttribute('font-size', '10.5');
+      } else if (['40', '55', '70', '85', '100'].includes(txt) && parseFloat(t.getAttribute('y') || '0') > 300) {
+        t.setAttribute('y', '331');
+      }
+    });
+
+    const legendRow = svg.nextElementSibling;
+    if (legendRow && legendRow.tagName === 'DIV') {
+      legendRow.style.setProperty('display', 'flex', 'important');
+      legendRow.style.justifyContent = 'flex-start';
+      legendRow.style.gap = '18px';
+      legendRow.style.marginTop = '10px';
+      legendRow.innerHTML = `
+        <span><b style="color:#2E7D5B">● Wave 1:</b> Days 1–30</span>
+        <span><b style="color:#2E5A8A">● Wave 2:</b> Days 31–60</span>
+        <span><b style="color:#E65100">● Wave 3:</b> Days 61–90+</span>
+      `;
+    }
+  }
+
   function cleanDynamicDOM() {
+    fixImpactEaseGraph();
+
     document.querySelectorAll('button, a, span, div').forEach(el => {
       if (el.dataset.uatCleaned) return;
       const rect = el.getBoundingClientRect();
@@ -110,6 +160,7 @@
     });
 
     document.querySelectorAll('p, div, small, span').forEach(el => {
+      if (el.closest('svg') || el.previousElementSibling?.tagName === 'svg') return;
       if (el.children.length === 0 && !el.closest('.drawer, .modal-card, [class*="modal"], [class*="drawer"]')) {
         const txt = (el.textContent || '').trim();
         if (!txt) return;
