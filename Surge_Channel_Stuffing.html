@@ -1343,11 +1343,10 @@ document.addEventListener('keydown',e=>{
 /* ===================== init ===================== */
 (function init(){buildNav();renderDash();})();
 
-</script><!-- FORTIFAI INLINE UAT CLEANER V6 -->
-<style id="fortifai-inline-clean-v6">
+</script><!-- FORTIFAI INLINE UAT CLEANER V7 -->
+<style id="fortifai-inline-clean-v7">
   b, strong, h1, h2, h3, h4, th { font-weight: 600 !important; }
 
-  /* Keep top headers & tab bars clean and prevent horizontal clipping */
   header > div, .hbar, .topbar, .hdr, .app-header, .top-bar, .nav-header {
     flex-wrap: nowrap !important;
     padding-top: 9px !important;
@@ -1355,12 +1354,14 @@ document.addEventListener('keydown',e=>{
     gap: 10px !important;
   }
 
-  /* Hide subtitles, duplicate user pills, KPI corner tags/footers, and methodology warnboxes */
-  .tt-sub, .htenant, .huser, .hdr-sub, .header-sub, .brand-sub, .brand-tag, .tagline,
-  .subtitle, .sub-head, .replica-pill, .audit-pill, .sap-pill, .live-pill,
+  /* Hide subtitles, user/role pills, live ERP pills, KPI footers/tags, and warnboxes */
+  .tt-sub, .htenant, .huser, .user-pill, .role-pill, .persona-pill, .analyst-pill,
+  .hdr-sub, .header-sub, .brand-sub, .brand-tag, .tagline,
+  .subtitle, .sub-head, .replica-pill, .audit-pill, .sap-pill, .live-pill, .erp-pill, .status-pill,
   header .hbtn, .hchrome > button.hbtn,
   .kpi-top .tag, .kpi-top .badge, .kpi-top .pill,
   .kpi-badge, .kpi-foot, .kpi-footer, .kpi-meta, .card-foot, .metric-foot,
+  .kpi-sub, [class*="kpi-sub"], [class*="metric-sub"],
   .band-h .hint, .panel .psub, .panel-sub, .card-sub, .sec-sub, .section-sub, .page-sub, .mbr-sub,
   .panel-h > .tag, .panel-h > .badge, .card-head > .tag,
   .warnbox, .boundary-box, .gts-note, .gtsnote, .pat-note, .pat-scope, .methodology-note,
@@ -1372,32 +1373,31 @@ document.addEventListener('keydown',e=>{
     display: none !important;
   }
 </style>
-<script id="fortifai-inline-clean-script-v6">
+<script id="fortifai-inline-clean-script-v7">
 (function(){
-  // Universal regex patterns that catch ALL agent names (Ask Manifest, Export MBR..., Board & CxO Reports, etc.)
   const HIDE_REGEX = [
     /\bask\s+(sara|kuber|manifest|crystal|moneta|aegis|veritas|argus|vantage|aewac|surge|vigil|tender|conduit|agent)\b/i,
     /⌘\s*k\b/i,
     /^export\b/i,
     /\bexport\s+(mbr|cfo|board|pack|csv|xls|xlsx|pdf|report)/i,
     /\bboard\s*(report|dossier|pack|&\s*cxo)/i,
-    /\b(live\s*sap|read-only\s*sap|external\s*audit)\b/i,
+    /\b(live\s*sap|live\s*erp|erp\s*\+\s*tms|read-only|external\s*audit|sap\s*ecc|s\/4hana\s*live)\b/i,
+    /\b(priya\s*nair|varun\s*mowar|analyst|maker|checker|approver|auditor\s*view)\b/i,
     /^\?\s*guide$/i,
-    /\b(user\s*guide|cockpit\s*guide|suppressed\s*fp)\b/i,
+    /\b(user\s*guide|cockpit\s*guide|suppressed\s*fp|methodology\s*&\s*controls|methodology\s*&\s*schema)\b/i,
     /pre-payment\s+hold\s+queue/i
   ];
 
   function nukeClutter() {
-    // 1. Universal Button, Pill & Header Subtitle Stripper across ALL agents
+    // 1. Strip Header Pills (including "Live ERP + TMS", "PN Priya Nair · Analyst", "Methodology" tab, etc.)
     document.querySelectorAll('button, a, span, div').forEach(el => {
       if (el.tagName === 'SELECT' || el.closest('table, tbody, .drawer, .modal-card, [class*="modal"], [class*="drawer"]')) return;
       if (el.children.length > 4) return;
 
       const raw = (el.textContent || '').replace(/\s+/g, ' ').trim();
-      if (!raw || raw.length > 48) return;
+      if (!raw || raw.length > 52) return;
       const low = raw.toLowerCase();
 
-      // Protect currency toggles, brand wordmarks, and main navigation tabs (except Board/Methodology tabs if overflowing)
       if (low === '$ usd' || low === '₹ inr' || low === '₹ cr' || low === 'usd' || low === 'inr') return;
       if (low.includes('fortifai')) return;
 
@@ -1406,36 +1406,37 @@ document.addEventListener('keydown',e=>{
         return;
       }
 
-      // Hide long grey tagline text inside dark top headers (e.g. Manifest's "Logistics, Haulage & Weighbridge Control Tower")
-      if (el.children.length === 0 && raw.length > 26) {
-        const p = el.parentElement;
-        const gp = p ? p.parentElement : null;
-        const inDarkHeader = [el, p, gp].some(node => {
-          if (!node) return false;
-          const bg = window.getComputedStyle(node).backgroundColor || '';
-          const bgImg = window.getComputedStyle(node).backgroundImage || '';
-          return bg.includes('13, 21, 32') || bg.includes('15, 23, 42') || bg.includes('19, 31, 48') || bgImg.includes('gradient');
-        });
-        if (inDarkHeader && !raw.includes('Enterprise Risk')) {
+      // Hide any remaining status/persona badges inside the top dark bar (keep ONLY Brand + <select> dropdowns + USD/INR)
+      const inDarkBar = (() => {
+        let p = el.parentElement;
+        for (let i = 0; i < 4 && p; i++, p = p.parentElement) {
+          const bg = window.getComputedStyle(p).backgroundColor || '';
+          const bgImg = window.getComputedStyle(p).backgroundImage || '';
+          if (bg.includes('13, 21, 32') || bg.includes('15, 23, 42') || bg.includes('19, 31, 48') || bgImg.includes('gradient')) return true;
+        }
+        return false;
+      })();
+
+      if (inDarkBar && (el.tagName === 'BUTTON' || el.classList.contains('pill') || el.classList.contains('badge'))) {
+        if (!low.includes('usd') && !low.includes('inr') && !low.includes('cr') && !el.querySelector('select')) {
           el.style.setProperty('display', 'none', 'important');
         }
       }
     });
 
-    // 2. Strip numeric count badges ("6", "14", "22") inside ALL Tabs (including "Pattern Analysis 6")
+    // 2. Strip numeric count badges inside Tabs
     document.querySelectorAll('button, a, div, li, [role="tab"]').forEach(tab => {
       const txt = (tab.textContent || '').replace(/\s+/g, ' ').trim();
       if (tab.children.length >= 1 && tab.children.length <= 4 && txt.length > 4 && txt.length < 44) {
         tab.querySelectorAll('span, b, small, em').forEach(b => {
-          const bt = (b.textContent || '').trim();
-          if (/^\(?\d+\)?$/.test(bt)) {
+          if (/^\(?\d+\)?$/.test((b.textContent || '').trim())) {
             b.style.setProperty('display', 'none', 'important');
           }
         });
       }
     });
 
-    // 3. Fix cramped Health Score / Pillar mini-cards (e.g., Manifest's "2 · Weighbridge 56/100" collision)
+    // 3. Fix cramped Health Score sub-cards & hide their bottom grey micro-captions ("L1 usage 64.2%...", "Avg TAT 18.4h...")
     document.querySelectorAll('div').forEach(box => {
       if (box.children.length >= 2 && box.children.length <= 4) {
         const firstRow = box.firstElementChild;
@@ -1446,30 +1447,29 @@ document.addEventListener('keydown',e=>{
             firstRow.style.setProperty('flex-direction', 'column', 'important');
             firstRow.style.setProperty('align-items', 'flex-start', 'important');
             firstRow.style.setProperty('gap', '4px', 'important');
-            firstRow.firstElementChild.style.setProperty('white-space', 'normal', 'important');
+            // Hide the bottom grey micro-note inside each score box so only Title + Score + Progress Bar show!
+            const lastEl = box.lastElementChild;
+            if (lastEl && lastEl.children.length === 0 && (lastEl.textContent || '').trim().length > 8) {
+              lastEl.style.setProperty('display', 'none', 'important');
+            }
           }
         }
       }
     });
 
-    // 4. Hide small-font explanatory subtitles & helper blurbs outside modals/drawers/SVGs
+    // 4. Hide small grey sub-explanations at the bottom of KPI cards (e.g. "1.42M MT · ₹3.82/MT-Km...", "Target: <2.5%...")
     document.querySelectorAll('p, div, small, span').forEach(el => {
       if (el.closest('svg') || el.previousElementSibling?.tagName === 'svg') return;
-      if (el.children.length === 0 && !el.closest('.drawer, .modal-card, [class*="modal"], [class*="drawer"], table, tbody')) {
+      if (el.children.length === 0 && !el.closest('.drawer, .modal-card, [class*="modal"], [class*="drawer"], table, tbody, header')) {
         const txt = (el.textContent || '').trim();
         if (!txt) return;
-        const low = txt.toLowerCase();
-        if (
-          low.startsWith('click any kpi') ||
-          low.startsWith('click any bubble') ||
-          low.startsWith('click any row') ||
-          low.startsWith('executive unit-economics')
-        ) {
-          el.style.setProperty('display', 'none', 'important');
-          return;
-        }
-        const fs = parseFloat(window.getComputedStyle(el).fontSize || '13');
-        if (fs <= 12 && txt.length > 65 && !el.closest('td.mono, th, code')) {
+        const st = window.getComputedStyle(el);
+        const fs = parseFloat(st.fontSize || '13');
+        const col = st.color || '';
+        const isMutedGrey = col.includes('100, 116, 139') || col.includes('107, 114, 128') || col.includes('148, 163, 184') || col.includes('71, 85, 105');
+
+        // Hide small muted grey explanation text (<= 11.5px and > 22 chars) inside KPI/summary cards so cards show ONLY Label + Big Number!
+        if (fs <= 11.5 && isMutedGrey && txt.length > 22 && !/^(stage|wave)\s*\d/i.test(txt)) {
           el.style.setProperty('display', 'none', 'important');
         }
       }
@@ -1515,10 +1515,10 @@ document.addEventListener('keydown',e=>{
 
   function wireCurrency() {
     document.querySelectorAll('button, span, a, div').forEach(btn => {
-      if (btn.dataset.curV6 || btn.children.length > 1) return;
+      if (btn.dataset.curV7 || btn.children.length > 1) return;
       const t = (btn.textContent || '').replace(/\s+/g, ' ').trim();
       if (['$ USD', 'USD', '₹ INR', 'INR', '₹ Cr'].includes(t)) {
-        btn.dataset.curV6 = '1';
+        btn.dataset.curV7 = '1';
         btn.addEventListener('click', () => {
           const mode = t.includes('USD') ? 'USD' : 'INR';
           setTimeout(() => convertCurrency(mode), 30);
@@ -1526,12 +1526,11 @@ document.addEventListener('keydown',e=>{
         });
       }
     });
-    // Also support <select> dropdowns that include USD / INR (like Manifest's "FY2025-26 · INR (₹)")
     document.querySelectorAll('select').forEach(sel => {
-      if (sel.dataset.curSelV6) return;
+      if (sel.dataset.curSelV7) return;
       const optsText = Array.from(sel.options).map(o => o.text).join(' ');
       if (optsText.includes('INR') || optsText.includes('USD')) {
-        sel.dataset.curSelV6 = '1';
+        sel.dataset.curSelV7 = '1';
         sel.addEventListener('change', () => {
           const chosen = sel.options[sel.selectedIndex]?.text || '';
           const mode = chosen.includes('USD') || chosen.includes('$') ? 'USD' : 'INR';
@@ -1549,5 +1548,5 @@ document.addEventListener('keydown',e=>{
   new MutationObserver(() => { clearTimeout(tm); tm = setTimeout(boot, 80); }).observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>
-<!-- END FORTIFAI INLINE UAT CLEANER V6 -->
+<!-- END FORTIFAI INLINE UAT CLEANER V7 -->
 </body></html>
