@@ -1850,15 +1850,25 @@ document.addEventListener('keydown', e => {
 
 renderAll();
 </script>
-<!-- FORTIFAI INLINE UAT CLEANER V5 -->
-<style id="fortifai-inline-clean-v5">
+<!-- FORTIFAI INLINE UAT CLEANER V6 -->
+<style id="fortifai-inline-clean-v6">
   b, strong, h1, h2, h3, h4, th { font-weight: 600 !important; }
-  .tt-sub, .htenant, .huser, .hdr-sub, .header-sub, .brand-sub,
+
+  /* Keep top headers & tab bars clean and prevent horizontal clipping */
+  header > div, .hbar, .topbar, .hdr, .app-header, .top-bar, .nav-header {
+    flex-wrap: nowrap !important;
+    padding-top: 9px !important;
+    padding-bottom: 9px !important;
+    gap: 10px !important;
+  }
+
+  /* Hide subtitles, duplicate user pills, KPI corner tags/footers, and methodology warnboxes */
+  .tt-sub, .htenant, .huser, .hdr-sub, .header-sub, .brand-sub, .brand-tag, .tagline,
   .subtitle, .sub-head, .replica-pill, .audit-pill, .sap-pill, .live-pill,
   header .hbtn, .hchrome > button.hbtn,
   .kpi-top .tag, .kpi-top .badge, .kpi-top .pill,
   .kpi-badge, .kpi-foot, .kpi-footer, .kpi-meta, .card-foot, .metric-foot,
-  .band-h .hint, .panel .psub, .panel-sub, .card-sub, .sec-sub, .section-sub,
+  .band-h .hint, .panel .psub, .panel-sub, .card-sub, .sec-sub, .section-sub, .page-sub, .mbr-sub,
   .panel-h > .tag, .panel-h > .badge, .card-head > .tag,
   .warnbox, .boundary-box, .gts-note, .gtsnote, .pat-note, .pat-scope, .methodology-note,
   .pipe-stage .ps-meta, .wf-row .wf-lbl small,
@@ -1869,59 +1879,104 @@ renderAll();
     display: none !important;
   }
 </style>
-<script id="fortifai-inline-clean-script-v5">
+<script id="fortifai-inline-clean-script-v6">
 (function(){
-  const KILL_TEXT = [
-    'board report', 'board dossier', 'board pack',
-    'export (.xls)', 'export (.xlsx)', 'export cfo pack', 'export csv', 'export pdf',
-    'ask kuber', 'ask sara', 'ask crystal', 'ask moneta', 'ask aegis', 'ask veritas', 'ask argus', 'ask agent',
-    'live sap', 'read-only sap', 'external audit',
-    '? guide', 'user guide', 'cockpit guide',
-    'suppressed fp'
+  // Universal regex patterns that catch ALL agent names (Ask Manifest, Export MBR..., Board & CxO Reports, etc.)
+  const HIDE_REGEX = [
+    /\bask\s+(sara|kuber|manifest|crystal|moneta|aegis|veritas|argus|vantage|aewac|surge|vigil|tender|conduit|agent)\b/i,
+    /⌘\s*k\b/i,
+    /^export\b/i,
+    /\bexport\s+(mbr|cfo|board|pack|csv|xls|xlsx|pdf|report)/i,
+    /\bboard\s*(report|dossier|pack|&\s*cxo)/i,
+    /\b(live\s*sap|read-only\s*sap|external\s*audit)\b/i,
+    /^\?\s*guide$/i,
+    /\b(user\s*guide|cockpit\s*guide|suppressed\s*fp)\b/i,
+    /pre-payment\s+hold\s+queue/i
   ];
 
   function nukeClutter() {
-    // 1. Hide noisy header buttons & pills unconditionally (no rect check, any child count <= 5)
+    // 1. Universal Button, Pill & Header Subtitle Stripper across ALL agents
     document.querySelectorAll('button, a, span, div').forEach(el => {
       if (el.tagName === 'SELECT' || el.closest('table, tbody, .drawer, .modal-card, [class*="modal"], [class*="drawer"]')) return;
-      if (el.children.length > 5) return;
-      // Skip wrapper divs that also contain the currency buttons or brand logo
-      const raw = (el.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
-      if (!raw || raw.length > 32) return;
-      if (raw.includes('usd') || raw.includes('inr') || raw.includes('fortifai')) return;
+      if (el.children.length > 4) return;
 
-      if (KILL_TEXT.some(k => raw === k || raw.includes(k))) {
+      const raw = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!raw || raw.length > 48) return;
+      const low = raw.toLowerCase();
+
+      // Protect currency toggles, brand wordmarks, and main navigation tabs (except Board/Methodology tabs if overflowing)
+      if (low === '$ usd' || low === '₹ inr' || low === '₹ cr' || low === 'usd' || low === 'inr') return;
+      if (low.includes('fortifai')) return;
+
+      if (HIDE_REGEX.some(rx => rx.test(raw))) {
         el.style.setProperty('display', 'none', 'important');
+        return;
       }
-    });
 
-    // 2. Hide numeric count pills ("14", "22") inside Tabs
-    document.querySelectorAll('button, a, div, li, [role="tab"]').forEach(tab => {
-      const txt = (tab.textContent || '').replace(/\s+/g, ' ').trim();
-      if (tab.children.length >= 1 && tab.children.length <= 4 && txt.length > 4 && txt.length < 42) {
-        if (txt.includes('Workbench') || txt.includes('Actions Hub') || txt.includes('Overview') || txt.includes('Queue') || tab.classList.contains('tab')) {
-          tab.querySelectorAll('span, b, small, em').forEach(b => {
-            if (/^\(?\d+\)?$/.test((b.textContent || '').trim())) {
-              b.style.setProperty('display', 'none', 'important');
-            }
-          });
+      // Hide long grey tagline text inside dark top headers (e.g. Manifest's "Logistics, Haulage & Weighbridge Control Tower")
+      if (el.children.length === 0 && raw.length > 26) {
+        const p = el.parentElement;
+        const gp = p ? p.parentElement : null;
+        const inDarkHeader = [el, p, gp].some(node => {
+          if (!node) return false;
+          const bg = window.getComputedStyle(node).backgroundColor || '';
+          const bgImg = window.getComputedStyle(node).backgroundImage || '';
+          return bg.includes('13, 21, 32') || bg.includes('15, 23, 42') || bg.includes('19, 31, 48') || bgImg.includes('gradient');
+        });
+        if (inDarkHeader && !raw.includes('Enterprise Risk')) {
+          el.style.setProperty('display', 'none', 'important');
         }
       }
     });
 
-    // 3. Hide small-font helper lines & long grey descriptions
+    // 2. Strip numeric count badges ("6", "14", "22") inside ALL Tabs (including "Pattern Analysis 6")
+    document.querySelectorAll('button, a, div, li, [role="tab"]').forEach(tab => {
+      const txt = (tab.textContent || '').replace(/\s+/g, ' ').trim();
+      if (tab.children.length >= 1 && tab.children.length <= 4 && txt.length > 4 && txt.length < 44) {
+        tab.querySelectorAll('span, b, small, em').forEach(b => {
+          const bt = (b.textContent || '').trim();
+          if (/^\(?\d+\)?$/.test(bt)) {
+            b.style.setProperty('display', 'none', 'important');
+          }
+        });
+      }
+    });
+
+    // 3. Fix cramped Health Score / Pillar mini-cards (e.g., Manifest's "2 · Weighbridge 56/100" collision)
+    document.querySelectorAll('div').forEach(box => {
+      if (box.children.length >= 2 && box.children.length <= 4) {
+        const firstRow = box.firstElementChild;
+        if (firstRow && firstRow.children.length === 2) {
+          const rightTxt = (firstRow.lastElementChild.textContent || '').trim();
+          if (/^\d+\s*\/\s*100$/.test(rightTxt)) {
+            firstRow.style.setProperty('display', 'flex', 'important');
+            firstRow.style.setProperty('flex-direction', 'column', 'important');
+            firstRow.style.setProperty('align-items', 'flex-start', 'important');
+            firstRow.style.setProperty('gap', '4px', 'important');
+            firstRow.firstElementChild.style.setProperty('white-space', 'normal', 'important');
+          }
+        }
+      }
+    });
+
+    // 4. Hide small-font explanatory subtitles & helper blurbs outside modals/drawers/SVGs
     document.querySelectorAll('p, div, small, span').forEach(el => {
       if (el.closest('svg') || el.previousElementSibling?.tagName === 'svg') return;
-      if (el.children.length === 0 && !el.closest('.drawer, .modal-card, [class*="modal"], [class*="drawer"]')) {
+      if (el.children.length === 0 && !el.closest('.drawer, .modal-card, [class*="modal"], [class*="drawer"], table, tbody')) {
         const txt = (el.textContent || '').trim();
         if (!txt) return;
         const low = txt.toLowerCase();
-        if (low.startsWith('click any kpi') || low.startsWith('click any bubble') || low.startsWith('click any row')) {
+        if (
+          low.startsWith('click any kpi') ||
+          low.startsWith('click any bubble') ||
+          low.startsWith('click any row') ||
+          low.startsWith('executive unit-economics')
+        ) {
           el.style.setProperty('display', 'none', 'important');
           return;
         }
         const fs = parseFloat(window.getComputedStyle(el).fontSize || '13');
-        if (fs <= 11.5 && txt.length > 68 && !el.closest('td.mono, th, code')) {
+        if (fs <= 12 && txt.length > 65 && !el.closest('td.mono, th, code')) {
           el.style.setProperty('display', 'none', 'important');
         }
       }
@@ -1936,7 +1991,7 @@ renderAll();
     while (walker.nextNode()) nodes.push(walker.currentNode);
     nodes.forEach(node => {
       const p = node.parentElement;
-      if (!p || ['SCRIPT', 'STYLE', 'CODE', 'PRE'].includes(p.tagName)) return;
+      if (!p || ['SCRIPT', 'STYLE', 'CODE', 'PRE', 'OPTION'].includes(p.tagName)) return;
       const pt = (p.textContent || '').trim();
       if (['$ USD', '₹ INR', '₹ Cr', 'INR', 'USD'].includes(pt)) return;
       if (node._origCur === undefined) {
@@ -1967,14 +2022,27 @@ renderAll();
 
   function wireCurrency() {
     document.querySelectorAll('button, span, a, div').forEach(btn => {
-      if (btn.dataset.curV5 || btn.children.length > 1) return;
+      if (btn.dataset.curV6 || btn.children.length > 1) return;
       const t = (btn.textContent || '').replace(/\s+/g, ' ').trim();
       if (['$ USD', 'USD', '₹ INR', 'INR', '₹ Cr'].includes(t)) {
-        btn.dataset.curV5 = '1';
+        btn.dataset.curV6 = '1';
         btn.addEventListener('click', () => {
           const mode = t.includes('USD') ? 'USD' : 'INR';
           setTimeout(() => convertCurrency(mode), 30);
           setTimeout(() => convertCurrency(mode), 180);
+        });
+      }
+    });
+    // Also support <select> dropdowns that include USD / INR (like Manifest's "FY2025-26 · INR (₹)")
+    document.querySelectorAll('select').forEach(sel => {
+      if (sel.dataset.curSelV6) return;
+      const optsText = Array.from(sel.options).map(o => o.text).join(' ');
+      if (optsText.includes('INR') || optsText.includes('USD')) {
+        sel.dataset.curSelV6 = '1';
+        sel.addEventListener('change', () => {
+          const chosen = sel.options[sel.selectedIndex]?.text || '';
+          const mode = chosen.includes('USD') || chosen.includes('$') ? 'USD' : 'INR';
+          setTimeout(() => convertCurrency(mode), 40);
         });
       }
     });
@@ -1988,6 +2056,6 @@ renderAll();
   new MutationObserver(() => { clearTimeout(tm); tm = setTimeout(boot, 80); }).observe(document.documentElement, { childList: true, subtree: true });
 })();
 </script>
-<!-- END FORTIFAI INLINE UAT CLEANER V5 -->
+<!-- END FORTIFAI INLINE UAT CLEANER V6 -->
 </body>
 </html>
