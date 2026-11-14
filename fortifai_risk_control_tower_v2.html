@@ -726,7 +726,7 @@ tr.clk-row:hover { background: #F6F9FC; }
     <div class="band">
       <div class="band-h">
         <div class="band-h-left">
-          <h2> Leakage Recovery Implementation Plan (Imact vs Ease) </h2>
+          <h2> Leakage Recovery Implementation Plan (Impact vs Ease) </h2>
           <span class="hint"></span>
         </div>
         <div class="pill-bar">
@@ -747,7 +747,7 @@ tr.clk-row:hover { background: #F6F9FC; }
             </div>
             <span class="tag Wave1">Zero Double-Counting</span>
           </div>
-          <svg id="impactEaseSvg" viewBox="0 0 620 350" style="width:100%;height:340px;display:block;background:#FAFBFD;border:1px solid var(--line);border-radius:6px"></svg>
+          <svg id="impactEaseSvg" viewBox="0 0 620 380" style="width:100%;height:365px;display:block;background:#FAFBFD;border:1px solid var(--line);border-radius:6px"></svg>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:11px;color:var(--mut);flex-wrap:wrap;gap:8px">
             <span><b style="color:var(--ok)">&#9679; Wave 1 (Days 1&ndash;30):</b> Internal ERP/AP actions (Ease &ge; 75)</span>
             <span><b style="color:var(--deep)">&#9679; Wave 2 (Days 31&ndash;60):</b> Bilateral commercial resets (Ease 45&ndash;74)</span>
@@ -1867,7 +1867,7 @@ function renderImpactEaseQuadrant() {
 
   // Render SVG Quadrant (X = Ease 25..100, Y = Impact 55..100)
   const svg = document.getElementById('impactEaseSvg');
-  const W = 620, H = 350, padL = 48, padR = 24, padT = 22, padB = 36;
+  const W = 620, H = 380, padL = 52, padR = 24, padT = 34, padB = 52;
   const plotW = W - padL - padR, plotH = H - padT - padB;
   const xMap = ease => padL + ((ease - 25) / 75) * plotW;
   const yMap = imp => padT + ((100 - imp) / 45) * plotH;
@@ -1882,18 +1882,18 @@ function renderImpactEaseQuadrant() {
     <line x1="${midX}" y1="${padT}" x2="${midX}" y2="${H - padB}" stroke="#99AFBC" stroke-dasharray="4 4"/>
     <line x1="${padL}" y1="${midY}" x2="${W - padR}" y2="${midY}" stroke="#99AFBC" stroke-dasharray="4 4"/>
     <!-- Quadrant Labels -->
-    <text x="${W - padR - 8}" y="${padT + 16}" text-anchor="end" font-size="10" font-weight="600" fill="#2E7D5B">WAVE 1: IMMEDIATE QUICK WINS (HIGH IMPACT &middot; HIGH EASE)</text>
-    <text x="${padL + 8}" y="${padT + 16}" font-size="10" font-weight="600" fill="#2E5A8A">WAVE 2: COMMERCIAL RESETS (HIGH IMPACT &middot; MODERATE EASE)</text>
-    <text x="${padL + 8}" y="${H - padB - 8}" font-size="10" font-weight="600" fill="#6B7280">WAVE 3: STRUCTURAL RFQ / MDM TRANSFORMATION</text>
+    <text x="${W - padR}" y="${padT - 10}" text-anchor="end" font-size="10" font-weight="600" fill="#2E7D5B">WAVE 1 &middot; QUICK WINS (DAYS 1&ndash;30)</text>
+    <text x="${padL}" y="${padT - 10}" font-size="10" font-weight="600" fill="#2E5A8A">WAVE 2 &middot; COMMERCIAL RESETS (DAYS 31&ndash;60)</text>
+    <text x="${padL + 10}" y="${H - padB - 10}" font-size="9.5" font-weight="600" fill="#6B7280">WAVE 3 &middot; STRUCTURAL</text>
     <!-- Axes Labels -->
-    <text x="${padL + plotW / 2}" y="${H - 8}" text-anchor="middle" font-size="10.5" font-weight="600" fill="#374151">Implementation Ease Score (S_Ease: 25 &rarr; 100) &middot; Authority, Counterparty Friction &amp; ERP Readiness</text>
-    <text x="14" y="${padT + plotH / 2}" text-anchor="middle" font-size="10.5" font-weight="600" fill="#374151" transform="rotate(-90 14 ${padT + plotH / 2})">Impact Score (S_Impact: 55 &rarr; 100)</text>
+    <text x="${padL + plotW / 2}" y="${H - 12}" text-anchor="middle" font-size="11" font-weight="600" fill="#374151">Implementation Ease Score (25 &rarr; 100)</text>
+    <text x="16" y="${padT + plotH / 2}" text-anchor="middle" font-size="11" font-weight="600" fill="#374151" transform="rotate(-90 16 ${padT + plotH / 2})">Financial Impact Score (55 &rarr; 100)</text>
   `;
 
   // Grid ticks
   [40, 55, 70, 85, 100].forEach(e => {
     const xx = xMap(e);
-    h += `<text x="${xx}" y="${H - padB + 14}" text-anchor="middle" font-size="9" font-family="DM Mono" fill="#6B7280">${e}</text>`;
+    h += `<text x="${xx}" y="${H - padB + 18}" text-anchor="middle" font-size="9" font-family="DM Mono" fill="#6B7280">${e}</text>`;
   });
   [65, 75, 85, 95].forEach(im => {
     const yy = yMap(im);
@@ -2873,6 +2873,6 @@ refreshAll();
 })();
 </script>
 <!-- ==================== END FORTIFAI CLEAN UI UPGRADE ==================== -->  
-<script src="./uat-clean.js"></script>
+<script src="./uat-clean.js?v=2"></script>
 </body>
 </html>
