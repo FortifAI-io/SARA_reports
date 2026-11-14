@@ -1,5 +1,5 @@
 /**
- * Fortifai UAT Universal Executive De-Clutter + Currency Sync Engine (uat-clean.js v3)
+ * Fortifai UAT Universal Executive De-Clutter + Currency Sync Engine (uat-clean.js v4)
  */
 (function () {
   const CLEAN_CSS = `
@@ -14,12 +14,7 @@
     }
     .tt-sub, .htenant, .huser, .hdr-sub, .header-sub, .brand-sub,
     .subtitle, .sub-head, .replica-pill, .audit-pill, .sap-pill, .live-pill,
-    header .hbtn, .hchrome > button.hbtn,
-    button[onclick*="Board"], button[onclick*="board"],
-    button[onclick*="Export"], button[onclick*="export"],
-    button[onclick*="Ask"], button[onclick*="ask"],
-    button[onclick*="Guide"], button[onclick*="guide"],
-    button[onclick*="Copilot"], button[onclick*="Drawer"] {
+    header .hbtn, .hchrome > button.hbtn {
       display: none !important;
     }
 
@@ -50,13 +45,7 @@
       display: none !important;
     }
 
-    /* 4. Hide Tab Numeric Count Pills (e.g. Kuber "14", "22") */
-    .tab .t-pill, .tab .badge, .tab .count,
-    .nav-tab span, .tab-btn span, [role="tab"] span, [role="tab"] .badge, [role="tab"] .pill {
-      /* Handled selectively in JS below so tab text spans stay visible */
-    }
-
-    /* 5. Clean Suite Cards, Briefs & Action Queue Multi-Line Explanations */
+    /* 4. Clean Suite Cards, Briefs & Action Queue Multi-Line Explanations */
     .suite-card .sc-owner,
     .suite-card .sc-head .tag,
     .suite-card .sc-foot span:first-child,
@@ -75,42 +64,47 @@
     document.head.appendChild(style);
   }
 
-  // Exact button/pill labels to strip anywhere in any agent's top header bar
-  const EXACT_HEADER_BTNS = [
+  // Exact button/badge phrases to strip directly (works on gradient headers, divs, spans, or buttons!)
+  const HIDE_BUTTON_PATTERNS = [
     'board report', 'board dossier', 'board pack',
-    'export (.xls)', 'export (.xlsx)', 'export cfo pack (.xlsx)', 'export csv', 'export',
-    '⌘k ask kuber', 'ask kuber', '⌘k ask sara', 'ask sara', 'ask crystal', 'ask moneta', 'ask aegis', 'ask veritas', 'ask argus', 'ask agent',
-    'live sap', '• live sap', '● live sap', 'read-only', 'external audit',
-    '? guide', 'guide', 'user guide'
+    'export (.xls)', 'export (.xlsx)', 'export cfo pack', 'export csv', 'export pdf',
+    'ask kuber', 'ask sara', 'ask crystal', 'ask moneta', 'ask aegis', 'ask veritas', 'ask argus', 'ask agent',
+    'live sap', 'read-only sap', 'external audit',
+    '? guide', 'user guide', 'cockpit guide',
+    'suppressed fp'
   ];
 
   function cleanDynamicDOM() {
-    // 1. Hide Cluttered Topbar Buttons & Pills (No fragile Y-coordinate restriction!)
+    // 1. Strip Cluttered Header Buttons & Technical Pills Directly by Text (No fragile colour/position gates)
     document.querySelectorAll('button, a, span, div').forEach(el => {
-      if (el.children.length > 2 || el.tagName === 'SELECT') return;
+      if (el.tagName === 'SELECT' || el.closest('.drawer, .modal-card, [class*="modal"], [class*="drawer"], table, tbody')) return;
+      // Only target leaf buttons/pills (up to 3 small child icons/spans, compact width/height)
+      if (el.children.length > 3) return;
       const raw = (el.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
-      if (!raw || raw.length > 34) return;
-      if (raw.includes('usd') || raw.includes('inr')) return;
+      if (!raw || raw.length > 36) return;
+      if (raw.includes('usd') || raw.includes('inr') || raw === 'export') return;
 
-      // Check if element is inside a dark navy top header or sticky top bar
-      const inTopBar = el.closest('header, .hbar, .topbar, .hdr, .top-bar, .app-header, nav') ||
-                       (() => {
-                         let p = el.parentElement;
-                         for (let i = 0; i < 4 && p; i++, p = p.parentElement) {
-                           const bg = window.getComputedStyle(p).backgroundColor;
-                           if (bg === 'rgb(13, 21, 32)' || bg === 'rgb(19, 31, 48)' || bg === 'rgb(15, 23, 42)' || bg === 'rgb(22, 34, 52)') return true;
-                         }
-                         return false;
-                       })();
-
-      if (inTopBar && EXACT_HEADER_BTNS.some(p => raw === p || raw.includes(p))) {
-        el.style.setProperty('display', 'none', 'important');
+      if (HIDE_BUTTON_PATTERNS.some(p => raw === p || raw.includes(p))) {
+        // Make sure we hide the button/pill itself, not a huge wrapper container
+        const rect = el.getBoundingClientRect();
+        if (rect.width < 260 && rect.height < 52) {
+          el.style.setProperty('display', 'none', 'important');
+        }
       }
     });
 
-    // 2. Strip numeric count pills ("14", "22") & leading "1. " numbers inside Tabs
-    document.querySelectorAll('button, a, div, .tab, [role="tab"]').forEach(tab => {
-      if (tab.children.length >= 1 && tab.children.length <= 3 && (tab.textContent || '').length < 45) {
+    // Also catch plain "Export" buttons in top bars
+    document.querySelectorAll('button, a').forEach(btn => {
+      const raw = (btn.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      if (raw === 'export' || raw.startsWith('export (')) {
+        btn.style.setProperty('display', 'none', 'important');
+      }
+    });
+
+    // 2. Strip numeric count badges ("14", "22") inside Navigation Tabs (e.g. "Opportunity Workbench 14")
+    document.querySelectorAll('button, a, div, li, .tab, [role="tab"]').forEach(tab => {
+      const tLen = (tab.textContent || '').trim().length;
+      if (tab.children.length >= 1 && tab.children.length <= 3 && tLen > 4 && tLen < 45) {
         tab.querySelectorAll('span, b, small, em').forEach(badge => {
           const t = (badge.textContent || '').trim();
           if (/^\(?\d+\)?$/.test(t)) {
@@ -120,14 +114,19 @@
       }
     });
 
-    // 3. Hide small-font (<= 11.5px) multi-line explanation blurbs outside drawers/modals/SVGs
+    // 3. Hide small-font helper instructions ("Click any KPI card to inspect...") & multi-line grey blurbs
     document.querySelectorAll('p, div, small, span').forEach(el => {
       if (el.closest('svg') || el.previousElementSibling?.tagName === 'svg') return;
       if (el.children.length === 0 && !el.closest('.drawer, .modal-card, [class*="modal"], [class*="drawer"]')) {
         const txt = (el.textContent || '').trim();
         if (!txt) return;
+        const lower = txt.toLowerCase();
+        if (lower.startsWith('click any kpi card') || lower.startsWith('click any bubble') || lower.startsWith('click any row')) {
+          el.style.setProperty('display', 'none', 'important');
+          return;
+        }
         const fontSize = parseFloat(window.getComputedStyle(el).fontSize || '13');
-        if (fontSize <= 11.5 && txt.length > 72 && !el.closest('td.mono, th, code')) {
+        if (fontSize <= 11.5 && txt.length > 68 && !el.closest('td.mono, th, code')) {
           el.style.setProperty('display', 'none', 'important');
         }
       }
@@ -135,9 +134,7 @@
   }
 
   // =========================================================================
-  // UNIVERSAL USD <-> INR CURRENCY CONVERTER FOR HARDCODED AGENT TEXT & SVGs
-  // Fixes Kuber (and any other agent) where ₹ Cr / $M strings are hardcoded!
-  // Rate: 1 USD Million ($1.0M) = ₹8.35 Cr (at ₹83.5 / USD)
+  // UNIVERSAL USD <-> INR CURRENCY CONVERTER (1 USD Million = ₹8.35 Cr)
   // =========================================================================
   const FX_CR_PER_USDM = 8.35;
 
@@ -150,7 +147,6 @@
       const parent = node.parentElement;
       if (!parent || ['SCRIPT', 'STYLE', 'CODE', 'PRE'].includes(parent.tagName)) return;
       const pTxt = (parent.textContent || '').trim();
-      // Never rewrite the toggle button labels themselves ("₹ INR" / "$ USD" / "₹ Cr")
       if (pTxt === '$ USD' || pTxt === '₹ INR' || pTxt === '₹ Cr' || pTxt === 'INR' || pTxt === 'USD') return;
 
       if (node._origCurrText === undefined) {
@@ -165,7 +161,6 @@
       if (!orig) return;
 
       if (targetCur === 'USD') {
-        // Convert ₹X Cr -> $Y.YM (or $YK) and ₹X L -> $YK
         let updated = orig.replace(/₹\s?([\d,]+(?:\.\d+)?)\s*Cr\b/gi, (_, numStr) => {
           const cr = parseFloat(numStr.replace(/,/g, ''));
           if (isNaN(cr)) return _;
@@ -182,11 +177,9 @@
         });
         if (node.nodeValue !== updated) node.nodeValue = updated;
       } else if (targetCur === 'INR') {
-        // If original was already in ₹, restore exact original text!
         if (orig.includes('₹')) {
           if (node.nodeValue !== orig) node.nodeValue = orig;
         } else {
-          // Convert $X.XM -> ₹Y.Y Cr
           let updated = orig.replace(/\$\s?([\d,]+(?:\.\d+)?)\s*M\b/gi, (_, numStr) => {
             const usdM = parseFloat(numStr.replace(/,/g, ''));
             if (isNaN(usdM)) return _;
@@ -210,7 +203,6 @@
           const mode = t.includes('USD') ? 'USD' : 'INR';
           localStorage.setItem('fortifai_currency', mode);
 
-          // Toggle visual active state on sibling currency buttons if agent's native handler failed
           const grp = btn.parentElement;
           if (grp && grp.children.length <= 3) {
             Array.from(grp.children).forEach(sib => {
@@ -222,7 +214,6 @@
             });
           }
 
-          // Run native currency function if defined, then sweep all hardcoded DOM/SVG labels
           try {
             if (typeof window.setCurr === 'function') window.setCurr(mode);
             else if (typeof window.setCur === 'function') window.setCur(mode, btn);
@@ -240,18 +231,6 @@
     injectStyles();
     cleanDynamicDOM();
     wireCurrencyButtons();
-
-    // Sync active visual currency on initial load (e.g., if "$ USD" button starts highlighted in Kuber)
-    const activeUsdBtn = Array.from(document.querySelectorAll('button, span')).find(b => {
-      const t = (b.textContent || '').trim();
-      if (t !== '$ USD' && t !== 'USD') return false;
-      const bg = window.getComputedStyle(b).backgroundColor;
-      return b.classList.contains('active') || b.classList.contains('on') ||
-             (bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent' && !bg.includes('13, 21, 32'));
-    });
-    if (activeUsdBtn) {
-      convertAllTextNodesToCurrency('USD');
-    }
   }
 
   if (document.readyState === 'loading') {
@@ -262,6 +241,7 @@
   window.addEventListener('load', () => {
     runAll();
     setTimeout(runAll, 250);
+    setTimeout(runAll, 700);
   });
 
   let debounceTimer;
