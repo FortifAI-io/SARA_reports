@@ -1117,5 +1117,101 @@
     }
   });
 </script>
+let globalCleanUI = true;
+
+  const UNIVERSAL_CLEAN_CSS = `
+    /* 1. Strip Cluttered Header Buttons (Ask Agent, Board Report, Export, Duplicate User/Replica Pills) */
+    html.clean-ui .hbar,
+    html.clean-ui header > div {
+      flex-wrap: nowrap !important;
+      padding-top: 9px !important;
+      padding-bottom: 9px !important;
+    }
+    html.clean-ui .tt-sub,
+    html.clean-ui .htenant,
+    html.clean-ui .huser,
+    html.clean-ui .hchrome > button.hbtn,
+    html.clean-ui header [class*="subtitle"],
+    html.clean-ui header [class*="sub"],
+    html.clean-ui header [class*="replica"],
+    html.clean-ui header [class*="user"],
+    html.clean-ui header button[onclick*="Board"],
+    html.clean-ui header button[onclick*="Export"],
+    html.clean-ui header button[onclick*="Ask"],
+    html.clean-ui header button[onclick*="Modal"],
+    html.clean-ui header button[onclick*="Drawer"] {
+      display: none !important;
+    }
+
+    /* 2. Clean 3-Element KPI Cards Across All Agents (Label + Big Number + 1-Line Subtext) */
+    html.clean-ui .kpi-top .tag,
+    html.clean-ui .kpi-foot,
+    html.clean-ui [class*="kpi"] [class*="badge"],
+    html.clean-ui [class*="kpi"] [class*="pill"],
+    html.clean-ui [class*="kpi-foot"],
+    html.clean-ui [class*="card-foot"] {
+      display: none !important;
+    }
+    html.clean-ui .kpi-sub,
+    html.clean-ui [class*="kpi-sub"] {
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    /* 3. Declutter Pipeline Metadata, Panel Subtitles, Accounting Warnboxes & Multi-Line Table Blurbs */
+    html.clean-ui .tab .t-pill,
+    html.clean-ui .pipe-stage .ps-meta,
+    html.clean-ui .band-h .hint,
+    html.clean-ui .panel .psub,
+    html.clean-ui .panel-h > .tag,
+    html.clean-ui .warnbox,
+    html.clean-ui .wf-row .wf-lbl small,
+    html.clean-ui #waveActionTable td:first-child > div:nth-child(2) {
+      display: none !important;
+    }
+  `;
+
+  function injectCleanThemeIntoAgent() {
+    const frame = document.getElementById('agent-frame');
+    if (!frame) return;
+    try {
+      const doc = frame.contentDocument || frame.contentWindow.document;
+      if (!doc || !doc.head) return;
+
+      // Skip cross-origin or overview page
+      if (frame.src.includes('overview.fortifai.io')) return;
+
+      let styleEl = doc.getElementById('fortifai-universal-clean');
+      if (!styleEl) {
+        styleEl = doc.createElement('style');
+        styleEl.id = 'fortifai-universal-clean';
+        styleEl.textContent = UNIVERSAL_CLEAN_CSS;
+        doc.head.appendChild(styleEl);
+
+        // Strip "1. ", "2. " numbering from sub-tabs if present
+        doc.querySelectorAll('.tab, [role="tab"]').forEach(btn => {
+          btn.childNodes.forEach(n => {
+            if (n.nodeType === 3) n.textContent = n.textContent.replace(/^\s*\d+\.\s*/, '');
+          });
+        });
+      }
+      doc.documentElement.classList.toggle('clean-ui', globalCleanUI);
+    } catch (err) {
+      // Ignore cross-origin frame (e.g. overview.fortifai.io)
+    }
+  }
+
+  function toggleGlobalCleanUI() {
+    globalCleanUI = !globalCleanUI;
+    const btn = document.getElementById('clean-mode-btn');
+    if (btn) {
+      btn.textContent = globalCleanUI ? '✦ Simple View: ON' : '▤ Detailed View';
+      btn.classList.toggle('accent', globalCleanUI);
+    }
+    injectCleanThemeIntoAgent();
+  }
+
+  document.getElementById('agent-frame').addEventListener('load', injectCleanThemeIntoAgent);
 </body>
 </html>
