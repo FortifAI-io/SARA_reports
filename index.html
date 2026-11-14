@@ -1116,50 +1116,18 @@
       launchApp('Varun Mowar', saved || 'varun@fortifai.io');
     }
   });
-</script>
-let globalCleanUI = true;
 
-  const UNIVERSAL_CLEAN_CSS = `
-    /* 1. Strip Cluttered Header Buttons (Ask Agent, Board Report, Export, Duplicate User/Replica Pills) */
-    html.clean-ui .hbar,
-    html.clean-ui header > div {
-      flex-wrap: nowrap !important;
-      padding-top: 9px !important;
-      padding-bottom: 9px !important;
-    }
+const UNIVERSAL_CLEAN_CSS = `
+    /* 1. Clean KPI Cards, Tab Badges & Footnotes Across All Agents */
     html.clean-ui .tt-sub,
     html.clean-ui .htenant,
     html.clean-ui .huser,
-    html.clean-ui .hchrome > button.hbtn,
-    html.clean-ui header [class*="subtitle"],
-    html.clean-ui header [class*="sub"],
-    html.clean-ui header [class*="replica"],
-    html.clean-ui header [class*="user"],
-    html.clean-ui header button[onclick*="Board"],
-    html.clean-ui header button[onclick*="Export"],
-    html.clean-ui header button[onclick*="Ask"],
-    html.clean-ui header button[onclick*="Modal"],
-    html.clean-ui header button[onclick*="Drawer"] {
-      display: none !important;
-    }
-
-    /* 2. Clean 3-Element KPI Cards Across All Agents (Label + Big Number + 1-Line Subtext) */
     html.clean-ui .kpi-top .tag,
     html.clean-ui .kpi-foot,
     html.clean-ui [class*="kpi"] [class*="badge"],
     html.clean-ui [class*="kpi"] [class*="pill"],
     html.clean-ui [class*="kpi-foot"],
-    html.clean-ui [class*="card-foot"] {
-      display: none !important;
-    }
-    html.clean-ui .kpi-sub,
-    html.clean-ui [class*="kpi-sub"] {
-      white-space: nowrap !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-    }
-
-    /* 3. Declutter Pipeline Metadata, Panel Subtitles, Accounting Warnboxes & Multi-Line Table Blurbs */
+    html.clean-ui [class*="card-foot"],
     html.clean-ui .tab .t-pill,
     html.clean-ui .pipe-stage .ps-meta,
     html.clean-ui .band-h .hint,
@@ -1174,44 +1142,68 @@ let globalCleanUI = true;
 
   function injectCleanThemeIntoAgent() {
     const frame = document.getElementById('agent-frame');
-    if (!frame) return;
+    if (!frame || frame.src.includes('overview.fortifai.io')) return;
+
     try {
       const doc = frame.contentDocument || frame.contentWindow.document;
       if (!doc || !doc.head) return;
 
-      // Skip cross-origin or overview page
-      if (frame.src.includes('overview.fortifai.io')) return;
-
-      let styleEl = doc.getElementById('fortifai-universal-clean');
-      if (!styleEl) {
-        styleEl = doc.createElement('style');
+      // 1. Inject universal CSS rules
+      if (!doc.getElementById('fortifai-universal-clean')) {
+        const styleEl = doc.createElement('style');
         styleEl.id = 'fortifai-universal-clean';
         styleEl.textContent = UNIVERSAL_CLEAN_CSS;
         doc.head.appendChild(styleEl);
+      }
+      doc.documentElement.classList.add('clean-ui');
 
-        // Strip "1. ", "2. " numbering from sub-tabs if present
-        doc.querySelectorAll('.tab, [role="tab"]').forEach(btn => {
-          btn.childNodes.forEach(n => {
+      // 2. Universal Header Button & Badge Cleaner (Works on Kuber, Crystal, Aegis, SARA, etc. regardless of tag/class!)
+      const noisyHeaderWords = [
+        'board report', 'board dossier', 'export', 'ask ',
+        'live sap', 'guide', 'read-only', 'external audit'
+      ];
+      doc.querySelectorAll('button, a, span, div').forEach(el => {
+        // Only check compact elements near the top 110px of the agent page (its dark topbar)
+        const rect = el.getBoundingClientRect();
+        if (rect.top >= 0 && rect.top < 110 && rect.height > 14 && rect.height < 46 && el.children.length <= 2) {
+          const txt = (el.textContent || '').trim().toLowerCase();
+          if (noisyHeaderWords.some(w => txt.includes(w)) && !txt.includes('usd') && !txt.includes('inr')) {
+            el.style.setProperty('display', 'none', 'important');
+          }
+        }
+      });
+
+      // 3. Clean tab count pills (e.g. "14", "22" in Kuber tabs) & "1. " numbering
+      doc.querySelectorAll('button, [role="tab"], .tab').forEach(tab => {
+        const rect = tab.getBoundingClientRect();
+        if (rect.top >= 35 && rect.top < 140) {
+          tab.querySelectorAll('span, b, small').forEach(badge => {
+            if (/^\d+$/.test((badge.textContent || '').trim())) {
+              badge.style.setProperty('display', 'none', 'important');
+            }
+          });
+          tab.childNodes.forEach(n => {
             if (n.nodeType === 3) n.textContent = n.textContent.replace(/^\s*\d+\.\s*/, '');
           });
-        });
-      }
-      doc.documentElement.classList.toggle('clean-ui', globalCleanUI);
-    } catch (err) {
-      // Ignore cross-origin frame (e.g. overview.fortifai.io)
-    }
+        }
+      });
+
+      // 4. Hide dense 3-line grey breakdown paragraphs inside Wave / Summary cards (like Kuber's Wave 1/2/3 cards)
+      doc.querySelectorAll('p, div').forEach(p => {
+        if (p.children.length === 0) {
+          const t = (p.textContent || '').trim();
+          if (t.length > 85 && (t.includes('opportunities:') || t.includes('overbilling') || t.includes('consolidation ('))) {
+            p.style.setProperty('display', 'none', 'important');
+          }
+        }
+      });
+    } catch (err) {}
   }
 
-  function toggleGlobalCleanUI() {
-    globalCleanUI = !globalCleanUI;
-    const btn = document.getElementById('clean-mode-btn');
-    if (btn) {
-      btn.textContent = globalCleanUI ? '✦ Simple View: ON' : '▤ Detailed View';
-      btn.classList.toggle('accent', globalCleanUI);
-    }
+  document.getElementById('agent-frame').addEventListener('load', () => {
     injectCleanThemeIntoAgent();
-  }
-
-  document.getElementById('agent-frame').addEventListener('load', injectCleanThemeIntoAgent);
+    setTimeout(injectCleanThemeIntoAgent, 250); // Catch dynamically rendered agent elements
+  });
+</script>
 </body>
 </html>
