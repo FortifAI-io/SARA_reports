@@ -715,6 +715,84 @@ tr.clk-row:hover { background: #F6F9FC; }
   #suiteCardsGrid.r5-suites { grid-template-columns: repeat(2, 1fr) !important; }
 }
 
+
+/* ==================== CLEAN BUSINESS FUNCTION CARDS (NO AGENT CHIPS) ==================== */
+#suiteCardsGrid.r5-suites {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  align-items: stretch !important;
+}
+#suiteCardsGrid.r5-suites .suite-card {
+  padding: 16px 18px !important;
+  border-radius: 8px !important;
+  background: #FFFFFF !important;
+  border: 1px solid var(--line) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease !important;
+}
+#suiteCardsGrid.r5-suites .suite-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(13,21,32,.08) !important;
+}
+#suiteCardsGrid.r5-suites .suite-card.fn-proc { border-top: 3px solid #2E7D5B !important; }
+#suiteCardsGrid.r5-suites .suite-card.fn-rev  { border-top: 3px solid #E65100 !important; }
+#suiteCardsGrid.r5-suites .suite-card.fn-fin  { border-top: 3px solid #2E5A8A !important; }
+#suiteCardsGrid.r5-suites .suite-card.fn-comp { border-top: 3px solid #C62828 !important; }
+#suiteCardsGrid.r5-suites .suite-card.fn-aud  { border-top: 3px solid #5B4B8A !important; }
+
+.fn-card-title {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--navy) !important;
+  letter-spacing: -0.1px !important;
+  margin-bottom: 14px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.fn-metric-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding-top: 12px !important;
+  border-top: 1px solid var(--line-soft) !important;
+}
+.fn-metric-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: baseline !important;
+  gap: 8px !important;
+}
+.fn-m-lbl {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.4px !important;
+  color: var(--mut) !important;
+  white-space: nowrap !important;
+}
+.fn-m-val {
+  font-family: 'DM Mono', monospace !important;
+  font-size: 15.5px !important;
+  font-weight: 600 !important;
+  color: var(--navy) !important;
+  white-space: nowrap !important;
+}
+.fn-card-cta {
+  margin-top: 14px !important;
+  padding-top: 9px !important;
+  border-top: 1px solid var(--line-soft) !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--deep) !important;
+}
+
 </style>
 </head>
 <body>
@@ -866,7 +944,7 @@ tr.clk-row:hover { background: #F6F9FC; }
     <div class="band">
       <div class="band-h">
         <div class="band-h-left">
-          <h2>Enterprise Performance by Functional AI Suite</h2>
+          <h2>Enterprise Performance by Business Function</h2>
           <span class="hint">click any suite to drill down</span>
         </div>
       </div>
@@ -1860,96 +1938,77 @@ function renderCockpit() {
   // 3. Impact vs Ease Quadrant & Table
   renderImpactEaseQuadrant();
 
-  // 4. All 5 Functional AI Suites (Procurement, Revenue, Finance, Compliance, Internal Audit)
+  // 4. Enterprise Performance by Business Function (Clean, Agent-Agnostic Cards)
   const suites = [
     {
       tab: 'procurement',
-      title: '1. Procurement & Supply',
-      owner: 'Owner: CPO',
-      badge: 'Wave 1',
-      bCls: 'Wave1',
-      agents: ['Kuber', 'Conduit', 'Manifest', 'Vantage'],
+      cls: 'fn-proc',
+      title: 'Procurement & Supply Chain',
       m1Lbl: 'Net Hard EBITDA',
       m1Val: fmtMoney(84.6),
+      m1Col: 'var(--ok)',
       m2Lbl: 'Stoppable AP',
-      m2Val: fmtMoney(99.0),
-      foot: '14 Opportunity Packets'
+      m2Val: fmtMoney(99.0)
     },
     {
       tab: 'revenue',
-      title: '2. Revenue & Commercial',
-      owner: 'Owner: CRO',
-      badge: 'Q4 Watch',
-      bCls: 'High',
-      agents: ['Surge', 'Horizon', 'Margin'],
+      cls: 'fn-rev',
+      title: 'Revenue & Commercial',
       m1Lbl: 'Margin Recovery',
       m1Val: fmtMoney(16.2),
+      m1Col: 'var(--ok)',
       m2Lbl: 'Revenue at Risk',
-      m2Val: fmtMoney(48.5),
-      foot: 'Sanitized S&OP forecast'
+      m2Val: fmtMoney(48.5)
     },
     {
       tab: 'financials',
-      title: '3. Finance & Treasury',
-      owner: 'Owner: CFO',
-      badge: 'On Track',
-      bCls: 'Low',
-      agents: ['Crystal', 'Moneta', 'Tenor'],
+      cls: 'fn-fin',
+      title: 'Finance & Working Capital',
       m1Lbl: 'WC Cash Release',
       m1Val: fmtMoney(188.6),
+      m1Col: 'var(--deep)',
       m2Lbl: 'Close Exposure',
-      m2Val: fmtMoney(44.2),
-      foot: '60/186 GL recs cleared'
+      m2Val: fmtMoney(44.2)
     },
     {
       tab: 'compliance',
-      title: '4. Compliance & 3rd-Party',
-      owner: 'Owner: Global CCO & GC',
-      badge: 'Privileged',
-      bCls: 'Critical',
-      agents: ['Custos', 'Veritas', 'Conduit', 'Aegis'],
+      cls: 'fn-comp',
+      title: 'Compliance & 3rd-Party',
       m1Lbl: 'Statutory Exposure',
       m1Val: fmtMoney(38.4),
+      m1Col: 'var(--crit)',
       m2Lbl: 'Stoppable Hold',
-      m2Val: fmtMoney(14.3),
-      foot: '14 Custos adverse drifts'
+      m2Val: fmtMoney(14.3)
     },
     {
       tab: 'audit',
-      title: '5. Internal Audit & ICFR',
-      owner: 'Owner: CAE',
-      badge: 'SOX 93.3%',
-      bCls: 'High',
-      agents: ['Vigil', 'Pulse', 'Argus'],
+      cls: 'fn-aud',
+      title: 'Internal Audit & Controls',
       m1Lbl: 'Net Audit Exposure',
       m1Val: fmtMoney(164.8),
+      m1Col: 'var(--navy)',
       m2Lbl: 'Pre-F110 Hold',
-      m2Val: fmtMoney(18.4),
-      foot: '142 multi-rule cases'
+      m2Val: fmtMoney(18.4)
     }
   ];
 
   document.getElementById('suiteCardsGrid').innerHTML = suites.map(s => `
-    <div class="suite-card" onclick="switchTab('${s.tab}')">
+    <div class="suite-card ${s.cls}" onclick="switchTab('${s.tab}')">
       <div>
-        <div class="sc-head">
-          <div>
-            <div class="sc-title">${s.title}</div>
-            <div class="sc-owner">${s.owner}</div>
+        <div class="fn-card-title">${s.title}</div>
+        <div class="fn-metric-stack">
+          <div class="fn-metric-row">
+            <span class="fn-m-lbl">${s.m1Lbl}</span>
+            <span class="fn-m-val" style="color:${s.m1Col}">${s.m1Val}</span>
           </div>
-          <span class="tag ${s.bCls}">${s.badge}</span>
-        </div>
-        <div class="sc-agents">
-          ${s.agents.map(a => `<span class="ag-chip">${a}</span>`).join('')}
-        </div>
-        <div class="sc-metrics">
-          <div class="sc-m"><div class="m-lbl">${s.m1Lbl}</div><div class="m-val">${s.m1Val}</div></div>
-          <div class="sc-m"><div class="m-lbl">${s.m2Lbl}</div><div class="m-val">${s.m2Val}</div></div>
+          <div class="fn-metric-row">
+            <span class="fn-m-lbl">${s.m2Lbl}</span>
+            <span class="fn-m-val">${s.m2Val}</span>
+          </div>
         </div>
       </div>
-      <div class="sc-foot">
-        <span>${s.foot}</span>
-        <span style="color:var(--deep);font-weight:600">Open &rarr;</span>
+      <div class="fn-card-cta">
+        <span>Explore &rarr;</span>
       </div>
     </div>
   `).join('');
