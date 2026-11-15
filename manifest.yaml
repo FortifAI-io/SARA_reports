@@ -83,7 +83,7 @@ reports:
     priority: 3
     active: true
     
-  - file: D7-custos-v2.HTML
+  - file: D7-custos-v2.html
     title: D7 Custos
     component_key: d7-custos-v2
     subtitle: Third Party Risk Assessment
