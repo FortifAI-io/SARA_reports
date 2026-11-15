@@ -626,6 +626,95 @@ tr.clk-row:hover { background: #F6F9FC; }
   .wrap { padding: 0; }
   .panel { break-inside: avoid; box-shadow: none; }
 }
+
+/* ==================== CCO EXECUTIVE COCKPIT (ZERO CLUTTER) ==================== */
+.cco-hm-table { width: 100%; border-collapse: separate; border-spacing: 6px; margin: -6px; }
+.cco-hm-table th {
+  background: #F4F7FA;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 9px 10px;
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}
+.cco-hm-table th:first-child { text-align: left; width: 190px; }
+.cco-hm-ent {
+  background: #FAFBFD;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 10px 12px;
+  font-weight: 600;
+  color: var(--navy);
+  font-size: 12px;
+}
+.cco-hm-cell {
+  border-radius: 5px;
+  padding: 10px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform .12s, box-shadow .12s;
+  border: 1px solid transparent;
+}
+.cco-hm-cell:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(13,21,32,.08); }
+.cco-hm-cell .hm-v { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 600; display: block; }
+.cco-hm-cell .hm-c { font-family: 'DM Mono', monospace; font-size: 10px; opacity: .8; margin-top: 2px; display: block; }
+.cco-hm-cell.crit { background: #FDECEC; border-color: #F5C2C2; color: #8B1A1A; }
+.cco-hm-cell.high { background: #FFF3E0; border-color: #FAD7A0; color: #6D3B00; }
+.cco-hm-cell.med  { background: #F5F7DC; border-color: #E2E8A6; color: #3A4400; }
+.cco-hm-cell.low  { background: #E8F0F8; border-color: #C9DDF0; color: #1A3A5C; }
+
+.pillar-row {
+  display: grid;
+  grid-template-columns: 155px 1fr 78px 92px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.pillar-row:last-child { border-bottom: none; }
+.pillar-bar-bg { height: 14px; background: #EEF2F6; border-radius: 4px; overflow: hidden; position: relative; }
+.pillar-bar-exp { height: 100%; background: #99AFBC; border-radius: 4px; }
+.pillar-bar-hold { position: absolute; left: 0; top: 0; height: 100%; background: var(--crit); border-radius: 4px; }
+.agent-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--deep);
+  text-decoration: none;
+  background: #fff;
+  white-space: nowrap;
+}
+.agent-link:hover { background: var(--low-bg); border-color: var(--deep); }
+#compKpiRibbon .kpi-top { display: flex !important; visibility: visible !important; }
+#compKpiRibbon .kpi-lbl { display: inline-block !important; visibility: visible !important; }
+
+
+/* ==================== 5-PILLAR SUITE GRID & CAE AUDIT COCKPIT ==================== */
+#suiteCardsGrid.r5-suites {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+#suiteCardsGrid.r5-suites .suite-card { padding: 13px 14px !important; }
+#suiteCardsGrid.r5-suites .sc-title { font-size: 12px !important; }
+.kpi-card.audit-kpi { border-top: 3px solid #5B4B8A; cursor: pointer; }
+.kpi-card.reg-kpi, .kpi-card.rar-kpi, .kpi-card.wc-kpi, .kpi-card.ebitda-kpi { cursor: pointer; }
+#auditKpiRibbon .kpi-top { display: flex !important; visibility: visible !important; }
+#auditKpiRibbon .kpi-lbl { display: inline-block !important; visibility: visible !important; }
+@media(max-width: 1200px) {
+  #suiteCardsGrid.r5-suites { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
 </style>
 </head>
 <body>
@@ -678,21 +767,12 @@ tr.clk-row:hover { background: #F6F9FC; }
 <div class="tabbar">
   <div class="tabbar-inner">
     <div class="tabs-left">
-      <button class="tab active" data-tab="cockpit" onclick="switchTab('cockpit')">
-        1. Executive Cockpit <span class="t-pill"></span>
-      </button>
-      <button class="tab" data-tab="financials" onclick="switchTab('financials')">
-        2. EBITDA &amp; Working Capital Bridge <span class="t-pill"></span>
-      </button>
-      <button class="tab" data-tab="procurement" onclick="switchTab('procurement')">
-        3. Procurement &amp; Supply Chain <span class="t-pill"></span>
-      </button>
-      <button class="tab" data-tab="revenue" onclick="switchTab('revenue')">
-        4. Revenue &amp; Close Integrity <span class="t-pill"></span>
-      </button>
-      <button class="tab" data-tab="compliance" onclick="switchTab('compliance')">
-        5. Compliance, Trade &amp; Action Hub <span class="t-pill"></span>
-      </button>
+      <button class="tab active" data-tab="cockpit" onclick="switchTab('cockpit')">Executive Cockpit</button>
+      <button class="tab" data-tab="financials" onclick="switchTab('financials')">EBITDA &amp; Working Capital</button>
+      <button class="tab" data-tab="procurement" onclick="switchTab('procurement')">Procurement &amp; Supply Chain</button>
+      <button class="tab" data-tab="revenue" onclick="switchTab('revenue')">Revenue &amp; Close</button>
+      <button class="tab" data-tab="compliance" onclick="switchTab('compliance')">Compliance &amp; 3rd-Party</button>
+      <button class="tab" data-tab="audit" onclick="switchTab('audit')">Audit &amp; Controls</button>
     </div>
     <div class="spine-status">
       <span><i class="spine-dot"></i><b></b></span>
@@ -790,7 +870,7 @@ tr.clk-row:hover { background: #F6F9FC; }
           <span class="hint">click any suite to drill down</span>
         </div>
       </div>
-      <div class="grid r4" id="suiteCardsGrid"></div>
+      <div class="grid r5-suites" id="suiteCardsGrid"></div>
     </div>
 
     <!-- CROSS-AGENT EXECUTIVE BRIEFING CARDS -->
@@ -1152,96 +1232,168 @@ tr.clk-row:hover { background: #F6F9FC; }
 </div>
 
 <!-- =======================================================================
-     TAB 5: COMPLIANCE, TRADE & ACTION HUB (GC / CAE / COO VIEW)
+     TAB 5: GLOBAL CCO & GC COCKPIT
      ======================================================================= -->
 <div class="tabpage" id="page-compliance">
   <div class="wrap">
 
+    <!-- BAND 1: 5 HIGH-LEVEL CCO INDICATORS -->
+    <div class="kpi-ribbon" id="compKpiRibbon"></div>
+
+    <!-- BAND 2: GLOBAL HEATMAP (60%) + AGENT LAUNCHPAD & EXPOSURE SPLIT (40%) -->
     <div class="band">
-      <div style="background:var(--navy);color:#fff;padding:12px 18px;border-radius:var(--r-lg);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-        <div>
-          <span class="tag Critical" style="margin-right:8px">ELEVATED POSTURE</span>
-          <b style="font-size:13px">Attorney-Client Privileged Sentinel &mdash; Veritas (ABAC/FCPA), Aegis (ITAR/EAR/OFAC) &amp; Pulse (SOX 404)</b>
+      <div class="grid r-asym">
+
+        <div class="panel">
+          <div class="panel-h">
+            <h3>Global Entity &times; Compliance Regime Heatmap</h3>
+          </div>
+          <table class="cco-hm-table" id="ccoHeatmapTable"></table>
         </div>
-        <span class="mono" style="font-size:10.5px;color:rgba(255,255,255,.7)">Signals, Not Verdicts &middot; Hard Maker-Checker (SoD) Enforced</span>
+
+        <div class="panel">
+          <div class="panel-h">
+            <h3>Exposure &amp; Stoppable Hold by Domain</h3>
+          </div>
+          <div id="ccoPillarBars"></div>
+          <div style="display:flex;gap:16px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line-soft);font-size:11px;color:var(--ink)">
+            <span><b style="color:var(--crit)">&#9632;</b> Stoppable Now</span>
+            <span><b style="color:#99AFBC">&#9632;</b> Total Exposure</span>
+          </div>
+        </div>
+
       </div>
     </div>
 
+    <!-- BAND 3: CUSTOS DRIFT SUMMARY (50%) + PRIORITY ESCALATIONS (50%) -->
     <div class="band">
       <div class="grid r2">
-        <!-- Aegis Post-Clearance Export Control -->
+
         <div class="panel">
           <div class="panel-h">
-            <div>
-              <h3>Fortifai Aegis &mdash; Post-Clearance Export Control &amp; Trade Diversion</h3>
-              <div class="psub">GTS blocks impermissible sales at order entry; Aegis detects post-clearance route flips (CDPOS), transshipment hubs, and POD gaps.</div>
-            </div>
-            <span class="tag Critical">21 Open &middot; EAR / ITAR / OFAC</span>
+            <h3>Custos &middot; Counterparty Drift &amp; ERP Exposure</h3>
+            <a href="D7-custos-v2.html" target="_blank" class="agent-link">Open Custos &#8599;</a>
           </div>
           <table>
             <thead>
               <tr>
-                <th>Case ID &amp; ECCN</th>
-                <th>Regime</th>
-                <th>Post-GTS Diversion Indicator</th>
-                <th class="num">Value Under Review</th>
-                <th>Counsel Gate</th>
+                <th>Counterparty</th>
+                <th>D7 Drift</th>
+                <th>Trigger</th>
+                <th class="num">ERP Dealings</th>
+                <th class="num">Open Hold</th>
               </tr>
             </thead>
-            <tbody id="aegisTable"></tbody>
+            <tbody id="ccoCustosTable"></tbody>
           </table>
         </div>
 
-        <!-- Veritas Global Bribery & FCPA + Pulse SOX Observations -->
         <div class="panel">
           <div class="panel-h">
-            <div>
-              <h3>Fortifai Veritas &amp; Pulse &mdash; FCPA / ABAC &amp; SOX 404 Control Telemetry</h3>
-              <div class="psub">High-risk government-channel consultants, Concur T&amp;E split hospitality, and continuous SOX 404 control exception counts.</div>
+            <h3>Priority Escalations &middot; Counsel &amp; CCO Gate</h3>
+            <div class="pill-bar" id="ccoFilterPills">
+              <button class="f-pill on" data-f="ALL" onclick="setCcoFilter('ALL')">All</button>
+              <button class="f-pill" data-f="Bribery" onclick="setCcoFilter('Bribery')">Bribery</button>
+              <button class="f-pill" data-f="Pass-Through" onclick="setCcoFilter('Pass-Through')">Pass-Through</button>
+              <button class="f-pill" data-f="Export" onclick="setCcoFilter('Export')">Export</button>
             </div>
-            <span class="tag High">426 Critical ABAC Signals</span>
           </div>
           <table>
             <thead>
               <tr>
-                <th>Control / Compliance Area</th>
-                <th>Framework (Ref.)</th>
-                <th class="num">Exceptions</th>
-                <th class="num">Quantified Exposure</th>
-                <th>Audit Observation</th>
+                <th>Counterparty / Scope</th>
+                <th>Domain</th>
+                <th>Primary Signal</th>
+                <th class="num">Stoppable</th>
+                <th>Agent</th>
               </tr>
             </thead>
-            <tbody id="veritasPulseTable"></tbody>
+            <tbody id="ccoEscalationTable"></tbody>
           </table>
         </div>
+
       </div>
     </div>
 
-    <!-- CLOSED-LOOP ENTERPRISE ACTION & SLA TRACKER -->
+  </div>
+</div>
+
+<!-- =======================================================================
+     TAB 6: INTERNAL AUDIT & CONTROL ASSURANCE COCKPIT (CAE VIEW)
+     ======================================================================= -->
+<div class="tabpage" id="page-audit">
+  <div class="wrap">
+
+    <!-- BAND 1: 5 HIGH-LEVEL CAE AUDIT & CONTROL INDICATORS -->
+    <div class="kpi-ribbon" id="auditKpiRibbon"></div>
+
+    <!-- BAND 2: ENTITY x CONTROL HEATMAP (60%) + CAE DEDUP BRIDGE & AGENTS (40%) -->
     <div class="band">
-      <div class="band-h">
-        <div class="band-h-left">
-          <h2>Enterprise Closed-Loop Action Hub, RACI &amp; Maker-Checker SLA Governance</h2>
-          <span class="hint">Immutable detection timestamps &middot; Open Age (Xd) vs. Severity SLA &middot; Locked Closed TAT &middot; Continuous Regression Tripwires</span>
+      <div class="grid r-asym">
+
+        <div class="panel">
+          <div class="panel-h">
+            <h3>Global Entity &times; Internal Control Breakdown Heatmap</h3>
+          </div>
+          <table class="cco-hm-table" id="caeHeatmapTable"></table>
         </div>
+
+        <div class="panel">
+          <div class="panel-h">
+            <h3>CAE Exposure De-Duplication &amp; Audit Engines</h3>
+          </div>
+          <div id="caeBridgeBars"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--line-soft);gap:8px;flex-wrap:wrap">
+            <a href="Vigil_Comprehensive.html" target="_blank" class="agent-link">Open Vigil (Continuous Audit) &#8599;</a>
+            <a href="Argus_Investigation_Agent.html" target="_blank" class="agent-link">Open Argus (Investigations) &#8599;</a>
+          </div>
+        </div>
+
       </div>
-      <div class="panel">
-        <table>
-          <thead>
-            <tr>
-              <th>Action ID</th>
-              <th>Source Agent &amp; Initiative</th>
-              <th>RACI Owner</th>
-              <th>Detected (UTC)</th>
-              <th>SLA / Open Age</th>
-              <th>Execution Instrument</th>
-              <th class="num">Target Value</th>
-              <th class="num">Booked YTD</th>
-              <th>Governance State</th>
-            </tr>
-          </thead>
-          <tbody id="closedLoopSlaTable"></tbody>
-        </table>
+    </div>
+
+    <!-- BAND 3: MULTI-RULE ENTITY/USER CONVERGENCE (50%) + SOX / ICFR DEFICIENCIES (50%) -->
+    <div class="band">
+      <div class="grid r2">
+
+        <div class="panel">
+          <div class="panel-h">
+            <h3>Multi-Rule Convergence &middot; Repeat Vendors &amp; Users</h3>
+            <a href="Argus_Investigation_Agent.html" target="_blank" class="agent-link">Open Argus &#8599;</a>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Subject (Vendor / User)</th>
+                <th>Rules Tripped</th>
+                <th class="num">Net Exposure</th>
+                <th class="num">Stoppable</th>
+                <th>Route</th>
+              </tr>
+            </thead>
+            <tbody id="caeConvergenceTable"></tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="panel-h">
+            <h3>SOX 404 &amp; ICFR Systemic Control Deficiencies</h3>
+            <a href="Vigil_Comprehensive.html" target="_blank" class="agent-link">Open Vigil &#8599;</a>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Control Domain</th>
+                <th>COSO Pillar</th>
+                <th class="num">Exceptions</th>
+                <th class="num">Exposure</th>
+                <th>Posture</th>
+              </tr>
+            </thead>
+            <tbody id="caeDeficiencyTable"></tbody>
+          </table>
+        </div>
+
       </div>
     </div>
 
@@ -1604,10 +1756,11 @@ function switchTab(t) {
 // TAB 1: RENDER EXECUTIVE COCKPIT
 // ============================================================================
 function renderCockpit() {
-  // 1. Macro KPI Ribbon
+  // 1. Macro KPI Ribbon — Balanced across Commercial, Revenue, Compliance (CCO) & Audit (CAE)
   const kpis = [
     {
       cls: 'ebitda-kpi',
+      tab: 'financials',
       lbl: 'Net Hard EBITDA Pipeline',
       badge: '4-Rung Deduped',
       bCls: 'Wave1',
@@ -1619,6 +1772,7 @@ function renderCockpit() {
     },
     {
       cls: 'wc-kpi',
+      tab: 'financials',
       lbl: 'Working Capital Cash Release',
       badge: 'Balance Sheet',
       bCls: 'Low',
@@ -1629,18 +1783,8 @@ function renderCockpit() {
       dCls: 'good'
     },
     {
-      cls: 'primary-kpi',
-      lbl: 'Verified Captured YTD',
-      badge: 'Audited Ledger',
-      bCls: 'Wave1',
-      val: fmtMoney(34.2),
-      sub: 'Cleared FB65 set-offs + lower EKBE receipts',
-      foot: fmtMoney(78.4) + ' instruments executed in ERP',
-      delta: '32.8% realization rate',
-      dCls: 'good'
-    },
-    {
       cls: 'rar-kpi',
+      tab: 'revenue',
       lbl: 'Revenue & Close at Risk',
       badge: 'Surge + Crystal',
       bCls: 'High',
@@ -1652,19 +1796,32 @@ function renderCockpit() {
     },
     {
       cls: 'reg-kpi',
-      lbl: 'Statutory & Control Posture',
-      badge: 'Aegis + Veritas',
+      tab: 'compliance',
+      lbl: 'Compliance & 3rd-Party Risk',
+      badge: 'CCO / GC',
       bCls: 'Critical',
-      val: 'ELEVATED',
-      sub: '13 Tier-1 ITAR/EAR holds · 426 Crit ABAC',
-      foot: 'SOX 404 Coverage: 93.3% (28/30 live)',
-      delta: 'Zero-Egress · Hard SoD Active',
+      val: fmtMoney(38.4),
+      sub: fmtMoney(14.3) + ' stoppable hold · 14 Custos drifts',
+      foot: 'Custos · Veritas · Conduit · Aegis',
+      delta: '9 Critical escalations',
       dCls: 'bad'
+    },
+    {
+      cls: 'audit-kpi',
+      tab: 'audit',
+      lbl: 'Net Audit & Control Exposure',
+      badge: 'CAE / SOX 404',
+      bCls: 'High',
+      val: fmtMoney(164.8),
+      sub: fmtMoney(18.4) + ' pre-F110 stoppable · 93.3% SOX live',
+      foot: 'Deduped from ' + fmtMoney(342.1) + ' gross hits',
+      delta: '142 multi-rule cases',
+      dCls: 'warn'
     }
   ];
 
   document.getElementById('macroKpiRibbon').innerHTML = kpis.map(k => `
-    <div class="kpi-card ${k.cls}">
+    <div class="kpi-card ${k.cls}" onclick="switchTab('${k.tab}')">
       <div>
         <div class="kpi-top">
           <span class="kpi-lbl">${k.lbl}</span>
@@ -1680,10 +1837,10 @@ function renderCockpit() {
     </div>
   `).join('');
 
-  // 2. 5-Stage Savings Realization Pipeline
+  // 2. 5-Stage Savings & Risk Realization Pipeline (Retains Verified Captured YTD $34.2M)
   const stages = [
-    { key: 'ALL', step: 'Stage 1 · Raw Signals', title: 'Gross Signal Universe', val: 467.4, pct: 100, meta: '14 Agents · 29,451 TRAE + Pattern hits' },
-    { key: 'ALL', step: 'Stage 2 · 4-Rung Dedup', title: 'Net Addressable Value', val: 292.8, pct: 78, meta: fmtMoney(104.2) + ' Hard EBITDA + ' + fmtMoney(188.6) + ' WC' },
+    { key: 'ALL', step: 'Stage 1 · Raw Signals', title: 'Gross Signal Universe', val: 467.4, pct: 100, meta: '15 Agents · 29,451 TRAE + Pattern hits' },
+    { key: 'ALL', step: 'Stage 2 · 4-Rung Dedup', title: 'Net Commercial Value', val: 292.8, pct: 78, meta: fmtMoney(104.2) + ' Hard EBITDA + ' + fmtMoney(188.6) + ' WC' },
     { key: 'Staged', step: 'Stage 3 · In Workflow', title: 'Staged with RACI Owners', val: 164.5, pct: 56, meta: '12 Executive Initiatives · SLA active' },
     { key: 'Executed', step: 'Stage 4 · ERP Actioned', title: 'Instruments Executed', val: 78.4, pct: 34, meta: 'FB65 memos, ME32K resets & F110 blocks' },
     { key: 'Booked', step: 'Stage 5 · Audited GL', title: 'Verified Captured YTD', val: 34.2, pct: 18, meta: 'Confirmed in BSIK / EKBE / ACDOCA', booked: true }
@@ -1703,59 +1860,72 @@ function renderCockpit() {
   // 3. Impact vs Ease Quadrant & Table
   renderImpactEaseQuadrant();
 
-  // 4. 4 Functional AI Suite Cards
+  // 4. All 5 Functional AI Suites (Procurement, Revenue, Finance, Compliance, Internal Audit)
   const suites = [
     {
       tab: 'procurement',
-      title: '1. Procurement & Supply Chain',
-      owner: 'Owner: CPO & VP Supply Chain',
-      badge: 'Wave 1 Priority',
+      title: '1. Procurement & Supply',
+      owner: 'Owner: CPO',
+      badge: 'Wave 1',
       bCls: 'Wave1',
-      agents: ['Kuber (Margin)', 'Conduit (Pass-Through)', 'Manifest (Freight)', 'Vantage (P2P)'],
+      agents: ['Kuber', 'Conduit', 'Manifest', 'Vantage'],
       m1Lbl: 'Net Hard EBITDA',
       m1Val: fmtMoney(84.6),
-      m2Lbl: 'Stoppable AP Cash',
+      m2Lbl: 'Stoppable AP',
       m2Val: fmtMoney(99.0),
-      foot: '14 Opportunity Packets · P_eff normalised'
+      foot: '14 Opportunity Packets'
     },
     {
       tab: 'revenue',
       title: '2. Revenue & Commercial',
-      owner: 'Owner: CRO & Commercial Fin',
-      badge: 'Q4 Cut-Off Watch',
+      owner: 'Owner: CRO',
+      badge: 'Q4 Watch',
       bCls: 'High',
-      agents: ['Surge (Stuffing)', 'Horizon (Forecast)', 'Margin (Price/GTN)'],
+      agents: ['Surge', 'Horizon', 'Margin'],
       m1Lbl: 'Margin Recovery',
       m1Val: fmtMoney(16.2),
       m2Lbl: 'Revenue at Risk',
       m2Val: fmtMoney(48.5),
-      foot: 'Strips artificial Q-end spikes from S&OP'
+      foot: 'Sanitized S&OP forecast'
     },
     {
       tab: 'financials',
-      title: '3. Finance, Close & Treasury',
-      owner: 'Owner: CFO & Controller',
-      badge: 'Close On Track',
+      title: '3. Finance & Treasury',
+      owner: 'Owner: CFO',
+      badge: 'On Track',
       bCls: 'Low',
-      agents: ['Crystal (GL Close)', 'Moneta (AP Cash)', 'Tenor (AR / DSO)'],
+      agents: ['Crystal', 'Moneta', 'Tenor'],
       m1Lbl: 'WC Cash Release',
       m1Val: fmtMoney(188.6),
-      m2Lbl: 'WACC Carry Yield',
-      m2Val: fmtMoney(15.1) + '/yr',
-      foot: '60/186 GL recs auto-cleared (19h saved)'
+      m2Lbl: 'Close Exposure',
+      m2Val: fmtMoney(44.2),
+      foot: '60/186 GL recs cleared'
     },
     {
       tab: 'compliance',
-      title: '4. Compliance, Trade & Audit',
-      owner: 'Owner: General Counsel & CAE',
-      badge: 'Privileged Hold',
+      title: '4. Compliance & 3rd-Party',
+      owner: 'Owner: Global CCO & GC',
+      badge: 'Privileged',
       bCls: 'Critical',
-      agents: ['Aegis (ITAR/EAR)', 'Veritas (FCPA)', 'Argus & Pulse (SOX)', 'D7 Spine'],
-      m1Lbl: 'Export / FCPA Holds',
-      m1Val: fmtMoney(20.7),
-      m2Lbl: 'SOX 404 Coverage',
-      m2Val: '93.3%',
-      foot: '170 production rules · Maker-Checker SoD'
+      agents: ['Custos', 'Veritas', 'Conduit', 'Aegis'],
+      m1Lbl: 'Statutory Exposure',
+      m1Val: fmtMoney(38.4),
+      m2Lbl: 'Stoppable Hold',
+      m2Val: fmtMoney(14.3),
+      foot: '14 Custos adverse drifts'
+    },
+    {
+      tab: 'audit',
+      title: '5. Internal Audit & ICFR',
+      owner: 'Owner: CAE',
+      badge: 'SOX 93.3%',
+      bCls: 'High',
+      agents: ['Vigil', 'Pulse', 'Argus'],
+      m1Lbl: 'Net Audit Exposure',
+      m1Val: fmtMoney(164.8),
+      m2Lbl: 'Pre-F110 Hold',
+      m2Val: fmtMoney(18.4),
+      foot: '142 multi-rule cases'
     }
   ];
 
@@ -1779,44 +1949,48 @@ function renderCockpit() {
       </div>
       <div class="sc-foot">
         <span>${s.foot}</span>
-        <span style="color:var(--deep);font-weight:600">Open Suite &rarr;</span>
+        <span style="color:var(--deep);font-weight:600">Open &rarr;</span>
       </div>
     </div>
   `).join('');
 
-  // 5. CEO & Board Synthesis Brief Cards
+  // 5. CEO, GC & Audit Committee Synthesis Brief (Covers Margin, Revenue, Compliance & Audit)
   const briefs = [
     {
-      dim: 'IMMEDIATE CASH & EBITDA QUICK WIN (WAVE 1)',
-      src: 'Kuber + Moneta + Vantage',
-      hl: fmtMoney(82.7) + ' in Unilateral AP Set-Offs & Pre-F110 Payment Holds Ready Now',
-      body: 'Across 412 overbilled POs and 2,656 split requisitions, Fortifai matched ' + fmtMoney(16.8) + ' in hard overcharges directly against ' + fmtMoney(28.2) + ' in open unpaid BSIK vendor balances, plus ' + fmtMoney(54.5) + ' in early/unapproved disbursements.',
-      sowhat: 'Board So What: 100% self-funding via SAP FB65 Debit Memos and F110 blocks prior to Friday disbursement—zero supplier renegotiation friction.',
-      actId: 'ACT-01'
+      dim: 'COMMERCIAL MARGIN & CASH QUICK WINS (CPO / CFO)',
+      src: 'Kuber + Moneta + Conduit',
+      hl: fmtMoney(104.2) + ' Hard EBITDA & ' + fmtMoney(188.6) + ' Working Capital Cash Unlocked',
+      body: 'Unilateral AP debit-memo set-offs, LME/ICIS deflation resets, and 0-EPFO trader disintermediation.',
+      sowhat: 'Board So What: ' + fmtMoney(82.7) + ' executable in Wave 1 via SAP FB65 set-offs and F110 payment holds with zero supplier friction.',
+      tabJump: 'financials',
+      btnLbl: 'Open EBITDA Bridge'
     },
     {
-      dim: 'STRUCTURAL GROSS MARGIN EXPANSION (WAVE 2)',
-      src: 'Kuber + Conduit + D7',
-      hl: fmtMoney(44.8) + ' Structural COGS Reduction via Index Resets & Trader Bypass',
-      body: 'LME/ICIS commodity indices fell 14.8% while supplier unit prices remained sticky (downward pass-through beta- = 0.08). Simultaneously, Conduit identified 6 zero-EPFO middlemen marking up OEM goods by 16.4%.',
-      sowhat: 'Board So What: Adds +110 bps to consolidated Gross Margin by extending existing sister-plant OEM contracts (ME32K) and enforcing index clauses.',
-      actId: 'ACT-05'
-    },
-    {
-      dim: 'QUALITY OF EARNINGS & FORECAST SANITIZATION',
+      dim: 'REVENUE QUALITY & CLOSE INTEGRITY (CRO / CONTROLLER)',
       src: 'Surge + Horizon + Crystal',
-      hl: fmtMoney(18.4) + ' Period-End Channel Stuffing Isolated Before Q4 Guidance',
-      body: 'Surge detected 41% of regional Q4 bookings bunching in Days 86-90 via manual credit-limit overrides, carrying a 29.4% historical Day 1-15 next-quarter return/wash rate.',
-      sowhat: 'Board So What: Horizon automatically stripped artificial stuffing from the S&OP baseline, raising revenue forecast accuracy by +9.4% and preventing excess MRP inventory buys.',
-      actId: 'ACT-07'
+      hl: fmtMoney(18.4) + ' Q4 Stuffing Stripped & ' + fmtMoney(44.2) + ' Close Breaks Isolated',
+      body: 'Days 86-90 credit-override spikes and Sunday manual FB01 top-side journals flagged prior to close.',
+      sowhat: 'Board So What: Horizon forecast accuracy lifted +9.4% while protecting ASC 606 cut-off and inventory NRV.',
+      tabJump: 'revenue',
+      btnLbl: 'Open Revenue & Close'
     },
     {
-      dim: 'LICENSE-TO-OPERATE & STATUTORY SHIELD',
-      src: 'Aegis + Veritas + Pulse',
-      hl: '13 Post-GTS Export Redirections & 96% ABAC Control Absence Gated',
-      body: 'Aegis intercepted 13 ECCN-controlled orders where ship-to countries were modified in CDPOS after SAP GTS clearance. Veritas flagged ' + fmtMoney(13.7) + ' in government-channel spend lacking control evidence.',
-      sowhat: 'Board So What: Protects defence/aerospace debarment boundary and FCPA compliance; privileged evidence packs staged for General Counsel review.',
-      actId: 'ACT-09'
+      dim: 'COMPLIANCE, 3RD-PARTY & TRADE POSTURE (CCO / GC)',
+      src: 'Custos + Veritas + Aegis',
+      hl: fmtMoney(38.4) + ' Statutory Exposure · ' + fmtMoney(14.3) + ' Stoppable Before Cash/Goods Move',
+      body: '14 Custos D7 adverse drifts (DOJ monitor / Foreign SOE), 4 bribery leads, and 13 post-GTS route flips.',
+      sowhat: 'Board So What: Prevents export debarment and FCPA liability via pre-F110 and VLPOD legal holds.',
+      tabJump: 'compliance',
+      btnLbl: 'Open CCO Cockpit'
+    },
+    {
+      dim: 'INTERNAL AUDIT & SOX 404 ASSURANCE (CAE)',
+      src: 'Vigil + Pulse + Argus',
+      hl: fmtMoney(342.1) + ' Gross Rule Hits De-Duplicated to ' + fmtMoney(164.8) + ' Net Exposure',
+      body: '142 multi-rule convergence cases across repeat vendors/users; 28 of 30 SOX 404 controls operating within threshold.',
+      sowhat: 'Board So What: Eliminates double-counted audit reporting and gates ' + fmtMoney(18.4) + ' in unpaid control breaches.',
+      tabJump: 'audit',
+      btnLbl: 'Open CAE Cockpit'
     }
   ];
 
@@ -1832,8 +2006,8 @@ function renderCockpit() {
         <div class="eb-sowhat">${b.sowhat}</div>
       </div>
       <div class="eb-foot">
-        <span class="mono" style="font-size:10px;color:var(--mut)">Ref: ${b.actId} &middot; Maker-Checker Enforced</span>
-        <button class="btn-xs" onclick="openInitiativeDossier('${b.actId}')">Inspect &amp; Execute &rarr;</button>
+        <span class="mono" style="font-size:10px;color:var(--mut)">${b.src}</span>
+        <button class="btn-xs" onclick="switchTab('${b.tabJump}')">${b.btnLbl} &rarr;</button>
       </div>
     </div>
   `).join('');
@@ -2291,64 +2465,233 @@ function renderRevenue() {
 }
 
 // ============================================================================
-// TAB 5: RENDER COMPLIANCE, TRADE & CLOSED-LOOP SLA HUB
+// TAB 5: GLOBAL CCO & GC COCKPIT (HIGH-LEVEL INDICATORS ONLY)
 // ============================================================================
+let CCO_FILTER = 'ALL';
+
+const CCO_ESCALATIONS = [
+  {
+    id: 'CMP-01',
+    party: 'Global Horizon Advisory · MEX03',
+    dom: 'Bribery',
+    sig: '12% Govt Tender Success Fee',
+    expM: 2.40,
+    holdM: 0.95,
+    sev: 'Critical',
+    link: 'FCPA_PROC0460_Module_v9.html',
+    agentLbl: 'Veritas'
+  },
+  {
+    id: 'CMP-02',
+    party: 'Meridian Minerals FZE · UAE',
+    dom: 'Pass-Through',
+    sig: '<35m GR-IR Dwell · +21% OEM Spread',
+    expM: 4.24,
+    holdM: 1.18,
+    sev: 'Critical',
+    link: 'D7-custos-v2.html',
+    agentLbl: 'Conduit'
+  },
+  {
+    id: 'CMP-03',
+    party: 'ECCN 7A003 / 2B350 · USA02',
+    dom: 'Export',
+    sig: '13 Post-GTS Ship-To Route Flips',
+    expM: 6.97,
+    holdM: 6.97,
+    sev: 'Critical',
+    link: 'Aegis_Prototype_v30.html',
+    agentLbl: 'Aegis'
+  },
+  {
+    id: 'CMP-04',
+    party: 'Crestline Services · IND01',
+    dom: 'Bribery',
+    sig: 'Buyer Bank Match + Split T&E',
+    expM: 1.88,
+    holdM: 0.62,
+    sev: 'Critical',
+    link: 'Argus_Investigation_Agent.html',
+    agentLbl: 'Argus'
+  },
+  {
+    id: 'CMP-05',
+    party: 'R K & M Enterprises · IND01',
+    dom: 'Pass-Through',
+    sig: '0-EPFO Trader · +110% Gas Markup',
+    expM: 3.12,
+    holdM: 0.84,
+    sev: 'Critical',
+    link: 'Kuber-Procurement-Cost-Optimisation-v2.html',
+    agentLbl: 'Conduit'
+  },
+  {
+    id: 'CMP-06',
+    party: 'Sahyadri Foundation · IND01',
+    dom: 'Bribery',
+    sig: 'Permit Official Co-Located Grant',
+    expM: 0.65,
+    holdM: 0.30,
+    sev: 'High',
+    link: 'FCPA_PROC0460_Module_v9.html',
+    agentLbl: 'Veritas'
+  }
+];
+
+function setCcoFilter(f) {
+  CCO_FILTER = f;
+  document.querySelectorAll('#ccoFilterPills .f-pill').forEach(b => {
+    b.classList.toggle('on', b.dataset.f === f);
+  });
+  renderCcoEscalations();
+}
+
+function renderCcoEscalations() {
+  const tb = document.getElementById('ccoEscalationTable');
+  if (!tb) return;
+  const rows = CCO_ESCALATIONS.filter(r => CCO_FILTER === 'ALL' || r.dom === CCO_FILTER);
+  tb.innerHTML = rows.map(r => `
+    <tr>
+      <td><b>${r.party}</b></td>
+      <td><span class="tag ${r.sev}">${r.dom}</span></td>
+      <td>${r.sig}</td>
+      <td class="num" style="color:var(--crit);font-weight:600">${fmtMoney(r.holdM)}</td>
+      <td><a href="${r.link}" target="_blank" class="agent-link">${r.agentLbl} &#8599;</a></td>
+    </tr>
+  `).join('');
+}
+
 function renderCompliance() {
-  // Aegis Table
-  const aRows = [
-    { id: 'AEG-2041 · ECCN 7A003', reg: 'ITAR / EAR', ind: 'Post-GTS Ship-To Country Flip (CDPOS) from Domestic to Transshipment Hub (FZ)', val: 2.85, gate: 'Delivery Blocked (GC Hold)' },
-    { id: 'AEG-2048 · ECCN 2B350', reg: 'EAR Dual-Use', ind: 'End-User Business Profile Mismatch (Hospital entity ordering chemical valves)', val: 1.74, gate: 'Awaiting End-Use Cert' },
-    { id: 'AEG-2052 · ECCN 9A991', reg: 'OFAC / EAR', ind: 'CP4 Network Cluster: 3 buyers sharing freight forwarder & address with watchlisted entity', val: 1.48, gate: 'Escalated to Trade Counsel' },
-    { id: 'AEG-2059 · ECCN 1C202', reg: 'EAR / VLPOD', ind: 'DAP Destination Incoterm shipment missing VLPOD international handoff proof >14d', val: 0.90, gate: 'Carrier Trace Triggered' }
+  // 1. 5 Clean Top KPIs (Protected Titles, Zero Sub-Text Clutter)
+  const kpis = [
+    { cls: 'reg-kpi', lbl: 'NET COMPLIANCE EXPOSURE', val: fmtMoney(38.40) },
+    { cls: 'wc-kpi', lbl: 'STOPPABLE PRE-F110 / SHIP HOLD', val: fmtMoney(14.25) },
+    { cls: 'rar-kpi', lbl: 'CUSTOS ADVERSE DRIFT', val: '14 Parties' },
+    { cls: 'primary-kpi', lbl: 'CRITICAL BRIBERY & CONDUIT', val: '9 Cases' },
+    { cls: 'ebitda-kpi', lbl: 'UNSCREENED SPEND (> $250K)', val: '3.8%' }
+  ];
+  const rib = document.getElementById('compKpiRibbon');
+  if (rib) {
+    rib.innerHTML = kpis.map(k => `
+      <div class="kpi-card ${k.cls}">
+        <div class="kpi-top"><span class="kpi-lbl">${k.lbl}</span></div>
+        <div class="kpi-val">${k.val}</div>
+      </div>
+    `).join('');
+  }
+
+  // 2. Semantic Table Heatmap (4 CCO Regimes — Zero Column Shift)
+  const hmRows = [
+    {
+      ent: 'North America (USA02)',
+      cells: [
+        { f: 'ALL', s: 'high', v: 6.40, c: '2 Drift' },
+        { f: 'Bribery', s: 'low', v: 0.22, c: '1 Case' },
+        { f: 'Pass-Through', s: 'med', v: 1.40, c: '1 Case' },
+        { f: 'Export', s: 'crit', v: 5.49, c: '9 Holds' }
+      ]
+    },
+    {
+      ent: 'Latin America (MEX03)',
+      cells: [
+        { f: 'ALL', s: 'high', v: 2.95, c: '3 Drift' },
+        { f: 'Bribery', s: 'crit', v: 2.85, c: '3 Cases' },
+        { f: 'Pass-Through', s: 'high', v: 2.10, c: '2 Cases' },
+        { f: 'Export', s: 'med', v: 0.58, c: '2 Holds' }
+      ]
+    },
+    {
+      ent: 'India & APAC (IND01)',
+      cells: [
+        { f: 'ALL', s: 'crit', v: 6.85, c: '5 Drift' },
+        { f: 'Bribery', s: 'crit', v: 2.53, c: '3 Cases' },
+        { f: 'Pass-Through', s: 'crit', v: 5.47, c: '4 Cases' },
+        { f: 'Export', s: 'low', v: 0.18, c: '0 Holds' }
+      ]
+    },
+    {
+      ent: 'EMEA & Free-Zone Hubs',
+      cells: [
+        { f: 'ALL', s: 'crit', v: 4.90, c: '4 Drift' },
+        { f: 'Bribery', s: 'med', v: 0.45, c: '1 Case' },
+        { f: 'Pass-Through', s: 'crit', v: 4.24, c: '2 Cases' },
+        { f: 'Export', s: 'crit', v: 1.48, c: '2 Holds' }
+      ]
+    }
   ];
 
-  document.getElementById('aegisTable').innerHTML = aRows.map(a => `
-    <tr class="clk-row" onclick="openInitiativeDossier('ACT-09')">
-      <td><b class="mono">${a.id}</b></td>
-      <td><span class="tag Critical">${a.reg}</span></td>
-      <td>${a.ind}</td>
-      <td class="num" style="font-weight:600">${fmtMoney(a.val)}</td>
-      <td><span class="tag Wave2">${a.gate}</span></td>
-    </tr>
-  `).join('');
-
-  // Veritas & Pulse Table
-  const vpRows = [
-    { area: 'Veritas · Govt-Channel & Liaison Consultants (Cat H)', fw: 'FCPA / UKBA', ex: 219, exp: 13.7, obs: '96% control absence on milestone proof; 81 D7 EDD holds' },
-    { area: 'Pulse · Three-Way Match (PO-GR-Invoice)', fw: 'SOX 404 / COSO', ex: 3813, exp: 16.8, obs: 'Tolerance bypasses & GR-after-Invoice patterns' },
-    { area: 'Pulse · Segregation of Duties (Same User Post & Pay)', fw: 'SOX 404', ex: 1068, exp: 11.3, obs: 'Same ERNAM posted MIRO/FB60 and released payment' },
-    { area: 'Pulse · Payment Block Release Without Evidence', fw: 'COSO ICFR', ex: 742, exp: 8.4, obs: 'ZLSPR block removed in CDPOS without attachment' },
-    { area: 'Pulse · Pre-Payment Vendor Bank Master Flip', fw: 'SOX 404 / Argus', ex: 219, exp: 4.9, obs: 'LFBK IBAN edited <72h before F110 payment run' }
-  ];
-
-  document.getElementById('veritasPulseTable').innerHTML = vpRows.map(v => `
-    <tr class="clk-row" onclick="openInitiativeDossier('ACT-09')">
-      <td><b>${v.area}</b></td>
-      <td class="mono" style="font-size:11px;color:var(--mut)">${v.fw}</td>
-      <td class="num">${v.ex.toLocaleString()}</td>
-      <td class="num" style="font-weight:600">${fmtMoney(v.exp)}</td>
-      <td style="font-size:11px;color:var(--tx-table)">${v.obs}</td>
-    </tr>
-  `).join('');
-
-  // Closed-Loop SLA Table
-  document.getElementById('closedLoopSlaTable').innerHTML = INITIATIVES.map(it => {
-    const targetV = it.ebitdaM + it.wcM;
-    const stCls = it.stage === 'Booked' ? 'Wave1' : (it.stage === 'Executed' ? 'Low' : 'High');
-    return `
-      <tr class="clk-row" onclick="openInitiativeDossier('${it.id}')">
-        <td class="mono" style="font-weight:600;color:var(--deep)">${it.id}</td>
-        <td><b>${it.title}</b><div style="font-size:10.5px;color:var(--mut)">${it.agent} &middot; ${it.wave}</div></td>
-        <td>${it.owner}</td>
-        <td class="mono" style="font-size:11px;color:var(--mut)">2026-03-14 08:15</td>
-        <td class="mono" style="font-size:11px">${it.sla}</td>
-        <td style="font-size:11.5px">${it.instrument}</td>
-        <td class="num" style="font-weight:600">${targetV > 0 ? fmtMoney(targetV) : 'Statutory Shield'}</td>
-        <td class="num" style="color:var(--ok);font-weight:600">${it.bookedM > 0 ? fmtMoney(it.bookedM) : '&mdash;'}</td>
-        <td><span class="tag ${stCls}">${it.stage}</span></td>
-      </tr>
+  const hmTbl = document.getElementById('ccoHeatmapTable');
+  if (hmTbl) {
+    hmTbl.innerHTML = `
+      <thead>
+        <tr>
+          <th>Region / Entity</th>
+          <th>Custos (3rd-Party)</th>
+          <th>Veritas (Bribery)</th>
+          <th>Conduit (Pass-Through)</th>
+          <th>Aegis (Export)</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${hmRows.map(r => `
+          <tr>
+            <td class="cco-hm-ent">${r.ent}</td>
+            ${r.cells.map(c => `
+              <td class="cco-hm-cell ${c.s}" onclick="setCcoFilter('${c.f}')">
+                <span class="hm-v">${fmtMoney(c.v)}</span>
+                <span class="hm-c">${c.c}</span>
+              </td>
+            `).join('')}
+          </tr>
+        `).join('')}
+      </tbody>
     `;
-  }).join('');
+  }
+
+  // 3. Domain Exposure & Direct Agent Launchpad
+  const pillars = [
+    { name: 'Custos · 3rd-Party', exp: 14.60, hold: 3.39, link: 'D7-custos-v2.html', btn: 'Open Custos' },
+    { name: 'Conduit · Pass-Through', exp: 9.71, hold: 2.70, link: 'Kuber-Procurement-Cost-Optimisation-v2.html', btn: 'Open Conduit' },
+    { name: 'Aegis · Export & OFAC', exp: 7.73, hold: 6.97, link: 'Aegis_Prototype_v30.html', btn: 'Open Aegis' },
+    { name: 'Veritas · Bribery/ABAC', exp: 6.36, hold: 1.87, link: 'FCPA_PROC0460_Module_v9.html', btn: 'Open Veritas' }
+  ];
+  const pEl = document.getElementById('ccoPillarBars');
+  if (pEl) {
+    pEl.innerHTML = pillars.map(p => `
+      <div class="pillar-row">
+        <b style="font-size:12px;color:var(--navy)">${p.name}</b>
+        <div class="pillar-bar-bg">
+          <div class="pillar-bar-exp" style="width:${(p.exp / 15) * 100}%"></div>
+          <div class="pillar-bar-hold" style="width:${(p.hold / 15) * 100}%"></div>
+        </div>
+        <div class="mono" style="text-align:right;font-size:12px;font-weight:600;color:var(--navy)">${fmtMoney(p.exp)}</div>
+        <a href="${p.link}" target="_blank" class="agent-link">${p.btn} &#8599;</a>
+      </div>
+    `).join('');
+  }
+
+  // 4. Custos Counterparty Drift Summary Table
+  const custosRows = [
+    { name: "The Brink's Company", drift: '3.8 → 7.5', sev: 'High', trig: 'DOJ AML Monitor', erp: 7.25, hold: 1.42 },
+    { name: 'Shanghai Electric JV', drift: '5.1 → 8.9', sev: 'Critical', trig: 'Foreign SOE + BIS', erp: 14.40, hold: 2.65 },
+    { name: 'Meridian Holdings FZ', drift: '4.2 → 8.6', sev: 'Critical', trig: 'UBO / Jurisdiction', erp: 10.20, hold: 0.94 },
+    { name: 'Kedarnath Packing', drift: '2.8 → 8.2', sev: 'Critical', trig: 'Sec 138 + 0-EPFO', erp: 2.80, hold: 0.68 }
+  ];
+  const cTb = document.getElementById('ccoCustosTable');
+  if (cTb) {
+    cTb.innerHTML = custosRows.map(c => `
+      <tr class="clk-row" onclick="window.open('D7-custos-v2.html','_blank')">
+        <td><b>${c.name}</b></td>
+        <td><span class="tag ${c.sev}">${c.drift}</span></td>
+        <td>${c.trig}</td>
+        <td class="num">${fmtMoney(c.erp)}</td>
+        <td class="num" style="color:var(--crit);font-weight:600">${fmtMoney(c.hold)}</td>
+      </tr>
+    `).join('');
+  }
+
+  // 5. Priority Escalations Table
+  renderCcoEscalations();
 }
 
 // ============================================================================
@@ -2590,12 +2933,156 @@ document.addEventListener('keydown', e => {
   }
 });
 
+
+// ============================================================================
+// TAB 6: RENDER CAE INTERNAL AUDIT & CONTROLS COCKPIT (VIGIL · PULSE · ARGUS)
+// ============================================================================
+function renderAudit() {
+  // 1. 5 Clean CAE Headline KPIs
+  const kpis = [
+    { cls: 'audit-kpi', lbl: 'NET DEDUPED AUDIT EXPOSURE', val: fmtMoney(164.8) },
+    { cls: 'wc-kpi', lbl: 'STOPPABLE PRE-F110 CASH', val: fmtMoney(18.4) },
+    { cls: 'rar-kpi', lbl: 'MULTI-RULE CONVERGENCE', val: '142 Cases' },
+    { cls: 'ebitda-kpi', lbl: 'SOX 404 / ICFR HEALTH', val: '93.3%' },
+    { cls: 'primary-kpi', lbl: 'CONFIRMED LOCKED FINDINGS', val: '24' }
+  ];
+  const rib = document.getElementById('auditKpiRibbon');
+  if (rib) {
+    rib.innerHTML = kpis.map(k => `
+      <div class="kpi-card ${k.cls}">
+        <div class="kpi-top"><span class="kpi-lbl">${k.lbl}</span></div>
+        <div class="kpi-val">${k.val}</div>
+      </div>
+    `).join('');
+  }
+
+  // 2. Entity x Control Breakdown Heatmap
+  const hmRows = [
+    {
+      ent: 'North America (USA02)',
+      cells: [
+        { s: 'med', v: 14.2, c: '412 Hits' },
+        { s: 'low', v: 2.1, c: '84 Hits' },
+        { s: 'med', v: 1.4, c: '38 Flips' },
+        { s: 'high', v: 19.4, c: 'Top-Side JE' }
+      ]
+    },
+    {
+      ent: 'Latin America (MEX03)',
+      cells: [
+        { s: 'crit', v: 38.6, c: '1,920 Hits' },
+        { s: 'crit', v: 6.4, c: '612 Hits' },
+        { s: 'high', v: 2.2, c: '109 Flips' },
+        { s: 'high', v: 14.8, c: 'Split-PO' }
+      ]
+    },
+    {
+      ent: 'India & APAC (IND01)',
+      cells: [
+        { s: 'high', v: 24.5, c: '1,481 Hits' },
+        { s: 'high', v: 2.8, c: '372 Hits' },
+        { s: 'crit', v: 1.3, c: '72 Flips' },
+        { s: 'med', v: 8.3, c: 'NRV / Retro' }
+      ]
+    }
+  ];
+
+  const hmTbl = document.getElementById('caeHeatmapTable');
+  if (hmTbl) {
+    hmTbl.innerHTML = `
+      <thead>
+        <tr>
+          <th>Operating Entity</th>
+          <th>3-Way Match</th>
+          <th>SoD Conflicts</th>
+          <th>Master / Bank</th>
+          <th>Override &amp; Cut-Off</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${hmRows.map(r => `
+          <tr>
+            <td class="cco-hm-ent">${r.ent}</td>
+            ${r.cells.map(c => `
+              <td class="cco-hm-cell ${c.s}" onclick="window.open('Vigil_Comprehensive.html','_blank')">
+                <span class="hm-v">${fmtMoney(c.v)}</span>
+                <span class="hm-c">${c.c}</span>
+              </td>
+            `).join('')}
+          </tr>
+        `).join('')}
+      </tbody>
+    `;
+  }
+
+  // 3. Gross-to-Net De-Duplication Bridge Bars
+  const bridge = [
+    { name: '1. Gross Rule Hits (37 Rules)', val: 342.1, col: '#99AFBC' },
+    { name: '2. Overlap Stripped (Doc Key)', val: 177.3, col: '#6699CC' },
+    { name: '3. Net Unique Audit Exposure', val: 164.8, col: '#0D1520' },
+    { name: '4. Open Stoppable (Pre-F110)', val: 18.4, col: '#C62828' }
+  ];
+  const brEl = document.getElementById('caeBridgeBars');
+  if (brEl) {
+    brEl.innerHTML = bridge.map(b => `
+      <div class="pillar-row" style="grid-template-columns: 185px 1fr 82px">
+        <b style="font-size:12px;color:var(--navy)">${b.name}</b>
+        <div class="pillar-bar-bg">
+          <div style="height:100%;width:${(b.val / 342.1) * 100}%;background:${b.col};border-radius:4px"></div>
+        </div>
+        <div class="mono" style="text-align:right;font-size:12px;font-weight:600;color:var(--navy)">${fmtMoney(b.val)}</div>
+      </div>
+    `).join('');
+  }
+
+  // 4. Multi-Rule Convergence Table (Vendors & SAP Users)
+  const convRows = [
+    { subj: 'Agni Enterprises (V-1000034)', rules: '4 Rules · Early Pay + Split PO + Price', exp: 10.89, stop: 2.40, link: 'Argus_Investigation_Agent.html', btn: 'Argus' },
+    { subj: 'USERP0001 (SAP Posting User)', rules: '3 Rules · Post & Pay SoD + ZLSPR', exp: 8.60, stop: 1.95, link: 'Vigil_Comprehensive.html', btn: 'Vigil' },
+    { subj: 'Samuel Transport (V-170000135)', rules: '3 Rules · Retro PO + Early Pay + Dup', exp: 6.42, stop: 1.18, link: 'Argus_Investigation_Agent.html', btn: 'Argus' },
+    { subj: 'Vinay Lad Ent. (V-1004821)', rules: '3 Rules · Tax-ID Scrub + Bank Flip', exp: 4.15, stop: 0.92, link: 'Argus_Investigation_Agent.html', btn: 'Argus' }
+  ];
+  const convTb = document.getElementById('caeConvergenceTable');
+  if (convTb) {
+    convTb.innerHTML = convRows.map(r => `
+      <tr>
+        <td><b>${r.subj}</b></td>
+        <td>${r.rules}</td>
+        <td class="num">${fmtMoney(r.exp)}</td>
+        <td class="num" style="color:var(--crit);font-weight:600">${fmtMoney(r.stop)}</td>
+        <td><a href="${r.link}" target="_blank" class="agent-link">${r.btn} &#8599;</a></td>
+      </tr>
+    `).join('');
+  }
+
+  // 5. SOX 404 & ICFR Deficiency Table (Moved cleanly out of Compliance into CAE Tab)
+  const defRows = [
+    { dom: '3-Way Match Bypass (PO-GR-IR)', coso: 'Control Activities', ex: 3813, exp: 16.8, st: 'Deficient', cls: 'Critical' },
+    { dom: 'Same-User Post & Pay (SoD)', coso: 'Control Activities', ex: 1068, exp: 11.3, st: 'Hard Gate On', cls: 'High' },
+    { dom: 'ZLSPR Block Removed No Proof', coso: 'Monitoring', ex: 742, exp: 8.4, st: 'Review Req.', cls: 'High' },
+    { dom: 'LFBK Bank IBAN Flip (<72h F110)', coso: 'ITGC / Master', ex: 219, exp: 4.9, st: 'Cooling Lock', cls: 'Medium' }
+  ];
+  const defTb = document.getElementById('caeDeficiencyTable');
+  if (defTb) {
+    defTb.innerHTML = defRows.map(d => `
+      <tr class="clk-row" onclick="window.open('Vigil_Comprehensive.html','_blank')">
+        <td><b>${d.dom}</b></td>
+        <td>${d.coso}</td>
+        <td class="num">${d.ex.toLocaleString()}</td>
+        <td class="num" style="font-weight:600">${fmtMoney(d.exp)}</td>
+        <td><span class="tag ${d.cls}">${d.st}</span></td>
+      </tr>
+    `).join('');
+  }
+}
+
 function refreshAll() {
   renderCockpit();
   renderFinancials();
   renderProcurement();
   renderRevenue();
   renderCompliance();
+  renderAudit();
 }
 
 refreshAll();
