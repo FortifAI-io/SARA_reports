@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Custos · Continuous Third-Party Monitoring | Acme Inc. · D7 by Fortifai</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sb-w:60px;
+  --accent:#6699CC; --accent-soft:rgba(102,153,204,0.10); --accent-soft-2:rgba(102,153,204,0.18); --accent-dark:#2E5A8A;
+  --green:#98AA3A; --yellow:#CCCB31; --critical:#C62828; --high:#E65100;
+  --bg:#F4F6F8; --card:#FFFFFF; --card-bd:#E2E6EC; --shadow:0 1px 2px rgba(20,30,50,0.04);
+  --text:#333333; --text-2:#5A6A78; --text-3:#8C98A4;
+  --pass-bg:#EEF2DC; --pass-fg:#5A6E1E;
+  --refer-bg:#FFF1E0; --refer-fg:#B14F00;
+  --fail-bg:#FBE3E3; --fail-fg:#9B1F1F;
+  --yellow-bg:rgba(204,203,49,0.16); --yellow-fg:#7A7300;
+  --neutral-bg:#F0F2F5;
+  --sb-bg:#1A1F2E; --sb-text:#E8ECF1; --sb-text-2:rgba(255,255,255,0.45);
+  --sb-hover:rgba(102,153,204,0.08); --sb-active:rgba(102,153,204,0.14);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:13px;color:var(--text);background:var(--bg);line-height:1.45;}
+.mono{font-family:'JetBrains Mono',monospace;}
+button{font-family:inherit;cursor:pointer;}
+
+.app{display:flex;min-height:100vh;}
+.sidebar{width:var(--sb-w);background:var(--sb-bg);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:10;}
+.sb-logo{height:56px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid rgba(255,255,255,0.06);color:var(--accent);font-weight:600;font-size:16px;letter-spacing:0.5px;}
+.sb-nav{padding:12px 0;display:flex;flex-direction:column;gap:4px;}
+.sb-item{height:40px;width:40px;margin:0 auto;display:flex;align-items:center;justify-content:center;color:var(--sb-text-2);border-radius:6px;cursor:pointer;transition:all 180ms;}
+.sb-item svg{width:18px;height:18px;}
+.sb-item:hover{background:var(--sb-hover);color:var(--sb-text);}
+.sb-item.active{background:var(--sb-active);color:var(--accent);}
+
+.main{flex:1;margin-left:var(--sb-w);}
+.topbar{height:56px;background:white;border-bottom:1px solid var(--card-bd);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:5;}
+.topbar-left{display:flex;align-items:center;gap:12px;}
+.topbar-d7-wordmark{font-size:24px;font-weight:600;color:#1A1F2E;letter-spacing:-0.8px;line-height:1;}
+.topbar-d7-wordmark sub{font-size:15px;color:var(--accent-dark);}
+.topbar-divider{width:1px;height:26px;background:var(--card-bd);}
+.topbar-title{font-size:17px;font-weight:600;}
+.topbar-sub{font-size:12.5px;color:var(--text-2);}
+.topbar-right{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text-2);}
+.preset-pill{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent-dark);padding:5px 11px;border-radius:4px;font-weight:600;font-size:11.5px;}
+.preset-pill svg{width:12px;height:12px;}
+.plan-pill{background:var(--accent-soft);color:var(--accent-dark);padding:5px 12px;border-radius:4px;font-weight:600;font-family:'JetBrains Mono',monospace;font-size:11.5px;}
+
+.subtabs{background:white;border-bottom:1px solid var(--card-bd);display:flex;padding:0 24px;gap:0;position:sticky;top:56px;z-index:4;}
+.subtab{padding:12px 18px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;transition:all 180ms;}
+.subtab:hover{color:var(--text);}
+.subtab.active{color:var(--accent-dark);border-bottom-color:var(--accent);font-weight:600;}
+.subtab .count{display:inline-block;margin-left:6px;background:var(--neutral-bg);color:var(--text-2);padding:1px 7px;border-radius:10px;font-size:10.5px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+.subtab.active .count{background:var(--accent-soft);color:var(--accent-dark);}
+.subtab .count.urgent{background:#FBE3E3;color:#9B1F1F;}
+
+.content{padding:20px 24px 48px;display:none;}
+.content.active{display:block;}
+.page-lead{font-size:12.5px;color:var(--text-2);margin:-2px 0 16px;max-width:860px;line-height:1.5;}
+
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;}
+.kpi{background:var(--card);border:1px solid var(--card-bd);border-radius:6px;padding:14px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);}
+.kpi.k-crit::before{background:var(--critical);}
+.kpi.k-high::before{background:var(--high);}
+.kpi.k-green::before{background:var(--green);}
+.kpi-label{font-size:10.5px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;}
+.kpi-value{font-size:23px;font-weight:600;margin-top:4px;color:var(--text);font-family:'JetBrains Mono',monospace;}
+.kpi-sub{font-size:11px;color:var(--text-2);margin-top:3px;}
+.kpi-value.critical{color:var(--critical);} .kpi-value.high{color:var(--high);} .kpi-value.accent{color:var(--accent-dark);}
+
+.card{background:var(--card);border:1px solid var(--card-bd);border-radius:6px;box-shadow:var(--shadow);margin-bottom:16px;}
+.card-head{padding:12px 16px;border-bottom:1px solid var(--card-bd);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title{font-size:13.5px;font-weight:600;}
+.card-sub{font-size:11.5px;color:var(--text-3);}
+.card-body{padding:16px;}
+.grid-2{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;}
+.grid-11{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+.dim-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.dim-tile{border:1px solid var(--card-bd);border-radius:6px;padding:13px 14px;}
+.dim-tile .icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;}
+.dim-tile .icon svg{width:14px;height:14px;}
+.dim-tile .label{font-size:11.5px;color:var(--text-2);font-weight:500;}
+.dim-tile .num{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;margin-top:3px;}
+.dim-tile .delta{font-family:'JetBrains Mono',monospace;font-size:11px;margin-top:5px;}
+.dim-tile .delta.up{color:var(--critical);} .dim-tile .delta.flat{color:var(--text-3);}
+.dt-sanction .icon,.dt-lit .icon{background:#FBE3E3;color:var(--critical);}
+.dt-geo .icon{background:#FFF1E0;color:var(--high);}
+.dt-beh .icon{background:var(--yellow-bg);color:var(--yellow-fg);}
+.dt-kyc .icon{background:rgba(110,91,166,0.14);color:#6E5BA6;}
+
+.distro{display:flex;height:32px;border-radius:5px;overflow:hidden;margin-bottom:12px;}
+.distro .seg{display:flex;align-items:center;justify-content:center;color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;}
+.distro .s-low{background:var(--green);} .distro .s-med{background:var(--yellow);color:#5c5800;} .distro .s-high{background:var(--high);} .distro .s-sev{background:var(--critical);}
+.legend{display:flex;flex-wrap:wrap;gap:14px;}
+.legend .li{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-2);}
+.legend .li .sw{width:10px;height:10px;border-radius:2px;}
+.legend .li b{font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:600;}
+
+.feed-row{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid #F0F2F5;cursor:pointer;transition:background 120ms;}
+.feed-row:hover{background:#FAFBFC;}
+.feed-row:last-child{border-bottom:none;}
+.feed-row .fname{font-weight:600;font-size:13px;}
+.feed-row .fid{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);margin-top:1px;}
+.drift{display:inline-flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--critical);}
+.drift svg{width:12px;height:12px;}
+.mini .row{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid #F0F2F5;font-size:12.5px;}
+.mini .row:last-child{border-bottom:none;}
+.mini .row .m{font-family:'JetBrains Mono',monospace;color:var(--text-2);}
+
+.band{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:4px;white-space:nowrap;}
+.band .d{width:6px;height:6px;border-radius:50%;}
+.b-low{background:var(--pass-bg);color:var(--pass-fg);} .b-low .d{background:var(--green);}
+.b-med{background:var(--yellow-bg);color:var(--yellow-fg);} .b-med .d{background:var(--yellow);}
+.b-high{background:var(--refer-bg);color:var(--refer-fg);} .b-high .d{background:var(--high);}
+.b-sev{background:var(--fail-bg);color:var(--fail-fg);} .b-sev .d{background:var(--critical);}
+.scorechip{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;}
+
+table{width:100%;border-collapse:collapse;}
+thead th{text-align:left;font-size:10.5px;letter-spacing:0.4px;text-transform:uppercase;color:var(--text-3);font-weight:600;padding:10px 16px;border-bottom:1px solid var(--card-bd);background:#FAFBFC;}
+tbody td{padding:11px 16px;border-bottom:1px solid #F0F2F5;font-size:12.5px;vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr.clickable{cursor:pointer;transition:background 120ms;}
+tbody tr.clickable:hover{background:#F3F7FB;}
+td .cust{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-2);}
+
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.fchip{font-size:12px;font-weight:600;padding:5px 12px;border-radius:5px;border:1px solid var(--card-bd);background:#fff;color:var(--text-2);cursor:pointer;transition:120ms;}
+.fchip:hover{border-color:var(--accent);}
+.fchip.on{background:var(--sb-bg);color:#fff;border-color:var(--sb-bg);}
+.jur-chip.on{background:var(--fail-bg);color:var(--fail-fg);border-color:#EBB6B6;}
+.filter-bar .spacer{flex:1;}
+.hint{font-size:11.5px;color:var(--text-3);}
+.sel{font-size:12px;font-weight:600;padding:6px 10px;border-radius:5px;border:1px solid var(--card-bd);background:#fff;color:var(--text-2);cursor:pointer;font-family:inherit;}
+.sel:hover{border-color:var(--accent);}
+
+.back{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--text-2);cursor:pointer;margin-bottom:14px;}
+.back:hover{color:var(--accent-dark);}
+.back svg{width:14px;height:14px;}
+.chead{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:16px;flex-wrap:wrap;}
+.chead .cn{font-size:22px;font-weight:600;}
+.chead .cm-meta{font-size:12.5px;color:var(--text-2);margin-top:5px;display:flex;gap:16px;flex-wrap:wrap;}
+.chead .cm-meta b{color:var(--text);font-weight:500;}
+.chead .cm-meta .mo{font-family:'JetBrains Mono',monospace;font-size:12px;}
+.dtop{display:grid;grid-template-columns:290px 1fr;gap:16px;margin-bottom:16px;}
+.gauge-card{background:var(--card);border:1px solid var(--card-bd);border-radius:6px;box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;align-items:center;}
+.gauge-wrap{position:relative;width:210px;height:118px;}
+.gauge-score{position:absolute;bottom:0;left:0;right:0;text-align:center;}
+.gauge-score .n{font-family:'JetBrains Mono',monospace;font-size:40px;font-weight:600;line-height:1;}
+.gauge-score .of{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-3);}
+.gauge-scale{display:flex;justify-content:space-between;width:210px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text-3);margin-top:3px;}
+.gdriver{font-size:12px;color:var(--text-2);text-align:center;margin-top:14px;padding-top:13px;border-top:1px solid #F0F2F5;width:100%;line-height:1.5;}
+.gdriver .l{font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:var(--text-3);font-weight:600;margin-bottom:5px;}
+.fcard{background:var(--card);border:1px solid var(--card-bd);border-radius:6px;box-shadow:var(--shadow);overflow:hidden;}
+.fcard .fh{padding:13px 16px;border-bottom:1px solid var(--card-bd);display:flex;align-items:center;justify-content:space-between;}
+.fcard .fh .t{font-size:13.5px;font-weight:600;}
+.fcard .fh .eq{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);}
+.factor{padding:13px 16px;border-bottom:1px solid #F0F2F5;cursor:pointer;transition:background 120ms;}
+.factor:last-child{border-bottom:none;}
+.factor:hover{background:#FAFBFC;}
+.frow{display:flex;align-items:center;gap:13px;}
+.fico{width:23px;height:23px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex:0 0 23px;}
+.fico svg{width:13px;height:13px;}
+.fico.screening{background:var(--accent-soft-2);color:var(--accent-dark);}
+.fico.litigation{background:#FBE3E3;color:var(--critical);}
+.fico.geo,.fico.regulatory{background:#FFF1E0;color:var(--high);}
+.fico.behaviour,.fico.media{background:var(--yellow-bg);color:var(--yellow-fg);}
+.fico.kyc,.fico.financial{background:rgba(110,91,166,0.14);color:#6E5BA6;}
+.fnm{flex:0 0 205px;display:flex;align-items:center;gap:9px;}
+.fnm .fnl{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.fnm .fl{font-size:13px;font-weight:600;line-height:1.1;}
+.fsrc{align-self:flex-start;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:600;padding:1px 5px;border-radius:3px;letter-spacing:0.3px;text-transform:uppercase;}
+.fsrc.ingested{background:#EAF0F6;color:#2E5A8A;}
+.fsrc.detected{background:#F0F2F5;color:#7A8694;}
+
+.ptype{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;padding:1px 6px;border-radius:3px;letter-spacing:0.2px;margin-left:9px;vertical-align:middle;white-space:nowrap;}
+.ptype.corporate{background:#EAF0F6;color:#2E5A8A;}
+.ptype.llc{background:#EFE3F0;color:#6E5BA6;}
+.ptype.llp{background:#E8F0E4;color:#5A6E1E;}
+.ptype.jv{background:#FFF1E0;color:#B14F00;}
+.ptype.proprietorship{background:#F0F2F5;color:#5A6A78;}
+
+.ov-note{display:flex;gap:11px;background:var(--fail-bg);border:1px solid #F3C9C9;border-radius:6px;padding:13px 15px;margin-bottom:16px;}
+.ov-note svg{width:18px;height:18px;color:var(--critical);flex:0 0 18px;margin-top:1px;}
+.ov-note div{font-size:12.5px;color:var(--text-2);line-height:1.5;}
+.ov-note b{color:var(--fail-fg);font-weight:600;}
+.ftrack{flex:1;height:8px;background:#F0F2F5;border-radius:4px;overflow:hidden;}
+.ffill{height:100%;border-radius:4px;transition:width .5s;}
+.fsub{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text-2);width:62px;text-align:right;}
+.fw{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-3);flex:0 0 38px;text-align:right;}
+.fc{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;flex:0 0 44px;text-align:right;}
+.fchev{flex:0 0 13px;color:var(--text-3);transition:transform 180ms;}
+.factor.open .fchev{transform:rotate(90deg);}
+.fsignals{margin-top:11px;padding-left:32px;display:none;}
+.factor.open .fsignals{display:block;}
+.signal{display:flex;align-items:flex-start;gap:9px;padding:5px 0;font-size:12px;line-height:1.5;}
+.sig-d{width:6px;height:6px;border-radius:50%;margin-top:5px;flex:0 0 6px;}
+.sig-d.low{background:var(--green);} .sig-d.med{background:var(--yellow);} .sig-d.high{background:var(--high);} .sig-d.crit{background:var(--critical);}
+.sig-src{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);margin-top:2px;}
+.composite-row{padding:12px 16px;background:#FAFBFC;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--card-bd);}
+.composite-row .lab{font-size:12.5px;font-weight:600;color:var(--text-2);}
+.composite-row .val{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;}
+.dbot{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;margin-bottom:16px;}
+.hnote{font-size:12px;color:var(--text-2);margin-top:11px;line-height:1.5;display:flex;gap:8px;align-items:flex-start;}
+.hnote svg{width:14px;height:14px;color:var(--high);flex:0 0 14px;margin-top:1px;}
+.act-row{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid #F0F2F5;}
+.act-row:last-child{border-bottom:none;}
+.act-row .t{flex:1;font-size:12.5px;font-weight:500;}
+.act-row .s{font-size:11px;color:var(--text-3);margin-top:1px;}
+.astat{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:4px;white-space:nowrap;}
+.astat.open{background:var(--refer-bg);color:var(--refer-fg);}
+.astat.req{background:var(--fail-bg);color:var(--fail-fg);}
+.astat.done{background:var(--pass-bg);color:var(--pass-fg);}
+
+/* Embedded D7 Report Section Inside Party Detail */
+.embedded-d7-wrap{background:#fff;border:1px solid var(--card-bd);border-radius:8px;box-shadow:var(--shadow);overflow:hidden;margin-top:16px;}
+.embedded-d7-bar{background:#1A1F2E;color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.embedded-d7-bar-l{display:flex;align-items:center;gap:10px;}
+.embedded-d7-pill{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:4px;background:rgba(102,153,204,0.22);color:#99C2EE;text-transform:uppercase;letter-spacing:0.4px;}
+.embedded-d7-body{padding:20px;}
+
+.alert{background:var(--card);border:1px solid var(--card-bd);border-left:3px solid var(--critical);border-radius:6px;box-shadow:var(--shadow);padding:14px 16px;margin-bottom:11px;}
+.alert.t3{border-left-color:var(--high);} .alert.t4{border-left-color:var(--yellow);}
+.alert.prohibited{border-left-width:5px;border-left-color:#9B1F1F;background:linear-gradient(90deg,#FDECEC 0%,#fff 55%);}
+.ov-flag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;padding:1px 6px;border-radius:3px;background:var(--fail-bg);color:var(--fail-fg);border:1px solid #F3C9C9;margin-left:8px;letter-spacing:0.2px;vertical-align:middle;}
+.ov-flag[title]{cursor:help;}
+.ubo-flag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;padding:1px 6px;border-radius:3px;background:var(--pass-bg);color:var(--pass-fg);border:1px solid rgba(152,170,58,0.35);margin-left:6px;vertical-align:middle;}
+.d7-doc-flag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;padding:1px 6px;border-radius:3px;background:var(--accent-soft);color:var(--accent-dark);border:1px solid var(--accent-soft-2);margin-left:6px;vertical-align:middle;}
+.ajur{display:flex;align-items:center;gap:1px;margin-top:9px;font-size:11.5px;}
+.ajur .ajn{font-weight:600;color:var(--text);margin-right:2px;}
+.sla{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;letter-spacing:0.2px;}
+.sla.ok{background:var(--pass-bg);color:var(--pass-fg);} .sla.limit{background:var(--yellow-bg);color:var(--yellow-fg);} .sla.breach{background:var(--fail-bg);color:var(--fail-fg);}
+.atop{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+.aname{font-size:14px;font-weight:600;}
+.aid{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);margin-top:2px;}
+.tier{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:4px;white-space:nowrap;}
+.tier.t1,.tier.t2{background:var(--fail-bg);color:var(--fail-fg);}
+.tier.t3{background:var(--refer-bg);color:var(--refer-fg);}
+.tier.t4{background:var(--yellow-bg);color:var(--yellow-fg);}
+.atrig{font-size:12.5px;color:var(--text);margin-top:10px;line-height:1.5;}
+.adet{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;align-items:center;}
+.tag{display:inline-flex;align-items:center;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px;background:var(--neutral-bg);color:var(--text-2);}
+.tag.sanction,.tag.litigation{background:#FBE3E3;color:var(--critical);}
+.tag.geo,.tag.reg{background:#FFF1E0;color:var(--refer-fg);}
+.tag.beh{background:var(--yellow-bg);color:var(--yellow-fg);}
+.tag.pep{background:var(--accent-soft-2);color:var(--accent-dark);}
+.conf{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-3);}
+.adel{margin-top:11px;padding-top:10px;border-top:1px solid #F0F2F5;display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--text-2);flex-wrap:wrap;}
+.dchk{width:16px;height:16px;border-radius:50%;background:var(--pass-bg);color:var(--pass-fg);display:flex;align-items:center;justify-content:center;flex:0 0 16px;}
+.dchk svg{width:10px;height:10px;}
+.adel .m{font-family:'JetBrains Mono',monospace;color:var(--text-3);}
+
+.set-grid{display:grid;grid-template-columns:270px 1fr;gap:16px;margin-bottom:16px;}
+.preset-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.preset-opt{border:1px solid var(--card-bd);border-radius:6px;padding:10px;text-align:center;cursor:pointer;transition:120ms;font-size:12px;font-weight:600;color:var(--text-2);}
+.preset-opt:hover{border-color:var(--accent);}
+.preset-opt.on{background:var(--sb-bg);color:#fff;border-color:var(--sb-bg);}
+.preset-opt .act{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;color:var(--green);margin-top:3px;letter-spacing:0.3px;}
+.preset-opt.on .act{color:#b6c96a;}
+.wlist .wl{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:12.5px;}
+.wlist .wl .sw{width:11px;height:11px;border-radius:3px;flex:0 0 11px;}
+.wlist .wl .wn{flex:1;font-weight:500;}
+.wlist .wl .ww{font-family:'JetBrains Mono',monospace;font-weight:600;}
+
+.exp-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px;}
+.exp-tile{background:var(--card);border:1px solid var(--card-bd);border-radius:6px;box-shadow:var(--shadow);padding:12px 13px;}
+.exp-tile .eic{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
+.exp-tile .eic svg{width:13px;height:13px;}
+.exp-tile .ev{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600;line-height:1;}
+.exp-tile .el{font-size:11px;color:var(--text-2);font-weight:600;margin-top:5px;line-height:1.3;}
+.exp-tile .es{font-size:10px;color:var(--text-3);margin-top:3px;line-height:1.3;}
+.eic.crit{background:#FBE3E3;color:var(--critical);} .eic.high{background:#FFF1E0;color:var(--high);} .eic.accent{background:var(--accent-soft-2);color:var(--accent-dark);} .eic.kyc{background:rgba(110,91,166,0.14);color:#6E5BA6;}
+.cbar{display:flex;height:7px;border-radius:4px;overflow:hidden;width:100%;max-width:140px;}
+.cbar span{display:block;height:100%;}
+.cb-low{background:var(--green);} .cb-med{background:var(--yellow);} .cb-high{background:var(--high);} .cb-sev{background:var(--critical);}
+.flag{font-size:15px;margin-right:8px;line-height:1;}
+.tier-badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:4px;white-space:nowrap;letter-spacing:0.2px;}
+.tb-lic{background:var(--pass-bg);color:var(--pass-fg);} .tb-std{background:var(--neutral-bg);color:var(--text-2);} .tb-enh{background:var(--yellow-bg);color:var(--yellow-fg);} .tb-high{background:var(--fail-bg);color:var(--fail-fg);}
+.fatf-grey{background:#EDEFF2;color:#5A6A78;border:1px solid #D6DBE1;} .fatf-black{background:#2A2F3A;color:#fff;}
+.jx-panel{background:#FDECEC;border:1px solid #F3C9C9;border-radius:6px;padding:12px 14px;margin:12px 16px 10px;}
+.jx-h{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--fail-fg);margin-bottom:9px;}
+.jx-h svg{width:15px;height:15px;flex:0 0 15px;}
+.jx-r{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;border-bottom:1px solid rgba(198,40,40,0.08);}
+.jx-r:last-of-type{border-bottom:none;}
+.jx-n{flex:1;display:flex;align-items:center;gap:7px;font-weight:500;}
+.jx-t{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;padding:2px 7px;border-radius:3px;letter-spacing:0.2px;}
+.jx-t.bl{background:#2A2F3A;color:#fff;} .jx-t.sanc{background:var(--fail-bg);color:var(--fail-fg);border:1px solid #F3C9C9;}
+.jx-v{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--fail-fg);}
+.jx-note{font-size:11px;color:var(--text-2);line-height:1.5;margin-top:9px;padding-top:9px;border-top:1px solid rgba(198,40,40,0.12);}
+.jx-note b{color:var(--fail-fg);font-weight:600;}
+.jx-fatf{margin:0 16px 16px;font-size:11.5px;color:var(--text-2);line-height:1.5;}
+.region-row{display:flex;align-items:center;gap:10px;padding:8px 16px;font-size:12px;}
+.region-row .rn{flex:0 0 74px;font-weight:600;}
+.region-row .rt{flex:1;height:8px;background:#F0F2F5;border-radius:4px;overflow:hidden;}
+.region-row .rf{height:100%;background:var(--accent);border-radius:4px;}
+.region-row .rv{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-2);flex:0 0 104px;text-align:right;}
+
+.trend-head{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;margin-top:6px;}
+.th-title{font-size:14px;font-weight:600;color:var(--text);}
+.th-sub{font-size:11.5px;color:var(--text-3);}
+.trend-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.tcard{background:var(--card);border:1px solid var(--card-bd);border-radius:6px;box-shadow:var(--shadow);padding:14px 16px;}
+.tc-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.tc-t{font-size:13px;font-weight:600;}
+.tc-legend{display:flex;flex-wrap:wrap;gap:13px;margin-bottom:6px;}
+.tc-legend .li{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-2);}
+.tc-legend .li .sw{width:11px;height:3px;border-radius:2px;}
+.chart{position:relative;width:100%;}
+.chart svg{display:block;width:100%;height:auto;overflow:visible;}
+.tc-cap{font-size:11px;color:var(--text-2);line-height:1.5;margin-top:9px;padding-top:9px;border-top:1px solid #F0F2F5;}
+.axis-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;fill:#9CA3AF;}
+.grid-ln{stroke:#EEF0F3;stroke-width:1;}
+
+.btn-act{background:var(--accent-dark);color:#fff;border:none;padding:6px 12px;border-radius:5px;font-size:11.5px;font-weight:600;transition:140ms;display:inline-flex;align-items:center;gap:6px;}
+.btn-act:hover{background:#1A3A5C;}
+.btn-sec{background:#fff;color:var(--text);border:1px solid var(--card-bd);padding:6px 12px;border-radius:5px;font-size:11.5px;font-weight:600;transition:140ms;display:inline-flex;align-items:center;gap:6px;}
+.btn-sec:hover{border-color:var(--accent);color:var(--accent-dark);}
+
+/* Single-Entity Full-Screen Report Modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(26,31,46,0.68);z-index:1000;display:none;align-items:center;justify-content:center;padding:24px;}
+.modal-backdrop.open{display:flex;}
+.modal-box{background:#F4F6F8;width:100%;max-width:980px;max-height:92vh;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,0.32);}
+.modal-top{background:#1A1F2E;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;}
+.modal-body{padding:22px;overflow-y:auto;flex:1;}
+
+/* Floating D7 QuantumQuery Assistant */
+.qq-fab{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#2E1E3D,#1E1E2D);color:#fff;border:none;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15px;box-shadow:0 4px 24px rgba(0,0,0,0.25);z-index:900;}
+.qq-fab:hover{transform:scale(1.04);}
+.qq-fab-dot{position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;background:#993467;border:2px solid #1E1E2D;}
+.qq-drawer{position:fixed;bottom:20px;right:20px;width:460px;max-width:calc(100vw - 40px);height:620px;max-height:calc(100vh - 40px);background:#fff;border:1px solid var(--card-bd);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.22);z-index:950;display:none;flex-direction:column;overflow:hidden;}
+.qq-drawer.open{display:flex;}
+.qq-head{background:#1E1E2D;color:#fff;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;}
+.qq-msgs{flex:1;overflow-y:auto;padding:14px;background:#F4F6F8;display:flex;flex-direction:column;gap:10px;}
+.qq-msg{padding:10px 13px;border-radius:8px;font-size:12px;line-height:1.5;max-width:92%;}
+.qq-msg.bot{background:#fff;border:1px solid var(--card-bd);align-self:flex-start;}
+.qq-msg.usr{background:#2E1E3D;color:#fff;align-self:flex-end;}
+.qq-chips{padding:8px 12px;background:#fff;border-top:1px solid var(--card-bd);display:flex;gap:6px;overflow-x:auto;}
+.qq-chip{font-size:11px;padding:4px 9px;border-radius:12px;background:var(--neutral-bg);color:var(--text-2);white-space:nowrap;border:none;font-weight:500;}
+.qq-chip:hover{background:var(--accent-soft);color:var(--accent-dark);}
+.qq-input-row{padding:10px 12px;background:#fff;border-top:1px solid var(--card-bd);display:flex;gap:8px;}
+.qq-input-row input{flex:1;padding:8px 11px;border:1px solid var(--card-bd);border-radius:6px;font-family:inherit;font-size:12.5px;outline:none;}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <nav class="sidebar">
+    <div class="sb-logo">F</div>
+    <div class="sb-nav">
+      <div class="sb-item" title="Dashboard" onclick="showTab('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg></div>
+      <div class="sb-item" title="Monitored Parties" onclick="showTab('customers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></div>
+      <div class="sb-item active" title="Continuous Monitoring" onclick="showTab('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+      <div class="sb-item" title="Settings" onclick="showTab('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15H4a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 6 8a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 12 4.6V4a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 19.4 8l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 21 12z"/></svg></div>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-d7-wordmark">D<sub>7</sub></span>
+        <span class="topbar-divider"></span>
+        <span class="topbar-title">Custos</span>
+        <span class="topbar-sub">Acme Inc. · Global Third-Party &amp; Supplier Portfolio · 2,840 counterparties</span>
+      </div>
+      <div class="topbar-right">
+        <span class="preset-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>Enterprise Corporate model</span>
+        <span class="plan-pill">2,840 / 5,000</span>
+      </div>
+    </div>
+
+    <div class="subtabs">
+      <div class="subtab active" data-tab="dashboard" onclick="showTab('dashboard')">Dashboard</div>
+      <div class="subtab" data-tab="customers" onclick="showTab('customers')">Monitored Parties <span class="count">18</span></div>
+      <div class="subtab" data-tab="alerts" onclick="showTab('alerts')">Alerts <span class="count urgent">10</span></div>
+      <div class="subtab" data-tab="settings" onclick="showTab('settings')">Model &amp; Settings</div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- TAB 1: FORTUNE 500 EXECUTIVE DASHBOARD                       -->
+    <!-- ============================================================ -->
+    <div class="content active" id="tab-dashboard">
+      <div class="page-lead">Every supplier, JV partner, LLC, LLP, and contractor is screened through <b>D7</b> at onboarding, then monitored continuously in <b>Custos</b> — re-rated whenever a new sanctions, UBO/ownership, ABAC/Sapin II corruption conviction, regulatory enforcement, court docket, or ERP behavioural signal lands.</div>
+
+      <!-- Row 1: Fortune 500 CxO Headline Strip -->
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-label">Parties Monitored</div><div class="kpi-value accent">2,840</div><div class="kpi-sub">100% of active third-party book</div></div>
+        <div class="kpi k-crit"><div class="kpi-label">Active Spend in High + Severe</div><div class="kpi-value critical">$148.2M</div><div class="kpi-sub">across 199 counterparties (7.0% of book)</div></div>
+        <div class="kpi k-high"><div class="kpi-label">In-Flight AP Hold Queue</div><div class="kpi-value high">$4.85M</div><div class="kpi-sub">4 vendors flagged before F110 payout</div></div>
+        <div class="kpi k-high"><div class="kpi-label">Drifted Up · 30d</div><div class="kpi-value high">29</div><div class="kpi-sub">crossed to higher risk band</div></div>
+        <div class="kpi k-green"><div class="kpi-label">New Delta Alerts · 30d</div><div class="kpi-value critical">10</div><div class="kpi-sub">94 namesake / FAM-RCA auto-suppressed</div></div>
+      </div>
+
+      <!-- Row 2: 6 Specific Risk Vector Tiles -->
+      <div class="exp-row" id="expRow"></div>
+
+      <!-- Row 3: Above-the-Fold Executive Concentration & Live Rating Changes -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><span class="card-title">Alerts by risk dimension &amp; book distribution</span><span class="card-sub">last 30 days · live posture across 2,840 entities</span></div>
+          <div class="card-body">
+            <div class="dim-grid">
+              <div class="dim-tile dt-sanction"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M5 5l14 14"/></svg></div><div class="label">Sanctions / Debarment</div><div class="num">2</div><div class="delta up">↑ 1</div></div>
+              <div class="dim-tile dt-kyc"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg></div><div class="label">UBO / SOE / KMP</div><div class="num">2</div><div class="delta up">↑ 1</div></div>
+              <div class="dim-tile dt-lit"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/></svg></div><div class="label">Reg &amp; Litigation</div><div class="num">3</div><div class="delta up">↑ 1</div></div>
+              <div class="dim-tile dt-geo"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M2 12h20"/></svg></div><div class="label">Financial &amp; Credit</div><div class="num">2</div><div class="delta flat">→ 0</div></div>
+              <div class="dim-tile dt-beh"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div><div class="label">ERP / P2P Conduct</div><div class="num">1</div><div class="delta flat">→ 0</div></div>
+            </div>
+            <div style="margin-top:16px;padding-top:14px;border-top:1px solid #F0F2F5;">
+              <div style="font-size:11px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:10px;">Risk band distribution (2,840 Counterparties)</div>
+              <div class="distro"><div class="seg s-low" style="width:76%">76%</div><div class="seg s-med" style="width:17%">17%</div><div class="seg s-high" style="width:5.5%">5.5%</div><div class="seg s-sev" style="width:1.5%"></div></div>
+              <div class="legend">
+                <div class="li"><span class="sw" style="background:var(--green)"></span>Low <b>2,158</b></div>
+                <div class="li"><span class="sw" style="background:var(--yellow)"></span>Medium <b>483</b></div>
+                <div class="li"><span class="sw" style="background:var(--high)"></span>High <b>156</b></div>
+                <div class="li"><span class="sw" style="background:var(--critical)"></span>Severe <b>43</b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><span class="card-title">Recent rating changes &amp; D7 escalations</span><span class="card-sub">click any counterparty to inspect profile &amp; embedded D7 report</span></div>
+          <div id="changesFeed"></div>
+        </div>
+      </div>
+
+      <!-- Row 4: Entity Structure Concentration & Deep Diligence Signals -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><span class="card-title">Entity structure mix &amp; risk concentration</span><span class="card-sub">by legal entity type · risk-weighted</span></div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>Party type</th><th>Parties</th><th>% book</th><th>Risk mix</th><th>Avg</th><th>High+Sev</th><th>Alerts 90d</th></tr></thead>
+              <tbody id="ptypeRows"></tbody>
+            </table>
+          </div>
+          <div style="padding:11px 16px;border-top:1px solid #F0F2F5;font-size:11.5px;color:var(--text-2);line-height:1.5;">Corporations and LLCs make up <b style="color:var(--text);font-weight:600;">74.3% of the book (2,110 entities)</b>, while <b style="color:var(--text);font-weight:600;">Sino-Foreign JVs &amp; SOEs (135 entities · 4.8%)</b> and offshore-held LLCs carry a disproportionate share of ABAC/Sapin II escalations and active compliance monitorships.</div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Executive diligence &amp; ABAC / Sapin II signals</span><span class="card-sub">synthesised from D7 KYB, UBO, PACER, QCC &amp; ERP</span></div>
+          <div class="mini" id="cpartySignals"></div>
+        </div>
+      </div>
+
+      <!-- Row 5: Geographic & State-Owned / Sanctioned UBO Exposure -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><span class="card-title">Geographic distribution</span><span class="card-sub">counterparties by jurisdiction · sorted by average risk</span></div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr><th>Jurisdiction</th><th>Parties</th><th>% book</th><th>Risk mix</th><th>Avg</th><th>Alerts 90d</th><th>Jurisdiction risk</th></tr></thead>
+              <tbody id="ctryRows"></tbody>
+            </table>
+          </div>
+          <div style="padding:11px 16px;border-top:1px solid #F0F2F5;font-size:11.5px;color:var(--text-2);line-height:1.5;">Concentration: <b style="color:var(--text);font-weight:600;">BVI, China (SOE JVs), and UAE hold 38% of High / Severe counterparties</b> while making up 16.5% of the book.</div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">By region &amp; state-controlled / sanctioned UBO nexus</span><span class="card-sub">share of Acme Inc. third-party book</span></div>
+          <div id="regionRows" style="padding:10px 0 4px;"></div>
+          <div class="jx-panel">
+            <div class="jx-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>Sanctioned &amp; State-Controlled UBO / Sub-Tier Exposure</div>
+            <div class="jx-r"><span class="jx-n"><span class="rb-flag">🇨🇳</span>Chinese State (SASAC Shanghai SOE Chain)</span><span class="jx-t sanc">60.01% SOE Block</span><span class="jx-v">14</span></div>
+            <div class="jx-r"><span class="jx-n"><span class="rb-flag">🇮🇷</span>Iran (Sub-tier shipping / transshipment nexus)</span><span class="jx-t bl">FATF black</span><span class="jx-v">2</span></div>
+            <div class="jx-r"><span class="jx-n"><span class="rb-flag">🇷🇺</span>Russia (OFAC SDN Beneficial Owner via BVI shell)</span><span class="jx-t sanc">Sanctioned UBO</span><span class="jx-v">3</span></div>
+            <div class="jx-note"><b>5 counterparties</b> show indirect UBO or sub-tier logistics ties to sanctioned persons/territories despite clean front-company registration, and <b>14 JVs</b> resolve to foreign state-owned control (SASAC) requiring enhanced FCPA / Sapin II safeguards.</div>
+          </div>
+          <div class="jx-fatf">
+            <div><b style="color:var(--text);font-weight:600;">Offshore &amp; FATF grey-list structures:</b> <span class="rb-flag">🇻🇬</span> BVI, <span class="rb-flag">🇰🇾</span> Cayman &amp; <span class="rb-flag">🇻🇳</span> Vietnam — <b class="mono" style="color:var(--text);">195</b> counterparties.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 6: Multi-Quarter Portfolio Trajectory -->
+      <div class="trend-head"><span class="th-title">Multi-Quarter Portfolio Trajectory</span><span class="th-sub">last 8 quarters</span></div>
+      <div class="trend-grid">
+        <div class="tcard">
+          <div class="tc-h"><span class="tc-t">Total book growth</span></div>
+          <div class="tc-legend" id="lg-total"></div>
+          <div class="chart" id="ch-total"></div>
+          <div class="tc-cap">Acme Inc.'s monitored third-party book grew to 2,840 legal entities over eight quarters across global manufacturing, logistics, and EPC supply chains.</div>
+        </div>
+        <div class="tcard">
+          <div class="tc-h"><span class="tc-t">Counterparty growth by legal structure</span></div>
+          <div class="tc-legend" id="lg-cp"></div>
+          <div class="chart" id="ch-cp"></div>
+          <div class="tc-cap">LLCs, LLPs, and Sino-Foreign JVs/SOEs are the fastest-growing segments — adding multi-layer UBO and cross-border regulatory complexity.</div>
+        </div>
+        <div class="tcard">
+          <div class="tc-h"><span class="tc-t">Average risk by entity structure</span></div>
+          <div class="tc-legend" id="lg-avg"></div>
+          <div class="chart" id="ch-avg"></div>
+          <div class="tc-cap">Sino-Foreign JVs &amp; SOEs (36) and Proprietorships (29) sit above standard Corporations (21) due to state-ownership concentration and litigation exposure.</div>
+        </div>
+        <div class="tcard">
+          <div class="tc-h"><span class="tc-t">Confirmed hits by dimension</span></div>
+          <div class="tc-legend" id="lg-hits"></div>
+          <div class="chart" id="ch-hits"></div>
+          <div class="tc-cap">Regulatory/Litigation (DOJ/FinCEN/QCC/NCLT) and Ownership/UBO &amp; Historical-KMP hits climb quarter on quarter while ERP behavioural stays steady.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- TAB 2: MONITORED PARTIES (WITH EMBEDDED D7 REPORTS ON CLICK) -->
+    <!-- ============================================================ -->
+    <div class="content" id="tab-customers">
+      <div class="page-lead">One corporate diligence and continuous monitoring engine across every third party — Public &amp; Private Corporations, LLCs, LLPs, Sino-Foreign JVs, and Proprietorships. Select any party to inspect its factor-by-factor score and its <b>embedded D7 Due Diligence / Quick Scan Report</b>.</div>
+      <div class="filter-bar">
+        <button class="fchip band-chip on" onclick="filterCust(this,'all')">All</button>
+        <button class="fchip band-chip" onclick="filterCust(this,'sev')">Severe</button>
+        <button class="fchip band-chip" onclick="filterCust(this,'high')">High</button>
+        <button class="fchip band-chip" onclick="filterCust(this,'med')">Medium</button>
+        <button class="fchip band-chip" onclick="filterCust(this,'low')">Low</button>
+        <button class="fchip jur-chip" onclick="toggleCustJur(this)">⚑ High-risk jurisdiction</button>
+        <select class="sel" id="typeFilter" onchange="filterCustType(this.value)">
+          <option value="all">All party types</option>
+          <option value="corporate">Corporate customers &amp; vendors</option>
+          <option value="llc">Limited Liability Companies (LLC)</option>
+          <option value="llp">LLPs &amp; Partnerships</option>
+          <option value="jv">Sino-Foreign JVs &amp; SOEs</option>
+          <option value="proprietorship">Sole Proprietorships</option>
+        </select>
+        <select class="sel" id="ctryFilter" onchange="filterCustCtry(this.value)">
+          <option value="all">All jurisdictions</option>
+        </select>
+        <div class="spacer"></div>
+        <span class="hint">Sorted by risk score, highest first · Click any row for profile &amp; embedded D7 report</span>
+      </div>
+      <div class="card">
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr><th>Party</th><th>ID</th><th>Jurisdiction</th><th>Top risk driver</th><th>Score</th><th>Band</th><th>Next re-rate</th></tr></thead>
+            <tbody id="custRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PARTY DETAIL + EMBEDDED D7 REPORT                            -->
+    <!-- ============================================================ -->
+    <div class="content" id="tab-detail">
+      <div class="back" onclick="showTab('customers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>Back to Monitored Parties</div>
+      <div id="detailBody"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- TAB 3: ALERTS (BLUE & DASHED BANNERS REMOVED)                -->
+    <!-- ============================================================ -->
+    <div class="content" id="tab-alerts">
+      <div class="page-lead">Monitoring raises an alert only when something <em>changes</em> — a new regulatory enforcement order, a historical-KMP corruption conviction, a UBO change, a credit downgrade, or an ERP pass-through anomaly since onboarding. (94 low-confidence / namesake candidates auto-suppressed this period.)</div>
+      <div class="filter-bar">
+        <button class="fchip atier on" onclick="filterAlerts(this,'all')">All tiers</button>
+        <button class="fchip atier" onclick="filterAlerts(this,'t1')">T1 / T2 · Critical &amp; High</button>
+        <button class="fchip atier" onclick="filterAlerts(this,'t3')">T3 · Medium-High</button>
+        <button class="fchip atier" onclick="filterAlerts(this,'t4')">T4 · Informational</button>
+        <button class="fchip jur-chip" onclick="toggleAlertJur(this)">⚑ High-risk jurisdiction</button>
+        <div class="spacer"></div>
+        <span class="hint">Webhook delivery active · Click any alert to inspect entity &amp; embedded D7 report</span>
+      </div>
+      <div id="alertList"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- TAB 4: MODEL & SETTINGS                                      -->
+    <!-- ============================================================ -->
+    <div class="content" id="tab-settings">
+      <div class="page-lead">One corporate engine, tuned per supply-chain vertical. The risk model is a transparent weighted composite with deterministic <b>Hard Gates &amp; Floor Rules</b> — no black box.</div>
+      <div class="set-grid">
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-head"><span class="card-title">Vertical preset</span></div>
+          <div class="card-body">
+            <div class="preset-opts">
+              <div class="preset-opt on" onclick="setPreset(this,'corporate')">Corporate<span class="act">● active</span></div>
+              <div class="preset-opt" onclick="setPreset(this,'manufacturing')">Mfg &amp; EPC<span class="act" style="visibility:hidden">●</span></div>
+              <div class="preset-opt" onclick="setPreset(this,'unlisted_jv')">Unlisted JV<span class="act" style="visibility:hidden">●</span></div>
+              <div class="preset-opt" onclick="setPreset(this,'us_public')">US Public<span class="act" style="visibility:hidden">●</span></div>
+            </div>
+            <div class="hint" id="presetNote" style="margin-top:10px;line-height:1.5;">Active for Acme Inc. Switch presets to inspect how D7 redistributes weights (e.g., when an Unlisted JV has N/A financials).</div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-head"><span class="card-title">Factor weights</span><span class="card-sub" id="presetLabel">Corporate standard model</span></div>
+          <div class="card-body" style="display:grid;grid-template-columns:190px 1fr;gap:20px;align-items:center;">
+            <div style="text-align:center;" id="donutWrap"></div>
+            <div class="wlist" id="weightList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-title">Harmonisation &amp; Floor Rule Methodology</span><span class="card-sub">Bridging D7 Quick Scan, Full CDD (0–10), and Custos Continuous Monitoring (0–100)</span></div>
+        <div class="card-body">
+          <div style="font-size:12px;color:var(--text-2);line-height:1.6;">
+            <p style="margin-bottom:8px;"><b>1. Shanghai Electric Harmonisation (Initial 3.75 Low → Quick Scan CDD Required 68 High):</b> At initial automated registry ingest, <i>Shanghai Electric Power Generation Equipment Co., Ltd. (FORT10083)</i> scored <b>3.75 / 10 (37.5 / 100 Low — Proceed with Safeguards)</b> because Entity Watchlists (19 subjects across 180+ Signzy lists) and China QCC Regulatory (SAMR/MEE/SAT/Dishonest Debtor) are <b>100% Clear</b>, and unlisted JV financials are N/A (weight redistributed). When the <b>D7 Quick Scan (FORT-SH-2026-QS-01)</b> resolved historical KMP attribution, it surfaced founding Legal Rep <b>Zheng Jianhua's Jan 2026 death-with-reprieve corruption conviction (Severity 9/10)</b> overlapping his 2007–2014 tenure plus <b>6 active civil lawsuits</b>, triggering the <b>CDD Required</b> escalation and moving the live Custos score to <b>68 / 100 (High)</b>.</p>
+            <p style="margin-bottom:8px;"><b>2. The Brink's Company Floor Rule (Weighted 5.00 → Floored 7.45 High):</b> <i>The Brink's Company (FORT260002 · NYSE: BCO)</i> passes all Global Sanctions and SAM.gov Debarment hard gates (<b>1.0 Low</b>), yielding a raw weighted average of <b>5.00</b>. However, because Sub-section <b>6B AML/BSA (9.5/10 — $42M DOJ NPA + FinCEN Consent Order)</b> and <b>Section 8 PACER Litigation (9.0/10 — 16/18 Five-Factor score)</b> are ≥ 9.0, the D7 Floor Rule forces the composite to <b>7.45 / 10 (75 / 100 High)</b> with mandatory Quarterly CM (Triggers T1, T3, T4).</p>
+            <p><b>3. Hard Gate Overrides (Forced Severe):</b> Confirmed Tier-1 Sanctions (OFAC SDN / UN / EU), World Bank / SAM.gov Debarment (<i>Transformers &amp; Rectifiers</i>), or Sanctioned/PMLA Beneficial Owners (<i>DB Realty</i>, <i>Meridian Nominee Holdings</i>) force the <b>Severe (Block &amp; Escalate)</b> band regardless of weighted arithmetic.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SINGLE-ENTITY MODAL -->
+<div class="modal-backdrop" id="reportModal" onclick="if(event.target===this)closeReportModal()">
+  <div class="modal-box">
+    <div class="modal-top">
+      <div id="modalTitle" style="font-weight:600;font-size:14.5px;">D7 Report</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sec" style="background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.25);" onclick="window.print()">🖨️ Print / Export PDF</button>
+        <button class="btn-act" style="background:#C62828;" onclick="closeReportModal()">✕ Close</button>
+      </div>
+    </div>
+    <div class="modal-body" id="modalContent"></div>
+  </div>
+</div>
+
+<!-- FLOATING QUANTUM QUERY ASSISTANT -->
+<button class="qq-fab" onclick="toggleQQ()" title="Open QuantumQuery D7 AI Assist">
+  D<sub>7</sub>
+  <span class="qq-fab-dot"></span>
+</button>
+
+<div class="qq-drawer" id="qqDrawer">
+  <div class="qq-head">
+    <div>
+      <div style="font-weight:600;font-size:14px;">QuantumQuery · D7 AI Assist · Acme Inc.</div>
+      <div style="font-size:10.5px;color:rgba(255,255,255,0.55);">Synced with 2,840 Counterparties &amp; Embedded D7 Reports</div>
+    </div>
+    <button style="background:none;border:none;color:#fff;font-size:16px;" onclick="toggleQQ()">✕</button>
+  </div>
+  <div class="qq-msgs" id="qqMsgs">
+    <div class="qq-msg bot">
+      <b>Welcome to QuantumQuery (Acme Inc. Enterprise Workspace).</b><br>I have full context across all <b>18 profiled corporate counterparties</b> and their embedded <b>D7 Due Diligence &amp; Quick Scan Reports</b> (including <i>Shanghai Electric Power Generation Equipment Co., Ltd.</i> and <i>The Brink's Company</i>).
+    </div>
+  </div>
+  <div class="qq-chips">
+    <button class="qq-chip" onclick="askQQ('How did you harmonise Shanghai Electric from 3.75 Low to 68 High (CDD Required)?')">Shanghai Electric Harmonisation</button>
+    <button class="qq-chip" onclick="askQQ('Explain the UBO trace on Shanghai Electric (60.01% vs 40%)')">Shanghai UBO Trace</button>
+    <button class="qq-chip" onclick="askQQ('Why is The Brinks Company rated 7.45 High if Global Screening is 1.0 Clear?')">Brink's 7.45 Floor Rule</button>
+    <button class="qq-chip" onclick="askQQ('Which entities have Block & Escalate overrides?')">Block &amp; Escalate List</button>
+  </div>
+  <div class="qq-input-row">
+    <input type="text" id="qqInput" placeholder="Ask about Shanghai Electric, Zheng Jianhua, Brink's DOJ NPA, or UBOs..." onkeydown="if(event.key==='Enter')sendQQ()" />
+    <button class="btn-act" style="background:#993467;" onclick="sendQQ()">Ask</button>
+  </div>
+</div>
+
+<script>
+const PARTY_ABBR={corporate:'Corporate',llc:'LLC',llp:'LLP / Partnership',jv:'Sino-Foreign JV · SOE',proprietorship:'Proprietorship'};
+function typeOf(c){return c.type||'corporate';}
+
+const PRESETS={
+  corporate:{screening:25,ownership:20,regulatory:20,litigation:15,financial:15,behaviour:5},
+  manufacturing:{screening:20,ownership:20,regulatory:20,litigation:15,financial:15,behaviour:10},
+  unlisted_jv:{screening:30,ownership:25,regulatory:20,litigation:20,financial:0,behaviour:5},
+  us_public:{screening:30,ownership:10,regulatory:20,litigation:15,financial:15,behaviour:10}
+};
+const FCOLOR={screening:'#4D7EAD',ownership:'#6E5BA6',regulatory:'#E65100',litigation:'#C62828',financial:'#2E5A8A',behaviour:'#98AA3A'};
+const INGESTED=['behaviour'];
+function sourceOf(k){return INGESTED.indexOf(k)>=0?'ingested':'detected';}
+
+const FMETA={
+  screening:{label:'Watchlist &amp; Media Screen',ico:'screening',icon:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>'},
+  ownership:{label:'Ownership, UBO &amp; KMP',ico:'kyc',icon:'<circle cx="12" cy="7" r="3"/><path d="M6 21v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1"/>'},
+  regulatory:{label:'Statutory &amp; Reg Compliance',ico:'regulatory',icon:'<path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7Z"/><path d="M9 12l2 2 4-4"/>'},
+  litigation:{label:'Litigation &amp; Court Dockets',ico:'litigation',icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/>'},
+  financial:{label:'Financial Viability &amp; Credit',ico:'financial',icon:'<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/>'},
+  behaviour:{label:'ERP &amp; Geopolitical Posture',ico:'behaviour',icon:'<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>'}
+};
+
+function weightsFor(c){
+  if(c.type==='jv')return PRESETS.unlisted_jv;
+  return PRESETS.corporate;
+}
+function barColor(s){return s<25?'#98AA3A':s<50?'#CCCB31':s<75?'#E65100':'#C62828';}
+function bandFor(s){return s<25?['low','Low']:s<50?['med','Medium']:s<75?['high','High']:['sev','Severe'];}
+function scoreColor(s){return s>=75?'#9B1F1F':s>=50?'#B14F00':s>=25?'#7A7300':'#5A6E1E';}
+function contrib(f,wmap){return Math.round(f.sub*(wmap[f.key]||0)/100);}
+function rawScoreOf(c){const w=weightsFor(c);return c.factors.reduce((s,f)=>s+contrib(f,w),0);}
+function scoreOf(c){return c.flooredScore!==undefined?c.flooredScore:rawScoreOf(c);}
+function effBand(c){return c.override?['sev','Severe']:bandFor(scoreOf(c));}
+
+const C={
+  'db-realty':{
+    name:'DB Realty Ltd',id:'FORT10010 · CIN L70200MH2007',type:'corporate',nat:'India',res:'India',onboarded:'2025-04',
+    d7ReportId:'FORT-IN-10010-202604',
+    driver:'ED PMLA attachment + CBI 2G chargesheet on promoter UBOs (Score 9.1)',
+    override:'MHA UAPA Watchlist / PMLA attachment + Promoter Directors (Vinod Goenka, Shahid Balwa) named in CBI chargesheet & NSDL freeze',
+    flooredScore:91,
+    factors:[
+      {key:'screening',sub:95,signals:[{t:'Entity associated with PMLA/ED attachment orders; 200+ high-severity adverse media articles',src:'D7 Screening · MHA / Adverse Media',lvl:'crit'}]},
+      {key:'ownership',sub:92,signals:[{t:'UBOs Vinod Goenka (28.5%) & Shahid Balwa (18.2%) flagged for active enforcement & NSDL freeze',src:'D7 UBO & KMP Register',lvl:'crit'}]},
+      {key:'regulatory',sub:90,signals:[{t:'4 GST compliance defaults; CARE credit rating downgraded to C (Negative)',src:'D7 GST & Credit Register',lvl:'crit'}]},
+      {key:'litigation',sub:98,signals:[{t:'Active ED PMLA & CBI proceedings; multiple high-court civil & criminal dockets',src:'D7 Court Docket Engine',lvl:'crit'}]},
+      {key:'financial',sub:82,signals:[{t:'FY25 PAT -₹210 Cr loss; D/E 3.4x; Current Ratio 0.55; Interest Coverage 0.2x',src:'D7 MCA Financial Extract',lvl:'high'}]},
+      {key:'behaviour',sub:75,signals:[{t:'High-risk real estate contractor posture; blocked for new POs',src:'Acme ERP P2P Control',lvl:'high'}]}
+    ],
+    history:[['2025-04',84],['2025-10',88],['2026-06',91]],
+    actions:[['Block & Escalate','Hard Override — PMLA/ED attachment','req'],['Freeze open AP disbursements','Sent to Moneta F110 hold queue','req']]
+  },
+  'rattan-india':{
+    name:'Rattan India Power Ltd',id:'FORT10007 · CIN L40101DL2007',type:'corporate',nat:'India',res:'India',onboarded:'2025-03',
+    d7ReportId:'FORT-IN-10007-202603',
+    driver:'RBI Caution List (₹4,200 Cr NPA) + Unreported Mauritius Holdco SPV (12.4%)',
+    override:'RBI Caution List match (score 0.95) + Brickwork Default (D) rating + Unreported Offshore Mauritius SPV in UBO structure',
+    flooredScore:82,
+    factors:[
+      {key:'screening',sub:85,signals:[{t:'Matched on RBI Caution List (0.95) for ₹4,200 Cr consortium NPA & debt restructuring',src:'D7 Watchlist · RBI Caution List',lvl:'crit'}]},
+      {key:'ownership',sub:78,signals:[{t:'Mauritius Holdco SPV (12.4% holding) unreported in SOE/UBO declaration',src:'D7 UBO Trace · Offshore Flag',lvl:'high'}]},
+      {key:'regulatory',sub:80,signals:[{t:'Brickwork credit rating downgraded to D (Default)',src:'D7 Credit Rating Feed',lvl:'crit'}]},
+      {key:'litigation',sub:88,signals:[{t:'NCLT debt resolution & lender consortium recovery suits',src:'D7 NCLT / DRT Register',lvl:'crit'}]},
+      {key:'financial',sub:85,signals:[{t:'FY25 PAT -₹680 Cr; D/E 8.2x; Current Ratio 0.38; ICR 0.1x',src:'D7 Financial Extract',lvl:'crit'}]},
+      {key:'behaviour',sub:65,signals:[{t:'Critical power-sector supplier under financial distress watch',src:'Acme Supply Chain Monitor',lvl:'high'}]}
+    ],
+    history:[['2025-03',74],['2025-11',79],['2026-06',82]],
+    actions:[['Block & Escalate','RBI Caution List + Default Rating','req'],['Third-Party Confirmation','Verify Mauritius SPV beneficial owners','open']]
+  },
+  'simplex-infra':{
+    name:'Simplex Infrastructures Ltd',id:'FORT10002 · CIN L45200WB1924',type:'corporate',nat:'India',res:'India',onboarded:'2025-01',
+    d7ReportId:'FORT-IN-10002-202601',
+    driver:'GST Suspended (8 defaults) + ICRA Default (D) rating + Interpol namesake review',
+    flooredScore:78,
+    factors:[
+      {key:'screening',sub:65,signals:[{t:'MD Rajesh Gupta flagged on Interpol Red Notice partial name match (0.78 — POSSIBLE_MATCH pending DOB)',src:'D7 KMP Screening · Layer 2',lvl:'high'}]},
+      {key:'ownership',sub:45,signals:[{t:'Promoter shareholding pledge elevated',src:'D7 MCA Filings',lvl:'med'}]},
+      {key:'regulatory',sub:92,signals:[{t:'Primary GSTIN Suspended; 8 recurring GSTR-3B defaults',src:'D7 GST Compliance Engine',lvl:'crit'}]},
+      {key:'litigation',sub:85,signals:[{t:'Multiple EPC arbitration & creditor recovery suits',src:'D7 Litigation Engine',lvl:'crit'}]},
+      {key:'financial',sub:84,signals:[{t:'ICRA rating downgraded to D; PAT -₹420 Cr; D/E 4.6x; ICR 0.3x',src:'D7 Financial & Credit Feed',lvl:'crit'}]},
+      {key:'behaviour',sub:70,signals:[{t:'High milestone delay rate across infrastructure contracts',src:'Acme Project Controls',lvl:'high'}]}
+    ],
+    history:[['2025-01',68],['2025-09',74],['2026-06',78]],
+    actions:[['Escalate Immediately','GST Suspended + Default Rating','req'],['Collect Evidence','Resolve MD Rajesh Gupta DOB verification','open']]
+  },
+  'brinks-co':{
+    name:"The Brink's Company",id:'FORT260002 · NYSE: BCO',type:'corporate',nat:'United States',res:'United States',onboarded:'2026-04',
+    d7ReportId:'FORT-US-00001-202605-01',
+    driver:'DOJ NPA ($25M) + FinCEN Consent Order ($17M) on BGS sub · PACER 9.0 Critical (Floor Rule 5.00 → 7.45)',
+    flooredScore:75,
+    uboTrace:true,
+    reportKey:'brinks',
+    factors:[
+      {key:'screening',sub:10,signals:[
+        {t:'All Hard Gates PASS (1.0 Low): 0 hits on OFAC SDN, UN, EU, UK HMT, BIS Entity List, SAM.gov Exclusions across 5 entities & 7 officers',src:'D7 US CDD Sec 5 · Categories A–E',lvl:'low'},
+        {t:'Adverse Media (6.7 Med): 8 items led by DOJ/FinCEN $42M action (8.8/10) & Chile FNE CIT antitrust probe (7.5/10)',src:'D7 US CDD Sec 7 · Fraud Floor Active',lvl:'high'}
+      ]},
+      {key:'ownership',sub:20,signals:[
+        {t:'NYSE: BCO Public Corporation · 78% Board Independence · All 7 Executive Officers Clear',src:'D7 US CDD Sec 2 & Sec 13 (DEF 14A)',lvl:'low'},
+        {t:'Subsidiary Attribution: Brink’s Global Services USA (DOJ NPA subject) & Brink’s Chile S.A. (FNE probe)',src:'D7 US CDD Sec 2 Corporate Structure',lvl:'high'}
+      ]},
+      {key:'regulatory',sub:70,signals:[
+        {t:'6B AML/BSA (9.5/10 Critical): DOJ Non-Prosecution Agreement ($25M) + FinCEN Consent Order ($17M) on 31 Jan 2025 for >$15B bulk cash shipments without AML controls (18 U.S.C. § 1960). Active 3-Yr Monitor → Jan 2028',src:'D7 US CDD Sec 6B · Sub-Pillar Floor Rule Applied',lvl:'crit'},
+        {t:'6E Employment (6.5/10): 4-agency pattern (EEOC, DOL/WHD, OSHA, NLRB). 6A SEC Rule 21F-17 ($400K, resolved)',src:'D7 US CDD Sec 6A & 6E',lvl:'high'}
+      ]},
+      {key:'litigation',sub:90,signals:[
+        {t:'DOJ Criminal NPA scores 16/18 on D7 Five-Factor PACER Model (Critical) · FinCEN 13/18 (High) · Chile FNE 12/18 ($9.5M accrued)',src:'D7 US CDD Sec 8 · PACER Federal Litigation',lvl:'crit'}
+      ]},
+      {key:'financial',sub:48,signals:[
+        {t:'FY25 Revenue $5.26B (+5%), Net Income $199.7M, Current Ratio 1.51. Structural Leverage: Debt $3.83B, D/E 9.4x, ICR 2.4x, Goodwill $1.52B (3.7x equity)',src:'D7 US CDD Sec 3 · SEC 10-K XBRL (20 Feb 2026)',lvl:'med'}
+      ]},
+      {key:'behaviour',sub:65,signals:[
+        {t:'7 federal agencies in 5-yr window + dual-jurisdiction enforcement (US + Chile) + $583M buybacks vs $26.6M M&A (22:1)',src:'D7 US CDD Sec 9 & Sec 11 Behavioural',lvl:'high'}
+      ]}
+    ],
+    history:[['2024-11',50],['2025-02',78],['2025-10',76],['2026-05',75]],
+    actions:[
+      ['Proceed with Safeguards (Do Not Block)','SAM.gov Clear — NPA preserves federal contract eligibility','done'],
+      ['Obtain DOJ NPA Compliance Monitor Report','Mandatory before contract execution (Monitor active → Jan 2028)','req'],
+      ['Insert NPA-Breach Termination & AML R&W Clauses','Plus 30-day notice on Chile FNE ($9.5M) resolution','req'],
+      ['Quarterly Continuous Monitoring (T1 · T3 · T4 Fired)','Track 10-Q ICR (<1.5x T2 tripwire) & PACER dockets','open']
+    ]
+  },
+  'anand-brothers':{
+    name:'Anand & Brothers',id:'FORT10018 · Unreg Partnership',type:'llp',nat:'India',res:'India',onboarded:'2025-05',
+    d7ReportId:'FORT-IN-10018-202605',
+    driver:'GST Suspended (6 defaults) + 11 MSME payment delays + Unregistered structure',
+    flooredScore:74,
+    factors:[
+      {key:'screening',sub:60,signals:[{t:'Partner Anand Sharma AML/adverse media hits (score 5.0)',src:'D7 KMP Screen',lvl:'high'}]},
+      {key:'ownership',sub:70,signals:[{t:'Unregistered Partnership — no MCA corporate disclosures or DIN registry',src:'D7 Entity Substance',lvl:'high'}]},
+      {key:'regulatory',sub:90,signals:[{t:'GSTIN Suspended; 6 GSTR filing defaults; 11 MSME Samadhaan delayed-payment claims',src:'D7 GST & MSME Register',lvl:'crit'}]},
+      {key:'litigation',sub:80,signals:[{t:'Commercial recovery disputes in district courts',src:'D7 Court Engine',lvl:'high'}]},
+      {key:'financial',sub:65,signals:[{t:'Unverified financial statements; thin working capital',src:'D7 Financial Screen',lvl:'high'}]},
+      {key:'behaviour',sub:72,signals:[{t:'High single-buyer PO concentration in HVAC/plumbing',src:'Acme P2P Conduit Signal',lvl:'high'}]}
+    ],
+    history:[['2025-05',62],['2026-01',69],['2026-06',74]],
+    actions:[['Escalate Immediately','GST Suspended + Structural Governance Risk','req'],['Third-Party Confirmation','Require audited balance sheet & GST reactivation','open']]
+  },
+  'hcc-ltd':{
+    name:'Hindustan Construction Co Ltd',id:'FORT10013 · CIN L45200MH1926',type:'corporate',nat:'India',res:'India',onboarded:'2025-02',
+    d7ReportId:'FORT-IN-10013-202602',
+    driver:'22 MSME payment delays + High litigation & regulatory score (7.1)',
+    flooredScore:71,
+    factors:[
+      {key:'screening',sub:55,signals:[{t:'Adverse media on debt restructuring & delayed EPC awards',src:'D7 Media Screen',lvl:'med'}]},
+      {key:'ownership',sub:40,signals:[{t:'Listed public company; promoter pledge monitored',src:'D7 MCA / BSE',lvl:'med'}]},
+      {key:'regulatory',sub:80,signals:[{t:'22 MSME supplier payment delay claims; 3 GST defaults',src:'D7 MSME & GST Register',lvl:'high'}]},
+      {key:'litigation',sub:80,signals:[{t:'Extensive arbitration & commercial court claims',src:'D7 Litigation Engine',lvl:'high'}]},
+      {key:'financial',sub:65,signals:[{t:'Elevated working-capital cycle & debt servicing load',src:'D7 Financial Screen',lvl:'high'}]},
+      {key:'behaviour',sub:60,signals:[{t:'Requires milestone-linked bank guarantees',src:'Acme Procurement Policy',lvl:'med'}]}
+    ],
+    history:[['2025-02',66],['2026-06',71]],
+    actions:[['Compliance Review Needed','Structural Compliance Risk','open'],['Third-Party Confirmation','Obtain MSME clearance attestation','open']]
+  },
+  'shanghai-electric':{
+    name:'Shanghai Electric Power Generation Equipment Co., Ltd.',id:'FORT10083 · USC 91310000071788037S3',type:'jv',nat:'China',res:'China',onboarded:'2026-06',
+    d7ReportId:'FORT-SH-2026-QS-01',
+    driver:'Harmonised: Base 3.75 Low → 68 High (CDD Required) on Ex-Legal Rep Death-Reprieve Bribery Conviction (9/10) + 6 Active Civil Suits',
+    flooredScore:68,
+    uboTrace:true,
+    reportKey:'shanghai',
+    factors:[
+      {key:'screening',sub:78,signals:[
+        {t:'Entity & 13 Active KMPs Watchlist CLEAR: 19 subjects screened across 180+ Signzy databases + 68-list QCC deep AML on Chairman Zhang Guangyao (0 TP, 0 PM; 12 Siemens Energy & 15 Li Yang namesake hits cleared)',src:'D7 Quick Scan Sec 4 · Signzy + QCC Deep AML',lvl:'low'},
+        {t:'CRITICAL ADVERSE MEDIA (9/10): Founding Legal Rep Zheng Jianhua (2007–2014 tenure) sentenced to death with 2-yr reprieve (13 Jan 2026, Shanghai No. 1 IPC) for RMB 156M+ bribery & RMB 700M+ misappropriation overlapping target tenure',src:'D7 Quick Scan Sec 5 · Direct Historical-KMP Attribution → CDD Required',lvl:'crit'}
+      ]},
+      {key:'ownership',sub:72,signals:[
+        {t:'UBO TRACE TRIGGERED & RESOLVED (2 Layers, 5 Entities): 0 natural-person UBOs ≥25%',src:'D7 Quick Scan Sec 2 · FATF / EU / US Methodology',lvl:'med'},
+        {t:'60.01% Chinese State Block: Shanghai Turbine Works (34.51%) + Shanghai Electric Machinery (13.60%) + Shanghai Power Plant Auxiliary (11.90%) → Shanghai Electric Group (SSE 601727) → SASAC Shanghai (PRC State Terminus)',src:'D7 UBO Trace · State-Owned Enterprise (SOE) Governance Risk',lvl:'high'},
+        {t:'40.00% German Block: Siemens Energy Co., Ltd. (USD 105.92M) → Siemens Energy AG (Munich · ENR.DE) · 3 German nominee directors on board',src:'D7 UBO Trace · Foreign JV Partner',lvl:'low'}
+      ]},
+      {key:'regulatory',sub:15,signals:[
+        {t:'China QCC Regulatory CLEAN STATE: 0 Administrative Penalties (SAMR/MEE/GAC/SAT), 0 Abnormal Operations, 0 Severe Violations, 0 Equity Pledges, 0 Dishonest Judgment Debtor / High-Consumption Restrictions',src:'D7 Quick Scan Sec 6 · QCC Authoritative Registry',lvl:'low'},
+        {t:'1 historical 2016 judgment debtor entry ((2016)沪0110执02667号 · CNY 0.00) statutorily time-barred',src:'D7 Quick Scan Sec 6 · Expired',lvl:'low'}
+      ]},
+      {key:'litigation',sub:68,signals:[
+        {t:'6 Active Civil Cases in QCC (3 as Defendant, 3 as Plaintiff; 0 Criminal, 0 Admin, 0 Insolvency): Minhang District Court construction (Mar 2026) & technical service (Aug 2025) disputes + Shanghai IP Court patent dispute (Jun 2025)',src:'D7 Quick Scan Sec 7 · Procedural Finding → Full CDD Materiality Check',lvl:'high'},
+        {t:'1 Closed Plaintiff Enforcement Win: Recovered CNY 6.02M against Inner Mongolia counterparties',src:'D7 Quick Scan Sec 7 · QCC Judgements',lvl:'low'}
+      ]},
+      {key:'financial',sub:0,signals:[
+        {t:'Unlisted Sino-Foreign JV — Financial Snapshot N/A in QCC scope (Weight redistributed across active pillars). Registered Capital: USD 264,791,667 (100% paid-up); 3,724 insured employees',src:'D7 Quick Scan Sec 3 · Unlisted JV Weight Redistribution',lvl:'low'}
+      ]},
+      {key:'behaviour',sub:65,signals:[
+        {t:'Harmonisation Note: Initial automated registry screen scored 3.75 Low (Proceed with Safeguards) on clean QCC/Watchlists; Quick Scan historical-KMP bribery attribution (Zheng Jianhua) escalated posture to 68 High (CDD Required)',src:'Custos Synthesis · D7 Screenshot ↔ Quick Scan Harmonised',lvl:'high'}
+      ]}
+    ],
+    history:[['2025-11',38],['2026-03',38],['2026-06',68]],
+    actions:[
+      ['Generate Comprehensive CDD Before Commitment','Quick Scan Verdict: CDD REQUIRED (FORT-SH-2026-QS-01)','req'],
+      ['Apply Historical-KMP Attribution & ABAC / Sapin II Safeguards','Assess post-2014 remediation following Zheng Jianhua conviction + parent 2022 CSRC / 2023 SSE censures','req'],
+      ['Quantify Exposure on 6 Active QCC Civil Suits','Verify claim values in Shanghai Minhang & IP Court dockets','open'],
+      ['UBO Trace Verified (SASAC 60.01% / Siemens Energy 40%)','UBO TRACE ✓ completed — enforce SOE/FCPA clauses','done']
+    ]
+  },
+  'meridian-nominee':{
+    name:'Meridian Nominee Holdings Ltd',id:'FORT10194 · BVI Reg 204918',type:'llc',nat:'British Virgin Islands',res:'British Virgin Islands',onboarded:'2025-05',
+    d7ReportId:'FORT-BVI-40194-202605',
+    driver:'Sanctioned beneficial owner behind BVI nominee director structure',
+    override:'Sanctioned UBO (OFAC SDN) identified behind BVI nominee ownership via D7 2-layer trace',
+    flooredScore:64,
+    uboTrace:true,
+    factors:[
+      {key:'screening',sub:40,signals:[{t:'No direct sanctions match on BVI entity name; adverse media on associated shell network',src:'D7 Watchlist & Media',lvl:'med'}]},
+      {key:'ownership',sub:95,signals:[{t:'Ultimate Beneficial Owner matched to OFAC SDN list; BVI nominee directors obscure control',src:'D7 UBO Flow-Through · Override Triggered',lvl:'crit'}]},
+      {key:'regulatory',sub:55,signals:[{t:'Offshore BVI holding structure; opaque statutory filings',src:'D7 Registry Check',lvl:'high'}]},
+      {key:'litigation',sub:30,signals:[{t:'No direct court dockets in BVI',src:'D7 Litigation',lvl:'low'}]},
+      {key:'financial',sub:60,signals:[{t:'Unverified offshore balance sheet; thin substance',src:'D7 Financial Screen',lvl:'high'}]},
+      {key:'behaviour',sub:70,signals:[{t:'Pass-through invoicing across multiple Acme company codes',src:'Acme P2P Conduit Signal',lvl:'high'}]}
+    ],
+    history:[['2025-05',40],['2025-11',44],['2026-06',64]],
+    actions:[['Offboarding Review (Block & Escalate)','Sanctioned UBO — Hard Override','req'],['Senior Legal Sign-Off','Required before any AP release','req']]
+  },
+  'transformers-rectifiers':{
+    name:'Transformers & Rectifiers (India) Ltd',id:'FORT10001 · CIN L31300GJ1994',type:'corporate',nat:'India',res:'India',onboarded:'2025-01',
+    d7ReportId:'FORT-IN-10001-202601',
+    driver:'World Bank Debarment List match (0.96) + 69 MSME delays + MD NSDL freeze (Score 6.3)',
+    override:'World Bank Debarred Firms match (score 0.96, fraud/corruption in NETEP) + MD Satyen Mamtora NSDL freeze',
+    flooredScore:63,
+    uboTrace:true,
+    factors:[
+      {key:'screening',sub:96,signals:[{t:'TRUE_POSITIVE (0.96) on World Bank Debarred Firms List — cross-debarment across MDBs',src:'D7 QuantumQC Layer 0–4 · Tier 2 Source',lvl:'crit'}]},
+      {key:'ownership',sub:70,signals:[{t:'UBO Mamtora Family Trust (42.8%); MD Satyen Mamtora under NSDL freeze (FAM PEP hit auto-cleared at L0)',src:'D7 UBO & KMP Screen',lvl:'high'}]},
+      {key:'regulatory',sub:75,signals:[{t:'69 MSME supplier payment delays; 3 GST defaults; CARE BBB- (Stable)',src:'D7 MSME & GST Register',lvl:'high'}]},
+      {key:'litigation',sub:75,signals:[{t:'Commercial & regulatory proceedings on record',src:'D7 Court Engine',lvl:'high'}]},
+      {key:'financial',sub:35,signals:[{t:'FY25 Rev ₹1,842 Cr, PAT ₹78 Cr, D/E 1.8x, Current Ratio 0.92, ICR 1.4x',src:'D7 MCA Financials',lvl:'med'}]},
+      {key:'behaviour',sub:50,signals:[{t:'Disqualified from MDB-funded procurement packages',src:'Acme Sourcing Policy',lvl:'high'}]}
+    ],
+    history:[['2025-01',58],['2025-08',61],['2026-06',63]],
+    actions:[['Block & Escalate on MDB Projects','World Bank Debarment Override','req'],['Collect Evidence','Verify NSDL freeze status on MD','open']]
+  },
+  'zee-entertainment':{
+    name:'Zee Entertainment Enterprises Ltd',id:'FORT10085 · Public Limited',type:'corporate',nat:'India',res:'India',onboarded:'2025-07',
+    d7ReportId:'FORT-IN-10085-202605',
+    driver:'Critical litigation & SEBI governance enforcement risk (D7 Score 5.85)',
+    flooredScore:59,
+    factors:[
+      {key:'screening',sub:65,signals:[{t:'High-volume adverse media on merger termination & SEBI promoter investigation',src:'D7 Adverse Media',lvl:'high'}]},
+      {key:'ownership',sub:60,signals:[{t:'Promoter governance & related-party fund-flow scrutiny',src:'D7 Governance Screen',lvl:'high'}]},
+      {key:'regulatory',sub:70,signals:[{t:'SEBI regulatory orders & exchange compliance notices',src:'D7 Regulatory Engine',lvl:'high'}]},
+      {key:'litigation',sub:78,signals:[{t:'NCLT / SIAC arbitration & creditor litigation dockets',src:'D7 Litigation Engine',lvl:'crit'}]},
+      {key:'financial',sub:35,signals:[{t:'Adequate operating cash flow; margin compression',src:'D7 Financials',lvl:'med'}]},
+      {key:'behaviour',sub:40,signals:[{t:'Flagged for Block & Escalate in D7 governance triage',src:'D7 Action Tag',lvl:'high'}]}
+    ],
+    history:[['2025-07',49],['2026-01',54],['2026-06',59]],
+    actions:[['Block & Escalate','Critical litigation & governance risk','req'],['General Counsel Review','Required before media/agency renewal','open']]
+  },
+  'patel-engineering':{
+    name:'Patel Engineering Ltd',id:'FORT10012 · Public Limited',type:'corporate',nat:'India',res:'India',onboarded:'2025-03',
+    d7ReportId:'FORT-IN-10012-202603',
+    driver:'15 MSME supplier delays + Elevated regulatory & litigation score (5.8)',
+    flooredScore:58,
+    factors:[
+      {key:'screening',sub:45,signals:[{t:'Moderate adverse media on infrastructure claims',src:'D7 Media Screen',lvl:'med'}]},
+      {key:'ownership',sub:35,signals:[{t:'Standard listed corporate structure',src:'D7 KYB',lvl:'low'}]},
+      {key:'regulatory',sub:70,signals:[{t:'15 MSME payment delay claims; 2 GST defaults',src:'D7 MSME & GST',lvl:'high'}]},
+      {key:'litigation',sub:60,signals:[{t:'Active EPC contract arbitration dockets',src:'D7 Court Engine',lvl:'high'}]},
+      {key:'financial',sub:50,signals:[{t:'Moderate leverage; working-capital intensive',src:'D7 Financials',lvl:'med'}]},
+      {key:'behaviour',sub:45,signals:[{t:'Proceed with Safeguards',src:'D7 Action Tag',lvl:'med'}]}
+    ],
+    history:[['2025-03',52],['2026-06',58]],
+    actions:[['Proceed with Safeguards','Emerging Risk Signal','open'],['Collect Evidence','Obtain quarterly GST & MSME clearance','open']]
+  },
+  'rajesh-sharma-assoc':{
+    name:'Rajesh Sharma & Associates',id:'FORT10011 · Partnership',type:'llp',nat:'India',res:'India',onboarded:'2025-04',
+    d7ReportId:'FORT-IN-10011-202604',
+    driver:'3 GST filing defaults + 8 MSME delays + Unregistered partnership (Score 5.5)',
+    flooredScore:55,
+    factors:[
+      {key:'screening',sub:35,signals:[{t:'Common-name hits cleared via Common Name Protocol',src:'D7 Screening',lvl:'low'}]},
+      {key:'ownership',sub:55,signals:[{t:'Unregistered electrical contracting partnership',src:'D7 Entity Check',lvl:'med'}]},
+      {key:'regulatory',sub:70,signals:[{t:'3 GST defaults; 8 MSME delayed-payment filings',src:'D7 GST & MSME',lvl:'high'}]},
+      {key:'litigation',sub:60,signals:[{t:'Civil labour & sub-contractor disputes',src:'D7 Litigation',lvl:'high'}]},
+      {key:'financial',sub:50,signals:[{t:'Moderate financial capacity',src:'D7 Financials',lvl:'med'}]},
+      {key:'behaviour',sub:45,signals:[{t:'Proceed with Safeguards',src:'D7 Action Tag',lvl:'med'}]}
+    ],
+    history:[['2025-04',50],['2026-06',55]],
+    actions:[['Proceed with Safeguards','Emerging Risk Signal','open']]
+  },
+  'sterling-wilson':{
+    name:'Sterling & Wilson Pvt Ltd',id:'FORT10008 · CIN U74999MH2017',type:'corporate',nat:'India',res:'India',onboarded:'2025-02',
+    d7ReportId:'FORT-IN-10008-202602',
+    driver:'Promoter group debt overhang + 4 MSME delays (D7 Score 5.1)',
+    flooredScore:51,
+    uboTrace:true,
+    factors:[
+      {key:'screening',sub:50,signals:[{t:'Media coverage on group inter-corporate loans',src:'D7 Media',lvl:'med'}]},
+      {key:'ownership',sub:40,signals:[{t:'UBO Shapoorji Pallonji Group (68.0% — SOE/UBO verified)',src:'D7 UBO Trace',lvl:'med'}]},
+      {key:'regulatory',sub:50,signals:[{t:'1 GST default; 4 MSME claims',src:'D7 Regulatory',lvl:'med'}]},
+      {key:'litigation',sub:45,signals:[{t:'Standard EPC commercial disputes',src:'D7 Litigation',lvl:'med'}]},
+      {key:'financial',sub:50,signals:[{t:'Working capital monitored',src:'D7 Financials',lvl:'med'}]},
+      {key:'behaviour',sub:40,signals:[{t:'Limit Exposure safeguard applied',src:'D7 Action Tag',lvl:'med'}]}
+    ],
+    history:[['2025-02',46],['2026-06',51]],
+    actions:[['Limit Exposure','Emerging Risk Signal','open'],['Collect Evidence','Monitor group credit lines','done']]
+  },
+  'ncc-ltd':{
+    name:'NCC Ltd',id:'FORT10006 · CIN L72200TG1990',type:'corporate',nat:'India',res:'India',onboarded:'2024-11',
+    d7ReportId:'FORT-IN-10006-202602',
+    driver:'12 MSME delays + Moderate litigation; CRISIL A+ Positive upgrade (Score 4.6)',
+    flooredScore:46,
+    factors:[
+      {key:'screening',sub:35,signals:[{t:'Clean sanctions/PEP; routine project media',src:'D7 Screening',lvl:'low'}]},
+      {key:'ownership',sub:25,signals:[{t:'Publicly listed infrastructure company',src:'D7 KYB',lvl:'low'}]},
+      {key:'regulatory',sub:60,signals:[{t:'2 GST defaults; 12 MSME supplier claims',src:'D7 Regulatory',lvl:'high'}]},
+      {key:'litigation',sub:60,signals:[{t:'Active civil arbitration dockets',src:'D7 Litigation',lvl:'high'}]},
+      {key:'financial',sub:30,signals:[{t:'FY25 Rev ₹18,500 Cr, PAT ₹820 Cr, D/E 1.2x, CRISIL upgraded to A+ (Positive)',src:'D7 Financials & CRISIL',lvl:'low'}]},
+      {key:'behaviour',sub:35,signals:[{t:'Proceed with Safeguards',src:'D7 Action Tag',lvl:'med'}]}
+    ],
+    history:[['2024-11',48],['2026-06',46]],
+    actions:[['Proceed with Safeguards','Early Warning Indicator on MSME delays','done']]
+  },
+  'schindler-india':{
+    name:'Schindler India Private Limited',id:'FORT10084 · Private Limited',type:'corporate',nat:'India',res:'India',onboarded:'2025-08',
+    d7ReportId:'FORT-IN-10084-202605',
+    driver:'Low risk with routine litigation concern; UBO Trace verified (D7 Score 3.74)',
+    flooredScore:37,
+    uboTrace:true,
+    factors:[
+      {key:'screening',sub:15,signals:[{t:'All global sanctions & watchlists clear',src:'D7 Screening',lvl:'low'}]},
+      {key:'ownership',sub:15,signals:[{t:'UBO TRACE ✓ Verified — wholly-owned subsidiary of Schindler Holding AG (Switzerland)',src:'D7 UBO Trace',lvl:'low'}]},
+      {key:'regulatory',sub:25,signals:[{t:'Active GSTINs compliant; statutory filings current',src:'D7 Regulatory',lvl:'low'}]},
+      {key:'litigation',sub:45,signals:[{t:'Routine consumer & maintenance contract disputes',src:'D7 Litigation',lvl:'med'}]},
+      {key:'financial',sub:20,signals:[{t:'Strong balance sheet & parent backing',src:'D7 Financials',lvl:'low'}]},
+      {key:'behaviour',sub:20,signals:[{t:'Approve with Monitoring',src:'D7 Action Tag',lvl:'low'}]}
+    ],
+    history:[['2025-08',37],['2026-06',37]],
+    actions:[['Approve with Monitoring','Low risk — annual check','done']]
+  },
+  'northwind-capital':{
+    name:'Northwind Industrial Supply LLC',id:'FORT10021 · Reg CY-40021',type:'llc',nat:'Cayman Islands',res:'Cayman Islands',onboarded:'2024-09',
+    d7ReportId:'FORT-CY-40021-202604',
+    driver:'Enhanced-jurisdiction incorporation (Cayman); 3 named UBOs verified clean',
+    flooredScore:22,
+    uboTrace:true,
+    factors:[
+      {key:'screening',sub:15,signals:[{t:'No sanctions, PEP, or adverse media match',src:'D7 Screening',lvl:'low'}]},
+      {key:'ownership',sub:18,signals:[{t:'UBO TRACE ✓ 3 named UBOs verified, no nominees',src:'D7 KYB + UBO',lvl:'low'}]},
+      {key:'regulatory',sub:20,signals:[{t:'Good standing in corporate registry',src:'D7 Registry',lvl:'low'}]},
+      {key:'litigation',sub:15,signals:[{t:'Zero court dockets',src:'D7 Litigation',lvl:'low'}]},
+      {key:'financial',sub:22,signals:[{t:'Audited statements current',src:'D7 Financials',lvl:'low'}]},
+      {key:'behaviour',sub:30,signals:[{t:'Incorporated in enhanced-review jurisdiction (Cayman)',src:'Jurisdiction Policy',lvl:'med'}]}
+    ],
+    history:[['2024-09',20],['2025-03',21],['2026-06',22]],
+    actions:[['Standard monitoring','Low band · Periodic UBO refresh','done']]
+  },
+  'kedarnath-packing':{
+    name:'Kedarnath Packing Industries',id:'FORT10087 · Proprietorship',type:'proprietorship',nat:'India',res:'India',onboarded:'2025-09',
+    d7ReportId:'FORT-IN-10087-202605',
+    driver:'Low composite risk with minor litigation exposure (D7 Score 2.15)',
+    flooredScore:22,
+    factors:[
+      {key:'screening',sub:10,signals:[{t:'No watchlist or adverse media hits',src:'D7 Screening',lvl:'low'}]},
+      {key:'ownership',sub:20,signals:[{t:'Sole proprietorship verified via PAN/GSTIN',src:'D7 KYB',lvl:'low'}]},
+      {key:'regulatory',sub:20,signals:[{t:'Active GST registration',src:'D7 GST Engine',lvl:'low'}]},
+      {key:'litigation',sub:35,signals:[{t:'Minor commercial litigation exposure monitored',src:'D7 Court Engine',lvl:'med'}]},
+      {key:'financial',sub:20,signals:[{t:'Consistent packaging supply volume',src:'D7 Financials',lvl:'low'}]},
+      {key:'behaviour',sub:15,signals:[{t:'Approve with Monitoring',src:'D7 Action Tag',lvl:'low'}]}
+    ],
+    history:[['2025-09',21],['2026-06',22]],
+    actions:[['Approve with Monitoring','Low band — standard monitoring','done']]
+  },
+  'tap-engineering':{
+    name:'TAP Engineering',id:'FORT10086 · Proprietorship',type:'proprietorship',nat:'India',res:'India',onboarded:'2025-08',
+    d7ReportId:'FORT-IN-10086-202605',
+    driver:'Low overall score (2.02) with historical PSU debarment concern',
+    flooredScore:20,
+    factors:[
+      {key:'screening',sub:35,signals:[{t:'Historical PSU tender debarment note flagged for safeguard review',src:'D7 Debarment Screen',lvl:'med'}]},
+      {key:'ownership',sub:15,signals:[{t:'Sole proprietor verified',src:'D7 KYB',lvl:'low'}]},
+      {key:'regulatory',sub:15,signals:[{t:'GST active and compliant',src:'D7 GST',lvl:'low'}]},
+      {key:'litigation',sub:15,signals:[{t:'No active high-court dockets',src:'D7 Litigation',lvl:'low'}]},
+      {key:'financial',sub:20,signals:[{t:'Adequate small-vendor ratios',src:'D7 Financials',lvl:'low'}]},
+      {key:'behaviour',sub:20,signals:[{t:'Proceed with Safeguards',src:'D7 Action Tag',lvl:'med'}]}
+    ],
+    history:[['2025-08',20],['2026-06',20]],
+    actions:[['Proceed with Safeguards','Verify PSU debarment expiry letter','open']]
+  }
+};
+
+function showTab(t){
+  document.querySelectorAll('.content').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.querySelectorAll('.subtab').forEach(s=>s.classList.remove('active'));
+  const tabName=(t==='detail')?'customers':t;
+  const st=document.querySelector('.subtab[data-tab="'+tabName+'"]');
+  if(st)st.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+const BOOK=2840;
+const TIER={lic:['tb-lic','Strong-AML'],std:['tb-std','Standard'],enh:['tb-enh','Enhanced'],high:['tb-high','High-risk']};
+const FATF_BADGE={grey:['fatf-grey','FATF grey'],black:['fatf-black','FATF black']};
+const JRISK={
+  'United States':{t:'lic'},'Germany':{t:'lic'},'Singapore':{t:'lic'},'Japan':{t:'lic'},'United Kingdom':{t:'enh'},
+  'India':{t:'std'},'China':{t:'enh'},'Cayman Islands':{t:'enh'},'United Arab Emirates':{t:'enh'},'Turkey':{t:'enh'},
+  'Vietnam':{t:'std',f:'grey'},'British Virgin Islands':{t:'high',f:'grey'},'Mauritius':{t:'high'},'Nigeria':{t:'high'},'Russia':{t:'high'},'Iran':{t:'high',f:'black',p:1}
+};
+function jurInfo(res){return JRISK[res]||{t:'std'};}
+function jurDot(res){const col={lic:'#98AA3A',std:'#8C98A4',enh:'#E65100',high:'#C62828'}[jurInfo(res).t];return '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+col+';margin-right:7px;vertical-align:middle;"></span>';}
+function jurBadge(res){const i=jurInfo(res);let out='';if(i.t==='enh'||i.t==='high')out+=' <span class="tier-badge '+TIER[i.t][0]+'">'+TIER[i.t][1]+'</span>';if(i.f)out+=' <span class="tier-badge '+FATF_BADGE[i.f][0]+'">'+FATF_BADGE[i.f][1]+'</span>';return out;}
+function jurElevated(res){const i=jurInfo(res);return i.t==='enh'||i.t==='high'||!!i.f;}
+function fmt(n){return n.toLocaleString('en-US');}
+
+function custArray(){return Object.keys(C).map(k=>({key:k,c:C[k],score:scoreOf(C[k])})).sort((a,b)=>b.score-a.score);}
+let custBand='all',custCtry='all',custType='all',custJur=false;
+
+function renderCust(){
+  let rows=custArray();
+  if(custBand!=='all')rows=rows.filter(r=>effBand(r.c)[0]===custBand);
+  if(custCtry!=='all')rows=rows.filter(r=>r.c.res===custCtry);
+  if(custType!=='all')rows=rows.filter(r=>typeOf(r.c)===custType);
+  if(custJur)rows=rows.filter(r=>jurElevated(r.c.res));
+  const tb=document.getElementById('custRows');
+  if(!rows.length){tb.innerHTML='<tr><td colspan="7" style="padding:30px;text-align:center;color:var(--text-3)">No parties match this filter.</td></tr>';return;}
+  tb.innerHTML=rows.map(r=>{
+    const c=r.c,eb=effBand(c),bc=eb[0],bl=eb[1],pt=typeOf(c);
+    const cad={low:'12 mo',med:'6 mo',high:'3 mo',sev:'Daily'}[bc];
+    const colEff=c.override?'#9B1F1F':scoreColor(r.score);
+    const ovf=c.override?'<span class="ov-flag" title="'+c.override+'">⚑ override</span>':(c.reportKey==='shanghai'?'<span class="ov-flag" title="Quick Scan CDD Required">⚑ CDD req</span>':(c.reportKey==='brinks'?'<span class="ov-flag" title="D7 Floor Rule 5.00 → 7.45">⚑ floor</span>':''));
+    const uboBadge=c.uboTrace?'<span class="ubo-flag">UBO TRACE ✓</span>':'';
+    const d7Badge=c.reportKey?'<span class="d7-doc-flag">📄 D7 Report Embedded</span>':'';
+    return '<tr class="clickable" onclick="openCust(\''+r.key+'\')">'
+      +'<td style="font-weight:600">'+c.name+'<span class="ptype '+pt+'">'+PARTY_ABBR[pt]+'</span>'+uboBadge+d7Badge+'</td>'
+      +'<td><span class="cust">'+c.id+'</span></td>'
+      +'<td style="white-space:nowrap">'+jurDot(c.res)+c.res+jurBadge(c.res)+'</td>'
+      +'<td style="color:var(--text-2);max-width:260px">'+c.driver+'</td>'
+      +'<td><span class="scorechip" style="color:'+colEff+'">'+r.score+'</span></td>'
+      +'<td style="white-space:nowrap"><span class="band b-'+bc+'"><span class="d"></span>'+bl+'</span>'+ovf+'</td>'
+      +'<td class="mono" style="font-size:11.5px;color:var(--text-2)">'+cad+'</td></tr>';
+  }).join('');
+}
+function filterCust(el,f){document.querySelectorAll('#tab-customers .fchip.band-chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');custBand=f;renderCust();}
+function filterCustCtry(v){custCtry=v;renderCust();}
+function filterCustType(v){custType=v;renderCust();}
+function toggleCustJur(el){custJur=!custJur;el.classList.toggle('on',custJur);renderCust();}
+function initCtryFilter(){
+  const sel=document.getElementById('ctryFilter');
+  const res=[...new Set(Object.values(C).map(c=>c.res))].sort();
+  res.forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;sel.appendChild(o);});
+}
+
+function gaugeSVG(score){
+  const col=barColor(score),r=90,cx=105,cy=105,len=Math.PI*r,off=len*(1-score/100);
+  return '<svg viewBox="0 0 210 118" width="210" height="118">'
+    +'<path d="M '+(cx-r)+' '+cy+' A '+r+' '+r+' 0 0 1 '+(cx+r)+' '+cy+'" fill="none" stroke="#EEF0F3" stroke-width="15" stroke-linecap="round"/>'
+    +'<path d="M '+(cx-r)+' '+cy+' A '+r+' '+r+' 0 0 1 '+(cx+r)+' '+cy+'" fill="none" stroke="'+col+'" stroke-width="15" stroke-linecap="round" stroke-dasharray="'+len+'" stroke-dashoffset="'+off+'"/></svg>';
+}
+function sparkSVG(hist){
+  const w=380,h=128,pl=8,pr=8,pt=12,pb=20,iw=w-pl-pr,ih=h-pt-pb,n=hist.length;
+  const x=i=>pl+(iw*(n===1?0.5:i/(n-1))),y=v=>pt+ih*(1-v/100);
+  const lines=[25,50,75].map(t=>'<line x1="'+pl+'" y1="'+y(t)+'" x2="'+(w-pr)+'" y2="'+y(t)+'" stroke="#EEF0F3" stroke-width="1" stroke-dasharray="3 3"/><text x="'+(w-pr)+'" y="'+(y(t)-3)+'" text-anchor="end" font-family="monospace" font-size="9" fill="#c3cad3">'+t+'</text>').join('');
+  const pts=hist.map((p,i)=>x(i)+','+y(p[1])).join(' ');
+  const lc=barColor(hist[n-1][1]);
+  const dots=hist.map((p,i)=>{const last=i===n-1;return '<circle cx="'+x(i)+'" cy="'+y(p[1])+'" r="'+(last?4.5:3)+'" fill="'+(last?lc:'#fff')+'" stroke="'+(last?lc:'#9aa6b2')+'" stroke-width="2"/>';}).join('');
+  const lab=hist.map((p,i)=>('<text x="'+x(i)+'" y="'+(h-6)+'" text-anchor="middle" font-family="monospace" font-size="9" fill="#8C98A4">'+p[0].slice(2)+'</text>')).join('');
+  return '<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="'+h+'">'+lines+'<polyline points="'+pts+'" fill="none" stroke="'+lc+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'+dots+lab+'</svg>';
+}
+
+/* ENTITY-SCOPED D7 REPORT GENERATOR */
+function buildEntityReportHTML(key){
+  if(key==='shanghai'){
+    return `
+      <div style="background:#1A1F2E;color:#fff;padding:24px 28px;border-radius:10px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+        <div>
+          <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.6);">D7 Quick Scan Report · FORT-SH-2026-QS-01 · Report Date: 02 June 2026</div>
+          <div style="font-size:22px;font-weight:600;margin-top:4px;">Shanghai Electric Power Generation Equipment Co., Ltd.</div>
+          <div class="mono" style="font-size:11px;color:rgba(255,255,255,0.68);margin-top:4px;">上海电气电站设备有限公司 · USC: 91310000071788037S3 · Reg No: 310000400532173 · Sino-Foreign JV</div>
+        </div>
+        <div style="text-align:right;">
+          <span style="background:#C62828;color:#fff;padding:7px 16px;border-radius:6px;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:0.6px;">CDD Required</span>
+          <div style="font-size:10.5px;color:rgba(255,255,255,0.65);margin-top:6px;">Harmonised: 3.75 Base → 68 High in Custos</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-title">§1 Executive Action Summary &amp; Per-Dimension Verdict</span><span class="card-sub">Source: QCC Advanced Report + Signzy Global (180+ Lists) + Targeted Public Web</span></div>
+        <div class="card-body" style="font-size:12px;line-height:1.6;color:var(--text-2);">
+          <p style="margin-bottom:8px;"><b>Shanghai Electric Power Generation Equipment Co., Ltd.</b> is a Shanghai-based unlisted Sino-foreign joint venture in power generation equipment manufacturing (turbines, generators, auxiliaries). The entity is <b>60.01% Chinese state-owned</b> (via SASAC Shanghai through listed parent Shanghai Electric Group, SSE 601727 / HKEX 2727) and <b>40.00% German</b> (via Siemens Energy Co., Ltd. / Siemens Energy AG).</p>
+          <p style="margin-bottom:8px;"><b>1. Severity 9/10 Historical-KMP Bribery Finding:</b> Founding-era Legal Representative <b>Zheng Jianhua (郑建华, tenure 2007–2014)</b> was sentenced to death with two-year reprieve on <b>13 January 2026</b> by Shanghai No. 1 Intermediate People's Court for bribery (RMB 156M+ accepted 2003–2021), embezzlement, and misappropriation of public funds (RMB 700M+ outstanding) overlapping his tenure at the target.</p>
+          <p><b>2. Procedural Litigation Finding:</b> 6 active civil cases in QCC (3 as defendant in Shanghai Minhang District People's Court &amp; Shanghai IP Court; 3 as plaintiff in Inner Mongolia). Zero criminal, administrative, or insolvency cases.</p>
+        </div>
+        <table>
+          <thead><tr><th>Dimension</th><th>Verdict</th><th>Summary</th></tr></thead>
+          <tbody>
+            <tr><td><b>Target Entity Details</b></td><td><span class="band b-low">Clear</span></td><td>Active Sino-foreign JV since 26 Jul 2007 · Reg Cap USD 264,791,667 (100% paid-up) · 3,724 insured employees · 3 branches.</td></tr>
+            <tr><td><b>UBO Trigger (§2)</b></td><td><span class="band b-high">Triggered &amp; Resolved</span></td><td>0 natural-person UBOs ≥25%. 60.01% Chinese State block (SASAC Shanghai terminus); 40.00% German block (Siemens Energy AG).</td></tr>
+            <tr><td><b>Financial Snapshot (§3)</b></td><td><span class="tag">Not Available</span></td><td>Unlisted JV — no audited financial statements in QCC scope. Financial weight redistributed in full CDD.</td></tr>
+            <tr><td><b>Global Watchlists (§4)</b></td><td><span class="band b-low">Clear</span></td><td>19 subjects (target + parent + 4 shareholders + 13 KMPs) screened across 180+ Signzy lists. 0 TP, 0 PM (12 Siemens &amp; 15 Li Yang FP cleared).</td></tr>
+            <tr><td><b>Director / KMP Screen (§4)</b></td><td><span class="band b-low">Clear</span></td><td>13 active KMPs clear. Chairman Zhang Guangyao deep-screened across 68 lists in 27 jurisdictions — 0 hits.</td></tr>
+            <tr><td><b>Negative Media (§5)</b></td><td><span class="band b-sev">Finding (9/10)</span></td><td>Ex-Legal Rep Zheng Jianhua (2007–2014) death sentence with 2-yr reprieve (Jan 2026) for RMB 156M+ bribery.</td></tr>
+            <tr><td><b>China Regulatory (§6)</b></td><td><span class="band b-low">Clear</span></td><td>QCC clean state: 0 Admin Penalties, 0 Abnormal Operation, 0 Severe Violations, 0 Equity Pledges, 0 Dishonest Debtor.</td></tr>
+            <tr><td><b>China Litigation (§7)</b></td><td><span class="band b-high">Finding (6 Active)</span></td><td>6 active civil cases (3 defendant, 3 plaintiff) + 1 closed plaintiff enforcement win (CNY 6.02M recovered).</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-11">
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-head"><span class="card-title">§2 Shareholding Pattern &amp; UBO Trace</span><span class="ubo-flag">UBO TRACE ✓ RESOLVED</span></div>
+          <table>
+            <thead><tr><th>Shareholder</th><th>Holding %</th><th>Capital (USD)</th><th>UBO Attribution</th></tr></thead>
+            <tbody>
+              <tr><td><b>Siemens Energy Co., Ltd.</b> (西门子能源)</td><td class="mono">40.0000%</td><td class="mono">$105,916,667</td><td>Siemens Energy AG (Munich · ENR.DE)</td></tr>
+              <tr><td><b>Shanghai Turbine Works Co., Ltd.</b></td><td class="mono">34.5083%</td><td class="mono">$91,375,000</td><td>Chinese SOE Block — SASAC Shanghai</td></tr>
+              <tr><td><b>Shanghai Electric Machinery Co., Ltd.</b></td><td class="mono">13.5956%</td><td class="mono">$36,000,000</td><td>Chinese SOE Block — SASAC Shanghai</td></tr>
+              <tr><td><b>Shanghai Power Plant Auxiliary Factory</b></td><td class="mono">11.8961%</td><td class="mono">$31,500,000</td><td>Chinese SOE Block — SASAC Shanghai</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-head"><span class="card-title">§2 Active Directors &amp; KMP (13 Screened — All Clear)</span></div>
+          <table>
+            <thead><tr><th>Name</th><th>Designation</th><th>Nationality</th><th>Watchlist</th></tr></thead>
+            <tbody>
+              <tr><td><b>Zhang Guangyao (张光耀)</b></td><td>Chairman &amp; Legal Rep</td><td>Chinese</td><td><span class="band b-low">Clear (0/68)</span></td></tr>
+              <tr><td><b>Wu Huanqi / Yao Zhenguo</b></td><td>Vice Chairmen (2)</td><td>Chinese</td><td><span class="band b-low">Clear</span></td></tr>
+              <tr><td><b>Thomas C. Hohlstein / Stefan J. Pieper</b></td><td>Directors (Siemens Nominees)</td><td>German</td><td><span class="band b-low">Clear</span></td></tr>
+              <tr><td><b>Xian Zhelong / Gui Jiangsheng / Li Yang / Chen Sihui / Zhu Jianwei</b></td><td>Directors (5)</td><td>Chinese</td><td><span class="band b-low">Clear (15 FP cleared)</span></td></tr>
+              <tr><td><b>Jin Xiaolong / Bao Yuhao / Joern J. Schmuecker</b></td><td>Supervisory Board (3)</td><td>CN (2) · DE (1)</td><td><span class="band b-low">Clear</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  if(key==='brinks'){
+    return `
+      <div style="background:#1A1F2E;color:#fff;padding:24px 28px;border-radius:10px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+        <div>
+          <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.6);">D7 Comprehensive Due Diligence Report — US Public Entity · FORT-US-00001-202605-01 · 03 May 2026</div>
+          <div style="font-size:22px;font-weight:600;margin-top:4px;">The Brink's Company (NYSE: BCO)</div>
+          <div class="mono" style="font-size:11px;color:rgba(255,255,255,0.68);margin-top:4px;">EIN: 54-1317776 · SEC CIK: 0000078890 · Virginia · SIC: 7382 · Auditor: KPMG LLP (PCAOB 185) · ~77,600 Employees</div>
+        </div>
+        <div style="text-align:right;">
+          <span style="background:#E65100;color:#fff;padding:7px 16px;border-radius:6px;font-weight:600;font-size:14px;">7.45 / 10 · High Risk</span>
+          <div style="font-size:10.5px;color:rgba(255,255,255,0.65);margin-top:6px;">Floor Rule Applied (Weighted 5.00 → 7.45)</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">
+        <div style="background:#FFF3E0;border:1px solid rgba(230,81,0,0.3);padding:10px 14px;border-radius:6px;font-weight:600;color:#6D3B00;">⚠️ Way Forward: Proceed with Safeguards</div>
+        <div style="background:#FDECEC;border:1px solid rgba(198,40,40,0.3);padding:10px 14px;border-radius:6px;font-weight:600;color:#8B1A1A;">🔴 Risk Nature: Structural Compliance Risk</div>
+        <div style="background:#E8F0F8;border:1px solid rgba(102,153,204,0.3);padding:10px 14px;border-radius:6px;font-weight:600;color:#2E5A8A;">📋 Action: Mandatory Monitor Verification</div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><span class="card-title">§1–§15 Consolidated 17-Section D7 US Assessment</span><span class="card-sub">Source: SEC EDGAR 10-K XBRL (20 Feb 2026) · PACER · FinCEN · DOJ · SAM.gov</span></div>
+        <table>
+          <thead><tr><th>Section</th><th>Dimension</th><th>Score</th><th>Level</th><th>Key Audit Finding</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">Sec 3</td><td><b>Financial Risk (10-K XBRL)</b></td><td class="mono">4.8</td><td><span class="band b-med">Medium ↓</span></td><td>Rev $5,263M (+5.0%), Net Income $199.7M, Operating CF $540.2M, CR 1.51. Highly leveraged: Total Debt $3,825.4M, Equity $407.3M, D/E 9.4x (down from 11.5x), ICR 2.4x, Goodwill $1,515.3M (3.7x equity).</td></tr>
+            <tr><td class="mono">Sec 4</td><td><b>Capacity &amp; Growth</b></td><td class="mono">2.0</td><td><span class="band b-low">Stable</span></td><td>Capex $289M (+12% YoY), Net PP&amp;E $870M. 3Y Share Buybacks ($583M) outpace M&amp;A ($26.6M — NoteMachine, DeLaRue CMS) by 22:1.</td></tr>
+            <tr><td class="mono">Sec 5</td><td><b>Global Watchlists (A–E)</b></td><td class="mono">1.0</td><td><span class="band b-low">All Clear</span></td><td>All Hard Gates PASS: 0 hits on OFAC SDN, UN, EU, HM Treasury, Interpol, BIS Entity List, SAM.gov Exclusions across 5 entities &amp; 7 executive officers.</td></tr>
+            <tr><td class="mono">Sec 6</td><td><b>US Regulatory (6A–6F)</b></td><td class="mono" style="color:var(--high);font-weight:600;">7.0</td><td><span class="band b-high">High (Floored)</span></td><td><b>6B AML/BSA (9.5 Critical):</b> DOJ Non-Prosecution Agreement ($25M criminal forfeiture) + FinCEN Consent Order ($17M CMP) on 31 Jan 2025 against BGS for &gt;$15B unlicensed bulk cash shipments (18 U.S.C. § 1960); active 3-yr monitor → Jan 2028. <b>6E Labour (6.5):</b> EEOC, DOL/WHD, OSHA, NLRB. <b>6A SEC (3.0):</b> Rule 21F-17 ($400K, resolved).</td></tr>
+            <tr><td class="mono">Sec 7</td><td><b>Negative Media Risk</b></td><td class="mono">6.7</td><td><span class="band b-med">Medium</span></td><td>8 items led by DOJ/FinCEN $42M action (8.8/10) and Chile FNE CIT antitrust investigation ($9.5M accrued, 7.5/10). Fraud floor active.</td></tr>
+            <tr><td class="mono">Sec 8</td><td><b>Federal Litigation (PACER)</b></td><td class="mono" style="color:var(--critical);font-weight:600;">9.0</td><td><span class="band b-sev">Critical</span></td><td>D7 Five-Factor Model (/18): DOJ NPA = <b>16/18 Critical</b>; FinCEN Consent Order = <b>13/18 High</b>; Chile FNE Antitrust = <b>12/18 High</b>.</td></tr>
+            <tr><td class="mono">Sec 9–13</td><td><b>Geopolitical, Cyber &amp; ESG</b></td><td class="mono">4.85</td><td><span class="band b-med">Medium</span></td><td>Geo 5.0 (100+ countries, LatAm FX -$56.2M); Cyber 2.0 Low (no Item 1C breaches); ESG 4.85 (22% female board, 78% independent, KPMG unqualified opinion).</td></tr>
+            <tr><td class="mono">Sec 14–15</td><td><b>CM &amp; Supplier Dialogue</b></td><td class="mono">Qtrly</td><td><span class="band b-high">T1·T3·T4 Fired</span></td><td>1. Obtain DOJ Monitor status before contract execution; 2. Insert NPA-breach termination R&amp;W; 3. Track Chile FNE &amp; 10-Q ICR (&lt;1.5x tripwire).</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid-11">
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-head"><span class="card-title">§2 Key Subsidiaries Screened</span></div>
+          <table>
+            <thead><tr><th>Subsidiary</th><th>Jurisdiction</th><th>Business Line</th><th>D7 Flag</th></tr></thead>
+            <tbody>
+              <tr><td><b>Brink's Global Services USA, Inc. (BGS)</b></td><td>USA</td><td>Cross-border cash logistics</td><td><span class="band b-sev">DOJ NPA + FinCEN ($42M)</span></td></tr>
+              <tr><td><b>Brink's Chile S.A.</b></td><td>Chile</td><td>CIT / Cash Management</td><td><span class="band b-high">FNE Antitrust ($9.5M)</span></td></tr>
+              <tr><td><b>Brink's Capital LLC</b></td><td>USA</td><td>FinCEN MSB Money Transmission</td><td><span class="band b-low">MSB Registered</span></td></tr>
+              <tr><td><b>Brink's, Incorporated / Brink's Network</b></td><td>USA</td><td>Domestic CIT &amp; Digital</td><td><span class="band b-low">Clear</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-head"><span class="card-title">§15 Mandatory Supplier Dialogue Questions</span></div>
+          <div class="card-body" style="font-size:11.5px;line-height:1.55;color:var(--text-2);">
+            <div style="margin-bottom:8px;"><b>Q1 (DOJ NPA Monitor):</b> What is the current status of the 3-year independent compliance monitor required under the Jan 2025 DOJ NPA (through Jan 2028)? Has the monitor reported any material deficiencies?</div>
+            <div style="margin-bottom:8px;"><b>Q2 (Chile FNE Antitrust):</b> What is the expected resolution timeline for the Chile FNE CIT pricing probe, and does the $9.5M accrual cap probable exposure?</div>
+            <div><b>Q3 (Leverage &amp; ICR 2.4x):</b> With D/E at 9.4x and $209M annual buybacks, how is Brink's managing upcoming debt maturities against the 1.5x ICR covenant threshold?</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  const c=C[key];
+  const sc=scoreOf(c),eb=effBand(c);
+  return `
+    <div style="background:#1A1F2E;color:#fff;padding:20px 24px;border-radius:10px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+      <div>
+        <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.6);">D7 Counterparty Due Diligence Dossier · ${c.d7ReportId||'FORT-D7-2026'}</div>
+        <div style="font-size:20px;font-weight:600;margin-top:4px;">${c.name}</div>
+        <div class="mono" style="font-size:11px;color:rgba(255,255,255,0.68);margin-top:4px;">${c.id} · Jurisdiction: ${c.res} · Structure: ${PARTY_ABBR[typeOf(c)]}</div>
+      </div>
+      <div style="text-align:right;">
+        <span style="background:${barColor(sc)};color:#fff;padding:6px 14px;border-radius:6px;font-weight:600;font-size:13px;">D7 Score: ${(sc/10).toFixed(2)} / 10 (${eb[1]})</span>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-head"><span class="card-title">D7 Pillar Breakdown &amp; Source Evidence</span><span class="card-sub">Synced directly from d7.fortifai.io</span></div>
+      <table>
+        <thead><tr><th>Pillar</th><th>Sub-Score</th><th>Key D7 Finding &amp; Registry Source</th></tr></thead>
+        <tbody>
+          ${c.factors.map(f=>`<tr><td><b>${FMETA[f.key].label}</b></td><td class="mono">${f.sub}/100</td><td>${f.signals.map(s=>`${s.t} <span class="mono" style="font-size:10px;color:var(--text-3);">[${s.src}]</span>`).join('<br>')}</td></tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function openCust(key){
+  const c=C[key],score=scoreOf(c),wmap=weightsFor(c),eb=effBand(c),bc=eb[0],bl=eb[1];
+  const facs=c.factors.map((f,idx)=>{
+    const ct=contrib(f,wmap),col=barColor(f.sub),meta=FMETA[f.key],src=sourceOf(f.key);
+    const sigs=f.signals.map(s=>'<div class="signal"><span class="sig-d '+s.lvl+'"></span><div><div>'+s.t+'</div><div class="sig-src">'+s.src+'</div></div></div>').join('');
+    return '<div class="factor '+(idx<2?'open':'')+'" onclick="this.classList.toggle(\'open\')"><div class="frow">'
+      +'<div class="fnm"><span class="fico '+meta.ico+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+meta.icon+'</svg></span><span class="fnl"><span class="fl">'+meta.label+'</span><span class="fsrc '+src+'">'+(src==='ingested'?'ingested · ERP':'detected · D7')+'</span></span></div>'
+      +'<div class="ftrack"><div class="ffill" style="width:'+f.sub+'%;background:'+col+'"></div></div><span class="fsub">'+(f.key==='financial'&&c.type==='jv'?'N/A':f.sub+'/100')+'</span>'
+      +'<span class="fw">×'+(wmap[f.key]||0)+'%</span><span class="fc" style="color:'+col+'">+'+ct+'</span>'
+      +'<svg class="fchev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 18 6-6-6-6"/></svg></div>'
+      +'<div class="fsignals">'+sigs+'</div></div>';
+  }).join('');
+  const acts=c.actions.map(a=>'<div class="act-row"><div class="t">'+a[0]+'<div class="s">'+a[1]+'</div></div><span class="astat '+a[2]+'">'+(a[2]==='req'?'Required':a[2]==='open'?'Open':'Applied')+'</span></div>').join('');
+  const first=c.history[0][1],last=c.history[c.history.length-1][1],delta=last-first;
+  const drift=delta>3?'Risk has risen <b>'+delta+' points</b> since initial screen ('+c.history[0][0]+'), crossing into a higher band due to post-onboarding or deep-scan findings.':'Rating has stayed within the same band since onboarding.';
+  const ovBanner=c.override
+    ? '<div class="ov-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg><div><b>Override applied — forced to Severe.</b> '+c.override+'. Mirrors D7\'s verdict-engine overrides.</div></div>'
+    : (c.reportKey==='shanghai'?'<div class="ov-note" style="background:#FFF3E0;border-color:#F5D9B8;"><svg viewBox="0 0 24 24" fill="none" stroke="#E65100" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg><div><b style="color:#B14F00;">Harmonised D7 Quick Scan Escalation (3.75 Low → 68 High · CDD Required):</b> Entity watchlists and China QCC regulatory alerts are 100% Clear, and unlisted JV financials are N/A. However, D7 Quick Scan (FORT-SH-2026-QS-01) surfaced a <b>Severity 9/10 historical-KMP bribery conviction</b> (founding Legal Rep Zheng Jianhua, sentenced to death with 2-yr reprieve Jan 2026 for RMB 156M+ bribery overlapping his 2007–2014 tenure) plus <b>6 active civil suits</b>.</div></div>':'');
+
+  const reportEmbedKey = c.reportKey || key;
+  document.getElementById('detailBody').innerHTML=
+    '<div class="chead"><div><div class="cn">'+c.name+(c.uboTrace?' <span class="ubo-flag">UBO TRACE ✓</span>':'')+'</div>'
+    +'<div class="cm-meta"><span>ID <b class="mo">'+c.id+'</b></span><span>Structure <b>'+PARTY_ABBR[typeOf(c)]+'</b></span><span>Incorporated '+jurDot(c.res)+'<b>'+c.res+'</b>'+jurBadge(c.res)+'</span><span>D7 Report ID <b class="mo">'+(c.d7ReportId||'FORT-D7-2026')+'</b></span></div></div>'
+    +'<div style="display:flex;gap:8px;align-items:center;">'
+    +'<button class="btn-sec" onclick="document.getElementById(\'embeddedD7Section\').scrollIntoView({behavior:\'smooth\'})">↓ Jump to Embedded D7 Report</button>'
+    +'<button class="btn-act" onclick="openSingleEntityModal(\''+reportEmbedKey+'\')">⤢ Full-Screen D7 Report</button>'
+    +'<span class="band b-'+bc+'" style="font-size:13px;padding:5px 12px"><span class="d"></span>'+bl+' risk</span></div></div>'
+    +ovBanner
+    +'<div class="dtop">'
+    +'<div class="gauge-card"><div class="gauge-wrap">'+gaugeSVG(score)+'<div class="gauge-score"><div class="n" style="color:'+scoreColor(score)+'">'+score+'</div><div class="of">/ 100</div></div></div>'
+    +'<div class="gauge-scale"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>'
+    +'<div class="gdriver"><div class="l">Primary driver</div>'+c.driver+'</div></div>'
+    +'<div class="fcard"><div class="fh"><span class="t">How this score is built</span><span class="eq">'+PARTY_ABBR[typeOf(c)]+' weights · sub-score × weight</span></div>'+facs
+    +'<div class="composite-row"><span class="lab">Composite risk score</span><span class="val" style="color:'+scoreColor(score)+'">'+score+' / 100</span></div></div></div>'
+    +'<div class="dbot">'
+    +'<div class="card" style="margin-bottom:0"><div class="card-head"><span class="card-title">Rating history</span><span class="card-sub">since onboarding · continuously re-rated</span></div>'
+    +'<div class="card-body">'+sparkSVG(c.history)+'<div class="hnote"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg><div>'+drift+'</div></div></div></div>'
+    +'<div class="card" style="margin-bottom:0"><div class="card-head"><span class="card-title">Actions this rating requires</span></div>'+acts+'</div></div>'
+    +'<div class="embedded-d7-wrap" id="embeddedD7Section">'
+    +'  <div class="embedded-d7-bar">'
+    +'    <div class="embedded-d7-bar-l">'
+    +'      <span class="embedded-d7-pill">Embedded D7 Source Report</span>'
+    +'      <span style="font-weight:600;font-size:13.5px;">'+c.name+' ('+(c.d7ReportId||'FORT-D7-2026')+')</span>'
+    +'    </div>'
+    +'    <div style="display:flex;gap:8px;">'
+    +'      <button class="btn-sec" style="background:rgba(255,255,255,0.08);color:#fff;border-color:rgba(255,255,255,0.22);" onclick="openSingleEntityModal(\''+reportEmbedKey+'\')">⤢ Expand Full Screen</button>'
+    +'      <a href="https://d7.fortifai.io" target="_blank" rel="noopener" class="btn-act" style="text-decoration:none;">Open in D7 Platform (d7.fortifai.io) ↗</a>'
+    +'    </div>'
+    +'  </div>'
+    +'  <div class="embedded-d7-body">'+buildEntityReportHTML(reportEmbedKey)+'</div>'
+    +'</div>';
+  showTab('detail');
+}
+
+function openSingleEntityModal(reportKey){
+  const title=document.getElementById('modalTitle'),body=document.getElementById('modalContent');
+  if(reportKey==='shanghai'){
+    title.textContent='D7 Quick Scan Report — Shanghai Electric Power Generation Equipment Co., Ltd. (FORT-SH-2026-QS-01)';
+  } else if(reportKey==='brinks'){
+    title.textContent="D7 Comprehensive Due Diligence Report — The Brink's Company (FORT-US-00001-202605-01)";
+  } else {
+    const c=C[reportKey];
+    title.textContent='D7 Due Diligence Dossier — '+(c?c.name:'Counterparty')+' ('+(c&&c.d7ReportId?c.d7ReportId:'D7')+')';
+  }
+  body.innerHTML=buildEntityReportHTML(reportKey);
+  document.getElementById('reportModal').classList.add('open');
+}
+function closeReportModal(){document.getElementById('reportModal').classList.remove('open');}
+
+const changes=[
+  {k:'shanghai-electric',from:'low',to:'high',when:'QS CDD Req'},
+  {k:'brinks-co',from:'med',to:'high',when:'DOJ Floor'},
+  {k:'db-realty',from:'high',to:'sev',when:'4d ago'},
+  {k:'meridian-nominee',from:'med',to:'sev',when:'6d ago'},
+  {k:'simplex-infra',from:'med',to:'high',when:'8d ago'}
+];
+const BL={low:'Low',med:'Medium',high:'High',sev:'Severe'};
+document.getElementById('changesFeed').innerHTML=changes.map(ch=>{const c=C[ch.k],sc=scoreOf(c);
+  return '<div class="feed-row" onclick="openCust(\''+ch.k+'\')"><div style="flex:1"><div class="fname">'+c.name+'</div><div class="fid">'+c.id+'</div></div>'
+    +'<div style="display:flex;align-items:center;gap:6px"><span class="band b-'+ch.from+'" style="opacity:.65"><span class="d"></span>'+BL[ch.from]+'</span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#8C98A4" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="band b-'+ch.to+'"><span class="d"></span>'+BL[ch.to]+'</span></div>'
+    +'<div class="drift" style="width:44px;justify-content:flex-end"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m18 15-6-6-6 6"/></svg>'+sc+'</div>'
+    +'<div style="width:68px;text-align:right;font-size:11px;color:var(--text-3)">'+ch.when+'</div></div>';}).join('');
+
+const ALERT_SLA={T1:2,T2:3,T3:7,T4:14};
+const alerts=[
+  {tier:'T1',cls:'prohibited',ov:true,key:'shanghai-electric',name:'Shanghai Electric Power Generation Equipment Co., Ltd.',id:'FORT10083 · USC 91310000071788037S3',juris:'China',age:1,trig:'<b>Severity 9/10 Historical-KMP Bribery Conviction + UBO Trigger (60.01% Chinese State SOE):</b> Founding Legal Rep <b>Zheng Jianhua</b> (tenure 2007–2014) sentenced to death with 2-yr reprieve on 13 Jan 2026 for RMB 156M+ bribery &amp; RMB 700M+ embezzlement overlapping his tenure. Escalated from initial 3.75 Low to <b>68 High (CDD Required)</b>.',tags:[['sanction','Severity 9/10 Bribery'],['pep','60.01% SASAC SOE · UBO Trace']],conf:'confidence 0.99',del:'Delivered from D7 Quick Scan FORT-SH-2026-QS-01 · Full CDD Triggered'},
+  {tier:'T1',cls:'prohibited',ov:true,key:'brinks-co',name:"The Brink's Company (Brink's Global Services USA)",id:'FORT260002 · NYSE: BCO',juris:'United States',age:1,trig:'<b>DOJ Non-Prosecution Agreement ($25M) + FinCEN Consent Order ($17M)</b> for AML/BSA failures on &gt;$15B cross-border cash shipments. Active 3-year independent compliance monitor through Jan 2028. Floor Rule applied (5.00 → 7.45 High).',tags:[['sanction','DOJ NPA / FinCEN $42M'],['litigation','PACER 16/18 Critical']],conf:'confidence 1.00',del:'Delivered from D7 US CDD FORT-US-00001 · Quarterly CM Triggered'},
+  {tier:'T1',cls:'prohibited',ov:true,key:'db-realty',name:'DB Realty Ltd',id:'FORT10010 · CIN L70200MH2007',juris:'India',age:1,trig:'<b>ED PMLA attachment orders &amp; CBI chargesheet</b> naming promoter UBOs Vinod Goenka &amp; Shahid Balwa. NSDL freeze active.',tags:[['sanction','PMLA / UAPA Watchlist'],['pep','Promoter NSDL Freeze']],conf:'confidence 0.98',del:'Delivered to case system · payload a3f9c1e0'},
+  {tier:'T1',cls:'',ov:true,key:'meridian-nominee',name:'Meridian Nominee Holdings Ltd',id:'FORT10194 · BVI Reg 204918',juris:'British Virgin Islands',age:2,trig:'<b>Sanctioned UBO (OFAC SDN)</b> identified behind BVI nominee director structure via D7 2-layer ownership trace.',tags:[['sanction','OFAC SDN UBO'],['geo','BVI Nominee Shell']],conf:'confidence 0.96',del:'Delivered to case system · payload b8017fd2'},
+  {tier:'T2',cls:'',ov:true,key:'transformers-rectifiers',name:'Transformers & Rectifiers (India) Ltd',id:'FORT10001 · CIN L31300GJ1994',juris:'India',age:2,trig:'<b>World Bank Debarment List match (0.96)</b> for NETEP procurement practices + 69 MSME supplier payment delays.',tags:[['sanction','World Bank Debarred'],['reg','69 MSME Delays']],conf:'confidence 0.96',del:'Delivered to case system · payload 77b2de41'},
+  {tier:'T2',cls:'',key:'rattan-india',name:'Rattan India Power Ltd',id:'FORT10007 · CIN L40101DL2007',juris:'India',age:3,trig:'<b>RBI Caution List match (0.95)</b> + Brickwork Default (D) downgrade + unreported 12.4% Mauritius Holdco SPV.',tags:[['reg','RBI Caution List'],['geo','Mauritius SPV']],conf:'confidence 0.95',del:'Delivered to case system · payload 5a9c74e1'},
+  {tier:'T2',cls:'',key:'simplex-infra',name:'Simplex Infrastructures Ltd',id:'FORT10002 · CIN L45200WB1924',juris:'India',age:4,trig:'<b>Primary GSTIN Suspended (8 defaults)</b> + ICRA Default (D) rating + MD Rajesh Gupta Interpol Red Notice partial match.',tags:[['reg','GST Suspended'],['litigation','ICRA Default (D)']],conf:'confidence 0.88',del:'Delivered to case system · payload 4c8f2a17'},
+  {tier:'T3',cls:'t3',key:'shanghai-electric',name:'Shanghai Electric Power Generation Equipment Co., Ltd.',id:'FORT10083 · QCC Litigation',juris:'China',age:5,trig:'<b>6 Active Civil Litigation Dockets in QCC</b> (3 as defendant in Shanghai Minhang District Court &amp; Shanghai IP Court; 3 as plaintiff). Materiality check routed to Full CDD.',tags:[['litigation','6 Active QCC Civil Suits'],['pep','IP & Construction']],conf:'confidence 0.92',del:'Delivered from QCC Judicial Feed · payload 9b1d33a2'},
+  {tier:'T3',cls:'t3',key:'zee-entertainment',name:'Zee Entertainment Enterprises Ltd',id:'FORT10085 · Public Limited',juris:'India',age:8,trig:'<b>Critical litigation &amp; SEBI governance enforcement</b> — NCLT/SIAC disputes and regulatory notices.',tags:[['litigation','NCLT / SIAC'],['reg','SEBI Governance']],conf:'confidence 0.89',del:'Delivered to case system · payload d47e91c3'},
+  {tier:'T4',cls:'t4',key:'schindler-india',name:'Schindler India Private Limited',id:'FORT10084 · Private Limited',juris:'India',age:1,trig:'Annual UBO Trace &amp; Watchlist refresh completed — <b>no new adverse match (3.74 Low)</b>.',tags:[['pep','UBO TRACE ✓']],conf:'confidence 0.99',del:'Logged · daily digest'}
+];
+function slaPill(a){
+  const sla=ALERT_SLA[a.tier],st=a.age>sla?'breach':(a.age===sla?'limit':'ok');
+  const lbl=st==='breach'?(a.age+'d open · SLA '+sla+'d · breached +'+(a.age-sla)+'d'):(a.age+'d open · SLA '+sla+'d');
+  return '<span class="sla '+st+'">'+lbl+'</span>';
+}
+let alertTier='all',alertJur=false;
+function renderAlerts(){
+  let list=alerts.slice();
+  if(alertTier!=='all')list=list.filter(a=>alertTier==='t1'?(a.tier==='T1'||a.tier==='T2'):a.tier.toLowerCase()===alertTier);
+  if(alertJur)list=list.filter(a=>jurElevated(a.juris));
+  document.getElementById('alertList').innerHTML=list.length?list.map(a=>
+    '<div class="alert '+a.cls+'" style="cursor:pointer" onclick="openCust(\''+a.key+'\')"><div class="atop"><div><div class="aname">'+a.name+(a.ov?'<span class="ov-flag">⚑ override / CDD</span>':'')+'</div><div class="aid">'+a.id+'</div></div><span class="tier '+a.tier.toLowerCase()+'">'+a.tier+'</span></div>'
+    +'<div class="atrig">'+a.trig+'</div>'
+    +'<div class="ajur">'+jurDot(a.juris)+'<span class="ajn">'+a.juris+'</span>'+jurBadge(a.juris)+'</div>'
+    +'<div class="adet">'+a.tags.map(t=>'<span class="tag '+t[0]+'">'+t[1]+'</span>').join('')+slaPill(a)+'<span class="conf">· '+a.conf+'</span></div>'
+    +'<div class="adel"><span class="dchk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></span><span class="m">'+a.del+' · Click to open entity &amp; embedded D7 report →</span></div></div>').join(''):'<div style="padding:34px;text-align:center;color:var(--text-3)">No alerts match this filter.</div>';
+}
+function filterAlerts(el,f){document.querySelectorAll('#tab-alerts .fchip.atier').forEach(c=>c.classList.remove('on'));el.classList.add('on');alertTier=f;renderAlerts();}
+function toggleAlertJur(el){alertJur=!alertJur;el.classList.toggle('on',alertJur);renderAlerts();}
+
+const KEYS_ORDER=['screening','ownership','regulatory','litigation','financial','behaviour'];
+function donutHTML(w){
+  const r=68,C2=2*Math.PI*r;let off=0,arcs='';
+  KEYS_ORDER.forEach(k=>{const seg=w[k]/100*C2;if(seg>0)arcs+='<circle cx="85" cy="85" r="'+r+'" fill="none" stroke="'+FCOLOR[k]+'" stroke-width="24" stroke-dasharray="'+seg+' '+(C2-seg)+'" stroke-dashoffset="'+(-off)+'"/>';off+=seg;});
+  return '<svg viewBox="0 0 170 170" width="160" height="160" style="transform:rotate(-90deg)"><circle cx="85" cy="85" r="'+r+'" fill="none" stroke="#EEF0F3" stroke-width="24"/>'+arcs+'</svg>';
+}
+function weightListHTML(w){return KEYS_ORDER.map(k=>'<div class="wl '+(w[k]===0?'off':'')+'"><span class="sw" style="background:'+FCOLOR[k]+'"></span><span class="wn">'+FMETA[k].label+'</span><span class="ww">'+w[k]+'%</span></div>').join('');}
+function drawModel(w){document.getElementById('donutWrap').innerHTML=donutHTML(w);document.getElementById('weightList').innerHTML=weightListHTML(w);}
+function setPreset(el,p){
+  document.querySelectorAll('.preset-opt').forEach(o=>o.classList.remove('on'));el.classList.add('on');
+  drawModel(PRESETS[p]);
+  const names={corporate:'Corporate standard model',manufacturing:'Manufacturing & EPC model',unlisted_jv:'Unlisted Sino-Foreign JV model (Financials N/A redistributed)',us_public:'US Public Company model (Brink’s 10-K)'};
+  document.getElementById('presetLabel').textContent=names[p];
+}
+
+const COUNTRIES=[
+  {n:'British Virgin Islands',iso:'🇻🇬',reg:'Americas',cust:65,avg:46,al:8,tier:'high',fatf:'grey',b:[42,30,18,10]},
+  {n:'China (incl. SOE JVs)',iso:'🇨🇳',reg:'APAC',cust:220,avg:35,al:19,tier:'enh',b:[58,25,13,4]},
+  {n:'United Arab Emirates',iso:'🇦🇪',reg:'EMEA',cust:185,avg:29,al:11,tier:'enh',b:[68,20,9,3]},
+  {n:'India',iso:'🇮🇳',reg:'APAC',cust:940,avg:26,al:42,tier:'std',b:[72,18,7.5,2.5]},
+  {n:'Vietnam',iso:'🇻🇳',reg:'APAC',cust:50,avg:25,al:5,tier:'std',fatf:'grey',b:[74,18,6,2]},
+  {n:'Cayman Islands',iso:'🇰🇾',reg:'Americas',cust:80,avg:23,al:4,tier:'enh',b:[78,16,5,1]},
+  {n:'United Kingdom',iso:'🇬🇧',reg:'EMEA',cust:260,avg:19,al:7,tier:'enh',b:[83,12,4,1]},
+  {n:'United States',iso:'🇺🇸',reg:'Americas',cust:620,avg:18,al:14,tier:'lic',b:[84,11,4,1]},
+  {n:'Germany',iso:'🇩🇪',reg:'EMEA',cust:240,avg:14,al:3,tier:'lic',b:[90,8,1.6,0.4]},
+  {n:'Singapore',iso:'🇸🇬',reg:'APAC',cust:180,avg:13,al:2,tier:'lic',b:[91,7,1.6,0.4]}
+];
+function renderCountries(){
+  document.getElementById('ctryRows').innerHTML=COUNTRIES.map(c=>{
+    const pct=(c.cust/BOOK*100).toFixed(1);
+    const bar='<div class="cbar"><span class="cb-low" style="width:'+c.b[0]+'%"></span><span class="cb-med" style="width:'+c.b[1]+'%"></span><span class="cb-high" style="width:'+c.b[2]+'%"></span><span class="cb-sev" style="width:'+c.b[3]+'%"></span></div>';
+    const t=TIER[c.tier];
+    const fatf=c.fatf?' <span class="tier-badge '+FATF_BADGE[c.fatf][0]+'">'+FATF_BADGE[c.fatf][1]+'</span>':'';
+    return '<tr><td style="font-weight:600;white-space:nowrap"><span class="flag">'+c.iso+'</span>'+c.n+'</td>'
+      +'<td class="mono">'+fmt(c.cust)+'</td>'
+      +'<td class="mono" style="color:var(--text-2)">'+pct+'%</td>'
+      +'<td>'+bar+'</td>'
+      +'<td><span class="scorechip" style="font-size:13px;color:'+scoreColor(c.avg)+'">'+c.avg+'</span></td>'
+      +'<td class="mono" style="color:var(--text-2)">'+c.al+'</td>'
+      +'<td style="white-space:nowrap"><span class="tier-badge '+t[0]+'">'+t[1]+'</span>'+fatf+'</td></tr>';
+  }).join('');
+}
+function renderRegions(){
+  const reg={};COUNTRIES.forEach(c=>{reg[c.reg]=(reg[c.reg]||0)+c.cust;});
+  const order=['APAC','Americas','EMEA'];
+  const max=Math.max(...Object.values(reg));
+  document.getElementById('regionRows').innerHTML=order.map(r=>{
+    const v=reg[r],pct=(v/BOOK*100).toFixed(1);
+    return '<div class="region-row"><span class="rn">'+r+'</span><span class="rt"><span class="rf" style="width:'+(v/max*100)+'%"></span></span><span class="rv">'+fmt(v)+' · '+pct+'%</span></div>';
+  }).join('');
+}
+
+const EXPOSURE=[
+  {ic:'crit',icon:'<circle cx="12" cy="12" r="9"/><path d="M5 5l14 14"/>',v:'6',l:'Debarment / Sanctions / PMLA',s:'World Bank, RBI Caution, UAPA, SDN'},
+  {ic:'crit',icon:'<path d="M12 2 4 6v6c0 5 8 10 8 10s8-5 8-10V6Z"/>',v:'2',l:'Active Govt Monitors / CDD',s:"Brink's DOJ NPA & Shanghai Elec QS"},
+  {ic:'accent',icon:'<path d="M9 12l2 2 4-4"/>',v:'14',l:'State-Owned (SOE) JVs',s:'60.01% SASAC Shanghai UBO chain'},
+  {ic:'kyc',icon:'<circle cx="9" cy="7" r="4"/>',v:'41',l:'UBO / KYB Refresh Due',s:'multi-layer body corporates ≥25%'},
+  {ic:'high',icon:'<circle cx="12" cy="12" r="9"/><path d="M2 12h20"/>',v:'195',l:'Offshore / Grey-List Entities',s:'BVI, Cayman, Mauritius, Vietnam'},
+  {ic:'crit',icon:'<path d="M10.29 3.86 1.82 18h16.94"/>',v:'18',l:'GST Suspended / Credit Default',s:'ICRA/Brickwork D or GSTIN blocked'}
+];
+function renderExposure(){
+  document.getElementById('expRow').innerHTML=EXPOSURE.map(e=>
+    '<div class="exp-tile"><div class="eic '+e.ic+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+e.icon+'</svg></div>'
+    +'<div class="ev">'+e.v+'</div><div class="el">'+e.l+'</div><div class="es">'+e.s+'</div></div>').join('');
+}
+
+const PMIX=[
+  {n:'Public & Private Corporations',cust:1420,avg:21,hs:82,al:54,b:[79,15,4.5,1.5]},
+  {n:'Limited Liability Companies (LLC)',cust:690,avg:24,hs:48,al:26,b:[74,19,5.5,1.5]},
+  {n:'LLPs & Partnerships',cust:385,avg:25,hs:29,al:18,b:[72,20,6,2]},
+  {n:'Sino-Foreign JVs & SOEs',cust:135,avg:36,hs:24,al:16,b:[55,27,14,4]},
+  {n:'Sole Proprietorships',cust:210,avg:29,hs:16,al:11,b:[68,24,6.5,1.5]}
+];
+function renderPartyMix(){
+  document.getElementById('ptypeRows').innerHTML=PMIX.map(p=>{
+    const pct=(p.cust/BOOK*100).toFixed(1);
+    const bar='<div class="cbar"><span class="cb-low" style="width:'+p.b[0]+'%"></span><span class="cb-med" style="width:'+p.b[1]+'%"></span><span class="cb-high" style="width:'+p.b[2]+'%"></span><span class="cb-sev" style="width:'+p.b[3]+'%"></span></div>';
+    return '<tr><td style="font-weight:600;white-space:nowrap">'+p.n+'</td>'
+      +'<td class="mono">'+fmt(p.cust)+'</td>'
+      +'<td class="mono" style="color:var(--text-2)">'+pct+'%</td>'
+      +'<td>'+bar+'</td>'
+      +'<td><span class="scorechip" style="font-size:13px;color:'+scoreColor(p.avg)+'">'+p.avg+'</span></td>'
+      +'<td class="mono" style="color:var(--text-2)">'+fmt(p.hs)+'</td>'
+      +'<td class="mono" style="color:var(--text-2)">'+p.al+'</td></tr>';
+  }).join('');
+}
+
+const CPSIG=[
+  ['Historical-KMP Bribery & SOE Attribution (ABAC / Sapin II)','1 (Severity 9/10)','Shanghai Electric former Legal Rep Zheng Jianhua (Jan 2026 death-reprieve sentence)'],
+  ['Active DOJ NPA & FinCEN Consent Order Monitorships','1 ($42.4M)','The Brink’s Company (BGS) — 3-yr independent monitor through Jan 2028'],
+  ['Multi-Layer Corporate UBO Triggers (≥25% Body Corporates)','38','incl. 60.01% SASAC Shanghai SOE block & 40% Siemens Energy AG block'],
+  ['World Bank Debarment / RBI Caution / NSDL Freeze','4','Transformers & Rectifiers, Rattan India Power, DB Realty'],
+  ['Credit Rating Downgrades to Default (D / C) & GST Suspensions','9','Simplex Infrastructures, Rattan India, Anand & Brothers'],
+  ['Cross-Agent Interlock Leads (Veritas ABAC · Conduit · Argus)','7','Flagged vendors with simultaneous ERP pass-through or Ombuds linkages']
+];
+function renderCpartySignals(){
+  document.getElementById('cpartySignals').innerHTML=CPSIG.map(s=>'<div class="row"><div><div style="font-size:12.5px;font-weight:500">'+s[0]+'</div><div style="font-size:10.5px;color:var(--text-3);margin-top:1px">'+s[2]+'</div></div><span class="m" style="font-weight:600;color:var(--text)">'+s[1]+'</span></div>').join('');
+}
+
+const QLAB=['Q3 24','Q4 24','Q1 25','Q2 25','Q3 25','Q4 25','Q1 26','Q2 26'];
+function tLegend(id,series){document.getElementById(id).innerHTML=series.map(s=>'<span class="li"><span class="sw" style="background:'+s.color+'"></span>'+s.name+'</span>').join('');}
+function renderTrend(id,type,series,yMax){
+  const el=document.getElementById(id),n=QLAB.length,W=560,H=195,px=42,pt=12,pr=14,pb=24,iw=W-px-pr,ih=H-pt-pb;
+  const X=i=>px+iw*(i/(n-1)),Y=v=>pt+ih*(1-v/yMax);
+  let svg='';
+  [0,yMax*0.5,yMax].forEach(t=>{const yy=Y(t);svg+='<line class="grid-ln" x1="'+px+'" y1="'+yy+'" x2="'+(W-pr)+'" y2="'+yy+'"/><text class="axis-lbl" x="'+(px-6)+'" y="'+(yy+3)+'" text-anchor="end">'+Math.round(t)+'</text>';});
+  QLAB.forEach((q,i)=>{svg+='<text class="axis-lbl" x="'+X(i)+'" y="'+(H-6)+'" text-anchor="middle">'+q+'</text>';});
+  series.forEach(s=>{
+    const pts=s.data.map((v,i)=>X(i)+','+Y(v)).join(' ');
+    svg+='<polyline points="'+pts+'" fill="none" stroke="'+s.color+'" stroke-width="2.2"/><circle cx="'+X(n-1)+'" cy="'+Y(s.data[n-1])+'" r="3.4" fill="'+s.color+'"/>';
+  });
+  el.innerHTML='<svg viewBox="0 0 '+W+' '+H+'">'+svg+'</svg>';
+}
+function renderTrends(){
+  const T_TOTAL=[{name:'Monitored entities',color:'#6699CC',data:[1920,2060,2195,2340,2480,2610,2735,2840]}];
+  const T_CP=[{name:'Corporations',color:'#2E5A8A',data:[980,1040,1110,1180,1250,1310,1370,1420]},{name:'LLCs',color:'#6E5BA6',data:[450,485,520,555,590,625,660,690]},{name:'LLPs',color:'#98AA3A',data:[260,280,300,320,340,355,370,385]},{name:'JVs & SOEs',color:'#E65100',data:[85,92,100,108,115,122,129,135]}];
+  const T_AVG=[{name:'Corporations',color:'#6699CC',data:[19,19,20,20,20,21,21,21]},{name:'LLCs & LLPs',color:'#6E5BA6',data:[22,22,23,23,24,24,24,25]},{name:'Proprietorships',color:'#98AA3A',data:[26,27,27,28,28,28,29,29]},{name:'Sino-Foreign JVs & SOEs',color:'#E65100',data:[30,31,32,33,34,35,35,36]}];
+  const T_HITS=[{name:'Reg & Litigation (DOJ/QCC/NCLT)',color:'#C62828',data:[3,4,4,5,6,7,8,9]},{name:'UBO / KMP Attribution',color:'#6E5BA6',data:[2,2,3,4,4,5,6,7]},{name:'Financial / GST Default',color:'#E65100',data:[3,3,4,4,5,5,6,6]},{name:'ERP Behavioural',color:'#98AA3A',data:[2,2,3,2,3,3,3,4]}];
+  tLegend('lg-total',T_TOTAL);renderTrend('ch-total','line',T_TOTAL,3000);
+  tLegend('lg-cp',T_CP);renderTrend('ch-cp','line',T_CP,1500);
+  tLegend('lg-avg',T_AVG);renderTrend('ch-avg','line',T_AVG,45);
+  tLegend('lg-hits',T_HITS);renderTrend('ch-hits','line',T_HITS,12);
+}
+
+function toggleQQ(){document.getElementById('qqDrawer').classList.toggle('open');}
+function askQQ(q){document.getElementById('qqInput').value=q;sendQQ();}
+function sendQQ(){
+  const inp=document.getElementById('qqInput'),q=inp.value.trim();
+  if(!q)return;
+  const box=document.getElementById('qqMsgs');
+  box.innerHTML+=`<div class="qq-msg usr">${q}</div>`;
+  inp.value='';
+  const ql=q.toLowerCase();
+  let ans='';
+  if(ql.includes('shanghai')||ql.includes('zheng')||ql.includes('3.75')||ql.includes('harmon')){
+    ans=`<b>Shanghai Electric Power Generation Equipment Co., Ltd. (FORT10083 / FORT-SH-2026-QS-01):</b><br>• <b>Why it was 3.75 Low on the initial screen:</b> All 19 subjects (target, parent SSE 601727, 4 shareholders, 13 active KMPs) are <b>100% Clear</b> on global watchlists, China QCC regulatory alerts are all zero, and unlisted JV financials are N/A.<br>• <b>Why Custos harmonises it to 68 High (CDD Required):</b> The D7 Quick Scan uncovered a <b>Severity 9/10 Historical-KMP Bribery finding</b> — founding Legal Representative <b>Zheng Jianhua (2007–2014)</b> was sentenced to death with 2-yr reprieve on 13 Jan 2026 for RMB 156M+ bribery overlapping his tenure at the JV — plus <b>6 active civil suits</b> in Shanghai Minhang &amp; IP Courts.<br>• <b>Embedded Report:</b> Click Shanghai Electric in <i>Monitored Parties</i> to view the full embedded Quick Scan dossier.`;
+  } else if(ql.includes('brink')||ql.includes('7.45')||ql.includes('npa')){
+    ans=`<b>The Brink's Company (FORT260002 · NYSE: BCO):</b><br>• Passes all Global Watchlist &amp; SAM.gov Debarment gates (<b>1.0 Low</b>), giving a raw weighted average of <b>5.00</b>.<br>• However, subsidiary <i>Brink's Global Services USA (BGS)</i> entered a <b>$25M DOJ Non-Prosecution Agreement + $17M FinCEN Consent Order</b> (31 Jan 2025) with an active <b>3-year compliance monitor (through Jan 2028)</b>.<br>• Sub-section 6B AML (9.5) and PACER Litigation (9.0) trigger the D7 Floor Rule → <b>7.45 / 10 (75 / 100 High)</b>. Click Brink's in <i>Monitored Parties</i> to read the embedded 17-section US CDD report.`;
+  } else if(ql.includes('ubo')){
+    ans=`<b>UBO Trace Summary Across Flagged Counterparties:</b><br>1. <b>Shanghai Electric JV (FORT10083):</b> 60.01% PRC State (SASAC Shanghai) + 40.00% Siemens Energy AG (0 natural persons ≥25%).<br>2. <b>Meridian Nominee Holdings (FORT10194 · BVI):</b> Sanctioned OFAC SDN UBO hidden behind BVI nominee directors (Override → Severe).<br>3. <b>DB Realty (FORT10010):</b> Vinod Goenka (28.5%) &amp; Shahid Balwa (18.2%) — both flagged for PMLA/CBI &amp; NSDL freeze.<br>4. <b>Rattan India Power (FORT10007):</b> Unreported 12.4% Mauritius Holdco SPV.`;
+  } else if(ql.includes('block')||ql.includes('override')){
+    ans=`<b>Counterparties with Block &amp; Escalate / Hard Overrides:</b><br>• <b>DB Realty Ltd (91 Severe):</b> MHA UAPA / ED PMLA attachment + promoter chargesheet.<br>• <b>Rattan India Power Ltd (82 Severe):</b> RBI Caution List (₹4,200 Cr NPA) + Default rating.<br>• <b>Simplex Infrastructures (78 Severe):</b> GSTIN Suspended + ICRA Default (D).<br>• <b>Meridian Nominee Holdings (64 Severe):</b> OFAC SDN Beneficial Owner behind BVI shell.<br>• <b>Transformers &amp; Rectifiers (63 Severe):</b> World Bank Debarment List match (0.96).`;
+  } else {
+    ans=`Searched <b>2,840 Acme Inc. counterparties</b>. Ask me about <b>Shanghai Electric's 3.75 → 68 harmonisation</b>, <b>Zheng Jianhua's Jan 2026 conviction</b>, <b>The Brink's Company 7.45 DOJ NPA floor</b>, or click any party in <b>Monitored Parties</b> to inspect its embedded D7 report.`;
+  }
+  setTimeout(()=>{box.innerHTML+=`<div class="qq-msg bot">${ans}</div>`;box.scrollTop=box.scrollHeight;},150);
+}
+
+initCtryFilter();
+renderTrends();
+renderPartyMix();
+renderCpartySignals();
+renderCountries();
+renderRegions();
+renderExposure();
+renderCust();
+renderAlerts();
+drawModel(PRESETS.corporate);
+</script>
+</body>
+</html>
