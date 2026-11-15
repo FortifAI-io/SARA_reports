@@ -1540,630 +1540,500 @@ renderCust();
 renderAlerts();
 drawModel(PRESETS.corporate);
 </script>
-<!-- ===== FORTIFAI CUSTOS UI FIX + ERP TRIANGULATION TAB PATCH ===== -->
+
+<!-- ===== FORTIFAI CUSTOS CLEAN NATIVE PATCH (v3) ===== -->
 <style>
-  /* 1. Remove the redundant inner dark-blue left icon rail */
-  .rail, nav.rail, aside.rail, .left-rail, .app-rail, .side-rail, .nav-rail,
-  body > div > aside:first-child, .app-shell > aside:first-child, .layout > nav:first-child {
+  /* 1. Hide ONLY the left <nav class="sidebar"> and reset .main margin */
+  nav.sidebar {
     display: none !important;
-    width: 0 !important;
   }
-  .main, .main-wrap, .app-main, .content-wrap, .page-wrap, .shell-main {
+  .main {
     margin-left: 0 !important;
-    padding-left: 0 !important;
     width: 100% !important;
-    max-width: 100% !important;
   }
 
-  /* 2. Standard Fortifai Dark Navy Top Header Bar (#0D1520) */
-  .topbar, header.topbar, .app-header, .top-header, .custos-header {
+  /* 2. Standard Fortifai Navy Header Bar (#0D1520) */
+  .topbar {
     background: #0D1520 !important;
-    color: #FFFFFF !important;
     border-bottom: 1px solid #1E293B !important;
-    min-height: 52px !important;
-    padding: 8px 20px !important;
+    color: #FFFFFF !important;
   }
-  .topbar *, header.topbar *, .app-header *, .top-header * {
-    color: #E2E8F0 !important;
-    border-color: rgba(255, 255, 255, 0.16) !important;
+  .topbar-d7-wordmark {
+    color: #FFFFFF !important;
   }
-  .topbar button, header.topbar button, .topbar .pill, .topbar .badge-pill {
+  .topbar-d7-wordmark sub {
+    color: #6699CC !important;
+  }
+  .topbar-divider {
+    background: rgba(255, 255, 255, 0.18) !important;
+  }
+  .topbar-title {
+    color: #FFFFFF !important;
+  }
+  .topbar-sub {
+    color: #94A3B8 !important;
+  }
+  .preset-pill, .plan-pill {
     background: rgba(255, 255, 255, 0.08) !important;
-    color: #F8FAFC !important;
-    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    color: #E2E8F0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
   }
 
-  /* 3. Fix Broken Table Formatting (Party, ID, Jurisdiction, Top Risk Driver) */
-  table {
+  /* 3. Fix ONLY the Monitored Parties Table (#tab-customers) — leaves Dashboard 100% untouched */
+  #tab-customers table {
     width: 100% !important;
-    table-layout: auto !important;
-    border-collapse: collapse !important;
+    table-layout: fixed !important;
   }
-  th, td {
-    vertical-align: middle !important;
-    padding: 12px 14px !important;
-    box-sizing: border-box !important;
-  }
-  /* Prevent narrow vertical text wrapping in Monitored Parties */
-  tr th:nth-child(1), tr td:nth-child(1) { width: 20% !important; min-width: 180px !important; }
-  tr th:nth-child(2), tr td:nth-child(2) { width: 15% !important; min-width: 145px !important; white-space: nowrap !important; }
-  tr th:nth-child(3), tr td:nth-child(3) { width: 12% !important; min-width: 115px !important; white-space: nowrap !important; }
-  tr th:nth-child(4), tr td:nth-child(4) { width: 31% !important; min-width: 280px !important; line-height: 1.45 !important; }
-  tr th:nth-child(5), tr td:nth-child(5) { width: 7%  !important; min-width: 65px  !important; text-align: left !important; }
-  tr th:nth-child(6), tr td:nth-child(6) { width: 9%  !important; min-width: 120px !important; white-space: nowrap !important; }
-  tr th:nth-child(7), tr td:nth-child(7) { width: 6%  !important; min-width: 75px  !important; white-space: nowrap !important; }
+  #tab-customers thead th:nth-child(1), #tab-customers tbody td:nth-child(1) { width: 22% !important; }
+  #tab-customers thead th:nth-child(2), #tab-customers tbody td:nth-child(2) { width: 15% !important; white-space: nowrap !important; }
+  #tab-customers thead th:nth-child(3), #tab-customers tbody td:nth-child(3) { width: 13% !important; white-space: nowrap !important; }
+  #tab-customers thead th:nth-child(4), #tab-customers tbody td:nth-child(4) { width: 28% !important; max-width: none !important; white-space: normal !important; line-height: 1.45 !important; }
+  #tab-customers thead th:nth-child(5), #tab-customers tbody td:nth-child(5) { width: 6%  !important; }
+  #tab-customers thead th:nth-child(6), #tab-customers tbody td:nth-child(6) { width: 10% !important; white-space: nowrap !important; }
+  #tab-customers thead th:nth-child(7), #tab-customers tbody td:nth-child(7) { width: 6%  !important; white-space: nowrap !important; }
 
-  /* If Monitored Parties uses CSS Grid rows instead of <table> */
-  .party-row, .p-row, .tbl-row, .cust-row, .grid-row {
-    grid-template-columns: minmax(185px, 1.4fr) minmax(145px, 1.1fr) minmax(110px, 0.9fr) minmax(290px, 2.4fr) 70px 145px 80px !important;
-    gap: 12px !important;
-    align-items: center !important;
-  }
-
-  /* 4. Styling for ERP Triangulation Tab */
-  #tab-erp-triangulation {
-    display: none;
-    padding: 20px 24px 40px 24px;
-    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    color: #0F172A;
-  }
-  #tab-erp-triangulation.active, #tab-erp-triangulation.on {
-    display: block !important;
-  }
-  .erp-kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-    margin-bottom: 18px;
-  }
-  .erp-kpi-card {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-top: 3px solid #2E5A8A;
-    border-radius: 8px;
-    padding: 14px 16px;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-  }
-  .erp-kpi-card.sev { border-top-color: #C62828; }
-  .erp-kpi-card.hi  { border-top-color: #E65100; }
-  .erp-kpi-card.md  { border-top-color: #98AA3A; }
-  .erp-kpi-lbl {
-    font-size: 10.5px;
+  /* 4. ERP Triangulation Tab Styles (matches native Custos look & feel) */
+  #tab-erp .erp-rel-badge {
+    display: inline-block;
+    font-size: 11px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #64748B;
-    margin-bottom: 6px;
-  }
-  .erp-kpi-val {
-    font-family: 'DM Mono', monospace;
-    font-size: 22px;
-    font-weight: 600;
-    color: #0F172A;
+    padding: 2px 8px;
+    border-radius: 4px;
     margin-bottom: 4px;
   }
-  .erp-kpi-sub {
-    font-size: 11.5px;
-    color: #64748B;
+  #tab-erp .erp-rel-badge.crit { background: var(--fail-bg); color: var(--fail-fg); border: 1px solid #F3C9C9; }
+  #tab-erp .erp-rel-badge.high { background: var(--refer-bg); color: var(--refer-fg); border: 1px solid #F5D9B8; }
+  #tab-erp .erp-rel-badge.med  { background: var(--pass-bg); color: var(--pass-fg); }
+  #tab-erp table th, #tab-erp table td {
+    padding: 11px 14px;
+    vertical-align: top;
   }
-  .erp-filter-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 14px;
-    flex-wrap: wrap;
-  }
-  .erp-filter-btn {
-    padding: 6px 12px;
-    font-size: 12px;
-    font-weight: 500;
-    border-radius: 6px;
-    border: 1px solid #CBD5E1;
-    background: #FFFFFF;
-    color: #334155;
-    cursor: pointer;
-  }
-  .erp-filter-btn.active {
-    background: #0D1520;
-    color: #FFFFFF;
-    border-color: #0D1520;
-  }
-  .erp-table-wrap {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 8px;
-    overflow-x: auto;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-  }
-  .erp-tri-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12.5px;
-  }
-  .erp-tri-table thead th {
-    background: #F8FAFC;
-    color: #475569;
-    font-size: 10.5px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border-bottom: 1px solid #E2E8F0;
-    padding: 11px 12px;
-    text-align: left;
-    white-space: nowrap;
-  }
-  .erp-tri-table tbody tr {
-    border-bottom: 1px solid #F1F5F9;
-    transition: background 0.12s;
-  }
-  .erp-tri-table tbody tr:hover {
-    background: #F8FAFC;
-  }
-  .erp-mono {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-  }
-  .erp-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 2px 8px;
-    border-radius: 5px;
-    font-size: 11px;
-    font-weight: 600;
-    font-family: 'DM Mono', monospace;
-  }
-  .erp-badge.severe { background: #FEE2E2; color: #C62828; border: 1px solid #FECACA; }
-  .erp-badge.high   { background: #FFEDD5; color: #E65100; border: 1px solid #FED7AA; }
-  .erp-badge.medium { background: #F4F7E6; color: #6B7A1F; border: 1px solid #DCE6B5; }
-  .rel-chip {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 600;
-    margin-bottom: 3px;
-  }
-  .rel-chip.crit { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; }
-  .rel-chip.warn { background: #FFF7ED; color: #C2410C; border: 1px solid #FED7AA; }
-  .rel-chip.info { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
 </style>
 
 <script>
 (function() {
-  const ERP_DATA = [
+  // Medium & High/Severe entities from Custos book triangulated with dummy SAP ERP business transactions
+  const ERP_TRIANGULATION = [
     {
-      party: "DB Realty Ltd",
-      id: "FORT10010 · CIN L70200MH2007",
-      jur: "India",
+      key: 'db-realty',
+      name: 'DB Realty Ltd',
+      id: 'FORT10010 · CIN L70200MH2007',
+      jur: 'India',
       score: 91,
-      band: "Severe",
-      d7Driver: "ED PMLA attachment + CBI 2G chargesheet on promoter UBOs",
+      band: 'sev',
+      bandLbl: 'Severe',
+      driver: 'ED PMLA attachment + CBI 2G chargesheet on promoter UBOs',
       purchases: 18.40,
       sales: 4.20,
       advances: 6.80,
       loans: 12.50,
-      openApAr: "$1.95M F110 Hold",
-      relType: "Dual Counterparty (JV Developer + ICD Borrower)",
-      relSeverity: "crit",
-      relDetail: "Unsecured ICD loan ($12.5M) + capital mobilization advance ($6.8M) extended to entity under active ED PMLA attachment; shared director DIN with 2 sub-vendors."
+      apHold: '$1.95M F110 Hold',
+      relFlag: 'Dual Role (JV Developer + Unsecured ICD Borrower)',
+      relLvl: 'crit',
+      relDesc: 'Unsecured Inter-Corporate Deposit (ICD) loan of $12.50M + $6.80M mobilization advance open with entity under active ED PMLA attachment; shared promoter DIN with 2 civil sub-contractors.'
     },
     {
-      party: "RattanIndia Power Ltd",
-      id: "FORT10007 · CIN L40101DL2007",
-      jur: "India",
+      key: 'rattan-india',
+      name: 'Rattan India Power Ltd',
+      id: 'FORT10007 · CIN L40101DL2007',
+      jur: 'India',
       score: 82,
-      band: "Severe",
-      d7Driver: "RBI Caution List (₹4,200 Cr NPA) + Unreported Mauritius HoldCo",
+      band: 'sev',
+      bandLbl: 'Severe',
+      driver: 'RBI Caution List (₹4,200 Cr NPA) + Unreported Mauritius SPV (12.4%)',
       purchases: 24.60,
       sales: 0.00,
       advances: 5.10,
       loans: 3.40,
-      openApAr: "$1.12M F110 Hold",
-      relType: "Strategic PPA Supplier + Working Capital Advance",
-      relSeverity: "crit",
-      relDetail: "22% of coal/power utility procurement + $5.1M unadjusted vendor advance (BSEG Ind. A > 180d) + $3.4M promoter bridge loan."
+      apHold: '$1.12M F110 Hold',
+      relFlag: 'Critical Utility Supplier + Unadjusted Advance & Bridge Loan',
+      relLvl: 'crit',
+      relDesc: '$24.60M power/utility purchases + $5.10M unadjusted vendor advance (SAP Special GL Ind. A > 180d) + $3.40M working-capital bridge facility.'
     },
     {
-      party: "The Brink's Company (BGS)",
-      id: "FORT260002 · NYSE: BCO",
-      jur: "United States",
-      score: 75,
-      band: "Severe",
-      d7Driver: "DOJ Non-Prosecution Agreement (NPA) + FinCEN $42M AML forfeiture",
-      purchases: 19.80,
-      sales: 1.40,
-      advances: 0.85,
-      loans: 0.00,
-      openApAr: "$0.94M F110 Hold",
-      relType: "Custody & CIT Logistics Partner (Active DOJ Monitor)",
-      relSeverity: "crit",
-      relDetail: "Handles high-value vaulting & transit; Subsidiary BGS under active DOJ/FinCEN monitorship through Jan 2028 (Trigger T3)."
-    },
-    {
-      party: "Shanghai Electric Power JV",
-      id: "FORT10001 · USCC 91310000",
-      jur: "China (SOE)",
-      score: 71,
-      band: "High",
-      d7Driver: "60.01% SASAC State-Owned Enterprise (SOE) + KMP Bribery Conviction",
-      purchases: 32.50,
-      sales: 6.10,
-      advances: 8.90,
-      loans: 0.00,
-      openApAr: "$0.84M F110 Hold",
-      relType: "Sino-Foreign EPC JV Partner + Turbine Supplier",
-      relSeverity: "crit",
-      relDetail: "$8.9M LC/mobilization advance open; former KMP convicted under PRC bribery statutes; high ABAC/Veritas & critical-spares lock-in."
-    },
-    {
-      party: "TAP Engineering & Projects",
-      id: "FORT10002 · GSTIN 27AAACT...",
-      jur: "India",
-      score: 68,
-      band: "High",
-      d7Driver: "World Bank & PSU Debarment (Forged Bid Bank Guarantees)",
-      purchases: 11.20,
-      sales: 0.00,
-      advances: 3.25,
-      loans: 1.10,
-      openApAr: "$0.48M Blocked",
-      relType: "Pass-Through Civil Contractor (Employee Bank Match)",
-      relSeverity: "crit",
-      relDetail: "Flagged in Conduit: 88% PO volume awarded by single buyer (EKKO.ERNAM) + $3.25M advance released 4 days before PSU debarment."
-    },
-    {
-      party: "Zee Entertainment Enterprises",
-      id: "FORT10003 · CIN L92132MH1982",
-      jur: "India",
-      score: 65,
-      band: "High",
-      d7Driver: "SEBI Promoter Fund-Diversion Order + NCLT Insolvency Litigation",
-      purchases: 4.50,
-      sales: 16.80,
-      advances: 0.40,
-      loans: 2.20,
-      openApAr: "$4.60M Overdue AR",
-      relType: "Major O2C Customer + Ad-Barter Counterparty",
-      relSeverity: "warn",
-      relDetail: "Dual O2C/P2P exposure: $16.8M billed sales ($4.6M AR > 90d overdue in BSID) + $2.2M structured ICD roll-over with promoter group entity."
-    },
-    {
-      party: "Kedarnath Packing Pvt Ltd",
-      id: "FORT10005 · PAN AADCK8821B",
-      jur: "India",
-      score: 62,
-      band: "High",
-      d7Driver: "Sec 138 NI Act Criminal Cheque Dishonour + Zero EPFO Workforce",
-      purchases: 9.40,
-      sales: 0.00,
-      advances: 2.15,
-      loans: 0.00,
-      openApAr: "$0.38M Next Run",
-      relType: "Zero-Substance Pass-Through Conduit (0 EPFO Staff)",
-      relSeverity: "crit",
-      relDetail: "Zero registered EPFO employees despite $9.4M packaging spend; zero GR/IR inventory dwell (<35 mins in EKBE) + 29% price spread over direct OEM."
-    },
-    {
-      party: "Meridian Nominee Holdings Ltd",
-      id: "FORT20014 · Reg #BVI-88412",
-      jur: "British Virgin Islands",
-      score: 59,
-      band: "High",
-      d7Driver: "Opaque 3-Tier Offshore Nominee Chain + Sanctioned Adjacent UBO",
-      purchases: 7.80,
-      sales: 3.90,
-      advances: 4.50,
-      loans: 6.00,
-      openApAr: "$1.20M Wire Hold",
-      relType: "Offshore Marketing Agent + Cross-Border Loan",
-      relSeverity: "crit",
-      relDetail: "Flagged in Veritas: $4.5M consulting advance + $6.0M shareholder loan routed via BVI/Mauritius shell with incomplete UBO TRACE."
-    },
-    {
-      party: "Simplex Infrastructures Ltd",
-      id: "FORT10012 · CIN L45209WB1924",
-      jur: "India",
-      score: 54,
-      band: "High",
-      d7Driver: "ICRA 'D' Default Rating + 14 Active NCLT Operational Creditor Suits",
+      key: 'simplex-infra',
+      name: 'Simplex Infrastructures Ltd',
+      id: 'FORT10002 · CIN L45200WB1924',
+      jur: 'India',
+      score: 78,
+      band: 'sev',
+      bandLbl: 'Severe',
+      driver: 'GSTIN Suspended (8 defaults) + ICRA Default (D) rating',
       purchases: 14.10,
       sales: 1.90,
       advances: 3.70,
       loans: 0.80,
-      openApAr: "$0.62M Retentions",
-      relType: "Subcontractor with Unrecovered Mobilization Advance",
-      relSeverity: "warn",
-      relDetail: "$3.70M unamortized mobilization advance at severe risk of write-off due to NCLT petitions; active bank guarantee invocation recommended."
+      apHold: '$0.88M F110 Hold',
+      relFlag: 'EPC Contractor with Unrecovered Mobilization Advance',
+      relLvl: 'crit',
+      relDesc: '$3.70M unamortized mobilization advance + $1.90M equipment back-charges at high write-off risk due to ICRA Default (D) and GSTIN suspension.'
     },
     {
-      party: "Transformers & Rectifiers (I) Ltd",
-      id: "FORT10008 · CIN L33121GJ1994",
-      jur: "India",
-      score: 46,
-      band: "Medium",
-      d7Driver: "World Bank Debarment (Nigeria Grid Project) + Working Capital Stretch",
+      key: 'brinks-co',
+      name: "The Brink's Company",
+      id: 'FORT260002 · NYSE: BCO',
+      jur: 'United States',
+      score: 75,
+      band: 'high',
+      bandLbl: 'High',
+      driver: 'DOJ NPA ($25M) + FinCEN Consent Order ($17M) on BGS sub',
+      purchases: 19.80,
+      sales: 1.40,
+      advances: 0.85,
+      loans: 0.00,
+      apHold: '$0.90M Monitor Check',
+      relFlag: 'Global Custody & CIT Logistics Partner (Active DOJ Monitor)',
+      relLvl: 'high',
+      relDesc: 'Handles high-value vaulting & transit across 14 plants; Subsidiary BGS under active 3-year DOJ/FinCEN compliance monitor through Jan 2028.'
+    },
+    {
+      key: 'anand-brothers',
+      name: 'Anand & Brothers',
+      id: 'FORT10018 · Unreg Partnership',
+      jur: 'India',
+      score: 74,
+      band: 'high',
+      bandLbl: 'High',
+      driver: 'GST Suspended (6 defaults) + 11 MSME delays + Unregistered partnership',
+      purchases: 9.40,
+      sales: 0.00,
+      advances: 2.85,
+      loans: 0.65,
+      apHold: '$0.42M Blocked',
+      relFlag: 'Pass-Through MRO Conduit (Single-Buyer Concentration)',
+      relLvl: 'crit',
+      relDesc: '86% of POs issued by a single buyer (EKKO.ERNAM); $2.85M advance paid despite suspended GSTIN and unregistered partnership structure.'
+    },
+    {
+      key: 'hcc-ltd',
+      name: 'Hindustan Construction Co Ltd',
+      id: 'FORT10013 · CIN L45200MH1926',
+      jur: 'India',
+      score: 71,
+      band: 'high',
+      bandLbl: 'High',
+      driver: '22 MSME payment delays + High litigation & regulatory score (7.1)',
+      purchases: 21.30,
+      sales: 3.10,
+      advances: 4.40,
+      loans: 1.50,
+      apHold: '$0.64M Retention',
+      relFlag: 'Turnkey Civil EPC Partner + Two-Way Materials Billing',
+      relLvl: 'high',
+      relDesc: '$21.30M civil works spend + $3.10M structural steel sold to HCC on credit + $4.40M open mobilization advance.'
+    },
+    {
+      key: 'shanghai-electric',
+      name: 'Shanghai Electric Power Generation Equipment Co., Ltd.',
+      id: 'FORT10083 · USC 91310000071788037S3',
+      jur: 'China',
+      score: 68,
+      band: 'high',
+      bandLbl: 'High',
+      driver: 'Ex-Legal Rep Death-Reprieve Bribery Conviction (9/10) + 60.01% SASAC SOE',
+      purchases: 32.50,
+      sales: 6.10,
+      advances: 8.90,
+      loans: 0.00,
+      apHold: 'CDD Required',
+      relFlag: 'Sino-Foreign JV Partner + Capital Turbine OEM (SOE)',
+      relLvl: 'crit',
+      relDesc: '$32.50M turbine/generator procurement + $8.90M LC/capital advance + $6.10M sub-assembly sales; requires ABAC/Sapin II & FCPA safeguards.'
+    },
+    {
+      key: 'meridian-nominee',
+      name: 'Meridian Nominee Holdings Ltd',
+      id: 'FORT10194 · BVI Reg 204918',
+      jur: 'British Virgin Islands',
+      score: 64,
+      band: 'sev',
+      bandLbl: 'Severe',
+      driver: 'Sanctioned beneficial owner (OFAC SDN) behind BVI nominee structure',
+      purchases: 7.80,
+      sales: 3.90,
+      advances: 4.50,
+      loans: 6.00,
+      apHold: '$1.20M Wire Freeze',
+      relFlag: 'Offshore Commission Agent + Cross-Border Loan (SDN UBO)',
+      relLvl: 'crit',
+      relDesc: '$4.50M marketing advance + $6.00M cross-border loan + $11.70M two-way trade routed through BVI shell linked to OFAC SDN beneficial owner.'
+    },
+    {
+      key: 'transformers-rectifiers',
+      name: 'Transformers & Rectifiers (India) Ltd',
+      id: 'FORT10001 · CIN L31300GJ1994',
+      jur: 'India',
+      score: 63,
+      band: 'sev',
+      bandLbl: 'Severe',
+      driver: 'World Bank Debarment List match (0.96) + 69 MSME delays + MD NSDL freeze',
       purchases: 15.60,
       sales: 0.80,
       advances: 1.90,
       loans: 0.00,
-      openApAr: "$0.51M Open AP",
-      relType: "Critical HV Equipment OEM (Single-Source Plant Risk)",
-      relSeverity: "warn",
-      relDetail: "Supplies 68% of 220kV transformers; World Bank cross-debarment triggers lender covenant review on externally funded capex projects."
+      apHold: 'MDB Disqualified',
+      relFlag: 'Single-Source HV Transformer OEM (World Bank Debarred)',
+      relLvl: 'crit',
+      relDesc: 'Supplies 68% of plant 220kV transformers ($15.60M P2P); World Bank debarment triggers covenant breach on MDB-financed capex projects.'
     },
     {
-      party: "Schindler India Pvt Ltd",
-      id: "FORT10004 · CIN U31900MH1997",
-      jur: "India / Switzerland",
-      score: 38,
-      band: "Medium",
-      d7Driver: "CCI Antitrust Probe + 42 Labour/Safety Consumer Litigation Filings",
+      key: 'zee-entertainment',
+      name: 'Zee Entertainment Enterprises Ltd',
+      id: 'FORT10085 · Public Limited',
+      jur: 'India',
+      score: 59,
+      band: 'high',
+      bandLbl: 'High',
+      driver: 'Critical litigation & SEBI governance enforcement risk (Score 5.85)',
+      purchases: 4.50,
+      sales: 16.80,
+      advances: 0.40,
+      loans: 2.20,
+      apHold: '$4.60M Overdue AR',
+      relFlag: 'Major O2C Customer + Ad-Barter & ICD Counterparty',
+      relLvl: 'high',
+      relDesc: 'Primary O2C relationship: $16.80M billed revenue ($4.60M AR > 90d overdue in SAP BSID) + $4.50M media purchases + $2.20M ICD rollover.'
+    },
+    {
+      key: 'patel-engineering',
+      name: 'Patel Engineering Ltd',
+      id: 'FORT10012 · Public Limited',
+      jur: 'India',
+      score: 58,
+      band: 'high',
+      bandLbl: 'High',
+      driver: '15 MSME supplier delays + Elevated regulatory & litigation score (5.8)',
+      purchases: 11.80,
+      sales: 1.20,
+      advances: 2.10,
+      loans: 0.00,
+      apHold: '$0.35M Open AP',
+      relFlag: 'Hydro & Tunneling Subcontractor (Advance Exposure)',
+      relLvl: 'high',
+      relDesc: '$11.80M civil subcontracting + $2.10M equipment mobilization advance; requires milestone-linked bank guarantee step-up.'
+    },
+    {
+      key: 'rajesh-sharma-assoc',
+      name: 'Rajesh Sharma & Associates',
+      id: 'FORT10011 · Partnership',
+      jur: 'India',
+      score: 55,
+      band: 'high',
+      bandLbl: 'High',
+      driver: '3 GST filing defaults + 8 MSME delays + Unregistered partnership (Score 5.5)',
+      purchases: 6.20,
+      sales: 0.00,
+      advances: 1.45,
+      loans: 0.35,
+      apHold: '$0.22M Open AP',
+      relFlag: 'Electrical Works Partnership (Repeat Advance Rollovers)',
+      relLvl: 'high',
+      relDesc: 'Unregistered partnership with $6.20M electrical contracting spend and $1.80M combined advances/short-term loans.'
+    },
+    {
+      key: 'sterling-wilson',
+      name: 'Sterling & Wilson Pvt Ltd',
+      id: 'FORT10008 · CIN U74999MH2017',
+      jur: 'India',
+      score: 51,
+      band: 'high',
+      bandLbl: 'High',
+      driver: 'Promoter group debt overhang + 4 MSME delays (D7 Score 5.1)',
+      purchases: 13.40,
+      sales: 2.90,
+      advances: 2.20,
+      loans: 2.50,
+      apHold: 'Limit Exposure',
+      relFlag: 'Solar EPC Partner + Group Inter-Corporate Loan',
+      relLvl: 'high',
+      relDesc: '$13.40M MEP/solar EPC purchases + $2.90M component sales + $2.50M inter-corporate loan exposure to promoter group.'
+    },
+    {
+      key: 'ncc-ltd',
+      name: 'NCC Ltd',
+      id: 'FORT10006 · CIN L72200TG1990',
+      jur: 'India',
+      score: 46,
+      band: 'med',
+      bandLbl: 'Medium',
+      driver: '12 MSME delays + Moderate litigation; CRISIL A+ Positive upgrade (Score 4.6)',
+      purchases: 16.50,
+      sales: 3.40,
+      advances: 1.80,
+      loans: 0.00,
+      apHold: 'Standard Terms',
+      relFlag: 'Tier-1 Civil Infrastructure Contractor (Dual Book)',
+      relLvl: 'med',
+      relDesc: '$16.50M capex construction spend + $3.40M material off-take; credit profile improving (CRISIL A+).'
+    },
+    {
+      key: 'schindler-india',
+      name: 'Schindler India Private Limited',
+      id: 'FORT10084 · Private Limited',
+      jur: 'India',
+      score: 37,
+      band: 'med',
+      bandLbl: 'Medium',
+      driver: 'Low/Medium risk with routine litigation; UBO Trace verified (Score 3.74)',
       purchases: 12.30,
       sales: 2.40,
       advances: 1.10,
       loans: 0.00,
-      openApAr: "$0.29M AMC Open",
-      relType: "OEM Elevator Partner + Commercial Tenant (Dual Book)",
-      relSeverity: "info",
-      relDetail: "Clean UBO TRACE ✓; $12.3M capex/AMC purchases + $2.4M lease billing across commercial properties; standard quarterly monitoring."
-    },
-    {
-      party: "Gulf Petrochem FZE",
-      id: "FORT20019 · DMCC-44109",
-      jur: "UAE (Free Zone)",
-      score: 48,
-      band: "Medium",
-      d7Driver: "Restructuring Default + Trade-Based Vessel AIS Dark-Activity Flag",
-      purchases: 11.90,
-      sales: 8.70,
-      advances: 2.60,
-      loans: 3.10,
-      openApAr: "$2.10M Net Exposure",
-      relType: "Two-Way Commodity Counterparty (Back-to-Back Trade)",
-      relSeverity: "warn",
-      relDetail: "Circular buy/sell trade pattern ($11.9M purchases vs $8.7M sales) + $5.7M combined advances & trade finance loan."
+      apHold: 'Approved',
+      relFlag: 'OEM Elevator Partner + Commercial Lessee (UBO Verified)',
+      relLvl: 'med',
+      relDesc: 'UBO TRACE ✓ verified (Schindler Holding AG); $12.30M elevator capex/AMC spend + $2.40M commercial property lease billing.'
     }
   ];
 
-  function fmtM(n) {
-    return n > 0 ? "$" + n.toFixed(2) + "M" : "—";
+  function fmtUSD(val) {
+    return val > 0 ? '$' + val.toFixed(2) + 'M' : '—';
   }
 
-  function injectFixingAndTriangulation() {
-    // 1. Clean up any stray dark-blue side rail by checking narrow fixed/flex left elements
-    document.querySelectorAll('nav, aside, div').forEach(el => {
-      const rect = el.getBoundingClientRect();
-      const bg = window.getComputedStyle(el).backgroundColor;
-      if (rect.width >= 36 && rect.width <= 72 && rect.height > 400 && rect.left < 100) {
-        if (bg.includes('13, 21, 32') || bg.includes('15, 23, 42') || bg.includes('20, 30, 48') || el.textContent.trim().startsWith('F')) {
-          el.style.display = 'none';
-        }
-      }
-    });
+  function setupErpTriangulationTab() {
+    const subtabs = document.querySelector('.subtabs');
+    const mainEl = document.querySelector('.main');
+    if (!subtabs || !mainEl || document.getElementById('tab-erp')) return;
 
-    // 2. Style the main Custos header bar into standard Fortifai Navy (#0D1520)
-    const d7Heading = Array.from(document.querySelectorAll('div, header')).find(el =>
-      el.children.length >= 2 &&
-      el.textContent.includes('Custos') &&
-      el.textContent.includes('2,840') &&
-      el.getBoundingClientRect().height < 90
-    );
-    if (d7Heading) {
-      d7Heading.style.background = '#0D1520';
-      d7Heading.style.color = '#FFFFFF';
-      d7Heading.style.padding = '10px 24px';
-      d7Heading.style.borderRadius = '8px 8px 0 0';
-      d7Heading.querySelectorAll('*').forEach(c => {
-        c.style.color = '#F8FAFC';
-      });
+    // 1. Add the subtab button right after "Monitored Parties"
+    const custTab = subtabs.querySelector('.subtab[data-tab="customers"]');
+    const erpSubtab = document.createElement('div');
+    erpSubtab.className = 'subtab';
+    erpSubtab.setAttribute('data-tab', 'erp');
+    erpSubtab.setAttribute('onclick', "showTab('erp')");
+    erpSubtab.innerHTML = 'ERP Exposure &amp; Triangulation <span class="count urgent">' + ERP_TRIANGULATION.length + '</span>';
+
+    if (custTab && custTab.nextSibling) {
+      subtabs.insertBefore(erpSubtab, custTab.nextSibling);
+    } else {
+      subtabs.appendChild(erpSubtab);
     }
 
-    // 3. Find the Tab Bar ("Dashboard", "Monitored Parties", "Alerts", "Model & Settings")
-    const tabLinks = Array.from(document.querySelectorAll('button, a, div[role="tab"], .tab-btn, .nav-tab')).filter(el => {
-      const t = el.textContent.trim();
-      return t === 'Dashboard' || t.startsWith('Monitored Parties') || t.startsWith('Alerts') || t === 'Model & Settings';
-    });
+    // 2. Create the <div class="content" id="tab-erp"> container using native Custos classes
+    const erpContent = document.createElement('div');
+    erpContent.className = 'content';
+    erpContent.id = 'tab-erp';
+    erpContent.innerHTML = `
+      <div class="page-lead">
+        Triangulates <b>Medium, High, and Severe D7 / Custos counterparties (Score ≥ 37)</b> against live SAP ERP subledgers — <b>Purchases (P2P · EKKO/RBKP)</b>, <b>Sales Revenue (O2C · VBAK/VBRK)</b>, <b>Vendor Advances (BSEG Special GL Ind. 'A')</b>, and <b>Inter-Corporate Loans / ICDs (BKPF/BSEG)</b> — to quantify total business volume and flag high-risk counterparty relationships. (Low-risk entities &lt; 25 are excluded.)
+      </div>
 
-    if (tabLinks.length >= 2 && !document.getElementById('btn-erp-tri')) {
-      const tabBar = tabLinks[0].parentElement;
-      const sampleTab = tabLinks[1]; // Monitored Parties tab
-
-      const erpTabBtn = sampleTab.cloneNode(true);
-      erpTabBtn.id = 'btn-erp-tri';
-      erpTabBtn.classList.remove('active', 'on', 'selected');
-      erpTabBtn.removeAttribute('onclick');
-      erpTabBtn.innerHTML = `ERP Exposure & Triangulation <span style="background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600;margin-left:5px;">12</span>`;
-
-      // Insert right after "Monitored Parties"
-      if (sampleTab.nextSibling) {
-        tabBar.insertBefore(erpTabBtn, sampleTab.nextSibling);
-      } else {
-        tabBar.appendChild(erpTabBtn);
-      }
-
-      // Create the Tab Content Panel
-      const mainContainer = document.querySelector('#tab-dashboard, #tab-customers, .tab-content, .tab-pane, main') || tabBar.parentElement.parentElement;
-      const erpSection = document.createElement('div');
-      erpSection.id = 'tab-erp-triangulation';
-
-      erpSection.innerHTML = `
-        <div style="margin-bottom:16px;">
-          <div style="font-size:15px;font-weight:600;color:#0F172A;margin-bottom:4px;">
-            D7 Outside-In Risk × SAP ERP Business Transaction Triangulation (Medium, High & Severe Book)
-          </div>
-          <div style="font-size:12.5px;color:#475569;line-height:1.5;">
-            Cross-correlates continuous <b>D7 / Custos risk ratings (Score ≥ 35 · Medium, High & Severe only)</b> against live SAP ERP subledgers — <b>Purchases (P2P · EKKO/RBKP)</b>, <b>Sales Revenue (O2C · VBAK/VBRK)</b>, <b>Unadjusted Advances (BSEG Special GL 'A')</b>, and <b>Inter-Corporate Loans / ICDs (BKPF/BSEG)</b> — to isolate total financial blast radius and undisclosed relationship risks.
-          </div>
+      <div class="kpi-row">
+        <div class="kpi k-crit">
+          <div class="kpi-label">Total Triangulated Business</div>
+          <div class="kpi-value critical">$354.15M</div>
+          <div class="kpi-sub">across 15 Medium, High &amp; Severe entities</div>
         </div>
-
-        <div class="erp-kpi-grid">
-          <div class="erp-kpi-card sev">
-            <div class="erp-kpi-lbl">TOTAL BUSINESS (MED + HIGH + SEVERE)</div>
-            <div class="erp-kpi-val" style="color:#C62828;">$316.25M</div>
-            <div class="erp-kpi-sub">Across 12 active Medium/High/Severe entities</div>
-          </div>
-          <div class="erp-kpi-card hi">
-            <div class="erp-kpi-lbl">PROCUREMENT SPEND (P2P · RBKP)</div>
-            <div class="erp-kpi-val" style="color:#0F172A;">$182.10M</div>
-            <div class="erp-kpi-sub">57.6% of triangulated counterparty volume</div>
-          </div>
-          <div class="erp-kpi-card">
-            <div class="erp-kpi-lbl">SALES & AR EXPOSURE (O2C · VBRK)</div>
-            <div class="erp-kpi-val" style="color:#2E5A8A;">$46.20M</div>
-            <div class="erp-kpi-sub">7 dual-role counterparties (Vendor + Customer)</div>
-          </div>
-          <div class="erp-kpi-card hi">
-            <div class="erp-kpi-lbl">OPEN VENDOR ADVANCES (GL IND. 'A')</div>
-            <div class="erp-kpi-val" style="color:#E65100;">$41.25M</div>
-            <div class="erp-kpi-sub">$18.85M unadjusted > 180 days on High/Severe</div>
-          </div>
-          <div class="erp-kpi-card sev">
-            <div class="erp-kpi-lbl">LOANS / ICDs TO FLAGGED ENTITIES</div>
-            <div class="erp-kpi-val" style="color:#C62828;">$29.10M</div>
-            <div class="erp-kpi-sub">6 counterparties with direct treasury/ICD exposure</div>
-          </div>
+        <div class="kpi k-high">
+          <div class="kpi-label">Purchases / P2P Spend</div>
+          <div class="kpi-value">$228.20M</div>
+          <div class="kpi-sub">64.4% of total counterparty exposure</div>
         </div>
-
-        <div class="erp-filter-bar">
-          <button class="erp-filter-btn active" data-band="ALL">All Tracked (Med + High + Severe · 12)</button>
-          <button class="erp-filter-btn" data-band="Severe">Severe Only (3)</button>
-          <button class="erp-filter-btn" data-band="High">High Only (6)</button>
-          <button class="erp-filter-btn" data-band="Medium">Medium Only (3)</button>
-          <button class="erp-filter-btn" data-band="LOAN">With Advances / Loans > $3M (7)</button>
-          <button class="erp-filter-btn" data-band="DUAL">Dual Relationship: Vendor + Customer (7)</button>
-          <span style="margin-left:auto;font-size:11.5px;color:#64748B;font-family:'DM Mono',monospace;">
-            Low-risk counterparties (<35) excluded by policy · Values in USD ($M)
-          </span>
+        <div class="kpi">
+          <div class="kpi-label">Sales / O2C Revenue</div>
+          <div class="kpi-value accent">$48.10M</div>
+          <div class="kpi-sub">12 dual-role entities (Vendor + Customer)</div>
         </div>
+        <div class="kpi k-high">
+          <div class="kpi-label">Open Advances (GL Ind. 'A')</div>
+          <div class="kpi-value high">$48.05M</div>
+          <div class="kpi-sub">$28.95M on Severe / Override entities</div>
+        </div>
+        <div class="kpi k-crit">
+          <div class="kpi-label">Loans &amp; ICDs Extended</div>
+          <div class="kpi-value critical">$29.80M</div>
+          <div class="kpi-sub">9 flagged entities with direct loan/ICD exposure</div>
+        </div>
+      </div>
 
-        <div class="erp-table-wrap">
-          <table class="erp-tri-table">
+      <div class="filter-bar" id="erpFilterBar">
+        <button class="fchip on" onclick="filterErpTri(this, 'all')">All Medium + High + Severe (15)</button>
+        <button class="fchip" onclick="filterErpTri(this, 'sev')">Severe / Override (5)</button>
+        <button class="fchip" onclick="filterErpTri(this, 'high')">High Risk (8)</button>
+        <button class="fchip" onclick="filterErpTri(this, 'med')">Medium Risk (2)</button>
+        <button class="fchip" onclick="filterErpTri(this, 'loans')">With Loans / ICDs &gt; $0 (9)</button>
+        <button class="fchip" onclick="filterErpTri(this, 'dual')">Dual Relationship: Buy + Sell (12)</button>
+        <div class="spacer"></div>
+        <span class="hint">Click any counterparty row to open its full D7 profile &amp; embedded report</span>
+      </div>
+
+      <div class="card">
+        <div style="overflow-x:auto;">
+          <table>
             <thead>
               <tr>
-                <th>Counterparty & ID</th>
-                <th>D7 Band & Score</th>
-                <th>Purchases (P2P)</th>
-                <th>Sales (O2C)</th>
-                <th>Advances</th>
-                <th>Loans / ICDs</th>
-                <th>Total Business</th>
-                <th>High-Risk Relationship & ERP Contagion Flag</th>
+                <th style="width:20%;">Counterparty &amp; D7 Driver</th>
+                <th style="width:11%;">D7 Band &amp; Score</th>
+                <th style="width:9%;">Purchases (P2P)</th>
+                <th style="width:9%;">Sales (O2C)</th>
+                <th style="width:9%;">Advances</th>
+                <th style="width:9%;">Loans / ICDs</th>
+                <th style="width:10%;">Total Business</th>
+                <th style="width:23%;">Relationship &amp; Contagion Flag</th>
               </tr>
             </thead>
-            <tbody id="erp-tri-tbody"></tbody>
+            <tbody id="erpTriRows"></tbody>
           </table>
         </div>
-      `;
+      </div>
+    `;
 
-      if (mainContainer.tagName === 'MAIN' || mainContainer.classList.contains('content')) {
-        mainContainer.appendChild(erpSection);
-      } else {
-        mainContainer.parentElement.appendChild(erpSection);
-      }
-
-      function renderErpRows(filter) {
-        const tbody = document.getElementById('erp-tri-tbody');
-        const rows = ERP_DATA.filter(r => {
-          if (filter === 'ALL') return true;
-          if (filter === 'Severe' || filter === 'High' || filter === 'Medium') return r.band === filter;
-          if (filter === 'LOAN') return (r.advances + r.loans) >= 3.0;
-          if (filter === 'DUAL') return r.purchases > 0 && r.sales > 0;
-          return true;
-        });
-
-        tbody.innerHTML = rows.map(r => {
-          const total = r.purchases + r.sales + r.advances + r.loans;
-          const bClass = r.band.toLowerCase();
-          return `
-            <tr>
-              <td style="min-width:210px;">
-                <div style="font-weight:600;color:#0F172A;font-size:13px;">${r.party}</div>
-                <div class="erp-mono" style="color:#64748B;font-size:11px;margin-top:2px;">${r.id} · ${r.jur}</div>
-                <div style="color:#475569;font-size:11px;margin-top:3px;">${r.d7Driver}</div>
-              </td>
-              <td style="white-space:nowrap;">
-                <span class="erp-badge ${bClass}">● ${r.band} · ${r.score}</span>
-                <div class="erp-mono" style="font-size:10.5px;color:#B91C1C;margin-top:4px;font-weight:600;">${r.openApAr}</div>
-              </td>
-              <td class="erp-mono" style="font-weight:600;color:#0F172A;">${fmtM(r.purchases)}</td>
-              <td class="erp-mono" style="color:#1E40AF;font-weight:500;">${fmtM(r.sales)}</td>
-              <td class="erp-mono" style="color:${r.advances >= 3 ? '#C2410C' : '#334155'};font-weight:${r.advances >= 3 ? '600' : '400'};">${fmtM(r.advances)}</td>
-              <td class="erp-mono" style="color:${r.loans > 0 ? '#B91C1C' : '#64748B'};font-weight:${r.loans > 0 ? '600' : '400'};">${fmtM(r.loans)}</td>
-              <td class="erp-mono" style="font-weight:600;font-size:13px;color:#0F172A;background:#F8FAFC;">$${total.toFixed(2)}M</td>
-              <td style="min-width:300px;max-width:380px;">
-                <div><span class="rel-chip ${r.relSeverity}">${r.relType}</span></div>
-                <div style="font-size:11.5px;color:#334155;line-height:1.4;">${r.relDetail}</div>
-              </td>
-            </tr>
-          `;
-        }).join('');
-      }
-
-      renderErpRows('ALL');
-
-      // Filter button clicks
-      erpSection.querySelectorAll('.erp-filter-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          erpSection.querySelectorAll('.erp-filter-btn').forEach(b => b.classList.remove('active'));
-          this.classList.add('active');
-          renderErpRows(this.getAttribute('data-band'));
-        });
-      });
-
-      // Tab Switching Logic
-      const siblingPanels = Array.from(erpSection.parentElement.children).filter(el =>
-        el !== erpSection && (el.id.startsWith('tab-') || el.classList.contains('tab-pane') || el.classList.contains('view') || el.classList.contains('panel-view'))
-      );
-
-      erpTabBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        // Hide existing tab panels
-        document.querySelectorAll('[id^="tab-"], .tab-pane, .tab-panel, .view-pane').forEach(p => {
-          if (p !== erpSection) {
-            p.style.display = 'none';
-            p.classList.remove('active', 'on');
-          }
-        });
-        siblingPanels.forEach(p => {
-          if (!p.contains(tabBar)) p.style.display = 'none';
-        });
-        tabLinks.forEach(t => {
-          t.classList.remove('active', 'on', 'selected');
-          t.style.borderBottomColor = 'transparent';
-        });
-        erpTabBtn.classList.add('active', 'on');
-        erpTabBtn.style.borderBottom = '2px solid #2E5A8A';
-        erpTabBtn.style.color = '#2E5A8A';
-        erpSection.style.display = 'block';
-        erpSection.classList.add('active');
-      });
-
-      tabLinks.forEach(origTab => {
-        origTab.addEventListener('click', function() {
-          erpSection.style.display = 'none';
-          erpSection.classList.remove('active');
-          erpTabBtn.classList.remove('active', 'on');
-          erpTabBtn.style.borderBottom = 'none';
-          erpTabBtn.style.color = '';
-          // Restore default display so native showTab() works
-          document.querySelectorAll('[id^="tab-"]:not(#tab-erp-triangulation)').forEach(p => {
-            p.style.display = '';
-          });
-        });
-      });
-    }
+    mainEl.appendChild(erpContent);
+    renderErpTriTable('all');
   }
+
+  window.filterErpTri = function(btn, mode) {
+    document.querySelectorAll('#erpFilterBar .fchip').forEach(c => c.classList.remove('on'));
+    btn.classList.add('on');
+    renderErpTriTable(mode);
+  };
+
+  window.renderErpTriTable = function(mode) {
+    const tbody = document.getElementById('erpTriRows');
+    if (!tbody) return;
+    const rows = ERP_TRIANGULATION.filter(r => {
+      if (mode === 'all') return true;
+      if (mode === 'sev' || mode === 'high' || mode === 'med') return r.band === mode;
+      if (mode === 'loans') return r.loans > 0;
+      if (mode === 'dual') return r.purchases > 0 && r.sales > 0;
+      return true;
+    });
+
+    tbody.innerHTML = rows.map(r => {
+      const total = r.purchases + r.sales + r.advances + r.loans;
+      return `
+        <tr class="clickable" onclick="openCust('${r.key}')">
+          <td>
+            <div style="font-weight:600;color:var(--text);font-size:13px;">${r.name}</div>
+            <div class="mono" style="font-size:11px;color:var(--text-3);margin-top:2px;">${r.id} · ${r.jur}</div>
+            <div style="font-size:11.5px;color:var(--text-2);margin-top:4px;line-height:1.35;">${r.driver}</div>
+          </td>
+          <td style="white-space:nowrap;">
+            <span class="band b-${r.band}"><span class="d"></span>${r.bandLbl}</span>
+            <span class="scorechip" style="margin-left:6px;color:${scoreColor(r.score)};">${r.score}</span>
+            <div class="mono" style="font-size:10.5px;color:var(--critical);margin-top:5px;font-weight:600;">${r.apHold}</div>
+          </td>
+          <td class="mono" style="font-weight:600;color:var(--text);">${fmtUSD(r.purchases)}</td>
+          <td class="mono" style="color:var(--accent-dark);font-weight:500;">${fmtUSD(r.sales)}</td>
+          <td class="mono" style="color:${r.advances >= 3 ? 'var(--high)' : 'var(--text)'};font-weight:${r.advances >= 3 ? '600' : '400'};">${fmtUSD(r.advances)}</td>
+          <td class="mono" style="color:${r.loans > 0 ? 'var(--critical)' : 'var(--text-3)'};font-weight:${r.loans > 0 ? '600' : '400'};">${fmtUSD(r.loans)}</td>
+          <td class="mono" style="font-weight:600;font-size:13px;color:var(--text);background:#FAFBFC;">$${total.toFixed(2)}M</td>
+          <td>
+            <div><span class="erp-rel-badge ${r.relLvl}">${r.relFlag}</span></div>
+            <div style="font-size:11.5px;color:var(--text-2);line-height:1.42;">${r.relDesc}</div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  };
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', injectFixingAndTriangulation);
+    document.addEventListener('DOMContentLoaded', setupErpTriangulationTab);
   } else {
-    injectFixingAndTriangulation();
+    setupErpTriangulationTab();
   }
-  setTimeout(injectFixingAndTriangulation, 300);
 })();
 </script>
-<!-- ===== END FORTIFAI CUSTOS PATCH ===== -->
+<!-- ===== END FORTIFAI CUSTOS CLEAN NATIVE PATCH (v3) ===== -->
 </body>
 </html>
