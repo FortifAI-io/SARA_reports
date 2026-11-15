@@ -2034,5 +2034,71 @@ drawModel(PRESETS.corporate);
 })();
 </script>
 <!-- ===== END FORTIFAI CUSTOS CLEAN NATIVE PATCH (v3) ===== -->
+<!-- ===== CUSTOS PROFILE DECLUTTER PATCH ===== -->
+<style id="custos-profile-declutter-css">
+  /* Hide small-font grey source/formula sub-labels in counterparty detail view */
+  .sig-src, .sig-meta, .f-src, .f-sub, .ind-src, .dim-sub, .dim-meta,
+  .drv-lbl, .drv-txt, .primary-driver, .gauge-driver, .score-formula, .wt-mul {
+    display: none !important;
+  }
+</style>
+<script id="custos-profile-declutter-js">
+(function() {
+  const CLUTTER_RX = [
+    /^D7\s+Quick\s+Scan/i,
+    /^D7\s+UBO\s+Trace/i,
+    /^D7\s+Screen/i,
+    /^D7\s+CDD/i,
+    /^DETECTED\s*[·•-]\s*D7$/i,
+    /^CLEAR\s*[·•-]\s*D7$/i,
+    /^PRIMARY\s+DRIVER$/i,
+    /^Harmonised:\s*Base/i,
+    /^Harmonized:\s*Base/i,
+    /sub-score\s*[×x*]\s*weight/i,
+    /SOE\s+weights/i,
+    /^[×x]\s*\d+%$/i
+  ];
+
+  function cleanCustosDetail() {
+    document.querySelectorAll('div, span, small, p').forEach(el => {
+      if (el.children.length > 2) return;
+      if (el.closest('thead, nav, .subtabs, .topbar')) return;
+
+      const txt = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!txt || txt.length > 180) return;
+
+      // 1. Direct match against known small-font metadata patterns
+      if (CLUTTER_RX.some(rx => rx.test(txt))) {
+        // Never hide the yellow top escalation alert banner itself
+        if (txt.length < 145 && !txt.includes('Entity watchlists and China QCC')) {
+          el.style.setProperty('display', 'none', 'important');
+          return;
+        }
+      }
+
+      // 2. Catch any remaining <=11.5px muted/monospace source lines under bullet items
+      if (el.children.length === 0 && el.previousElementSibling) {
+        const st = window.getComputedStyle(el);
+        const fs = parseFloat(st.fontSize || '13');
+        const fam = (st.fontFamily || '').toLowerCase();
+        if (fs <= 11.5 && (fam.includes('mono') || txt.includes(' · ')) && /^(D7|Signzy|QCC|SAP|Custos|Source|Sec\s+\d)/i.test(txt)) {
+          el.style.setProperty('display', 'none', 'important');
+        }
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', cleanCustosDetail);
+  else cleanCustosDetail();
+  window.addEventListener('load', () => { cleanCustosDetail(); setTimeout(cleanCustosDetail, 250); });
+
+  let tm;
+  new MutationObserver(() => {
+    clearTimeout(tm);
+    tm = setTimeout(cleanCustosDetail, 40);
+  }).observe(document.documentElement, { childList: true, subtree: true });
+})();
+</script>
+<!-- ===== END CUSTOS PROFILE DECLUTTER PATCH ===== -->
 </body>
 </html>
