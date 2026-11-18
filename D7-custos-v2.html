@@ -365,6 +365,12 @@ td .cust{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--tex
         <span class="topbar-sub">Acme Inc. · Global Third-Party &amp; Supplier Portfolio · 2,840 counterparties</span>
       </div>
       <div class="topbar-right">
+        <div style="position:relative;display:inline-flex;align-items:center;">
+          <input id="globalSearchInput" type="text" placeholder="Global search: party, ID, bank, UBO, PO... (⌘K)"
+            style="width:290px;padding:6px 12px 6px 30px;border-radius:6px;border:1px solid rgba(255,255,255,0.22);background:rgba(255,255,255,0.10);color:#F8FAFC;font-size:12px;outline:none;" />
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#94A3B8" stroke-width="2" style="position:absolute;left:10px;pointer-events:none;"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <div id="globalSearchDrop" style="display:none;position:absolute;top:36px;right:0;width:430px;max-height:420px;overflow-y:auto;background:#FFFFFF;color:#0F172A;border:1px solid #CBD5E1;border-radius:8px;box-shadow:0 12px 32px rgba(15,23,42,0.22);z-index:9999;text-align:left;"></div>
+        </div>
         <span class="preset-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>Enterprise Corporate model</span>
         <span class="plan-pill">2,840 / 5,000</span>
       </div>
@@ -615,37 +621,6 @@ td .cust{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--tex
       </div>
     </div>
     <div class="modal-body" id="modalContent"></div>
-  </div>
-</div>
-
-<!-- FLOATING QUANTUM QUERY ASSISTANT -->
-<button class="qq-fab" onclick="toggleQQ()" title="Open QuantumQuery D7 AI Assist">
-  D<sub>7</sub>
-  <span class="qq-fab-dot"></span>
-</button>
-
-<div class="qq-drawer" id="qqDrawer">
-  <div class="qq-head">
-    <div>
-      <div style="font-weight:600;font-size:14px;">QuantumQuery · D7 AI Assist · Acme Inc.</div>
-      <div style="font-size:10.5px;color:rgba(255,255,255,0.55);">Synced with 2,840 Counterparties &amp; Embedded D7 Reports</div>
-    </div>
-    <button style="background:none;border:none;color:#fff;font-size:16px;" onclick="toggleQQ()">✕</button>
-  </div>
-  <div class="qq-msgs" id="qqMsgs">
-    <div class="qq-msg bot">
-      <b>Welcome to QuantumQuery (Acme Inc. Enterprise Workspace).</b><br>I have full context across all <b>18 profiled corporate counterparties</b> and their embedded <b>D7 Due Diligence &amp; Quick Scan Reports</b> (including <i>Shanghai Electric Power Generation Equipment Co., Ltd.</i> and <i>The Brink's Company</i>).
-    </div>
-  </div>
-  <div class="qq-chips">
-    <button class="qq-chip" onclick="askQQ('How did you harmonise Shanghai Electric from 3.75 Low to 68 High (CDD Required)?')">Shanghai Electric Harmonisation</button>
-    <button class="qq-chip" onclick="askQQ('Explain the UBO trace on Shanghai Electric (60.01% vs 40%)')">Shanghai UBO Trace</button>
-    <button class="qq-chip" onclick="askQQ('Why is The Brinks Company rated 7.45 High if Global Screening is 1.0 Clear?')">Brink's 7.45 Floor Rule</button>
-    <button class="qq-chip" onclick="askQQ('Which entities have Block & Escalate overrides?')">Block &amp; Escalate List</button>
-  </div>
-  <div class="qq-input-row">
-    <input type="text" id="qqInput" placeholder="Ask about Shanghai Electric, Zheng Jianhua, Brink's DOJ NPA, or UBOs..." onkeydown="if(event.key==='Enter')sendQQ()" />
-    <button class="btn-act" style="background:#993467;" onclick="sendQQ()">Ask</button>
   </div>
 </div>
 
@@ -1540,500 +1515,7 @@ renderAlerts();
 drawModel(PRESETS.corporate);
 </script>
 
-<!-- ===== FORTIFAI CUSTOS CLEAN NATIVE PATCH (v3) ===== -->
-<style>
-  /* 1. Hide ONLY the left <nav class="sidebar"> and reset .main margin */
-  nav.sidebar {
-    display: none !important;
-  }
-  .main {
-    margin-left: 0 !important;
-    width: 100% !important;
-  }
 
-  /* 2. Standard Fortifai Navy Header Bar (#0D1520) */
-  .topbar {
-    background: #0D1520 !important;
-    border-bottom: 1px solid #1E293B !important;
-    color: #FFFFFF !important;
-  }
-  .topbar-d7-wordmark {
-    color: #FFFFFF !important;
-  }
-  .topbar-d7-wordmark sub {
-    color: #6699CC !important;
-  }
-  .topbar-divider {
-    background: rgba(255, 255, 255, 0.18) !important;
-  }
-  .topbar-title {
-    color: #FFFFFF !important;
-  }
-  .topbar-sub {
-    color: #94A3B8 !important;
-  }
-  .preset-pill, .plan-pill {
-    background: rgba(255, 255, 255, 0.08) !important;
-    color: #E2E8F0 !important;
-    border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  }
-
-  /* 3. Fix ONLY the Monitored Parties Table (#tab-customers) — leaves Dashboard 100% untouched */
-  #tab-customers table {
-    width: 100% !important;
-    table-layout: fixed !important;
-  }
-  #tab-customers thead th:nth-child(1), #tab-customers tbody td:nth-child(1) { width: 22% !important; }
-  #tab-customers thead th:nth-child(2), #tab-customers tbody td:nth-child(2) { width: 15% !important; white-space: nowrap !important; }
-  #tab-customers thead th:nth-child(3), #tab-customers tbody td:nth-child(3) { width: 13% !important; white-space: nowrap !important; }
-  #tab-customers thead th:nth-child(4), #tab-customers tbody td:nth-child(4) { width: 28% !important; max-width: none !important; white-space: normal !important; line-height: 1.45 !important; }
-  #tab-customers thead th:nth-child(5), #tab-customers tbody td:nth-child(5) { width: 6%  !important; }
-  #tab-customers thead th:nth-child(6), #tab-customers tbody td:nth-child(6) { width: 10% !important; white-space: nowrap !important; }
-  #tab-customers thead th:nth-child(7), #tab-customers tbody td:nth-child(7) { width: 6%  !important; white-space: nowrap !important; }
-
-  /* 4. ERP Triangulation Tab Styles (matches native Custos look & feel) */
-  #tab-erp .erp-rel-badge {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 4px;
-    margin-bottom: 4px;
-  }
-  #tab-erp .erp-rel-badge.crit { background: var(--fail-bg); color: var(--fail-fg); border: 1px solid #F3C9C9; }
-  #tab-erp .erp-rel-badge.high { background: var(--refer-bg); color: var(--refer-fg); border: 1px solid #F5D9B8; }
-  #tab-erp .erp-rel-badge.med  { background: var(--pass-bg); color: var(--pass-fg); }
-  #tab-erp table th, #tab-erp table td {
-    padding: 11px 14px;
-    vertical-align: top;
-  }
-</style>
-
-<script>
-(function() {
-  // Medium & High/Severe entities from Custos book triangulated with dummy SAP ERP business transactions
-  const ERP_TRIANGULATION = [
-    {
-      key: 'db-realty',
-      name: 'DB Realty Ltd',
-      id: 'FORT10010 · CIN L70200MH2007',
-      jur: 'India',
-      score: 91,
-      band: 'sev',
-      bandLbl: 'Severe',
-      driver: 'ED PMLA attachment + CBI 2G chargesheet on promoter UBOs',
-      purchases: 18.40,
-      sales: 4.20,
-      advances: 6.80,
-      loans: 12.50,
-      apHold: '$1.95M F110 Hold',
-      relFlag: 'Dual Role (JV Developer + Unsecured ICD Borrower)',
-      relLvl: 'crit',
-      relDesc: 'Unsecured Inter-Corporate Deposit (ICD) loan of $12.50M + $6.80M mobilization advance open with entity under active ED PMLA attachment; shared promoter DIN with 2 civil sub-contractors.'
-    },
-    {
-      key: 'rattan-india',
-      name: 'Rattan India Power Ltd',
-      id: 'FORT10007 · CIN L40101DL2007',
-      jur: 'India',
-      score: 82,
-      band: 'sev',
-      bandLbl: 'Severe',
-      driver: 'RBI Caution List (₹4,200 Cr NPA) + Unreported Mauritius SPV (12.4%)',
-      purchases: 24.60,
-      sales: 0.00,
-      advances: 5.10,
-      loans: 3.40,
-      apHold: '$1.12M F110 Hold',
-      relFlag: 'Critical Utility Supplier + Unadjusted Advance & Bridge Loan',
-      relLvl: 'crit',
-      relDesc: '$24.60M power/utility purchases + $5.10M unadjusted vendor advance (SAP Special GL Ind. A > 180d) + $3.40M working-capital bridge facility.'
-    },
-    {
-      key: 'simplex-infra',
-      name: 'Simplex Infrastructures Ltd',
-      id: 'FORT10002 · CIN L45200WB1924',
-      jur: 'India',
-      score: 78,
-      band: 'sev',
-      bandLbl: 'Severe',
-      driver: 'GSTIN Suspended (8 defaults) + ICRA Default (D) rating',
-      purchases: 14.10,
-      sales: 1.90,
-      advances: 3.70,
-      loans: 0.80,
-      apHold: '$0.88M F110 Hold',
-      relFlag: 'EPC Contractor with Unrecovered Mobilization Advance',
-      relLvl: 'crit',
-      relDesc: '$3.70M unamortized mobilization advance + $1.90M equipment back-charges at high write-off risk due to ICRA Default (D) and GSTIN suspension.'
-    },
-    {
-      key: 'brinks-co',
-      name: "The Brink's Company",
-      id: 'FORT260002 · NYSE: BCO',
-      jur: 'United States',
-      score: 75,
-      band: 'high',
-      bandLbl: 'High',
-      driver: 'DOJ NPA ($25M) + FinCEN Consent Order ($17M) on BGS sub',
-      purchases: 19.80,
-      sales: 1.40,
-      advances: 0.85,
-      loans: 0.00,
-      apHold: '$0.90M Monitor Check',
-      relFlag: 'Global Custody & CIT Logistics Partner (Active DOJ Monitor)',
-      relLvl: 'high',
-      relDesc: 'Handles high-value vaulting & transit across 14 plants; Subsidiary BGS under active 3-year DOJ/FinCEN compliance monitor through Jan 2028.'
-    },
-    {
-      key: 'anand-brothers',
-      name: 'Anand & Brothers',
-      id: 'FORT10018 · Unreg Partnership',
-      jur: 'India',
-      score: 74,
-      band: 'high',
-      bandLbl: 'High',
-      driver: 'GST Suspended (6 defaults) + 11 MSME delays + Unregistered partnership',
-      purchases: 9.40,
-      sales: 0.00,
-      advances: 2.85,
-      loans: 0.65,
-      apHold: '$0.42M Blocked',
-      relFlag: 'Pass-Through MRO Conduit (Single-Buyer Concentration)',
-      relLvl: 'crit',
-      relDesc: '86% of POs issued by a single buyer (EKKO.ERNAM); $2.85M advance paid despite suspended GSTIN and unregistered partnership structure.'
-    },
-    {
-      key: 'hcc-ltd',
-      name: 'Hindustan Construction Co Ltd',
-      id: 'FORT10013 · CIN L45200MH1926',
-      jur: 'India',
-      score: 71,
-      band: 'high',
-      bandLbl: 'High',
-      driver: '22 MSME payment delays + High litigation & regulatory score (7.1)',
-      purchases: 21.30,
-      sales: 3.10,
-      advances: 4.40,
-      loans: 1.50,
-      apHold: '$0.64M Retention',
-      relFlag: 'Turnkey Civil EPC Partner + Two-Way Materials Billing',
-      relLvl: 'high',
-      relDesc: '$21.30M civil works spend + $3.10M structural steel sold to HCC on credit + $4.40M open mobilization advance.'
-    },
-    {
-      key: 'shanghai-electric',
-      name: 'Shanghai Electric Power Generation Equipment Co., Ltd.',
-      id: 'FORT10083 · USC 91310000071788037S3',
-      jur: 'China',
-      score: 68,
-      band: 'high',
-      bandLbl: 'High',
-      driver: 'Ex-Legal Rep Death-Reprieve Bribery Conviction (9/10) + 60.01% SASAC SOE',
-      purchases: 32.50,
-      sales: 6.10,
-      advances: 8.90,
-      loans: 0.00,
-      apHold: 'CDD Required',
-      relFlag: 'Sino-Foreign JV Partner + Capital Turbine OEM (SOE)',
-      relLvl: 'crit',
-      relDesc: '$32.50M turbine/generator procurement + $8.90M LC/capital advance + $6.10M sub-assembly sales; requires ABAC/Sapin II & FCPA safeguards.'
-    },
-    {
-      key: 'meridian-nominee',
-      name: 'Meridian Nominee Holdings Ltd',
-      id: 'FORT10194 · BVI Reg 204918',
-      jur: 'British Virgin Islands',
-      score: 64,
-      band: 'sev',
-      bandLbl: 'Severe',
-      driver: 'Sanctioned beneficial owner (OFAC SDN) behind BVI nominee structure',
-      purchases: 7.80,
-      sales: 3.90,
-      advances: 4.50,
-      loans: 6.00,
-      apHold: '$1.20M Wire Freeze',
-      relFlag: 'Offshore Commission Agent + Cross-Border Loan (SDN UBO)',
-      relLvl: 'crit',
-      relDesc: '$4.50M marketing advance + $6.00M cross-border loan + $11.70M two-way trade routed through BVI shell linked to OFAC SDN beneficial owner.'
-    },
-    {
-      key: 'transformers-rectifiers',
-      name: 'Transformers & Rectifiers (India) Ltd',
-      id: 'FORT10001 · CIN L31300GJ1994',
-      jur: 'India',
-      score: 63,
-      band: 'sev',
-      bandLbl: 'Severe',
-      driver: 'World Bank Debarment List match (0.96) + 69 MSME delays + MD NSDL freeze',
-      purchases: 15.60,
-      sales: 0.80,
-      advances: 1.90,
-      loans: 0.00,
-      apHold: 'MDB Disqualified',
-      relFlag: 'Single-Source HV Transformer OEM (World Bank Debarred)',
-      relLvl: 'crit',
-      relDesc: 'Supplies 68% of plant 220kV transformers ($15.60M P2P); World Bank debarment triggers covenant breach on MDB-financed capex projects.'
-    },
-    {
-      key: 'zee-entertainment',
-      name: 'Zee Entertainment Enterprises Ltd',
-      id: 'FORT10085 · Public Limited',
-      jur: 'India',
-      score: 59,
-      band: 'high',
-      bandLbl: 'High',
-      driver: 'Critical litigation & SEBI governance enforcement risk (Score 5.85)',
-      purchases: 4.50,
-      sales: 16.80,
-      advances: 0.40,
-      loans: 2.20,
-      apHold: '$4.60M Overdue AR',
-      relFlag: 'Major O2C Customer + Ad-Barter & ICD Counterparty',
-      relLvl: 'high',
-      relDesc: 'Primary O2C relationship: $16.80M billed revenue ($4.60M AR > 90d overdue in SAP BSID) + $4.50M media purchases + $2.20M ICD rollover.'
-    },
-    {
-      key: 'patel-engineering',
-      name: 'Patel Engineering Ltd',
-      id: 'FORT10012 · Public Limited',
-      jur: 'India',
-      score: 58,
-      band: 'high',
-      bandLbl: 'High',
-      driver: '15 MSME supplier delays + Elevated regulatory & litigation score (5.8)',
-      purchases: 11.80,
-      sales: 1.20,
-      advances: 2.10,
-      loans: 0.00,
-      apHold: '$0.35M Open AP',
-      relFlag: 'Hydro & Tunneling Subcontractor (Advance Exposure)',
-      relLvl: 'high',
-      relDesc: '$11.80M civil subcontracting + $2.10M equipment mobilization advance; requires milestone-linked bank guarantee step-up.'
-    },
-    {
-      key: 'rajesh-sharma-assoc',
-      name: 'Rajesh Sharma & Associates',
-      id: 'FORT10011 · Partnership',
-      jur: 'India',
-      score: 55,
-      band: 'high',
-      bandLbl: 'High',
-      driver: '3 GST filing defaults + 8 MSME delays + Unregistered partnership (Score 5.5)',
-      purchases: 6.20,
-      sales: 0.00,
-      advances: 1.45,
-      loans: 0.35,
-      apHold: '$0.22M Open AP',
-      relFlag: 'Electrical Works Partnership (Repeat Advance Rollovers)',
-      relLvl: 'high',
-      relDesc: 'Unregistered partnership with $6.20M electrical contracting spend and $1.80M combined advances/short-term loans.'
-    },
-    {
-      key: 'sterling-wilson',
-      name: 'Sterling & Wilson Pvt Ltd',
-      id: 'FORT10008 · CIN U74999MH2017',
-      jur: 'India',
-      score: 51,
-      band: 'high',
-      bandLbl: 'High',
-      driver: 'Promoter group debt overhang + 4 MSME delays (D7 Score 5.1)',
-      purchases: 13.40,
-      sales: 2.90,
-      advances: 2.20,
-      loans: 2.50,
-      apHold: 'Limit Exposure',
-      relFlag: 'Solar EPC Partner + Group Inter-Corporate Loan',
-      relLvl: 'high',
-      relDesc: '$13.40M MEP/solar EPC purchases + $2.90M component sales + $2.50M inter-corporate loan exposure to promoter group.'
-    },
-    {
-      key: 'ncc-ltd',
-      name: 'NCC Ltd',
-      id: 'FORT10006 · CIN L72200TG1990',
-      jur: 'India',
-      score: 46,
-      band: 'med',
-      bandLbl: 'Medium',
-      driver: '12 MSME delays + Moderate litigation; CRISIL A+ Positive upgrade (Score 4.6)',
-      purchases: 16.50,
-      sales: 3.40,
-      advances: 1.80,
-      loans: 0.00,
-      apHold: 'Standard Terms',
-      relFlag: 'Tier-1 Civil Infrastructure Contractor (Dual Book)',
-      relLvl: 'med',
-      relDesc: '$16.50M capex construction spend + $3.40M material off-take; credit profile improving (CRISIL A+).'
-    },
-    {
-      key: 'schindler-india',
-      name: 'Schindler India Private Limited',
-      id: 'FORT10084 · Private Limited',
-      jur: 'India',
-      score: 37,
-      band: 'med',
-      bandLbl: 'Medium',
-      driver: 'Low/Medium risk with routine litigation; UBO Trace verified (Score 3.74)',
-      purchases: 12.30,
-      sales: 2.40,
-      advances: 1.10,
-      loans: 0.00,
-      apHold: 'Approved',
-      relFlag: 'OEM Elevator Partner + Commercial Lessee (UBO Verified)',
-      relLvl: 'med',
-      relDesc: 'UBO TRACE ✓ verified (Schindler Holding AG); $12.30M elevator capex/AMC spend + $2.40M commercial property lease billing.'
-    }
-  ];
-
-  function fmtUSD(val) {
-    return val > 0 ? '$' + val.toFixed(2) + 'M' : '—';
-  }
-
-  function setupErpTriangulationTab() {
-    const subtabs = document.querySelector('.subtabs');
-    const mainEl = document.querySelector('.main');
-    if (!subtabs || !mainEl || document.getElementById('tab-erp')) return;
-
-    // 1. Add the subtab button right after "Monitored Parties"
-    const custTab = subtabs.querySelector('.subtab[data-tab="customers"]');
-    const erpSubtab = document.createElement('div');
-    erpSubtab.className = 'subtab';
-    erpSubtab.setAttribute('data-tab', 'erp');
-    erpSubtab.setAttribute('onclick', "showTab('erp')");
-    erpSubtab.innerHTML = 'ERP Exposure &amp; Triangulation <span class="count urgent">' + ERP_TRIANGULATION.length + '</span>';
-
-    if (custTab && custTab.nextSibling) {
-      subtabs.insertBefore(erpSubtab, custTab.nextSibling);
-    } else {
-      subtabs.appendChild(erpSubtab);
-    }
-
-    // 2. Create the <div class="content" id="tab-erp"> container using native Custos classes
-    const erpContent = document.createElement('div');
-    erpContent.className = 'content';
-    erpContent.id = 'tab-erp';
-    erpContent.innerHTML = `
-      <div class="page-lead">
-        Triangulates <b>Medium, High, and Severe D7 / Custos counterparties (Score ≥ 37)</b> against live SAP ERP subledgers — <b>Purchases (P2P · EKKO/RBKP)</b>, <b>Sales Revenue (O2C · VBAK/VBRK)</b>, <b>Vendor Advances (BSEG Special GL Ind. 'A')</b>, and <b>Inter-Corporate Loans / ICDs (BKPF/BSEG)</b> — to quantify total business volume and flag high-risk counterparty relationships. (Low-risk entities &lt; 25 are excluded.)
-      </div>
-
-      <div class="kpi-row">
-        <div class="kpi k-crit">
-          <div class="kpi-label">Total Triangulated Business</div>
-          <div class="kpi-value critical">$354.15M</div>
-          <div class="kpi-sub">across 15 Medium, High &amp; Severe entities</div>
-        </div>
-        <div class="kpi k-high">
-          <div class="kpi-label">Purchases / P2P Spend</div>
-          <div class="kpi-value">$228.20M</div>
-          <div class="kpi-sub">64.4% of total counterparty exposure</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-label">Sales / O2C Revenue</div>
-          <div class="kpi-value accent">$48.10M</div>
-          <div class="kpi-sub">12 dual-role entities (Vendor + Customer)</div>
-        </div>
-        <div class="kpi k-high">
-          <div class="kpi-label">Open Advances (GL Ind. 'A')</div>
-          <div class="kpi-value high">$48.05M</div>
-          <div class="kpi-sub">$28.95M on Severe / Override entities</div>
-        </div>
-        <div class="kpi k-crit">
-          <div class="kpi-label">Loans &amp; ICDs Extended</div>
-          <div class="kpi-value critical">$29.80M</div>
-          <div class="kpi-sub">9 flagged entities with direct loan/ICD exposure</div>
-        </div>
-      </div>
-
-      <div class="filter-bar" id="erpFilterBar">
-        <button class="fchip on" onclick="filterErpTri(this, 'all')">All Medium + High + Severe (15)</button>
-        <button class="fchip" onclick="filterErpTri(this, 'sev')">Severe / Override (5)</button>
-        <button class="fchip" onclick="filterErpTri(this, 'high')">High Risk (8)</button>
-        <button class="fchip" onclick="filterErpTri(this, 'med')">Medium Risk (2)</button>
-        <button class="fchip" onclick="filterErpTri(this, 'loans')">With Loans / ICDs &gt; $0 (9)</button>
-        <button class="fchip" onclick="filterErpTri(this, 'dual')">Dual Relationship: Buy + Sell (12)</button>
-        <div class="spacer"></div>
-        <span class="hint">Click any counterparty row to open its full D7 profile &amp; embedded report</span>
-      </div>
-
-      <div class="card">
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:20%;">Counterparty &amp; D7 Driver</th>
-                <th style="width:11%;">D7 Band &amp; Score</th>
-                <th style="width:9%;">Purchases (P2P)</th>
-                <th style="width:9%;">Sales (O2C)</th>
-                <th style="width:9%;">Advances</th>
-                <th style="width:9%;">Loans / ICDs</th>
-                <th style="width:10%;">Total Business</th>
-                <th style="width:23%;">Relationship &amp; Contagion Flag</th>
-              </tr>
-            </thead>
-            <tbody id="erpTriRows"></tbody>
-          </table>
-        </div>
-      </div>
-    `;
-
-    mainEl.appendChild(erpContent);
-    renderErpTriTable('all');
-  }
-
-  window.filterErpTri = function(btn, mode) {
-    document.querySelectorAll('#erpFilterBar .fchip').forEach(c => c.classList.remove('on'));
-    btn.classList.add('on');
-    renderErpTriTable(mode);
-  };
-
-  window.renderErpTriTable = function(mode) {
-    const tbody = document.getElementById('erpTriRows');
-    if (!tbody) return;
-    const rows = ERP_TRIANGULATION.filter(r => {
-      if (mode === 'all') return true;
-      if (mode === 'sev' || mode === 'high' || mode === 'med') return r.band === mode;
-      if (mode === 'loans') return r.loans > 0;
-      if (mode === 'dual') return r.purchases > 0 && r.sales > 0;
-      return true;
-    });
-
-    tbody.innerHTML = rows.map(r => {
-      const total = r.purchases + r.sales + r.advances + r.loans;
-      return `
-        <tr class="clickable" onclick="openCust('${r.key}')">
-          <td>
-            <div style="font-weight:600;color:var(--text);font-size:13px;">${r.name}</div>
-            <div class="mono" style="font-size:11px;color:var(--text-3);margin-top:2px;">${r.id} · ${r.jur}</div>
-            <div style="font-size:11.5px;color:var(--text-2);margin-top:4px;line-height:1.35;">${r.driver}</div>
-          </td>
-          <td style="white-space:nowrap;">
-            <span class="band b-${r.band}"><span class="d"></span>${r.bandLbl}</span>
-            <span class="scorechip" style="margin-left:6px;color:${scoreColor(r.score)};">${r.score}</span>
-            <div class="mono" style="font-size:10.5px;color:var(--critical);margin-top:5px;font-weight:600;">${r.apHold}</div>
-          </td>
-          <td class="mono" style="font-weight:600;color:var(--text);">${fmtUSD(r.purchases)}</td>
-          <td class="mono" style="color:var(--accent-dark);font-weight:500;">${fmtUSD(r.sales)}</td>
-          <td class="mono" style="color:${r.advances >= 3 ? 'var(--high)' : 'var(--text)'};font-weight:${r.advances >= 3 ? '600' : '400'};">${fmtUSD(r.advances)}</td>
-          <td class="mono" style="color:${r.loans > 0 ? 'var(--critical)' : 'var(--text-3)'};font-weight:${r.loans > 0 ? '600' : '400'};">${fmtUSD(r.loans)}</td>
-          <td class="mono" style="font-weight:600;font-size:13px;color:var(--text);background:#FAFBFC;">$${total.toFixed(2)}M</td>
-          <td>
-            <div><span class="erp-rel-badge ${r.relLvl}">${r.relFlag}</span></div>
-            <div style="font-size:11.5px;color:var(--text-2);line-height:1.42;">${r.relDesc}</div>
-          </td>
-        </tr>
-      `;
-    }).join('');
-  };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupErpTriangulationTab);
-  } else {
-    setupErpTriangulationTab();
-  }
-})();
-</script>
-<!-- ===== END FORTIFAI CUSTOS CLEAN NATIVE PATCH (v3) ===== -->
 <!-- ===== CUSTOS PROFILE DECLUTTER PATCH ===== -->
 <style id="custos-profile-declutter-css">
   /* Hide small-font grey source/formula sub-labels in counterparty detail view */
@@ -2100,5 +1582,1431 @@ drawModel(PRESETS.corporate);
 })();
 </script>
 <!-- ===== END CUSTOS PROFILE DECLUTTER PATCH ===== -->
+
+
+
+
+
+
+
+
+
+
+<!-- ===== FORTIFAI CUSTOS UAT ENHANCEMENT SUITE (v7) ===== -->
+<style>
+  /* Hide duplicate inner left sidebar & style Fortifai Navy topbar */
+  nav.sidebar { display: none !important; }
+  .main { margin-left: 0 !important; width: 100% !important; }
+  .topbar { background: #0D1520 !important; border-bottom: 1px solid #1E293B !important; color: #FFFFFF !important; }
+  .topbar-d7-wordmark { color: #FFFFFF !important; }
+  .topbar-d7-wordmark sub { color: #6699CC !important; }
+  .topbar-divider { background: rgba(255,255,255,0.18) !important; }
+  .topbar-title { color: #FFFFFF !important; }
+  .topbar-sub { color: #94A3B8 !important; }
+  .preset-pill, .plan-pill { background: rgba(255,255,255,0.08) !important; color: #E2E8F0 !important; border: 1px solid rgba(255,255,255,0.16) !important; }
+
+  /* 1. CLEAN FILTER BAR & SINGLE-STATE RESOLUTION COLUMN */
+  #tab-customers .filter-bar {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    row-gap: 10px !important;
+    margin-bottom: 14px !important;
+  }
+  .f-divider {
+    width: 1px; height: 22px; background: #CBD5E1; margin: 0 2px;
+  }
+  #tab-customers table { width: 100% !important; table-layout: auto !important; border-collapse: collapse !important; }
+  #tab-customers thead th { padding: 11px 12px !important; white-space: nowrap !important; font-size: 10.5px !important; }
+  #tab-customers tbody td { padding: 12px 12px !important; vertical-align: middle !important; line-height: 1.45 !important; }
+  #tab-customers tbody td:nth-child(1) { min-width: 210px; max-width: 255px; }
+  #tab-customers tbody td:nth-child(2) { min-width: 145px; white-space: normal !important; }
+  #tab-customers tbody td:nth-child(3) { min-width: 135px; white-space: normal !important; }
+  #tab-customers tbody td:nth-child(4) { min-width: 245px; max-width: 320px; white-space: normal !important; }
+  #tab-customers tbody td:nth-child(5) { min-width: 52px;  text-align: center !important; }
+  #tab-customers tbody td:nth-child(6) { min-width: 105px; white-space: normal !important; }
+  #tab-customers tbody td:nth-child(7) { min-width: 70px;  white-space: nowrap !important; }
+  #tab-customers tbody td:nth-child(8) { min-width: 135px; white-space: nowrap !important; }
+
+  /* Single-State Resolution Select Pill */
+  .res-select {
+    appearance: none; -webkit-appearance: none;
+    padding: 5px 24px 5px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 600;
+    cursor: pointer; outline: none; font-family: inherit; transition: all 0.15s;
+    background-repeat: no-repeat; background-position: right 8px center; background-size: 10px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  }
+  .res-select.st-approved {
+    background-color: #EEF2DC; color: #3A4400; border: 1px solid #C5D38A;
+  }
+  .res-select.st-escalated {
+    background-color: #FFF1E0; color: #B14F00; border: 1px solid #F5CBA7;
+  }
+  .res-select.st-rejected {
+    background-color: #FBE3E3; color: #9B1F1F; border: 1px solid #F3C9C9;
+  }
+  .res-select.st-blank {
+    background-color: #F8FAFC; color: #94A3B8; border: 1px dashed #CBD5E1; font-weight: 500;
+  }
+
+  /* Deep-Dive Entity Header Resolution Bar */
+  .dd-res-bar {
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    background: #FFFFFF; border: 1px solid #CBD5E1; border-left: 4px solid #2E5A8A;
+    border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; box-shadow: 0 2px 6px rgba(15,23,42,0.04);
+  }
+  .dd-res-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .dd-act-btn {
+    padding: 6px 13px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;
+    border: 1px solid #CBD5E1; background: #FFFFFF; color: #334155; transition: all 0.14s;
+  }
+  .dd-act-btn:hover { background: #F8FAFC; }
+  .dd-act-btn.approve.active  { background: #15803D; border-color: #15803D; color: #FFFFFF; }
+  .dd-act-btn.escalate.active { background: #D97706; border-color: #D97706; color: #FFFFFF; }
+  .dd-act-btn.reject.active   { background: #B91C1C; border-color: #B91C1C; color: #FFFFFF; }
+
+  /* 2. REFINED HOVER POPOVERS */
+  .exp-tile, .dim-tile { position: relative; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+  .exp-tile:hover, .dim-tile:hover { border-color: #2E5A8A; box-shadow: 0 6px 18px rgba(13,21,32,0.10); z-index: 35; }
+  .exp-tile::after, .dim-tile::after { content: ''; position: absolute; left: 0; right: 0; bottom: -12px; height: 14px; display: none; }
+  .exp-tile:hover::after, .dim-tile:hover::after { display: block; }
+  .custos-pop {
+    display: none; position: absolute; top: calc(100% + 8px); left: 0; width: 340px;
+    background: #FFFFFF; color: #0F172A; border: 1px solid #CBD5E1; border-top: 3px solid #2E5A8A;
+    border-radius: 8px; padding: 14px 16px; box-shadow: 0 14px 34px rgba(13,21,32,0.20);
+    z-index: 50; font-size: 12px; line-height: 1.45; text-align: left; cursor: default;
+  }
+  .custos-pop.crit { border-top-color: #C62828; }
+  .custos-pop.high { border-top-color: #E65100; }
+  .exp-tile:nth-child(n+5) .custos-pop, .dim-tile:nth-child(n+4) .custos-pop { left: auto; right: 0; }
+  .exp-tile:hover .custos-pop, .dim-tile:hover .custos-pop { display: block; }
+  .pop-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid #F1F5F9; }
+  .pop-title { font-weight: 600; font-size: 12.5px; color: #0F172A; }
+  .pop-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: #F1F5F9; color: #475569; }
+  .pop-row { padding: 6px 0; border-bottom: 1px solid #F8FAFC; }
+  .pop-row:last-of-type { border-bottom: none; }
+  .pop-ent { font-weight: 600; color: #0F172A; font-size: 12px; display: flex; justify-content: space-between; }
+  .pop-meta { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #64748B; margin-top: 2px; }
+  .pop-footer { margin-top: 10px; padding-top: 9px; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; }
+  .pop-cta { display: inline-flex; align-items: center; gap: 4px; padding: 5px 11px; border-radius: 5px; background: #0D1520; color: #FFFFFF !important; font-weight: 600; font-size: 11px; text-decoration: none; }
+  .pop-cta:hover { background: #2E5A8A; }
+
+  /* 3. ERP TRIANGULATION & PHOENIX BADGES */
+  .erp-rel-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-bottom: 4px; }
+  .erp-rel-badge.crit { background: var(--fail-bg); color: var(--fail-fg); border: 1px solid #F3C9C9; }
+  .erp-rel-badge.high { background: var(--refer-bg); color: var(--refer-fg); border: 1px solid #F5D9B8; }
+  .erp-rel-badge.med  { background: var(--pass-bg); color: var(--pass-fg); }
+
+  /* 4. 3D INTERACTIVE NETWORK GRAPH WORKSPACE */
+  .net-layout { display: grid; grid-template-columns: 1fr 345px; gap: 16px; }
+  .net-canvas-3d {
+    background: radial-gradient(circle at 50% 42%, #17253B 0%, #0B1220 72%, #060A12 100%);
+    border: 1px solid #1E293B; border-radius: 10px; padding: 16px; position: relative;
+    min-height: 510px; box-shadow: inset 0 0 40px rgba(0,0,0,0.45), 0 8px 24px rgba(13,21,32,0.16);
+    overflow: hidden;
+  }
+  .net-inspector {
+    background: #FFFFFF; border: 1px solid var(--card-bd); border-radius: 10px; padding: 18px;
+    box-shadow: 0 2px 8px rgba(15,23,42,0.04); display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .net-legend {
+    display: flex; gap: 16px; flex-wrap: wrap; font-size: 11px; color: #CBD5E1;
+    background: rgba(15, 23, 42, 0.72); backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.1); padding: 7px 12px; border-radius: 6px; margin-bottom: 8px;
+  }
+  .net-orb-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; box-shadow: 0 0 8px currentColor; }
+  @keyframes pulseRing3D { 0% { transform: scale(0.95); opacity: 0.55; } 50% { transform: scale(1.16); opacity: 0.15; } 100% { transform: scale(0.95); opacity: 0.55; } }
+  @keyframes flowDash { to { stroke-dashoffset: -24; } }
+  .node-3d-group { cursor: pointer; }
+  .node-3d-group:hover .orb-halo { opacity: 0.45 !important; }
+  .pulse-ring { transform-box: fill-box; transform-origin: center; animation: pulseRing3D 2.8s infinite ease-in-out; }
+  .collusion-beam { animation: flowDash 1.2s linear infinite; }
+
+  /* 5. METHODOLOGY ACCORDION */
+  .meth-formula { font-size: 11.5px; color: var(--text-2); line-height: 1.9; background: #FAFBFC; border: 1px solid var(--card-bd); border-radius: 5px; padding: 9px 12px; }
+  .meth-row { border-bottom: 1px solid #F0F2F5; }
+  .meth-row:last-child { border-bottom: none; }
+  .meth-head { display: flex; align-items: center; gap: 12px; padding: 13px 16px; cursor: pointer; }
+  .meth-head:hover { background: #FAFBFC; }
+  .meth-name { font-weight: 600; font-size: 13px; flex: 1; }
+  .mech-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 4px; }
+  .mech-tag.dominant { background: var(--accent-soft-2); color: var(--accent-dark); }
+  .mech-tag.additive { background: var(--yellow-bg); color: var(--yellow-fg); }
+  .meth-chev { width: 13px; height: 13px; color: var(--text-3); transition: transform 180ms; }
+  .meth-row.open .meth-chev { transform: rotate(90deg); }
+  .meth-detail { display: none; padding: 0 16px 15px 51px; }
+  .meth-row.open .meth-detail { display: block; }
+  .meth-line { display: flex; justify-content: space-between; padding: 5px 0; font-size: 12px; border-bottom: 1px dashed #EEF0F3; }
+  .meth-line:last-child { border-bottom: none; }
+  .meth-line .rng { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--text-2); }
+  .meth-sub { font-size: 11.5px; color: var(--text-2); margin-top: 9px; line-height: 1.55; }
+
+  /* 6. REPORTS TAB GRID */
+  .rep-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 18px; }
+  .rep-card { background: #FFFFFF; border: 1px solid var(--card-bd); border-radius: 8px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between; }
+
+  /* 7. REFINED ASK D7 ASSISTANT */
+  .d7-ask-fab {
+    position: fixed; bottom: 22px; right: 22px; height: 46px; padding: 0 16px; border-radius: 24px;
+    background: #0D1520; color: #FFFFFF; border: 1px solid #334155; font-weight: 600; font-size: 13px;
+    display: flex; align-items: center; gap: 8px; box-shadow: 0 6px 22px rgba(13,21,32,0.28); z-index: 900;
+  }
+  .d7-ask-fab:hover { background: #1E293B; }
+  .d7-ask-drawer {
+    position: fixed; bottom: 20px; right: 20px; width: 520px; max-width: calc(100vw - 40px);
+    height: 640px; max-height: calc(100vh - 40px); background: #FFFFFF; border: 1px solid #CBD5E1;
+    border-radius: 12px; box-shadow: 0 16px 48px rgba(13,21,32,0.26); z-index: 950;
+    display: none; flex-direction: column; overflow: hidden;
+  }
+  .d7-ask-drawer.open { display: flex; }
+  .d7-ask-head { background: #0D1520; color: #FFFFFF; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; }
+  .d7-ask-msgs { flex: 1; overflow-y: auto; padding: 16px; background: #F8FAFC; display: flex; flex-direction: column; gap: 12px; }
+  .d7-msg-u { align-self: flex-end; background: #0D1520; color: #FFFFFF; padding: 9px 14px; border-radius: 10px 10px 2px 10px; font-size: 12.5px; max-width: 85%; }
+  .d7-msg-a { align-self: flex-start; background: #FFFFFF; border: 1px solid #E2E8F0; color: #1E293B; padding: 12px 14px; border-radius: 10px 10px 10px 2px; font-size: 12.5px; line-height: 1.5; width: 100%; box-shadow: 0 1px 2px rgba(15,23,42,0.04); }
+  .d7-ans-title { font-weight: 600; font-size: 13px; color: #0F172A; margin-bottom: 6px; padding-bottom: 5px; border-bottom: 1px solid #F1F5F9; display: flex; justify-content: space-between; align-items: center; }
+  .d7-ans-tbl { width: 100%; border-collapse: collapse; font-size: 11.5px; margin-top: 8px; }
+  .d7-ans-tbl th { background: #F1F5F9; color: #475569; padding: 5px 8px; text-align: left; font-size: 10px; text-transform: uppercase; }
+  .d7-ans-tbl td { padding: 6px 8px; border-bottom: 1px solid #F1F5F9; }
+  .d7-ask-chips { padding: 8px 12px; background: #FFFFFF; border-top: 1px solid #E2E8F0; display: flex; gap: 6px; overflow-x: auto; }
+  .d7-ask-chip { font-size: 11px; padding: 5px 10px; border-radius: 14px; background: #F1F5F9; color: #334155; border: 1px solid #E2E8F0; white-space: nowrap; font-weight: 500; }
+  .d7-ask-chip:hover { background: #E2E8F0; color: #0F172A; }
+  .d7-ask-in { padding: 10px 12px; background: #FFFFFF; border-top: 1px solid #E2E8F0; display: flex; gap: 8px; }
+  .d7-ask-in input { flex: 1; padding: 8px 12px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 12.5px; outline: none; }
+</style>
+
+<!-- REFINED ASK D7 ASSISTANT -->
+<button class="d7-ask-fab" id="d7AskFab" onclick="toggleAskD7()">
+  <span style="background:#2E5A8A;padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:11px;">D7</span>
+  <span>Ask D7</span>
+</button>
+
+<div class="d7-ask-drawer" id="d7AskDrawer">
+  <div class="d7-ask-head">
+    <div>
+      <div style="font-weight:600;font-size:13.5px;">Ask D7 · Custos Portfolio &amp; ERP Co-Pilot</div>
+      <div style="font-size:11px;color:#94A3B8;">2,840 Counterparties · AI Resolution Triage · SAP ERP &amp; 3D Network Engine</div>
+    </div>
+    <button style="background:rgba(255,255,255,0.1);border:none;color:#FFFFFF;width:28px;height:28px;border-radius:6px;font-size:14px;" onclick="toggleAskD7()">✕</button>
+  </div>
+  <div class="d7-ask-msgs" id="d7AskMsgs">
+    <div class="d7-msg-a">
+      <div class="d7-ans-title"><span>Ready to query Custos &amp; SAP ERP</span><span class="mono" style="font-size:10px;color:#64748B;">LIVE UAT</span></div>
+      <div>Ask about <b>D7 AI resolution states</b>, <b>blocked vendors reappearing under new names</b>, <b>Shanghai Electric harmonisation</b>, <b>employee–vendor network links</b>, or <b>F110 AP holds</b>.</div>
+    </div>
+  </div>
+  <div class="d7-ask-chips">
+    <button class="d7-ask-chip" onclick="runAskD7('Show D7 AI resolution states')">Resolution Summary</button>
+    <button class="d7-ask-chip" onclick="runAskD7('Blocked vendors reappearing under new names')">Phoenix Blocked Vendors</button>
+    <button class="d7-ask-chip" onclick="runAskD7('Shanghai Electric harmonisation 3.75 to 68')">Shanghai Harmonisation</button>
+    <button class="d7-ask-chip" onclick="runAskD7('Employee to vendor network links')">Employee–Vendor Collusion</button>
+    <button class="d7-ask-chip" onclick="runAskD7('Top ERP exposure & F110 holds')">F110 AP Holds</button>
+  </div>
+  <div class="d7-ask-in">
+    <input id="d7AskInput" type="text" placeholder="Ask a structured question across D7 & ERP..." onkeydown="if(event.key==='Enter')sendAskD7()" />
+    <button class="btn-act" onclick="sendAskD7()">Send</button>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ===== SINGLE-STATE RESOLUTION ENGINE =====
+  // status: 'Approved' | 'Escalated' | 'Rejected' | '' (blank when AI confidence < threshold / undecided)
+  const RESOLUTION_STATE = {
+    'db-realty':              { status: 'Rejected',  reason: 'Hard Override: ED PMLA + $12.5M ICD Loan (99% AI conf.)' },
+    'rattan-india':           { status: 'Escalated', reason: 'RBI Caution List + $33.1M ERP Exposure (97% AI conf.)' },
+    'simplex-infra':          { status: 'Escalated', reason: 'GSTIN Suspended + $3.7M Unadjusted Advance (92% AI conf.)' },
+    'brinks-co':              { status: 'Escalated', reason: 'DOJ/FinCEN Monitor → Internal Legal Approval (95% AI conf.)' },
+    'anand-brothers':         { status: 'Rejected',  reason: '86% Single-Buyer POs + HR Phone Collision (91% AI conf.)' },
+    'hcc-ltd':                { status: '',          reason: 'AI Undecided (64% conf.) — Awaiting MSME & retention verification' },
+    'shanghai-electric':      { status: 'Escalated', reason: '60.01% SASAC SOE + Ex-KMP Bribery (9/10) (96% AI conf.)' },
+    'meridian-nominee':       { status: 'Rejected',  reason: 'OFAC SDN UBO + Phoenix IBAN Collision (98% AI conf.)' },
+    'transformers-rectifiers':{ status: 'Escalated', reason: 'World Bank Debarred + Single-Source OEM (94% AI conf.)' },
+    'zee-entertainment':      { status: '',          reason: 'AI Undecided (61% conf.) — Awaiting NCLT/SEBI materiality review' },
+    'patel-engineering':      { status: '',          reason: 'AI Undecided (58% conf.) — Routine EPC arbitration check' },
+    'rajesh-sharma-assoc':    { status: '',          reason: 'AI Undecided (55% conf.) — GST filing refresh pending' },
+    'sterling-wilson':        { status: '',          reason: 'AI Undecided (60% conf.) — Promoter group credit review' },
+    'ncc-ltd':                { status: 'Approved',  reason: 'CRISIL A+ Positive Upgrade · Standard Terms (91% AI conf.)' },
+    'schindler-india':        { status: 'Approved',  reason: 'UBO TRACE ✓ Verified · Clean Statutory Posture (97% AI conf.)' },
+    'northwind-capital':      { status: 'Approved',  reason: '3 Named UBOs Verified · Low Composite (22) (95% AI conf.)' },
+    'kedarnath-packing':      { status: 'Rejected',  reason: 'Phoenix Vendor Match (Surya Packaging) + 0 EPFO (94% AI conf.)' },
+    'tap-engineering':        { status: 'Escalated', reason: 'Historical PSU Debarment + Single-Buyer POs (87% AI conf.)' }
+  };
+
+  window.getResState = function(key) {
+    return RESOLUTION_STATE[key] || { status: '', reason: 'AI Undecided — Analyst Review Needed' };
+  };
+
+  window.setEntityResolution = function(e, key, newStatus, fromDetail) {
+    if (e) e.stopPropagation();
+    const cur = getResState(key);
+    cur.status = newStatus;
+    RESOLUTION_STATE[key] = cur;
+    updateResolutionCounts();
+    renderCust();
+    if (fromDetail) openCust(key);
+  };
+
+  function updateResolutionCounts() {
+    const allKeys = Object.keys(C);
+    const cntEsc = allKeys.filter(k => getResState(k).status === 'Escalated').length;
+    const cntRej = allKeys.filter(k => getResState(k).status === 'Rejected').length;
+    const cntApp = allKeys.filter(k => getResState(k).status === 'Approved').length;
+    if (document.getElementById('cntResEsc')) document.getElementById('cntResEsc').textContent = cntEsc;
+    if (document.getElementById('cntResRej')) document.getElementById('cntResRej').textContent = cntRej;
+    if (document.getElementById('cntResApp')) document.getElementById('cntResApp').textContent = cntApp;
+  }
+
+  // ===== CLEAN FILTER BAR & SINGLE-STATE RESOLUTION COLUMN IN MONITORED PARTIES =====
+  let custResFilter = 'all';
+
+  window.filterCustRes = function(el, mode) {
+    document.querySelectorAll('#tab-customers .fchip.band-chip').forEach(c => c.classList.remove('on'));
+    el.classList.add('on');
+    custBand = 'all';
+    custResFilter = mode;
+    renderCust();
+  };
+
+  const origFilterCust = window.filterCust;
+  window.filterCust = function(el, f) {
+    custResFilter = 'all';
+    origFilterCust(el, f);
+  };
+
+  function enhanceMonitoredPartiesUI() {
+    const tabCust = document.getElementById('tab-customers');
+    if (!tabCust) return;
+
+    const fbar = tabCust.querySelector('.filter-bar');
+    if (fbar && !document.getElementById('chip-res-esc')) {
+      const jurChip = fbar.querySelector('.jur-chip');
+      const allKeys = Object.keys(C);
+      const cntEsc = allKeys.filter(k => getResState(k).status === 'Escalated').length;
+      const cntRej = allKeys.filter(k => getResState(k).status === 'Rejected').length;
+      const cntApp = allKeys.filter(k => getResState(k).status === 'Approved').length;
+
+      const div = document.createElement('span');
+      div.className = 'f-divider';
+
+      const chips = [
+        { id:'chip-res-esc', mode:'Escalated', html:`Escalated (<span id="cntResEsc">${cntEsc}</span>)` },
+        { id:'chip-res-rej', mode:'Rejected',  html:`Rejected (<span id="cntResRej">${cntRej}</span>)` },
+        { id:'chip-res-app', mode:'Approved',  html:`Approved (<span id="cntResApp">${cntApp}</span>)` }
+      ];
+
+      if (jurChip) {
+        fbar.insertBefore(div, jurChip);
+        chips.forEach(c => {
+          const btn = document.createElement('button');
+          btn.id = c.id;
+          btn.className = 'fchip band-chip';
+          btn.innerHTML = c.html;
+          btn.onclick = function() { filterCustRes(this, c.mode); };
+          fbar.insertBefore(btn, jurChip);
+        });
+        const div2 = document.createElement('span');
+        div2.className = 'f-divider';
+        fbar.insertBefore(div2, jurChip);
+      }
+    }
+
+    const theadRow = tabCust.querySelector('table thead tr');
+    if (theadRow && theadRow.children.length === 7) {
+      const th = document.createElement('th');
+      th.textContent = 'Resolution';
+      theadRow.appendChild(th);
+    }
+
+    window.renderCust = function() {
+      let rows = custArray();
+      if (custBand !== 'all') rows = rows.filter(r => effBand(r.c)[0] === custBand);
+      if (custCtry !== 'all') rows = rows.filter(r => r.c.res === custCtry);
+      if (custType !== 'all') rows = rows.filter(r => typeOf(r.c) === custType);
+      if (custJur) rows = rows.filter(r => jurElevated(r.c.res));
+      if (custResFilter !== 'all') rows = rows.filter(r => getResState(r.key).status === custResFilter);
+
+      const tb = document.getElementById('custRows');
+      if (!tb) return;
+      if (!rows.length) {
+        tb.innerHTML = '<tr><td colspan="8" style="padding:30px;text-align:center;color:var(--text-3)">No parties match this filter.</td></tr>';
+        return;
+      }
+
+      tb.innerHTML = rows.map(r => {
+        const c = r.c, eb = effBand(c), bc = eb[0], bl = eb[1], pt = typeOf(c);
+        const cad = { low: '12 mo', med: '6 mo', high: '3 mo', sev: 'Daily' }[bc];
+        const colEff = c.override ? '#9B1F1F' : scoreColor(r.score);
+        const ovText = c.override ? '⚑ Override' : (c.reportKey === 'shanghai' ? '⚑ CDD Req' : (c.reportKey === 'brinks' ? '⚑ Floor 7.45' : ''));
+        const res = getResState(r.key);
+        const stCls = res.status ? 'st-' + res.status.toLowerCase() : 'st-blank';
+
+        const resSelectHtml = `
+          <select class="res-select ${stCls}" onclick="event.stopPropagation()" onchange="setEntityResolution(event,'${r.key}',this.value,false)" title="${res.reason}">
+            <option value="" ${res.status===''?'selected':''}>—</option>
+            <option value="Approved" ${res.status==='Approved'?'selected':''}>Approved</option>
+            <option value="Escalated" ${res.status==='Escalated'?'selected':''}>Escalated</option>
+            <option value="Rejected" ${res.status==='Rejected'?'selected':''}>Rejected</option>
+          </select>
+        `;
+
+        return `
+          <tr class="clickable" onclick="openCust('${r.key}')">
+            <td>
+              <div style="font-weight:600;color:var(--text);font-size:13px;">${c.name}</div>
+              <div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">
+                <span class="ptype ${pt}" style="margin-left:0;">${PARTY_ABBR[pt]}</span>
+                ${c.uboTrace ? '<span class="ubo-flag" style="margin-left:0;">UBO TRACE ✓</span>' : ''}
+                ${c.reportKey ? '<span class="d7-doc-flag" style="margin-left:0;">📄 D7 Report</span>' : ''}
+              </div>
+            </td>
+            <td><div class="cust" style="font-size:11px;line-height:1.4;">${c.id.replace(' · ', '<br>')}</div></td>
+            <td>
+              <div style="font-weight:500;color:var(--text);">${jurDot(c.res)}${c.res}</div>
+              <div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;">${jurBadge(c.res)}</div>
+            </td>
+            <td style="color:var(--text-2);font-size:12px;">${c.driver}</td>
+            <td><span class="scorechip" style="color:${colEff}">${r.score}</span></td>
+            <td>
+              <div><span class="band b-${bc}"><span class="d"></span>${bl}</span></div>
+              ${ovText ? `<div style="margin-top:4px;"><span class="ov-flag" style="margin-left:0;">${ovText}</span></div>` : ''}
+            </td>
+            <td class="mono" style="font-size:11.5px;color:var(--text-2);">${cad}</td>
+            <td onclick="event.stopPropagation()">${resSelectHtml}</td>
+          </tr>
+        `;
+      }).join('');
+    };
+
+    renderCust();
+  }
+
+  // ===== ENTITY DEEP-DIVE RESOLUTION BAR =====
+  const origOpenCust = window.openCust;
+  window.openCust = function(key) {
+    origOpenCust(key);
+    const detailBody = document.getElementById('detailBody');
+    const c = C[key];
+    if (!detailBody || !c) return;
+
+    const res = getResState(key);
+    const curLabel = res.status ? res.status : 'Undecided (AI Confidence Below Threshold)';
+    const barHtml = `
+      <div class="dd-res-bar" id="ddResolutionBar">
+        <div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;color:#2E5A8A;">
+            Last-Mile Entity Resolution · Current State: <span style="color:#0F172A;">${curLabel}</span>
+          </div>
+          <div style="font-size:12px;color:var(--text-2);margin-top:3px;">${res.reason}</div>
+        </div>
+        <div class="dd-res-actions">
+          <button class="dd-act-btn approve ${res.status==='Approved'?'active':''}" onclick="setEntityResolution(event,'${key}','Approved',true)">✓ Approve</button>
+          <button class="dd-act-btn escalate ${res.status==='Escalated'?'active':''}" onclick="setEntityResolution(event,'${key}','Escalated',true)">⚑ Escalate</button>
+          <button class="dd-act-btn reject ${res.status==='Rejected'?'active':''}" onclick="setEntityResolution(event,'${key}','Rejected',true)">✕ Reject</button>
+        </div>
+      </div>
+    `;
+    const chead = detailBody.querySelector('.chead');
+    if (chead) chead.insertAdjacentHTML('afterend', barHtml);
+  };
+
+  // ===== DASHBOARD HOVER POPOVERS =====
+  const TOP_TILE_POPS = [
+    {
+      title: 'Debarment / Sanctions / PMLA', badge: '6 Entities · $51.7M', sev: 'crit',
+      rows: [
+        { ent: 'DB Realty Ltd (FORT10010)', val: '$41.90M', meta: 'ED PMLA attachment · PO 4500192810 & $12.5M ICD' },
+        { ent: 'Transformers & Rectifiers (FORT10001)', val: '$16.40M', meta: 'World Bank Debarred · PO 4500142290' },
+        { ent: 'Meridian Nominee (FORT10194)', val: '$22.20M', meta: 'OFAC SDN UBO · FI-Wire 190051108 ($6.0M Loan)' }
+      ],
+      cta: 'Inspect Base ERP Transactions →', fn: "jumpToErpFilter('sev')"
+    },
+    {
+      title: 'Active Govt Monitors / CDD', badge: '2 Entities · $68.7M', sev: 'high',
+      rows: [
+        { ent: "The Brink's Company (FORT260002)", val: '$22.05M', meta: 'DOJ NPA & FinCEN Monitor · Contract 4600009182' },
+        { ent: 'Shanghai Electric JV (FORT10083)', val: '$47.50M', meta: 'Quick Scan CDD Req · PO 4500150091 & $8.9M LC Adv' }
+      ],
+      cta: 'View High-Risk ERP Ledger →', fn: "jumpToErpFilter('high')"
+    },
+    {
+      title: 'State-Owned (SOE) JVs', badge: '14 Entities · SASAC', sev: 'high',
+      rows: [
+        { ent: 'Shanghai Electric Power JV', val: '60.01% SOE', meta: 'SASAC Shanghai Terminus · PO 4500150091 ($32.5M)' },
+        { ent: 'LC / Mobilization Advance', val: '$8.90M', meta: 'SAP Special GL Adv Doc 150004419 (Open)' }
+      ],
+      cta: 'Open Shanghai Electric Dossier →', fn: "openCust('shanghai-electric')"
+    },
+    {
+      title: 'UBO / KYB Refresh Due', badge: '41 Entities · ≥25%', sev: 'high',
+      rows: [
+        { ent: 'Rattan India Power (FORT10007)', val: '$33.10M', meta: '12.4% Unreported Mauritius SPV · PO 4500188401' },
+        { ent: 'Multi-Layer Corporate Chains', val: '38 Entities', meta: 'Body corporates ≥25% requiring Q4 UBO re-verification' }
+      ],
+      cta: 'Inspect UBO & Loan Exposure →', fn: "jumpToErpFilter('loans')"
+    },
+    {
+      title: 'Offshore / Grey-List Entities', badge: '195 Entities', sev: 'high',
+      rows: [
+        { ent: 'British Virgin Islands (65)', val: '$22.20M', meta: 'Meridian Nominee Holdings · $1.20M Wire Freeze' },
+        { ent: 'Cayman (80) & Vietnam (50)', val: '130 Entities', meta: 'Northwind Industrial Supply LLC (FORT10021)' }
+      ],
+      cta: 'Filter High-Risk Jurisdictions →', fn: "showTab('customers')"
+    },
+    {
+      title: 'GST Suspended / Credit Default', badge: '18 Entities · $34.1M', sev: 'crit',
+      rows: [
+        { ent: 'Simplex Infrastructures (FORT10002)', val: '$20.50M', meta: 'GSTIN Suspended + ICRA D · Adv 150006110 ($3.7M)' },
+        { ent: 'Anand & Brothers (FORT10018)', val: '$12.90M', meta: 'GSTIN Suspended + 11 MSME claims · PO 4500199012' }
+      ],
+      cta: 'Check Blocked Vendor Reappearance →', fn: "jumpToErpFilter('phoenix')"
+    }
+  ];
+
+  const DIM_TILE_POPS = [
+    {
+      title: 'Sanctions / Debarment Alerts (30d)', badge: '2 Alerts · ↑ 1', sev: 'crit',
+      rows: [
+        { ent: 'Meridian Nominee Holdings (BVI)', val: 'T1 Override', meta: 'OFAC SDN UBO · FI-Wire 190051108 ($6.0M Loan)' },
+        { ent: 'Transformers & Rectifiers (India)', val: 'T2 Debarred', meta: 'World Bank Debarred · PO 4500142290 ($15.6M)' }
+      ],
+      cta: 'Inspect Base Transactions →', fn: "jumpToErpFilter('sev')"
+    },
+    {
+      title: 'UBO / SOE / KMP Escalations (30d)', badge: '2 Alerts · ↑ 1', sev: 'high',
+      rows: [
+        { ent: 'Shanghai Electric Power JV', val: 'Severity 9/10', meta: 'Ex-Legal Rep Zheng Jianhua conviction · PO 4500150091' },
+        { ent: 'DB Realty Ltd (Promoter DINs)', val: 'NSDL Freeze', meta: 'Vinod Goenka & Shahid Balwa · FI-ICD 190044120' }
+      ],
+      cta: 'Open Shanghai Electric Dossier →', fn: "openCust('shanghai-electric')"
+    },
+    {
+      title: 'Regulatory & Litigation Alerts (30d)', badge: '3 Alerts · ↑ 1', sev: 'crit',
+      rows: [
+        { ent: "The Brink's Company (NYSE: BCO)", val: 'PACER 16/18', meta: 'DOJ NPA ($25M) + FinCEN ($17M) · Contract 4600009182' },
+        { ent: 'Zee Entertainment (FORT10085)', val: '$4.60M AR', meta: 'SEBI Order + NCLT suits · O2C BSID 18009214' }
+      ],
+      cta: 'Inspect Legal & ERP Exposure →', fn: "jumpToErpFilter('high')"
+    },
+    {
+      title: 'Financial & Credit Downgrades (30d)', badge: '2 Alerts · → 0', sev: 'high',
+      rows: [
+        { ent: 'Rattan India Power (Brickwork D)', val: '$33.10M', meta: '₹4,200 Cr NPA · Adv 150007721 ($5.10M > 180d)' },
+        { ent: 'Simplex Infrastructures (ICRA D)', val: '$20.50M', meta: 'GST Suspended · F110 Run 2026-11-19 ($0.88M)' }
+      ],
+      cta: 'Inspect Open Advances & Loans →', fn: "jumpToErpFilter('loans')"
+    },
+    {
+      title: 'ERP / P2P Conduct & Phoenix Alerts (30d)', badge: '1 Alert + 4 Phoenix', sev: 'crit',
+      rows: [
+        { ent: 'Apex Civil → Apexon Infra LLP', val: '98% Match', meta: 'Shared HDFC Bank A/C 50200048192011 & DIN 08492014' },
+        { ent: 'Anand & Brothers (RAJEEV55)', val: '86% PO Share', meta: 'Single-buyer PO concentration · PO 4500199012' }
+      ],
+      cta: 'Open Blocked Vendor Reappearance →', fn: "jumpToErpFilter('phoenix')"
+    }
+  ];
+
+  function renderPopoverHtml(cfg) {
+    return `
+      <div class="custos-pop ${cfg.sev}" onclick="event.stopPropagation()">
+        <div class="pop-head"><span class="pop-title">${cfg.title}</span><span class="pop-badge">${cfg.badge}</span></div>
+        ${cfg.rows.map(r => `
+          <div class="pop-row">
+            <div class="pop-ent"><span>${r.ent}</span><span class="mono" style="color:#2E5A8A;">${r.val}</span></div>
+            <div class="pop-meta">${r.meta}</div>
+          </div>
+        `).join('')}
+        <div class="pop-footer">
+          <span style="font-size:10.5px;color:#64748B;">SAP ERP + D7 Verified</span>
+          <a href="javascript:void(0)" class="pop-cta" onclick="${cfg.fn}">${cfg.cta}</a>
+        </div>
+      </div>
+    `;
+  }
+
+  function attachAllDashboardPopovers() {
+    document.querySelectorAll('#expRow .exp-tile').forEach((tile, i) => {
+      if (TOP_TILE_POPS[i] && !tile.querySelector('.custos-pop')) tile.insertAdjacentHTML('beforeend', renderPopoverHtml(TOP_TILE_POPS[i]));
+    });
+    document.querySelectorAll('#tab-dashboard .dim-grid .dim-tile').forEach((tile, i) => {
+      if (DIM_TILE_POPS[i] && !tile.querySelector('.custos-pop')) tile.insertAdjacentHTML('beforeend', renderPopoverHtml(DIM_TILE_POPS[i]));
+    });
+  }
+
+  // ===== ERP TRIANGULATION + PHOENIX BLOCKED-VENDOR DATA =====
+  const ERP_TRI_DATA = [
+    { key:'db-realty', name:'DB Realty Ltd', id:'FORT10010 · CIN L70200MH2007', jur:'India', score:91, band:'sev', bandLbl:'Severe',
+      purchases:18.40, sales:4.20, advances:6.80, loans:12.50, apHold:'$1.95M F110 Hold',
+      relFlag:'Dual Role (JV Developer + Unsecured ICD Borrower)', relLvl:'crit',
+      relDesc:'$12.50M unsecured ICD loan + $6.80M mobilization advance open under active ED PMLA attachment; shared director DIN with 2 civil sub-contractors.',
+      baseTxns:'PO 4500192810 ($8.4M) · FI-ICD 190044120 ($12.5M) · Adv Doc 150008912 ($6.8M)' },
+    { key:'rattan-india', name:'Rattan India Power Ltd', id:'FORT10007 · CIN L40101DL2007', jur:'India', score:82, band:'sev', bandLbl:'Severe',
+      purchases:24.60, sales:0.00, advances:5.10, loans:3.40, apHold:'$1.12M F110 Hold',
+      relFlag:'Critical Utility Supplier + Unadjusted Advance & Bridge Loan', relLvl:'crit',
+      relDesc:'$24.60M power purchases + $5.10M unadjusted vendor advance (SAP Special GL Ind. A > 180d) + $3.40M working-capital bridge facility.',
+      baseTxns:'PO 4500188401 ($14.2M) · MIRO 5105610291 ($10.4M) · Adv 150007721 ($5.1M)' },
+    { key:'simplex-infra', name:'Simplex Infrastructures Ltd', id:'FORT10002 · CIN L45200WB1924', jur:'India', score:78, band:'sev', bandLbl:'Severe',
+      purchases:14.10, sales:1.90, advances:3.70, loans:0.80, apHold:'$0.88M F110 Hold',
+      relFlag:'EPC Contractor with Unrecovered Mobilization Advance', relLvl:'crit',
+      relDesc:'$3.70M unamortized mobilization advance + $1.90M equipment back-charges at high write-off risk due to ICRA Default (D) and GSTIN suspension.',
+      baseTxns:'PO 4500174019 ($9.8M) · Adv 150006110 ($3.7M) · F110 Run 2026-11-19 ($0.88M)' },
+    { key:'brinks-co', name:"The Brink's Company", id:'FORT260002 · NYSE: BCO', jur:'United States', score:75, band:'high', bandLbl:'High',
+      purchases:19.80, sales:1.40, advances:0.85, loans:0.00, apHold:'$0.90M Monitor Check',
+      relFlag:'Global Custody & CIT Logistics Partner (Active DOJ Monitor)', relLvl:'high',
+      relDesc:'Handles high-value vaulting & transit across 14 plants; Subsidiary BGS under active 3-year DOJ/FinCEN compliance monitor through Jan 2028.',
+      baseTxns:'Contract 4600009182 ($19.8M) · MIRO 5105621104 ($0.90M Open AP)' },
+    { key:'anand-brothers', name:'Anand & Brothers', id:'FORT10018 · Unreg Partnership', jur:'India', score:74, band:'high', bandLbl:'High',
+      purchases:9.40, sales:0.00, advances:2.85, loans:0.65, apHold:'$0.42M Blocked',
+      relFlag:'Pass-Through MRO Conduit (Single-Buyer Concentration)', relLvl:'crit',
+      relDesc:'86% of POs issued by single buyer (EKKO.ERNAM = RAJEEV55); $2.85M advance paid despite suspended GSTIN.',
+      baseTxns:'PO 4500199012 ($4.1M) · Adv 150009304 ($2.85M)' },
+    { key:'hcc-ltd', name:'Hindustan Construction Co Ltd', id:'FORT10013 · CIN L45200MH1926', jur:'India', score:71, band:'high', bandLbl:'High',
+      purchases:21.30, sales:3.10, advances:4.40, loans:1.50, apHold:'$0.64M Retention',
+      relFlag:'Turnkey Civil EPC Partner + Two-Way Materials Billing', relLvl:'high',
+      relDesc:'$21.30M civil works spend + $3.10M structural steel sold on credit + $4.40M open mobilization advance.',
+      baseTxns:'PO 4500167822 ($21.3M) · O2C Inv 90048120 ($3.1M)' },
+    { key:'shanghai-electric', name:'Shanghai Electric Power Generation Equipment Co., Ltd.', id:'FORT10083 · USC 91310000071788037S3', jur:'China', score:68, band:'high', bandLbl:'High',
+      purchases:32.50, sales:6.10, advances:8.90, loans:0.00, apHold:'CDD Required',
+      relFlag:'Sino-Foreign JV Partner + Capital Turbine OEM (SOE)', relLvl:'crit',
+      relDesc:'$32.50M turbine/generator procurement + $8.90M LC/capital advance + $6.10M sub-assembly sales; requires ABAC/Sapin II safeguards.',
+      baseTxns:'PO 4500150091 ($32.5M) · LC Adv 150004419 ($8.9M)' },
+    { key:'meridian-nominee', name:'Meridian Nominee Holdings Ltd', id:'FORT10194 · BVI Reg 204918', jur:'British Virgin Islands', score:64, band:'sev', bandLbl:'Severe',
+      purchases:7.80, sales:3.90, advances:4.50, loans:6.00, apHold:'$1.20M Wire Freeze',
+      relFlag:'Offshore Commission Agent + Cross-Border Loan (SDN UBO)', relLvl:'crit',
+      relDesc:'$4.50M marketing advance + $6.00M cross-border loan + $11.70M two-way trade routed through BVI shell linked to OFAC SDN beneficial owner.',
+      baseTxns:'FI-Wire 190051108 ($6.0M Loan) · PO 4500191102 ($7.8M)' },
+    { key:'transformers-rectifiers', name:'Transformers & Rectifiers (India) Ltd', id:'FORT10001 · CIN L31300GJ1994', jur:'India', score:63, band:'sev', bandLbl:'Severe',
+      purchases:15.60, sales:0.80, advances:1.90, loans:0.00, apHold:'MDB Disqualified',
+      relFlag:'Single-Source HV Transformer OEM (World Bank Debarred)', relLvl:'crit',
+      relDesc:'Supplies 68% of plant 220kV transformers ($15.60M P2P); World Bank debarment triggers covenant breach on MDB-financed capex.',
+      baseTxns:'PO 4500142290 ($15.6M) · MIRO 5105598812 ($0.51M)' },
+    { key:'zee-entertainment', name:'Zee Entertainment Enterprises Ltd', id:'FORT10085 · Public Limited', jur:'India', score:59, band:'high', bandLbl:'High',
+      purchases:4.50, sales:16.80, advances:0.40, loans:2.20, apHold:'$4.60M Overdue AR',
+      relFlag:'Major O2C Customer + Ad-Barter & ICD Counterparty', relLvl:'high',
+      relDesc:'$16.80M billed revenue ($4.60M AR > 90d overdue in SAP BSID) + $4.50M media purchases + $2.20M ICD rollover.',
+      baseTxns:'O2C BSID 18009214 ($4.6M Overdue) · ICD 190049012 ($2.2M)' },
+    { key:'ncc-ltd', name:'NCC Ltd', id:'FORT10006 · CIN L72200TG1990', jur:'India', score:46, band:'med', bandLbl:'Medium',
+      purchases:16.50, sales:3.40, advances:1.80, loans:0.00, apHold:'Standard Terms',
+      relFlag:'Tier-1 Civil Infrastructure Contractor (Dual Book)', relLvl:'med',
+      relDesc:'$16.50M capex construction spend + $3.40M material off-take; credit profile improving (CRISIL A+).',
+      baseTxns:'PO 4500138810 ($16.5M)' },
+    { key:'schindler-india', name:'Schindler India Private Limited', id:'FORT10084 · Private Limited', jur:'India', score:37, band:'med', bandLbl:'Medium',
+      purchases:12.30, sales:2.40, advances:1.10, loans:0.00, apHold:'Approved',
+      relFlag:'OEM Elevator Partner + Commercial Lessee (UBO Verified)', relLvl:'med',
+      relDesc:'UBO TRACE ✓ verified (Schindler Holding AG); $12.30M elevator capex/AMC spend + $2.40M commercial property lease billing.',
+      baseTxns:'PO 4500129940 ($12.3M) · Lease 90041120 ($2.4M)' }
+  ];
+
+  const PHOENIX_VENDORS = [
+    {
+      blockedName: 'Apex Civil & Infra Works Pvt Ltd',
+      blockedCode: 'VND-00010482 (Blocked 14-Jan-2025 · World Bank / Forged BG)',
+      newName: 'Apexon Infrastructure & Logistics LLP',
+      newCode: 'VND-00023091 (Onboarded 09-Aug-2026)',
+      linkedKey: 'transformers-rectifiers',
+      matchScore: '98% Exact Collision',
+      sharedAnchors: [
+        'Same Bank Account (LFBK.BANKN): HDFC0000240 · A/C 50200048192011',
+        'Same Registered Address (ADRC): Plot 42, MIDC Phase II, Andheri East, Mumbai',
+        'Same Authorised Signatory DIN: 08492014 (R. K. Deshmukh)'
+      ],
+      daysGap: '207 days after block',
+      activeExposure: '$4.85M New POs ($1.18M Open AP)'
+    },
+    {
+      blockedName: 'Surya Industrial Packaging Co.',
+      blockedCode: 'VND-00011904 (Blocked 22-Oct-2025 · GSTIN Cancelled & Sec 138)',
+      newName: 'Kedarnath Packing Industries',
+      newCode: 'FORT10087 · VND-00022844 (Active)',
+      linkedKey: 'kedarnath-packing',
+      matchScore: '94% Metadata Match',
+      sharedAnchors: [
+        'Same PAN Root & Proprietor Mobile (LFA1/ADRC): +91-98204-77120',
+        'Same Dispatch Warehouse Pin & E-Way Bill IP: 103.21.124.88',
+        'Diverted Payee History (CDPOS.LFBK) 6 days prior to old vendor block'
+      ],
+      daysGap: '48 days after block',
+      activeExposure: '$3.20M Active Spend ($0.44M Next F110)'
+    },
+    {
+      blockedName: 'Zenith Global Trading FZE (UAE)',
+      blockedCode: 'VND-00014210 (Blocked 03-Mar-2025 · OFAC Adjacent Intermediary)',
+      newName: 'Meridian Nominee Holdings Ltd',
+      newCode: 'FORT10194 · VND-00023115 (Severe Override)',
+      linkedKey: 'meridian-nominee',
+      matchScore: '96% IBAN & Director Match',
+      sharedAnchors: [
+        'Same Mashreq Bank IBAN (LFBK.IBAN): AE440330000019283746512',
+        'Same Corporate Nominee Agent & Mail Drop: Suite 14B, Palm Chambers, Road Town BVI',
+        'Overlapping Beneficial Ownership Chain (D7 2-Layer Trace)'
+      ],
+      daysGap: '62 days after block',
+      activeExposure: '$11.70M Trade + $6.00M Loan'
+    },
+    {
+      blockedName: 'Metro MEP & Plumbing Contractors',
+      blockedCode: 'VND-00015890 (Blocked 19-Jun-2025 · Repeated MSME Defaults)',
+      newName: 'Anand & Brothers',
+      newCode: 'FORT10018 · VND-00022410 (High Risk)',
+      linkedKey: 'anand-brothers',
+      matchScore: '91% Address & Tax-Reg Match',
+      sharedAnchors: [
+        'Same GSTIN Principal Place of Business (ADRC): Shop 9, Turbhe Naka, Navi Mumbai',
+        'Same ICICI IFSC & Beneficiary Name Variant: ANAND & BROS MEP',
+        'Same Sponsoring Buyer (EKKO.ERNAM = RAJEEV55 · 86% PO share)'
+      ],
+      daysGap: '34 days after block',
+      activeExposure: '$9.40M POs + $2.85M Advance'
+    }
+  ];
+
+  // ===== BUILD TABS =====
+  function buildAllNewTabs() {
+    const subtabs = document.querySelector('.subtabs');
+    const mainEl = document.querySelector('.main');
+    if (!subtabs || !mainEl || document.getElementById('tab-erp')) return;
+
+    const settingsTab = subtabs.querySelector('.subtab[data-tab="settings"]');
+    if (settingsTab) settingsTab.innerHTML = 'Methodology &amp; Settings';
+
+    const custTab = subtabs.querySelector('.subtab[data-tab="customers"]');
+    const newTabs = [
+      { id: 'erp', label: 'ERP Exposure &amp; Triangulation', badge: '12 + 4', urgent: true },
+      { id: 'network', label: '3D Network Graphs', badge: '2 Views', urgent: false },
+      { id: 'reports', label: 'Reports', badge: '5 Packs', urgent: false }
+    ];
+
+    let anchor = custTab;
+    newTabs.forEach(t => {
+      const el = document.createElement('div');
+      el.className = 'subtab';
+      el.setAttribute('data-tab', t.id);
+      el.setAttribute('onclick', `showTab('${t.id}')`);
+      el.innerHTML = `${t.label} <span class="count ${t.urgent ? 'urgent' : ''}">${t.badge}</span>`;
+      if (anchor && anchor.nextSibling) subtabs.insertBefore(el, anchor.nextSibling);
+      else subtabs.appendChild(el);
+      anchor = el;
+    });
+
+    // TAB A: ERP EXPOSURE & TRIANGULATION
+    const erpDiv = document.createElement('div');
+    erpDiv.className = 'content';
+    erpDiv.id = 'tab-erp';
+    erpDiv.innerHTML = `
+      <div class="page-lead">
+        Triangulates <b>Medium, High, and Severe D7 / Custos counterparties (Score ≥ 37)</b> against live SAP ERP subledgers — <b>Purchases (EKKO/RBKP)</b>, <b>Sales (VBAK/VBRK)</b>, <b>Vendor Advances (BSEG Special GL 'A')</b>, and <b>Inter-Corporate Loans / ICDs (BKPF/BSEG)</b> — plus automated detection of <b>previously blocked vendors reappearing under a new name</b>.
+      </div>
+      <div class="kpi-row">
+        <div class="kpi k-crit"><div class="kpi-label">Total Triangulated Business</div><div class="kpi-value critical">$308.05M</div><div class="kpi-sub">across 12 Medium, High &amp; Severe entities</div></div>
+        <div class="kpi k-high"><div class="kpi-label">Purchases / P2P Spend</div><div class="kpi-value">$196.60M</div><div class="kpi-sub">63.8% of triangulated exposure</div></div>
+        <div class="kpi"><div class="kpi-label">Sales / O2C Revenue</div><div class="kpi-value accent">$43.80M</div><div class="kpi-sub">10 dual-role entities (Vendor + Customer)</div></div>
+        <div class="kpi k-high"><div class="kpi-label">Open Advances (GL Ind. 'A')</div><div class="kpi-value high">$41.20M</div><div class="kpi-sub">$25.90M on Severe / Override entities</div></div>
+        <div class="kpi k-crit"><div class="kpi-label">Loans / ICDs &amp; Phoenix Risk</div><div class="kpi-value critical">$26.45M</div><div class="kpi-sub">4 blocked vendors reappeared under new IDs</div></div>
+      </div>
+      <div class="filter-bar" id="erpFilterBar">
+        <button class="fchip on" data-mode="all" onclick="filterErpTri(this,'all')">All Medium + High + Severe (12)</button>
+        <button class="fchip" data-mode="sev" onclick="filterErpTri(this,'sev')">Severe / Override (5)</button>
+        <button class="fchip" data-mode="high" onclick="filterErpTri(this,'high')">High Risk (5)</button>
+        <button class="fchip" data-mode="med" onclick="filterErpTri(this,'med')">Medium Risk (2)</button>
+        <button class="fchip" data-mode="loans" onclick="filterErpTri(this,'loans')">With Loans / ICDs &gt; $0 (6)</button>
+        <button class="fchip" data-mode="dual" onclick="filterErpTri(this,'dual')">Dual Relationship: Buy + Sell (10)</button>
+        <button class="fchip" data-mode="phoenix" style="border-color:#EBB6B6;color:#9B1F1F;" onclick="filterErpTri(this,'phoenix')">⚑ Blocked Vendor Reappearance (4)</button>
+        <div class="spacer"></div>
+        <span class="hint">Low-risk entities (&lt;25) excluded · Click any row for D7 dossier</span>
+      </div>
+      <div class="card" id="erpStandardCard">
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:21%;">Counterparty &amp; Base ERP Refs</th>
+                <th style="width:11%;">D7 Band &amp; Score</th>
+                <th style="width:9%;">Purchases</th>
+                <th style="width:9%;">Sales</th>
+                <th style="width:9%;">Advances</th>
+                <th style="width:9%;">Loans / ICDs</th>
+                <th style="width:9%;">Total Business</th>
+                <th style="width:23%;">High-Risk Relationship &amp; Contagion Flag</th>
+              </tr>
+            </thead>
+            <tbody id="erpTriRows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" id="erpPhoenixCard" style="display:none;">
+        <div class="card-head">
+          <span class="card-title">Blocked Vendor Reappearance ("Phoenix Vendor" Metadata Collision Engine)</span>
+          <span class="card-sub">Cross-matching LFA1.SPERR='X' blocked masters against active vendors via LFBK Bank A/C, ADRC Address, Tax ID &amp; Director DIN</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:22%;">Previously Blocked Vendor</th>
+                <th style="width:22%;">Reappeared Active Entity</th>
+                <th style="width:12%;">Collision Confidence</th>
+                <th style="width:30%;">Shared Metadata Anchors (Bank / Address / Tax ID / DIN)</th>
+                <th style="width:14%;">Active Exposure &amp; Gap</th>
+              </tr>
+            </thead>
+            <tbody id="erpPhoenixRows"></tbody>
+          </table>
+        </div>
+      </div>
+    `;
+    mainEl.appendChild(erpDiv);
+
+    // TAB B: 3D NETWORK GRAPHS
+    const netDiv = document.createElement('div');
+    netDiv.className = 'content';
+    netDiv.id = 'tab-network';
+    netDiv.innerHTML = `
+      <div class="page-lead">
+        3D Isometric Entity-Resolution Graphs uncovering hidden collusion rings across SAP ERP masters (<b>LFBK</b>, <b>ADRC</b>, <b>PA0105</b>, <b>EKKO.ERNAM</b>) and <b>D7 Corporate Registry / MCA DIN</b> filings. Click any 3D sphere node to inspect forensic links.
+      </div>
+      <div class="filter-bar">
+        <button class="fchip on" id="btnNetV2V" onclick="switchNetworkGraph('v2v')">1. Vendor-to-Vendor Contagion &amp; Phoenix Rings</button>
+        <button class="fchip" id="btnNetE2V" onclick="switchNetworkGraph('e2v')">2. Employee-to-Vendor Collusion Networks</button>
+        <div class="spacer"></div>
+        <span class="hint">Click any 3D sphere node to inspect shared bank accounts, addresses, DINs, or SAP user IDs</span>
+      </div>
+      <div class="net-layout">
+        <div class="net-canvas-3d">
+          <div class="net-legend" id="netLegend"></div>
+          <div id="netSvgWrap" style="width:100%;height:455px;"></div>
+        </div>
+        <div class="net-inspector">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:10.5px;font-weight:600;text-transform:uppercase;color:var(--text-3);letter-spacing:0.5px;">3D Node Forensic Inspector</span>
+              <span id="netNodeTypePill" class="band b-sev" style="font-size:10px;">Active Cluster</span>
+            </div>
+            <div style="font-size:17px;font-weight:600;color:var(--text);margin-top:8px;" id="netNodeTitle">Apexon Infrastructure &amp; Logistics LLP</div>
+            <div class="mono" style="font-size:11.5px;color:var(--accent-dark);margin-top:3px;" id="netNodeSub">VND-00023091 · $4.85M Active POs ($1.18M Open AP)</div>
+            <div id="netNodeBody" style="margin-top:14px;padding-top:12px;border-top:1px solid #F0F2F5;font-size:12.5px;line-height:1.58;color:var(--text-2);"></div>
+          </div>
+          <div id="netNodeFooter" style="margin-top:16px;padding-top:12px;border-top:1px solid #E2E8F0;"></div>
+        </div>
+      </div>
+    `;
+    mainEl.appendChild(netDiv);
+
+    // TAB C: REPORTS
+    const repDiv = document.createElement('div');
+    repDiv.className = 'content';
+    repDiv.id = 'tab-reports';
+    repDiv.innerHTML = `
+      <div class="page-lead">
+        Generate board-ready and audit-defensible deliverables directly from live Custos risk ratings, analyst-finalized Resolutions (Approved / Escalated / Rejected), D7 dossiers, and SAP ERP exposure subledgers.
+      </div>
+      <div class="rep-grid">
+        <div class="rep-card" style="border-top:3px solid #D97706;">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span class="band b-high"><span class="d"></span>Escalated Action Queue</span>
+              <span class="mono" style="font-size:11px;color:#B45309;font-weight:600;">Escalated Flag Only</span>
+            </div>
+            <div style="font-size:15px;font-weight:600;color:var(--text);">Escalated Counterparties — Internal Approval &amp; Hold Pack</div>
+            <div style="font-size:12.5px;color:var(--text-2);margin-top:6px;line-height:1.5;">
+              Compiles <b>strictly the parties carrying the Escalated resolution state</b> in Monitored Parties or Entity Deep Dive, detailing rationale, SAP PO/Advance/Loan exposure, and required internal approval workflow.
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:8px;">
+            <button class="btn-act" style="background:#B45309;" onclick="generateCustosReport('escalated')">Generate Escalated Report</button>
+            <button class="btn-sec" onclick="downloadCustosCSV('escalated')">Download CSV</button>
+          </div>
+        </div>
+
+        <div class="rep-card">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span class="band b-sev"><span class="d"></span>Executive Governance</span>
+              <span class="mono" style="font-size:11px;color:var(--text-3);">PDF / Print Ready</span>
+            </div>
+            <div style="font-size:15px;font-weight:600;color:var(--text);">Board &amp; Audit Committee Third-Party Risk Pack</div>
+            <div style="font-size:12.5px;color:var(--text-2);margin-top:6px;line-height:1.5;">
+              Synthesises portfolio risk distribution across 2,840 entities, $148.2M High+Severe spend concentration, SOE/sanctioned UBO nexus (Shanghai Electric, Meridian BVI), and active DOJ/FinCEN monitorships (Brink's).
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:8px;">
+            <button class="btn-act" onclick="generateCustosReport('board')">Preview &amp; Export Brief</button>
+            <button class="btn-sec" onclick="downloadCustosCSV('board')">Download CSV</button>
+          </div>
+        </div>
+
+        <div class="rep-card">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span class="band b-high"><span class="d"></span>Treasury &amp; AP Control</span>
+              <span class="mono" style="font-size:11px;color:var(--text-3);">SAP F110 / BSIK</span>
+            </div>
+            <div style="font-size:15px;font-weight:600;color:var(--text);">CFO Pre-Disbursement Hold &amp; ERP Triangulation Schedule</div>
+            <div style="font-size:12.5px;color:var(--text-2);margin-top:6px;line-height:1.5;">
+              Itemizes $308.05M in Medium/High/Severe counterparty business across Purchases, Sales, Unadjusted Vendor Advances ($41.20M), and Inter-Corporate Loans ($26.45M), flagging $4.85M in immediate F110 payment holds.
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:8px;">
+            <button class="btn-act" onclick="generateCustosReport('erp')">Preview &amp; Export Schedule</button>
+            <button class="btn-sec" onclick="downloadCustosCSV('erp')">Download CSV</button>
+          </div>
+        </div>
+
+        <div class="rep-card">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span class="band b-sev"><span class="d"></span>Forensic &amp; Legal</span>
+              <span class="mono" style="font-size:11px;color:var(--text-3);">LFBK / ADRC / DIN</span>
+            </div>
+            <div style="font-size:15px;font-weight:600;color:var(--text);">Blocked Vendor Reappearance &amp; Network Collusion Dossier</div>
+            <div style="font-size:12.5px;color:var(--text-2);margin-top:6px;line-height:1.5;">
+              Documents all 4 previously blocked vendors that re-entered SAP under new entity names using identical bank accounts, addresses, or director DINs, plus employee-vendor collusion links (EKKO.ERNAM / PA0105).
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:8px;">
+            <button class="btn-act" onclick="generateCustosReport('phoenix')">Preview &amp; Export Dossier</button>
+            <button class="btn-sec" onclick="downloadCustosCSV('phoenix')">Download CSV</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="reportPreviewCard" style="display:none;">
+        <div class="card-head">
+          <span class="card-title" id="repPreviewTitle">Generated Report Preview</span>
+          <button class="btn-act" onclick="window.print()">🖨️ Print / Save as PDF</button>
+        </div>
+        <div class="card-body" id="repPreviewBody"></div>
+      </div>
+    `;
+    mainEl.appendChild(repDiv);
+
+    renderErpTriRows('all');
+    renderPhoenixRows();
+    switchNetworkGraph('v2v');
+    enhanceMethodologyTab();
+  }
+
+  function fmtUSD(v) { return v > 0 ? '$' + v.toFixed(2) + 'M' : '—'; }
+
+  window.filterErpTri = function(btn, mode) {
+    document.querySelectorAll('#erpFilterBar .fchip').forEach(c => c.classList.remove('on'));
+    if (btn) btn.classList.add('on');
+    const stdCard = document.getElementById('erpStandardCard');
+    const phxCard = document.getElementById('erpPhoenixCard');
+    if (mode === 'phoenix') { stdCard.style.display = 'none'; phxCard.style.display = 'block'; }
+    else { stdCard.style.display = 'block'; phxCard.style.display = 'none'; renderErpTriRows(mode); }
+  };
+
+  function renderErpTriRows(mode) {
+    const tbody = document.getElementById('erpTriRows');
+    if (!tbody) return;
+    const rows = ERP_TRI_DATA.filter(r => {
+      if (mode === 'all') return true;
+      if (mode === 'sev' || mode === 'high' || mode === 'med') return r.band === mode;
+      if (mode === 'loans') return r.loans > 0;
+      if (mode === 'dual') return r.purchases > 0 && r.sales > 0;
+      return true;
+    });
+
+    tbody.innerHTML = rows.map(r => {
+      const tot = r.purchases + r.sales + r.advances + r.loans;
+      return `
+        <tr class="clickable" onclick="openCust('${r.key}')">
+          <td>
+            <div style="font-weight:600;color:var(--text);font-size:13px;">${r.name}</div>
+            <div class="mono" style="font-size:11px;color:var(--text-3);margin-top:2px;">${r.id} · ${r.jur}</div>
+            <div style="font-size:11px;color:var(--accent-dark);font-family:'JetBrains Mono',monospace;margin-top:3px;">${r.baseTxns}</div>
+          </td>
+          <td style="white-space:nowrap;">
+            <span class="band b-${r.band}"><span class="d"></span>${r.bandLbl}</span>
+            <span class="scorechip" style="margin-left:6px;color:${scoreColor(r.score)};">${r.score}</span>
+            <div class="mono" style="font-size:10.5px;color:var(--critical);margin-top:4px;font-weight:600;">${r.apHold}</div>
+          </td>
+          <td class="mono" style="font-weight:600;">${fmtUSD(r.purchases)}</td>
+          <td class="mono" style="color:var(--accent-dark);font-weight:500;">${fmtUSD(r.sales)}</td>
+          <td class="mono" style="color:${r.advances >= 3 ? 'var(--high)' : 'var(--text)'};font-weight:${r.advances >= 3 ? '600' : '400'};">${fmtUSD(r.advances)}</td>
+          <td class="mono" style="color:${r.loans > 0 ? 'var(--critical)' : 'var(--text-3)'};font-weight:${r.loans > 0 ? '600' : '400'};">${fmtUSD(r.loans)}</td>
+          <td class="mono" style="font-weight:600;font-size:13px;background:#FAFBFC;">$${tot.toFixed(2)}M</td>
+          <td>
+            <div><span class="erp-rel-badge ${r.relLvl}">${r.relFlag}</span></div>
+            <div style="font-size:11.5px;color:var(--text-2);line-height:1.4;">${r.relDesc}</div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function renderPhoenixRows() {
+    const tbody = document.getElementById('erpPhoenixRows');
+    if (!tbody) return;
+    tbody.innerHTML = PHOENIX_VENDORS.map(p => `
+      <tr class="clickable" onclick="openCust('${p.linkedKey}')">
+        <td>
+          <div style="font-weight:600;color:#9B1F1F;">⛔ ${p.blockedName}</div>
+          <div class="mono" style="font-size:11px;color:var(--text-2);margin-top:3px;">${p.blockedCode}</div>
+        </td>
+        <td>
+          <div style="font-weight:600;color:var(--text);">⚠️ ${p.newName}</div>
+          <div class="mono" style="font-size:11px;color:var(--accent-dark);margin-top:3px;">${p.newCode}</div>
+        </td>
+        <td style="white-space:nowrap;">
+          <span class="band b-sev"><span class="d"></span>${p.matchScore}</span>
+          <div class="mono" style="font-size:10.5px;color:var(--text-3);margin-top:4px;">${p.daysGap}</div>
+        </td>
+        <td>${p.sharedAnchors.map(a => `<div style="font-size:11.5px;color:var(--text);margin-bottom:3px;">• ${a}</div>`).join('')}</td>
+        <td>
+          <div class="mono" style="font-weight:600;color:var(--critical);font-size:12px;">${p.activeExposure}</div>
+          <div style="font-size:11px;color:var(--accent-dark);margin-top:4px;font-weight:600;">Inspect D7 Profile →</div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // ===== 3D ISOMETRIC NETWORK GRAPHS =====
+  const GRAPH_DATA = {
+    v2v: {
+      legend: [
+        { col: '#EF4444', lbl: 'High/Severe Active Vendor (3D Sphere)' },
+        { col: '#64748B', lbl: 'Blocked Vendor Master (LFA1.SPERR)' },
+        { col: '#F59E0B', lbl: 'Shared Forensic Hub (Bank A/C · IBAN · DIN)' }
+      ],
+      nodes: [
+        { id:'nv1', x:135, y:105, r:26, grad:'orbSlate', col:'#94A3B8', tag:'BLOCKED MASTER', linkKey:'transformers-rectifiers',
+          label:'Apex Civil (BLOCKED)', sub:'VND-00010482 · Blocked Jan 2025',
+          info:'Blocked for World Bank debarment & forged bid BGs. Reappeared 207 days later as Apexon Infrastructure sharing the exact same HDFC bank account and director DIN.' },
+        { id:'nv2', x:545, y:105, r:28, grad:'orbRed', col:'#EF4444', tag:'PHOENIX ACTIVE', linkKey:'transformers-rectifiers', pulse:true,
+          label:'Apexon Infra LLP', sub:'VND-00023091 · $4.85M POs',
+          info:'Active vendor receiving $4.85M in civil POs ($1.18M open AP). Shares HDFC A/C 50200048192011 and Director DIN 08492014 with blocked Apex Civil.' },
+        { id:'na1', x:340, y:68,  r:21, grad:'orbGold', col:'#F59E0B', tag:'SHARED BANK', linkKey:'transformers-rectifiers',
+          label:'HDFC ...92011', sub:'Shared LFBK.BANKN Anchor',
+          info:'Identical beneficiary bank account (HDFC0000240 / 50200048192011) linked to both blocked Apex Civil and active Apexon Infra LLP.' },
+        { id:'na2', x:340, y:168, r:21, grad:'orbGold', col:'#F59E0B', tag:'SHARED DIN', linkKey:'db-realty',
+          label:'DIN 08492014', sub:'R. K. Deshmukh (MCA)',
+          info:'Common director/signatory on MCA filings across Apex Civil, Apexon Infra LLP, and sub-contractor DB Realty JV.' },
+        { id:'nv3', x:135, y:325, r:26, grad:'orbSlate', col:'#94A3B8', tag:'BLOCKED MASTER', linkKey:'meridian-nominee',
+          label:'Zenith FZE (BLOCKED)', sub:'VND-00014210 · Blocked Mar 2025',
+          info:'Blocked due to OFAC-adjacent transshipment risk. Same Mashreq IBAN and BVI registered agent surfaced 62 days later under Meridian Nominee Holdings.' },
+        { id:'nv4', x:545, y:325, r:28, grad:'orbRed', col:'#EF4444', tag:'SEVERE OVERRIDE', linkKey:'meridian-nominee', pulse:true,
+          label:'Meridian Nominee (BVI)', sub:'FORT10194 · $17.7M Exposure',
+          info:'Severe Override entity ($11.7M trade + $6.0M cross-border loan). Shares Mashreq IBAN AE440330...6512 with blocked Zenith Global Trading FZE.' },
+        { id:'na3', x:340, y:325, r:21, grad:'orbGold', col:'#F59E0B', tag:'SHARED IBAN', linkKey:'meridian-nominee',
+          label:'IBAN AE44...6512', sub:'Shared Mashreq IBAN & BVI Suite',
+          info:'Identical Mashreq Bank IBAN and BVI nominee corporate secretary address connecting blocked Zenith FZE and Meridian Nominee Holdings.' }
+      ],
+      edges: [
+        { from:'nv1', to:'na1', lbl:'Old Master Bank', crit:false },
+        { from:'nv2', to:'na1', lbl:'COLLISION: Same Bank', crit:true },
+        { from:'nv1', to:'na2', lbl:'Director', crit:false },
+        { from:'nv2', to:'na2', lbl:'COLLISION: Same DIN', crit:true },
+        { from:'nv3', to:'na3', lbl:'Old Master IBAN', crit:false },
+        { from:'nv4', to:'na3', lbl:'COLLISION: Same IBAN', crit:true }
+      ]
+    },
+    e2v: {
+      legend: [
+        { col: '#3B82F6', lbl: 'Internal Employee / SAP User (3D Sphere)' },
+        { col: '#EF4444', lbl: 'Flagged Pass-Through Vendor' },
+        { col: '#F59E0B', lbl: 'Shared HR / Digital Anchor (PA0105 · IP)' }
+      ],
+      nodes: [
+        { id:'ne1', x:145, y:125, r:27, grad:'orbBlue', col:'#3B82F6', tag:'INTERNAL BUYER', linkKey:'anand-brothers', pulse:true,
+          label:'Rajeev Nair (Buyer)', sub:'SAP User: RAJEEV55 · Procurement',
+          info:'Originates 86% of all POs ($9.40M) for Anand & Brothers and 88% of POs ($11.2M) for TAP Engineering using single-source justifications.' },
+        { id:'nv5', x:535, y:88,  r:27, grad:'orbRed', col:'#EF4444', tag:'HIGH RISK VENDOR', linkKey:'anand-brothers', pulse:true,
+          label:'Anand & Brothers', sub:'FORT10018 · $9.40M + $2.85M Adv',
+          info:'Unregistered partnership with suspended GSTIN. Received $2.85M advance 4 days before GST suspension; shares phone/address cluster with buyer.' },
+        { id:'nv6', x:535, y:215, r:25, grad:'orbRed', col:'#EF4444', tag:'DEBARRED VENDOR', linkKey:'tap-engineering',
+          label:'TAP Engineering', sub:'FORT10002 · $11.20M Spend',
+          info:'Debarred civil contractor receiving 88% of PO volume from RAJEEV55 without competitive RFQ.' },
+        { id:'na4', x:340, y:108, r:21, grad:'orbGold', col:'#F59E0B', tag:'HR PHONE MATCH', linkKey:'anand-brothers',
+          label:'PA0105 Phone Match', sub:'+91-98204-77120 (HR Record)',
+          info:'Vendor emergency contact phone in LFA1 matches HR employee secondary contact record in SAP PA0105.' },
+        { id:'ne2', x:145, y:335, r:27, grad:'orbBlue', col:'#3B82F6', tag:'INTERNAL AP CLERK', linkKey:'kedarnath-packing',
+          label:'Lata Verma (AP Clerk)', sub:'SAP User: LVERMA02 · Finance',
+          info:'Executed master bank modification (CDPOS-LFBK) on Kedarnath Packing < 72 hours prior to F110 payment run from shared IP.' },
+        { id:'nv7', x:535, y:335, r:27, grad:'orbRed', col:'#EF4444', tag:'0 EPFO CONDUIT', linkKey:'kedarnath-packing', pulse:true,
+          label:'Kedarnath Packing', sub:'FORT10087 · 0 EPFO Staff',
+          info:'Zero-substance packaging pass-through (0 EPFO employees). Invoice uploaded from same subnet IP as off-hours SAP login.' },
+        { id:'na5', x:340, y:335, r:21, grad:'orbGold', col:'#F59E0B', tag:'SHARED IP', linkKey:'kedarnath-packing',
+          label:'IP 103.21.124.88', sub:'Shared Portal & SAP Session IP',
+          info:'Same IP address logged uploading Kedarnath PDF invoice and executing off-hours SAP vendor bank change.' }
+      ],
+      edges: [
+        { from:'ne1', to:'nv5', lbl:'86% PO Volume ($9.4M)', crit:true },
+        { from:'ne1', to:'nv6', lbl:'88% PO Volume ($11.2M)', crit:true },
+        { from:'ne1', to:'na4', lbl:'HR PA0105', crit:false },
+        { from:'nv5', to:'na4', lbl:'COLLISION: Shared Phone', crit:true },
+        { from:'ne2', to:'na5', lbl:'Off-Hours SAP Login', crit:true },
+        { from:'nv7', to:'na5', lbl:'Portal Invoice Upload', crit:true }
+      ]
+    }
+  };
+
+  window.switchNetworkGraph = function(mode) {
+    document.getElementById('btnNetV2V')?.classList.toggle('on', mode === 'v2v');
+    document.getElementById('btnNetE2V')?.classList.toggle('on', mode === 'e2v');
+    const g = GRAPH_DATA[mode];
+    const leg = document.getElementById('netLegend');
+    const wrap = document.getElementById('netSvgWrap');
+    if (!g || !wrap) return;
+
+    leg.innerHTML = g.legend.map(l => `<span><span class="net-orb-dot" style="background:${l.col};color:${l.col};"></span>${l.lbl}</span>`).join('');
+    const nodeMap = {};
+    g.nodes.forEach(n => { nodeMap[n.id] = n; });
+
+    const defs = `
+      <defs>
+        <pattern id="isoGrid3D" width="36" height="36" patternUnits="userSpaceOnUse">
+          <path d="M 36 0 L 0 0 0 36" fill="none" stroke="rgba(148,163,184,0.08)" stroke-width="1"/>
+        </pattern>
+        <radialGradient id="orbRed" cx="32%" cy="28%" r="70%"><stop offset="0%" stop-color="#FCA5A5"/><stop offset="35%" stop-color="#EF4444"/><stop offset="85%" stop-color="#991B1B"/><stop offset="100%" stop-color="#450A0A"/></radialGradient>
+        <radialGradient id="orbBlue" cx="32%" cy="28%" r="70%"><stop offset="0%" stop-color="#93C5FD"/><stop offset="35%" stop-color="#3B82F6"/><stop offset="85%" stop-color="#1D4ED8"/><stop offset="100%" stop-color="#172554"/></radialGradient>
+        <radialGradient id="orbGold" cx="32%" cy="28%" r="70%"><stop offset="0%" stop-color="#FDE68A"/><stop offset="35%" stop-color="#F59E0B"/><stop offset="85%" stop-color="#B45309"/><stop offset="100%" stop-color="#451A03"/></radialGradient>
+        <radialGradient id="orbSlate" cx="32%" cy="28%" r="70%"><stop offset="0%" stop-color="#E2E8F0"/><stop offset="35%" stop-color="#64748B"/><stop offset="85%" stop-color="#334155"/><stop offset="100%" stop-color="#0F172A"/></radialGradient>
+        <filter id="glow3D" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <rect width="680" height="430" fill="url(#isoGrid3D)" />
+    `;
+
+    const edgeSvg = g.edges.map(e => {
+      const a = nodeMap[e.from], b = nodeMap[e.to];
+      const cx = (a.x + b.x) / 2;
+      const cy = (a.y + b.y) / 2 - (e.crit ? 18 : 10);
+      const pathD = `M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`;
+      const lx = cx, ly = (a.y + b.y) / 2 - (e.crit ? 11 : 6);
+      return `
+        <path d="${pathD}" fill="none" stroke="${e.crit ? 'rgba(239,68,68,0.28)' : 'rgba(100,116,139,0.22)'}" stroke-width="${e.crit ? 7 : 3}" />
+        <path d="${pathD}" fill="none" stroke="${e.crit ? '#F87171' : '#64748B'}" stroke-width="${e.crit ? 2.4 : 1.5}" ${e.crit ? 'stroke-dasharray="7,5" class="collusion-beam"' : ''} />
+        <rect x="${lx - 66}" y="${ly - 9}" width="132" height="17" rx="5" fill="#090F1A" stroke="${e.crit ? '#7F1D1D' : '#1E293B'}" stroke-width="1" />
+        <text x="${lx}" y="${ly + 2.5}" text-anchor="middle" fill="${e.crit ? '#FCA5A5' : '#94A3B8'}" font-size="9.5" font-weight="600" font-family="JetBrains Mono, monospace">${e.lbl}</text>
+      `;
+    }).join('');
+
+    const nodeSvg = g.nodes.map(n => `
+      <g class="node-3d-group" onclick="inspectNetNode('${mode}','${n.id}')">
+        <ellipse cx="${n.x}" cy="${n.y + n.r + 7}" rx="${n.r * 0.85}" ry="5.5" fill="rgba(0,0,0,0.65)" />
+        <circle class="orb-halo" cx="${n.x}" cy="${n.y}" r="${n.r + 9}" fill="${n.col}" opacity="0.16" filter="url(#glow3D)" />
+        ${n.pulse ? `<circle class="pulse-ring" cx="${n.x}" cy="${n.y}" r="${n.r + 6}" fill="none" stroke="${n.col}" stroke-width="1.8" />` : ''}
+        <circle cx="${n.x}" cy="${n.y}" r="${n.r}" fill="url(#${n.grad})" stroke="rgba(255,255,255,0.45)" stroke-width="1.4" />
+        <ellipse cx="${n.x - n.r * 0.3}" cy="${n.y - n.r * 0.32}" rx="${n.r * 0.34}" ry="${n.r * 0.2}" transform="rotate(-28 ${n.x - n.r * 0.3} ${n.y - n.r * 0.32})" fill="rgba(255,255,255,0.52)" />
+        <rect x="${n.x - 74}" y="${n.y + n.r + 12}" width="148" height="33" rx="6" fill="rgba(13,21,32,0.88)" stroke="rgba(255,255,255,0.12)" stroke-width="1" />
+        <text x="${n.x}" y="${n.y + n.r + 25}" text-anchor="middle" fill="#F8FAFC" font-size="11" font-weight="600" font-family="DM Sans, sans-serif">${n.label}</text>
+        <text x="${n.x}" y="${n.y + n.r + 38}" text-anchor="middle" fill="#94A3B8" font-size="9" font-family="JetBrains Mono, monospace">${n.sub}</text>
+      </g>
+    `).join('');
+
+    wrap.innerHTML = `<svg viewBox="0 0 680 430" width="100%" height="100%">${defs}${edgeSvg}${nodeSvg}</svg>`;
+    inspectNetNode(mode, g.nodes[1].id);
+  };
+
+  window.inspectNetNode = function(mode, id) {
+    const n = GRAPH_DATA[mode].nodes.find(x => x.id === id);
+    if (!n) return;
+    document.getElementById('netNodeTypePill').textContent = n.tag;
+    document.getElementById('netNodeTitle').textContent = n.label;
+    document.getElementById('netNodeSub').textContent = n.sub;
+    document.getElementById('netNodeBody').innerHTML = `
+      <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:12px;color:#0F172A;margin-bottom:12px;">${n.info}</div>
+      <div style="font-size:11.5px;color:#64748B;"><b>Recommended Governance Action:</b> Set Resolution to <b>Escalated</b> or <b>Rejected</b> and place immediate F110 payment hold on linked active vendor codes.</div>
+    `;
+    document.getElementById('netNodeFooter').innerHTML = `
+      <button class="btn-act" style="width:100%;justify-content:center;" onclick="openCust('${n.linkKey}')">Open Linked Counterparty D7 Profile →</button>
+    `;
+  };
+
+  // ===== METHODOLOGY ENHANCEMENT =====
+  function enhanceMethodologyTab() {
+    const setTab = document.getElementById('tab-settings');
+    if (!setTab || document.getElementById('okxMethodologyCard')) return;
+
+    const methHtml = `
+      <div class="card" id="okxMethodologyCard">
+        <div class="card-head">
+          <span class="card-title">Risk Scoring Methodology &amp; Pillar Mechanics (OKX / Enterprise Custos Standard)</span>
+          <span class="card-sub">one engine · dimension set configured per party &amp; legal structure</span>
+        </div>
+        <div class="card-body" style="padding-bottom:10px;">
+          <div class="meth-formula">
+            <span class="mono">contribution = round( sub-score × weight )</span> &nbsp;·&nbsp;
+            <span class="mono">composite = Σ contributions</span> &nbsp;·&nbsp;
+            band: <span class="mono">0–24</span> Low · <span class="mono">25–49</span> Medium · <span class="mono">50–74</span> High · <span class="mono">75–100</span> Severe
+          </div>
+          <div style="font-size:12px;color:var(--text-2);line-height:1.55;margin-top:10px;">
+            Each dimension is either <span class="fsrc detected" style="vertical-align:baseline;">detected · D7</span> natively (Watchlists, Ownership/UBO, Statutory/Regulatory, Litigation) or <span class="fsrc ingested" style="vertical-align:baseline;">ingested · ERP</span> from SAP P2P/O2C subledgers. D7 AI auto-assigns 1st-level Resolution states (Approved / Escalated / Rejected, or blank when undecided) for final analyst confirmation.
+          </div>
+        </div>
+        <div>
+          <div class="meth-row open">
+            <div class="meth-head" onclick="this.parentElement.classList.toggle('open')">
+              <span class="fico screening"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
+              <span class="meth-name">1. Watchlist, Debarment &amp; Adverse Media Screen</span>
+              <span class="mech-tag dominant">DOMINANT · worst resolved finding</span>
+              <svg class="meth-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+            <div class="meth-detail">
+              <div class="meth-line"><span>Confirmed Tier-1 sanctions / World Bank debarment / PMLA match</span><span class="rng">95–100</span></div>
+              <div class="meth-line"><span>Historical-KMP corruption conviction overlapping target tenure</span><span class="rng">75–90</span></div>
+              <div class="meth-line"><span>False positive / namesake cleared via L1–L4 adjudication (fuzzy &lt; 0.85)</span><span class="rng">0–15</span></div>
+              <div class="meth-sub">Resolved through 4-layer adjudication (Name → DOB/DIN → Source Tier → Prior Decision). Takes the single most severe resolved finding.</div>
+            </div>
+          </div>
+          <div class="meth-row">
+            <div class="meth-head" onclick="this.parentElement.classList.toggle('open')">
+              <span class="fico behaviour"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span>
+              <span class="meth-name">2. ERP Behavioural, Conduit &amp; Phoenix Network Signals</span>
+              <span class="mech-tag additive">ADDITIVE · sum of patterns</span>
+              <svg class="meth-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m9 18 6-6-6-6"/></svg>
+            </div>
+            <div class="meth-detail">
+              <div class="meth-line"><span>Blocked vendor reappearance (shared LFBK bank, ADRC address, or DIN)</span><span class="rng">+40</span></div>
+              <div class="meth-line"><span>Employee–vendor collusion link (PA0105 phone/bank or shared login IP)</span><span class="rng">+35</span></div>
+              <div class="meth-line"><span>Single-buyer PO concentration (&gt;85% EKKO.ERNAM) + zero GR/IR dwell</span><span class="rng">+25</span></div>
+              <div class="meth-sub">Additive dimension capped at 100: independent ERP anomalies compound because multiple collusion signals indicate systemic control bypass.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    setTab.insertAdjacentHTML('beforeend', methHtml);
+  }
+
+  // ===== GLOBAL SEARCH (⌘K) =====
+  function setupGlobalSearch() {
+    const inp = document.getElementById('globalSearchInput');
+    const drop = document.getElementById('globalSearchDrop');
+    if (!inp || !drop) return;
+
+    document.addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); inp.focus(); }
+      else if (e.key === 'Escape') { drop.style.display = 'none'; }
+    });
+
+    inp.addEventListener('input', () => {
+      const q = inp.value.trim().toLowerCase();
+      if (!q) { drop.style.display = 'none'; return; }
+      const matches = [];
+      Object.keys(C).forEach(k => {
+        const c = C[k];
+        if (`${c.name} ${c.id} ${c.res} ${c.driver}`.toLowerCase().includes(q)) {
+          matches.push({ type: 'Counterparty D7 Profile', title: c.name, sub: `${c.id} · ${c.res} · Score ${scoreOf(c)}`, fn: `openCust('${k}')` });
+        }
+      });
+      ERP_TRI_DATA.forEach(r => {
+        if (`${r.name} ${r.baseTxns} ${r.relFlag} ${r.apHold}`.toLowerCase().includes(q)) {
+          matches.push({ type: 'ERP Exposure & Ledger', title: `${r.name} ($${(r.purchases+r.sales+r.advances+r.loans).toFixed(2)}M)`, sub: r.baseTxns, fn: `jumpToErpFilter('all')` });
+        }
+      });
+      PHOENIX_VENDORS.forEach(p => {
+        if (`${p.blockedName} ${p.newName} ${p.sharedAnchors.join(' ')}`.toLowerCase().includes(q)) {
+          matches.push({ type: 'Blocked Vendor Reappearance', title: `${p.blockedName} → ${p.newName}`, sub: p.sharedAnchors[0], fn: `jumpToErpFilter('phoenix')` });
+        }
+      });
+
+      drop.innerHTML = !matches.length
+        ? `<div style="padding:14px;font-size:12px;color:#64748B;">No matching counterparties, SAP documents, bank accounts, or UBOs for "<b>${inp.value}</b>".</div>`
+        : matches.slice(0, 8).map(m => `
+          <div style="padding:10px 14px;border-bottom:1px solid #F1F5F9;cursor:pointer;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='#FFFFFF'"
+            onclick="document.getElementById('globalSearchDrop').style.display='none';${m.fn}">
+            <div style="font-size:10px;font-weight:600;text-transform:uppercase;color:#2E5A8A;">${m.type}</div>
+            <div style="font-weight:600;font-size:12.5px;color:#0F172A;margin-top:1px;">${m.title}</div>
+            <div class="mono" style="font-size:11px;color:#64748B;margin-top:2px;">${m.sub}</div>
+          </div>
+        `).join('');
+      drop.style.display = 'block';
+    });
+
+    document.addEventListener('click', e => {
+      if (!inp.contains(e.target) && !drop.contains(e.target)) drop.style.display = 'none';
+    });
+  }
+
+  // ===== REPORT GENERATOR (INCLUDING ESCALATED-ONLY REPORT) =====
+  window.generateCustosReport = function(type) {
+    const card = document.getElementById('reportPreviewCard');
+    const title = document.getElementById('repPreviewTitle');
+    const body = document.getElementById('repPreviewBody');
+    card.style.display = 'block';
+
+    if (type === 'escalated') {
+      const escKeys = Object.keys(C).filter(k => getResState(k).status === 'Escalated');
+      title.textContent = `Escalated Counterparties — Internal Approval & Hold Action Pack (${escKeys.length} Escalated Entities)`;
+      if (!escKeys.length) {
+        body.innerHTML = '<div style="padding:16px;color:var(--text-2);">No counterparties currently carry the <b>Escalated</b> resolution state. Select <b>Escalated</b> in <i>Monitored Parties</i> or the <i>Entity Deep Dive</i> bar to populate this report.</div>';
+      } else {
+        body.innerHTML = `
+          <div style="margin-bottom:12px;font-size:12.5px;color:var(--text-2);">
+            <b>Scope:</b> Includes strictly the <b>${escKeys.length} counterparties</b> with Resolution state <b>Escalated</b>.
+          </div>
+          <table>
+            <thead><tr><th>Escalated Counterparty</th><th>D7 Score &amp; Band</th><th>Resolution Rationale</th><th>ERP Exposure &amp; Hold</th><th>Required Approval Action</th></tr></thead>
+            <tbody>
+              ${escKeys.map(k => {
+                const c = C[k], sc = scoreOf(c), eb = effBand(c), res = getResState(k);
+                const erp = ERP_TRI_DATA.find(x => x.key === k);
+                const expTxt = erp ? `$${(erp.purchases+erp.sales+erp.advances+erp.loans).toFixed(2)}M (${erp.apHold})` : 'Under ERP Review';
+                const actTxt = c.actions && c.actions[0] ? `${c.actions[0][0]} — ${c.actions[0][1]}` : 'Senior Legal & GC Approval';
+                return `<tr>
+                  <td><b>${c.name}</b><div class="mono" style="font-size:10.5px;color:var(--text-3);">${c.id} · ${c.res}</div></td>
+                  <td><span class="band b-${eb[0]}"><span class="d"></span>${eb[1]} (${sc})</span></td>
+                  <td style="font-size:11.5px;">${res.reason}</td>
+                  <td class="mono" style="font-size:11.5px;color:var(--critical);font-weight:600;">${expTxt}</td>
+                  <td style="font-size:11.5px;">${actTxt}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+    } else if (type === 'erp') {
+      title.textContent = 'CFO Pre-Disbursement Hold & ERP Triangulation Schedule (FY 2025–26)';
+      body.innerHTML = `
+        <table>
+          <thead><tr><th>Counterparty</th><th>D7 Score</th><th>Purchases</th><th>Sales</th><th>Advances</th><th>Loans/ICDs</th><th>Hold Status</th></tr></thead>
+          <tbody>
+            ${ERP_TRI_DATA.map(r => `<tr><td><b>${r.name}</b></td><td class="mono">${r.score} (${r.bandLbl})</td><td class="mono">${fmtUSD(r.purchases)}</td><td class="mono">${fmtUSD(r.sales)}</td><td class="mono">${fmtUSD(r.advances)}</td><td class="mono">${fmtUSD(r.loans)}</td><td class="mono" style="color:var(--critical);font-weight:600;">${r.apHold}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      `;
+    } else if (type === 'phoenix') {
+      title.textContent = 'Forensic Dossier: Blocked Vendor Reappearance & Network Collusion';
+      body.innerHTML = `
+        <table>
+          <thead><tr><th>Blocked Vendor</th><th>Reappeared As</th><th>Match</th><th>Shared Forensic Anchor</th><th>Active Exposure</th></tr></thead>
+          <tbody>
+            ${PHOENIX_VENDORS.map(p => `<tr><td><b>${p.blockedName}</b></td><td><b>${p.newName}</b></td><td class="mono">${p.matchScore}</td><td>${p.sharedAnchors[0]}</td><td class="mono" style="color:var(--critical);font-weight:600;">${p.activeExposure}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      `;
+    } else {
+      title.textContent = 'Board & Audit Committee Third-Party Risk Executive Brief';
+      body.innerHTML = `
+        <div class="kpi-row" style="margin-bottom:12px;">
+          <div class="kpi"><div class="kpi-label">Monitored Book</div><div class="kpi-value accent">2,840</div><div class="kpi-sub">100% continuous coverage</div></div>
+          <div class="kpi k-crit"><div class="kpi-label">High + Severe Spend</div><div class="kpi-value critical">$148.2M</div><div class="kpi-sub">199 counterparties</div></div>
+          <div class="kpi k-high"><div class="kpi-label">F110 Hold Queue</div><div class="kpi-value high">$4.85M</div><div class="kpi-sub">4 vendors gated</div></div>
+          <div class="kpi"><div class="kpi-label">Phoenix Matches</div><div class="kpi-value critical">4</div><div class="kpi-sub">Shared Bank/DIN/Address</div></div>
+          <div class="kpi k-green"><div class="kpi-label">Noise Suppressed</div><div class="kpi-value">94</div><div class="kpi-sub">Namesake / FAM-RCA cleared</div></div>
+        </div>
+      `;
+    }
+    card.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  window.downloadCustosCSV = function(type) {
+    let csv = '';
+    if (type === 'escalated') {
+      csv = "Counterparty,ID,Jurisdiction,Score,Band,Resolution,Reason\n";
+      Object.keys(C).filter(k => getResState(k).status === 'Escalated').forEach(k => {
+        const c = C[k], res = getResState(k);
+        csv += `"${c.name}","${c.id}","${c.res}",${scoreOf(c)},${effBand(c)[1]},"${res.status}","${res.reason}"\n`;
+      });
+    } else {
+      csv = "Counterparty,ID,Band,Score,Purchases_M,Sales_M,Advances_M,Loans_M,Hold_Status\n";
+      ERP_TRI_DATA.forEach(r => {
+        csv += `"${r.name}","${r.id}",${r.bandLbl},${r.score},${r.purchases},${r.sales},${r.advances},${r.loans},"${r.apHold}"\n`;
+      });
+    }
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `Custos_${type}_report.csv`;
+    a.click();
+  };
+
+  // ===== ASK D7 ASSISTANT =====
+  window.toggleAskD7 = function() { document.getElementById('d7AskDrawer').classList.toggle('open'); };
+  window.runAskD7 = function(q) { document.getElementById('d7AskInput').value = q; sendAskD7(); };
+  window.sendAskD7 = function() {
+    const inp = document.getElementById('d7AskInput');
+    const q = inp.value.trim();
+    if (!q) return;
+    const box = document.getElementById('d7AskMsgs');
+    box.innerHTML += `<div class="d7-msg-u">${q}</div>`;
+    inp.value = '';
+    const ql = q.toLowerCase();
+    let htmlAns = '';
+
+    if (ql.includes('resolution') || ql.includes('escalat') || ql.includes('recommend') || ql.includes('reject')) {
+      const keys = Object.keys(C);
+      htmlAns = `
+        <div class="d7-ans-title"><span>Entity Resolution States (AI 1st-Level + Analyst Final)</span><span class="band b-high">${keys.length} Entities</span></div>
+        <table class="d7-ans-tbl">
+          <thead><tr><th>Counterparty</th><th>Resolution</th><th>Rationale</th></tr></thead>
+          <tbody>
+            ${keys.slice(0, 9).map(k => {
+              const r = getResState(k);
+              return `<tr><td><b>${C[k].name}</b></td><td><b>${r.status || '— (Undecided)'}</b></td><td>${r.reason}</td></tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    } else if (ql.includes('phoenix') || ql.includes('blocked') || ql.includes('reappear')) {
+      htmlAns = `
+        <div class="d7-ans-title"><span>Blocked Vendor Reappearance ("Phoenix" Collisions)</span><span class="band b-sev">4 Matches</span></div>
+        <table class="d7-ans-tbl">
+          <thead><tr><th>Blocked Vendor</th><th>Reappeared As</th><th>Shared Anchor</th><th>Exposure</th></tr></thead>
+          <tbody>
+            ${PHOENIX_VENDORS.map(p => `<tr><td>${p.blockedName}</td><td><b>${p.newName}</b></td><td>${p.sharedAnchors[0].split(':')[0]}</td><td class="mono">${p.activeExposure.split(' ')[0]}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      `;
+    } else if (ql.includes('shanghai') || ql.includes('zheng') || ql.includes('harmon')) {
+      htmlAns = `
+        <div class="d7-ans-title"><span>Shanghai Electric Harmonisation (3.75 → 68 High)</span><span class="band b-high">CDD Required</span></div>
+        <table class="d7-ans-tbl">
+          <thead><tr><th>Stage</th><th>Score</th><th>Key Evidence</th></tr></thead>
+          <tbody>
+            <tr><td><b>Initial Screen</b></td><td class="mono">3.75 Low</td><td>19 watchlists &amp; China QCC regulatory 100% Clear; unlisted JV financials N/A.</td></tr>
+            <tr><td><b>Quick Scan</b></td><td class="mono">68 High</td><td>Ex-Legal Rep <b>Zheng Jianhua</b> (2007–14) death-reprieve bribery sentence (Jan 2026) + 6 active civil suits.</td></tr>
+            <tr><td><b>ERP Exposure</b></td><td class="mono">$47.50M</td><td>$32.5M turbine POs + $8.9M LC advance + $6.1M sub-assembly sales.</td></tr>
+          </tbody>
+        </table>
+      `;
+    } else if (ql.includes('employee') || ql.includes('collusion') || ql.includes('network')) {
+      htmlAns = `
+        <div class="d7-ans-title"><span>Employee–Vendor Collusion Network Links</span><span class="band b-sev">2 Clusters</span></div>
+        <table class="d7-ans-tbl">
+          <thead><tr><th>Internal Actor</th><th>Linked Vendor</th><th>Forensic Anchor</th><th>Exposure</th></tr></thead>
+          <tbody>
+            <tr><td><b>Rajeev Nair</b> (RAJEEV55)</td><td>Anand &amp; Brothers / TAP Eng.</td><td>86–88% single-buyer PO share + HR <span class="mono">PA0105</span> phone match</td><td class="mono">$20.60M</td></tr>
+            <tr><td><b>Lata Verma</b> (LVERMA02)</td><td>Kedarnath Packing (0 EPFO)</td><td>Shared IP <span class="mono">103.21.124.88</span> on off-hours bank edit &amp; invoice upload</td><td class="mono">$9.40M</td></tr>
+          </tbody>
+        </table>
+      `;
+    } else {
+      htmlAns = `
+        <div class="d7-ans-title"><span>In-Flight F110 Payment Holds &amp; ERP Summary</span><span class="band b-sev">$4.85M Gated</span></div>
+        <table class="d7-ans-tbl">
+          <thead><tr><th>Counterparty</th><th>Band</th><th>Total ERP</th><th>Immediate Hold</th></tr></thead>
+          <tbody>
+            <tr><td><b>DB Realty Ltd</b></td><td>Severe (91)</td><td class="mono">$41.90M</td><td class="mono">$1.95M F110 Hold</td></tr>
+            <tr><td><b>Rattan India Power</b></td><td>Severe (82)</td><td class="mono">$33.10M</td><td class="mono">$1.12M F110 Hold</td></tr>
+            <tr><td><b>Meridian Nominee (BVI)</b></td><td>Severe (64)</td><td class="mono">$22.20M</td><td class="mono">$1.20M Wire Freeze</td></tr>
+            <tr><td><b>Simplex Infrastructures</b></td><td>Severe (78)</td><td class="mono">$20.50M</td><td class="mono">$0.88M F110 Hold</td></tr>
+          </tbody>
+        </table>
+      `;
+    }
+
+    box.innerHTML += `<div class="d7-msg-a">${htmlAns}</div>`;
+    box.scrollTop = box.scrollHeight;
+  };
+
+  function bootCustosV7() {
+    attachAllDashboardPopovers();
+    buildAllNewTabs();
+    enhanceMonitoredPartiesUI();
+    setupGlobalSearch();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootCustosV7);
+  } else {
+    bootCustosV7();
+  }
+  setTimeout(bootCustosV7, 250);
+})();
+</script>
+<!-- ===== END FORTIFAI CUSTOS UAT ENHANCEMENT SUITE (v7) ===== -->
+
 </body>
 </html>
