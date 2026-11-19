@@ -73,7 +73,7 @@ reports:
     subtitle: Export Control Monitoring
     level: compliance
     priority: 2
-    active: true
+    active: false
 
   - file: FCPA_PROC0460_Module_v9.html
     title: Veritas
