@@ -1,0 +1,520 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Quantum Graph · ZEE · by D7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+:root{--navy:#1A2330;--accent:#6699CC;--accent-dark:#2E5A8A;--medium:#98AA3A;--high:#E65100;--critical:#C62828;--green:#16a34a;--rpt:#7C5CBF;--paper:#F5F6F8;--card:#fff;--line:#E3E6EA;--ink:#1A2330;--ink-soft:#5B6674;--ink-faint:#8A94A1;}
+*{box-sizing:border-box;margin:0;padding:0;}html,body{height:100%;}
+body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);overflow:hidden;-webkit-font-smoothing:antialiased;}
+.mono{font-family:'JetBrains Mono',monospace;font-feature-settings:"tnum";}
+.app{display:grid;grid-template-columns:1fr;grid-template-rows:auto 1fr;height:100vh;position:relative;}
+header{grid-column:1/-1;display:flex;align-items:center;gap:16px;padding:11px 20px;background:var(--navy);color:#fff;z-index:20;flex-wrap:wrap;}
+header .brand{display:flex;align-items:baseline;gap:9px;}header .brand b{font-weight:700;font-size:15px;}header .brand span{font-size:11.5px;color:#A9B4C2;}
+header .subj{font-size:12px;color:#C7D0DB;border-left:1px solid #34415580;padding-left:16px;margin-left:4px;display:flex;align-items:center;}header .subj em{color:#F0A868;font-style:normal;font-weight:600;}
+header .spacer{flex:1;}
+.toggles{display:flex;gap:7px;}.tg{font-size:11px;font-weight:600;color:#D6DEE8;padding:5px 11px;border-radius:20px;background:#242F3F;cursor:pointer;user-select:none;transition:.15s;}.tg:hover{background:#2C3A4C;}.tg.off{opacity:.4;}
+.hdrrow{display:flex;align-items:center;gap:14px;width:100%;flex-wrap:wrap;}
+.hdrrow.r2{margin-top:9px;padding-top:9px;border-top:1px solid #34415560;}
+.toplenses{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.toplenses .tlt{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#7C89A0;margin-right:2px;}
+.toplenses button{font-family:'DM Sans';font-size:11px;font-weight:600;color:#D6DEE8;background:#242F3F;border:1px solid transparent;border-radius:20px;padding:5px 12px;cursor:pointer;transition:.14s;white-space:nowrap;}
+.toplenses button:hover{background:#2C3A4C;}
+.toplenses button.on{background:#fff;color:var(--navy);}
+.toplenses button.base{box-shadow:inset 0 -3px 0 #6699CC;}
+.toplenses button.overlay{box-shadow:inset 0 -3px 0 #F0A868;}
+.toplenses button.base.on{box-shadow:inset 0 -3px 0 #2E5A8A;}
+.toplenses button.overlay.on{box-shadow:inset 0 -3px 0 #E65100;}
+.topreset{font-size:10.5px;font-weight:600;color:#A9B4C2;background:transparent;border:1px solid #34415580;border-radius:20px;padding:5px 12px;cursor:pointer;}
+.topreset:hover{color:#fff;border-color:#5A6A80;}
+.filters{display:flex;gap:6px;align-items:center;}.chip{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;font-size:10.5px;font-weight:500;color:#D6DEE8;padding:5px 9px;border-radius:20px;background:#242F3F;transition:.15s;}.chip:hover{background:#2C3A4C;}.chip.off{opacity:.4;}.chip .sw{width:14px;border-top-width:3px;border-top-style:solid;border-radius:2px;}
+.stage{position:relative;overflow:hidden;background:radial-gradient(circle at 34% 12%,#fff,var(--paper) 74%);}
+svg#g{width:100%;height:100%;display:block;cursor:grab;}svg#g:active{cursor:grabbing;}
+.lensbar{display:none;}
+.lensbar .lt{font-size:9.5px;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-faint);font-weight:700;margin-bottom:6px;}
+.lensbar button{display:block;width:100%;text-align:left;font-family:'DM Sans';font-size:11.5px;font-weight:600;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px;margin-bottom:5px;cursor:pointer;transition:.12s;}
+.lensbar button:last-child{margin-bottom:0;}.lensbar button:hover{border-color:var(--accent);background:#F2F7FC;}
+.lensbar button.on{background:var(--navy);color:#fff;border-color:var(--navy);}
+.lensbar button .cnt{float:right;font-family:'JetBrains Mono';font-size:10px;opacity:.6;font-weight:500;}
+.hull{stroke-linejoin:round;pointer-events:none;transition:opacity .25s;}
+.edge{fill:none;transition:opacity .2s;}.edge.hit{stroke:transparent;stroke-width:14px;cursor:pointer;}.edge.dismissed{opacity:.13!important;}.edge.confirmed{stroke-width:3.4px;}
+.elabel{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;pointer-events:none;paint-order:stroke;stroke:var(--paper);stroke-width:3px;}.elabel.dismissed{opacity:.2;}
+.smark{font-size:12px;font-weight:700;pointer-events:none;}
+.node{cursor:pointer;}.node .shape{transition:stroke-width .15s;}.node text{pointer-events:none;}
+.nlabel{font-size:14px;font-weight:600;fill:var(--ink);}.nlabel.h2{font-size:12.5px;fill:var(--ink-soft);}
+.nid{font-size:11px;font-weight:500;fill:var(--ink-faint);font-family:'JetBrains Mono';}
+.node.faded{opacity:.12;}
+.bring{fill:none;pointer-events:none;}.bpill{fill:var(--high);}.bpill-t{fill:#fff;font-size:6.5px;font-weight:700;font-family:'DM Sans';letter-spacing:.2px;pointer-events:none;}
+.fdot{pointer-events:none;}
+aside{position:absolute;top:12px;right:12px;width:372px;max-height:calc(100% - 24px);background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 26px #1a233022;display:flex;flex-direction:column;overflow:hidden;z-index:8;transition:width .2s ease;}
+aside:not(.collapsed){bottom:12px;}
+aside.collapsed{width:264px;}
+.panel-toggle{position:absolute;top:11px;right:11px;width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);font-size:13px;line-height:1;cursor:pointer;z-index:9;display:flex;align-items:center;justify-content:center;}
+.panel-toggle:hover{border-color:var(--accent);color:var(--accent);}
+.verdict-mini{padding:15px 40px 15px 16px;}
+.verdict-mini .vm-k{font-size:9px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A94A6;margin-bottom:7px;}
+.verdict-mini .vm-w{font-size:13px;font-weight:700;line-height:1.32;color:var(--high);margin-bottom:7px;}
+.verdict-mini .vm-l{font-size:11.5px;color:var(--ink-soft);line-height:1.5;}
+.verdict-mini .vm-cta{margin-top:12px;font-size:11px;font-weight:600;color:var(--accent);cursor:pointer;}
+.verdict-mini .vm-cta:hover{text-decoration:underline;}
+aside.collapsed .ihead,aside.collapsed .ibody{display:none;}
+aside:not(.collapsed) .verdict-mini{display:none;}
+.ihead{padding:12px 16px 9px;border-bottom:1px solid var(--line);}
+.backbtn{font-family:'DM Sans';font-size:11px;font-weight:600;color:var(--accent-dark);background:none;border:none;cursor:pointer;padding:0 0 7px 0;display:none;}.backbtn:hover{text-decoration:underline;}
+.ihead .k{font-size:10px;letter-spacing:.9px;text-transform:uppercase;color:var(--ink-faint);font-weight:600;}.ihead h2{font-size:14.5px;font-weight:700;margin-top:3px;line-height:1.25;}
+.ibody{padding:14px 16px;overflow-y:auto;flex:1;}
+.headline{border-radius:11px;padding:13px 15px;margin-bottom:13px;color:#fff;}.headline.high{background:linear-gradient(135deg,#C2410C,#9A2D0A);}.headline.med{background:linear-gradient(135deg,#C9971A,#9E7714);}.headline.low{background:linear-gradient(135deg,#16a34a,#12833a);}
+.headline .w{font-size:10.5px;font-weight:700;letter-spacing:1.1px;opacity:.92;}.headline .l{font-size:13px;font-weight:600;line-height:1.4;margin-top:5px;}.headline .s{font-size:10px;opacity:.82;margin-top:7px;line-height:1.4;}
+.finding{border:1px solid var(--line);border-left-width:3px;border-radius:9px;padding:10px 12px;margin-bottom:9px;background:#fff;}.finding.high{border-left-color:var(--critical);}.finding.med{border-left-color:#C9971A;}.finding.low{border-left-color:var(--green);}
+.finding .ft{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;}.finding .fw{font-size:8.5px;font-weight:700;letter-spacing:.5px;flex:none;}.finding .fh{font-size:12px;font-weight:700;line-height:1.3;}.finding .fd{font-size:11.5px;color:var(--ink-soft);line-height:1.5;}
+.finding .fs{margin-top:7px;font-family:'DM Sans';font-size:10.5px;font-weight:600;color:var(--accent-dark);background:none;border:none;cursor:pointer;padding:0;}.finding .fs:hover{text-decoration:underline;}
+.sec{font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-faint);font-weight:600;margin:15px 0 7px;}
+.metricrow{display:flex;gap:9px;margin-bottom:6px;}.metric{flex:1;background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:9px 10px;}.metric .n{font-size:18px;font-weight:700;font-family:'JetBrains Mono';}.metric .l{font-size:9.5px;color:var(--ink-soft);margin-top:1px;font-weight:500;}
+.crow{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:8px;cursor:pointer;}.crow:hover{background:var(--paper);}.crow .sw{width:11px;height:11px;border-radius:4px;flex:none;}.crow .t{flex:1;font-size:11.5px;line-height:1.25;}.crow .t small{color:var(--ink-faint);font-size:10px;}.crow .z{font-family:'JetBrains Mono';font-size:10.5px;color:var(--ink-soft);font-weight:600;}
+.subj-tag{display:inline-block;font-size:8px;font-weight:700;color:var(--high);border:1px solid #F2C3A2;border-radius:4px;padding:0 4px;margin-left:5px;vertical-align:middle;}
+.brow{display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:8px;cursor:pointer;}.brow:hover{background:var(--paper);}.brow .nm{flex:1;font-size:11.5px;font-weight:600;}.brow .art{font-size:8px;font-weight:700;color:var(--high);border:1px solid #F2C3A2;border-radius:4px;padding:0 4px;}.bw{width:60px;height:6px;background:var(--line);border-radius:3px;overflow:hidden;flex:none;}.bf{height:100%;background:var(--accent-dark);border-radius:3px;}
+.erow{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px;}.erow .lab{color:var(--ink-soft);font-weight:500;}.erow .val{font-weight:600;text-align:right;}
+.eep{display:flex;align-items:center;gap:8px;margin:4px 0 12px;font-size:12.5px;}.eep .ep{background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:6px 9px;font-weight:600;flex:1;line-height:1.2;}.eep .ep small{display:block;color:var(--ink-faint);font-weight:500;font-size:8.5px;font-family:'JetBrains Mono';}.eep .ar{color:var(--ink-faint);font-size:13px;flex:none;}
+.ttag{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:6px;font-size:10.5px;font-weight:700;margin-bottom:12px;}.ttag .sw{width:14px;border-top:3px solid;border-radius:2px;}
+.note{font-size:11px;line-height:1.5;padding:9px 11px;border-radius:7px;margin:12px 0;background:#FBF3E6;color:#7A5A12;border:1px solid #E8D3A0;}
+.note.red{background:#FCECEC;color:#8A2020;border-color:#E9B4B4;}.note.green{background:#EAF6EE;color:#146c37;border-color:#B4E0C4;}.note.blue{background:#EEF4FA;color:#274b73;border-color:#C4D8EC;}
+.memlist{margin:8px 0 4px;padding:0;list-style:none;}.memlist li{font-size:11px;color:var(--ink-soft);padding:3px 0 3px 14px;position:relative;line-height:1.35;}.memlist li:before{content:'·';position:absolute;left:3px;color:var(--ink-faint);}
+.rev{font-size:11px;color:var(--ink-soft);margin:10px 0 4px;line-height:1.5;}
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px;}.actions button{font-family:'DM Sans';font-size:12px;font-weight:600;cursor:pointer;padding:9px 6px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);}.actions button:hover{border-color:var(--accent);background:#F2F7FC;}.actions button.on-confirm{background:var(--green);border-color:var(--green);color:#fff;}.actions button.on-flag{background:#E0A020;border-color:#E0A020;color:#fff;}.actions button.on-dismiss{background:var(--ink-soft);border-color:var(--ink-soft);color:#fff;}
+.cstat{margin-top:10px;font-size:11.5px;font-weight:600;}
+.ph{color:var(--ink-soft);font-size:11px;line-height:1.55;}.ph b{color:var(--ink);}
+.hint{position:absolute;bottom:11px;left:14px;font-size:10px;color:var(--ink-faint);background:#ffffffcc;padding:5px 10px;border-radius:20px;border:1px solid var(--line);backdrop-filter:blur(4px);}
+.reset{position:absolute;top:12px;right:14px;font-size:11px;font-weight:600;cursor:pointer;padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);}.reset:hover{border-color:var(--accent);color:var(--accent-dark);}
+.tally{position:absolute;bottom:11px;right:14px;font-size:10px;color:var(--ink-faint);background:#ffffffcc;padding:5px 10px;border-radius:20px;border:1px solid var(--line);backdrop-filter:blur(4px);}
+.layerkey{margin-top:10px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:#FbFcFe;font-family:'DM Sans';font-size:11px;}
+.layerkey .lk-h{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8A94A6;margin-bottom:6px;}
+.layerkey .lk-row{display:flex;align-items:center;gap:7px;margin-bottom:4px;}
+.layerkey .lk-row:last-child{margin-bottom:0;}
+.layerkey .lk-sw{width:18px;height:0;border-top:3px solid #ccc;border-radius:2px;flex:0 0 auto;}
+.layerkey .lk-t{color:var(--ink);font-weight:600;}
+.layerkey .lk-tag{font-size:8.5px;font-weight:700;color:#fff;border-radius:3px;padding:1px 5px;margin-left:auto;}
+.lensbar button.base{border-color:#2E5A8A;box-shadow:inset 3px 0 0 #2E5A8A;}
+.lensbar button.overlay{border-color:#E65100;box-shadow:inset 3px 0 0 #E65100;}
+.qg-brand{display:flex;align-items:center;gap:13px;}
+.qg-mark{flex:0 0 auto;}
+.qg-word{font-family:'Playfair Display',serif;font-weight:600;font-size:29px;color:#fff;line-height:1;letter-spacing:.2px;}
+.qg-word-hi{color:#8FB4DB;}
+.qg-by{font-family:'Playfair Display',serif;font-weight:500;font-size:17px;font-style:italic;color:#A9B4C2;border-left:1px solid #34415580;padding-left:13px;margin-left:4px;line-height:1;}
+.qg-by i{font-style:italic;color:#C7D0DB;font-size:21px;}
+.sample-wm{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden;}
+.sample-wm span{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-28deg);font-family:'DM Sans',sans-serif;font-weight:800;font-size:210px;letter-spacing:24px;color:rgba(230,81,0,0.10);white-space:nowrap;user-select:none;}
+/* ===== MOBILE GUARD (Option A) ===== */
+#mobile-guard{display:none;}
+@media (max-width:820px){
+  .app{display:none !important;}
+  .sample-wm{display:none !important;}
+  #mobile-guard{display:block;position:fixed;inset:0;overflow-y:auto;background:#F4F6F9;-webkit-overflow-scrolling:touch;}
+  .mg-wrap{max-width:560px;margin:0 auto;padding:26px 20px 48px;}
+  .mg-head{display:flex;align-items:center;gap:11px;padding:16px 0 20px;border-bottom:1px solid var(--line);margin-bottom:22px;}
+  .mg-word{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:23px;color:#1A2330;line-height:1;}
+  .mg-word .hi{color:#2E5A8A;}
+  .mg-by{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-style:italic;font-size:15px;color:#6B7686;border-left:1px solid var(--line);padding-left:10px;}
+  .mg-note{display:flex;gap:10px;align-items:flex-start;background:#FFF6EE;border:1px solid #F2D3B8;border-radius:10px;padding:13px 14px;margin-bottom:22px;font-size:13px;line-height:1.5;color:#7A4A20;}
+  .mg-note svg{flex:0 0 auto;margin-top:1px;}
+  .mg-subj{font-size:12px;color:var(--ink-soft);margin-bottom:4px;}
+  .mg-subj b{color:#E65100;font-weight:600;}
+  .mg-verdict{background:#fff;border:1px solid var(--line);border-left:4px solid #E65100;border-radius:10px;padding:16px 16px;margin-bottom:20px;}
+  .mg-verdict .k{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#8A94A6;margin-bottom:8px;}
+  .mg-verdict .w{font-size:16px;font-weight:700;color:#E65100;margin-bottom:8px;line-height:1.3;}
+  .mg-verdict .l{font-size:13.5px;color:#3A4452;line-height:1.55;}
+  .mg-sec{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8A94A6;margin:22px 0 12px;}
+  .mg-find{background:#fff;border:1px solid var(--line);border-radius:9px;padding:13px 14px;margin-bottom:11px;border-left:4px solid #98AA3A;}
+  .mg-find.high{border-left-color:#E65100;}
+  .mg-find .ft{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px;}
+  .mg-find.high .ft{color:#E65100;}
+  .mg-find:not(.high) .ft{color:#7d8a2e;}
+  .mg-find .fh{font-size:14px;font-weight:600;color:#1A2330;margin-bottom:5px;line-height:1.3;}
+  .mg-find .fd{font-size:12.5px;color:#4A5568;line-height:1.5;}
+  .mg-foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:#8A94A6;line-height:1.5;}
+}
+</style><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet"></head><body>
+<div class="app">
+<header>
+<div class="hdrrow r1">
+  <div class="brand qg-brand">
+  <svg class="qg-mark" width="38" height="38" viewBox="0 0 80 80" aria-hidden="true">
+    <line x1="18" y1="20" x2="60" y2="12" stroke="#6699CC" stroke-width="3"/>
+    <line x1="18" y1="20" x2="36" y2="62" stroke="#98AA3A" stroke-width="3"/>
+    <line x1="60" y1="12" x2="72" y2="52" stroke="#6699CC" stroke-width="3"/>
+    <line x1="36" y1="62" x2="72" y2="52" stroke="#98AA3A" stroke-width="3"/>
+    <line x1="60" y1="12" x2="36" y2="62" stroke="#98AA3A" stroke-width="3"/>
+    <circle cx="18" cy="20" r="8" fill="#6699CC"/>
+    <circle cx="60" cy="12" r="10" fill="#8FB4DB"/>
+    <circle cx="36" cy="62" r="7" fill="#98AA3A"/>
+    <circle cx="72" cy="52" r="8.5" fill="#E65100"/>
+  </svg>
+  <span class="qg-word">Quantum <span class="qg-word-hi">Graph</span></span>
+  <span class="qg-by">by <i>D7</i></span>
+</div>
+  <div class="subj">Subject: <em>Zee Entertainment Enterprises Ltd</em> · FORT10085-202607-01 · hop-2</div>
+  <div class="spacer"></div>
+  <div class="toggles"><div class="tg" id="tg-hop2">Hop-2</div><div class="tg" id="tg-comm">Groups</div><div class="tg" id="tg-bridge">Bridges</div></div>
+</div>
+<div class="hdrrow r2">
+  <div class="toplenses" id="toplenses">
+    <span class="tlt">Isolate</span>
+    <button data-l="all" class="on">All connections</button>
+    <button data-l="ownership">Subsidiaries</button>
+    <button data-l="directors">Board &amp; KMP</button>
+    <button data-l="related">Related parties</button>
+    <button data-l="promoter">Promoter / Essel</button>
+    <button data-l="commondir">Common directorships</button>
+    <button class="topreset" id="reset2">Reset</button>
+  </div>
+  <div class="spacer"></div>
+  <div class="filters" id="filters"></div>
+</div>
+</header>
+<div class="stage">
+<svg id="g"></svg>
+<button class="reset" id="reset" style="display:none">Reset view</button>
+<div class="hint">Drag · click a node or edge to inspect · use “Isolate a network” to declutter</div>
+<div class="tally" id="tally">No links reviewed yet</div>
+<div class="layerkey" id="layerkey" style="display:none"></div>
+<aside id="aside" class="collapsed">
+  <button class="panel-toggle" id="ptoggle" title="Expand / collapse">›</button>
+  <div class="verdict-mini" id="verdictmini"></div>
+  <div class="ihead"><button class="backbtn" id="back">‹ Back to overview</button><div class="k" id="ik">Network read</div><h2 id="it">What this map indicates</h2></div>
+  <div class="ibody" id="ib"></div>
+</aside>
+</div>
+</div>
+<script>
+const C={navy:'#1A2330',accent:'#6699CC',accentDark:'#2E5A8A',medium:'#98AA3A',high:'#E65100',critical:'#C62828',green:'#16a34a',rpt:'#7C5CBF'};
+const rptW=v=>{if(!v||v<=0)return 1.2; return Math.min(11, 1.6+Math.sqrt(v)*0.9);}; TIER={
+ deterministic:{color:C.navy,width:2,dash:null,label:'Directorship / KMP',desc:'DIN or PAN exact'},
+ ownership:{color:C.green,width:2.8,dash:null,label:'Ownership',desc:'Sourced shareholding %'},
+ rpt:{color:C.rpt,width:1.9,dash:'6,4',label:'Related-party txn',desc:'AS-18 / MCA related-party transaction'},
+ inferred:{color:C.high,width:1.8,dash:'7,3,2,3',label:'Inferred / promoter',desc:'Association — not a documented ownership edge'},
+};
+const COMM={0:'#6699CC',1:'#BC6B7E',2:'#D98A2E'};
+const commName={0:'Operating core (ZEE + subsidiaries)',1:'Promoter / Essel cluster',2:'Essel sub-cluster (Subodh Kumar)'};
+const commLetter=i=>({0:'A',1:'B',2:'C'}[i]||i);
+const nodes=[{"id":"zee","kind":"entity","subject":true,"hop":0,"name":"Zee Entertainment Enterprises","ident":"CIN L92132MH1982PLC028767","flag":"med","note":"Score 5.85 (Medium). Promoter 3.99% / public 96.02% (FY25). SEBI SCN (fund diversion, Feb-2026); IBC petitions.","fullname":"Zee Entertainment Enterprises Limited","community":0,"betweenness":0.8643,"is_articulation":true,"is_bridge":true,"rptGross":0},{"id":"punit","kind":"person","hop":1,"name":"Punit Goenka","ident":"DIN 00031263 · CEO","flag":"high","note":"CEO; PEP (FAM, TRUE POSITIVE). SEBI Settlement Orders + Orders-of-AO watchlist: TRUE POSITIVE (100%). Named in Feb-2026 SEBI fund-diversion SCN. Directorships across Essel/Zee group.","din":"00031263","community":1,"betweenness":0.216,"is_articulation":true,"is_bridge":true,"rptGross":0},{"id":"galgali","kind":"person","hop":1,"name":"Mukund Galgali","ident":"PAN ACQPG6557Q · CFO","flag":"high","note":"CFO. NSDL account-freeze list: TRUE POSITIVE (100% match) under SEBI WTM order. Serving KMP.","din":null,"community":0,"betweenness":0,"is_articulation":false,"is_bridge":false,"rptGross":0},{"id":"ashish","kind":"person","hop":1,"name":"Ashish Agarwal","ident":"Company Secretary","flag":null,"din":null,"community":0,"betweenness":0,"is_articulation":false,"is_bridge":false,"rptGross":0},{"id":"divya","kind":"person","hop":1,"name":"Divya R. Karani","ident":"DIN 01829747 · Director","flag":null,"indep":true,"din":"01829747","community":0,"betweenness":0,"is_articulation":false,"is_bridge":false,"rptGross":0},{"id":"saurav","kind":"person","hop":1,"name":"Saurav Adhikari","ident":"DIN 08402010 · Director","flag":null,"indep":true,"din":"08402010","community":0,"betweenness":0,"is_articulation":false,"is_bridge":false,"rptGross":0},{"id":"shishir","kind":"person","hop":1,"name":"Shishir Desai","ident":"DIN 01453410 · Director","flag":null,"indep":true,"din":"01453410","community":0,"betweenness":0,"is_articulation":false,"is_bridge":false,"rptGross":0},{"id":"subhash","kind":"person","hop":1,"name":"Subhash Chandra","ident":"DIN 00031458 · Founder / former director","flag":"high","note":"Founder of Zee/Essel; named in Feb-2026 SEBI SCN. Controls wider Essel web.","din":"00031458","community":1,"betweenness":0.1473,"is_articulation":true,"is_bridge":true,"rptGross":0},{"id":"subodh","kind":"person","hop":1,"name":"Subodh Kumar","ident":"Former director · Essel-linked","flag":null,"din":null,"community":2,"betweenness":0.1552,"is_articulation":true,"is_bridge":true,"rptGross":0},{"id":"promoter_grp","kind":"group","hop":1,"name":"Promoter Group","ident":"3.99% · no holder >5%","flag":"high","fullname":"Promoter Group","note":"Promoter holding 3.99% (FY25, MCA Annual Return). No individual promoter/director holds >5%; Punit Goenka holds 0 shares as CEO. Control exercised through the board, not equity.","carried":false,"community":1,"betweenness":0.0032,"is_articulation":false,"is_bridge":false,"rptGross":0,"promoBreakdown":{"entities":[{"name":"Essel Media Ventures Limited","pct":3.45},{"name":"Cyquator Media Services Private Limited","pct":0.2},{"name":"Essel Holdings Ltd","pct":0.18},{"name":"Essel International Limited","pct":0.14},{"name":"Essel Corporate LLP","pct":0.02}],"total":3.99,"listed":70}},{"id":"media_pro_enterprise_ind","kind":"entity","hop":1,"name":"Media Pro Enterprise India Pvt Ltd","ident":"JV 50% · U92412MH2006PTC164446","flag":null,"fullname":"Media Pro Enterprise India Private Limited","community":0,"betweenness":0,"is_articulation":false,"is_bridge":false,"rptGross":0},{"id":"margo_networks_private_l","kind":"entity","hop":1,"name":"Margo Networks Pvt Ltd","ident":"Subsidiary 90% · U74999MH2016PTC284879","flag":null,"fullname":"Margo Networks Private Limited","rptGross":5.7,"community":0,"betweenness":0,"is_articulation":false,"is_bridge":false},{"id":"zee_studios_limited","kind":"entity","hop":1,"name":"Zee Studios Ltd","ident":"Subsidiary 100% · U74990MH2010PLC198648","flag":null,"fullname":"Zee Studios Limited","rptGross":203.6,"community":0,"betweenness":0,"is_articulation":false,"is_bridge":false},{"id":"subs_foreign","kind":"group","hop":1,"name":"15 foreign subsidiaries","ident":"all ~100% · overseas arms","flag":null,"fullname":"Foreign wholly-owned subsidiaries","members_list":["Asia Multimedia Distribution Inc.","Asia Today Limited (Formerly Known As Zee Multimedia (Maurice) Limited)","Asia Today Singapore Pte Limited","Asia Tv Gmbh","Asia Tv Usa Limited","Atl Media Fz-Llc","Ooo Zee Cis Holding Llc","Ooo Zee Cis Llc","Taj Tv Limited","Z5X Global Fz - Llc","Zee Entertainement Middle East Fz-Llc","Zee Entertainment Middle East Fz-Llc","Zee Media Kenya Limited","Zee Multimedia Worldwide (Mauritius) Limited","Zee Tv South Africa (Proprietary) Limited"],"note":"15 overseas broadcast/distribution arms, ~100% owned; no Indian CIN. Clubbed for readability.","rptGross":603.9,"community":0,"betweenness":0,"is_articulation":false,"is_bridge":false},{"id":"rpt_atl_media_limited","kind":"entity","hop":1,"name":"Atl Media Ltd","ident":"RPT counterparty","flag":null,"fullname":"Atl Media Limited","note":null,"rptGross":403.8,"community":0,"betweenness":0,"is_articulation":false,"is_bridge":false},{"id":"rpt_digital_subscriber_manag","kind":"entity","hop":1,"name":"Digital Subscriber Management Mgmt","ident":"RPT · unidentified · U72300MH1993PTC074967","flag":"high","fullname":"Digital Subscriber Management And Consultancy Services Private Limited","note":"Flagged \"could not identify relationship\" (₹107.4 Cr, last 2 FY).","rptGross":107.4,"community":0,"betweenness":0,"is_articulation":false,"is_bridge":false},{"id":"rpt_non_executive_directors","kind":"entity","hop":1,"name":"Non-Executive Directors","ident":"RPT counterparty","flag":null,"fullname":"Non-Executive Directors","note":null,"rptGross":5.8,"community":0,"betweenness":0,"is_articulation":false,"is_bridge":false},{"id":"rpt_key_management_personnel","kind":"entity","hop":1,"name":"Key Management Personnel And Direc","ident":"RPT counterparty","flag":null,"fullname":"Key Management Personnel And Directors","note":null,"rptGross":5,"community":0,"betweenness":0,"is_articulation":false,"is_bridge":false},{"id":"rpt_diligent_media_corporati","kind":"entity","hop":1,"name":"Diligent Media Corporation Ltd","ident":"RPT · unidentified · L22120MH2005PLC151377","flag":"med","fullname":"Diligent Media Corporation Limited","note":"Flagged \"could not identify relationship\" (₹0.2 Cr, last 2 FY).","rptGross":0.2,"community":0,"betweenness":0,"is_articulation":false,"is_bridge":false},{"id":"rpt_other","kind":"group","hop":1,"name":"5 other RPT parties","ident":"clubbed · smaller value","flag":null,"fullname":"Other related-party counterparties","note":"5 smaller related-party counterparties (last 2 FY), clubbed. Total ₹0.2 Cr.","rptGross":0.2,"community":0,"betweenness":0,"is_articulation":false,"is_bridge":false},{"id":"essel_infra","kind":"entity","hop":2,"name":"Essel Infraprojects Ltd","ident":"CIN U74999MH1987PLC044006 · Under CIRP","flag":"high","note":"Under CIRP. Triple interlock (Goenka + Chandra + Subodh Kumar). Minor historic RPT.","community":2,"betweenness":0.031,"is_articulation":false,"is_bridge":true,"rptGross":0},{"id":"dish_tv","kind":"entity","hop":2,"name":"Dish TV India Ltd","ident":"CIN L51909MH1988PLC287553","flag":"med","note":"Historic RPT counterparty (₹976 Cr cumulative, unidentified relationship); flows nil in FY24–25. Linked via Goenka + Chandra directorships (interlock).","community":1,"betweenness":0.0032,"is_articulation":false,"is_bridge":false,"rptGross":0},{"id":"zee_media","kind":"entity","hop":2,"name":"Zee Media Corporation Ltd","ident":"CIN L92100MH1999PLC121506","flag":"med","note":"Historic RPT counterparty (₹585 Cr cumulative, unidentified); nil in FY24–25. Goenka directorship.","community":1,"betweenness":0,"is_articulation":false,"is_bridge":false,"rptGross":0},{"id":"siti","kind":"entity","hop":2,"name":"Siti Networks Ltd","ident":"CIN L64200MH2006PLC160733","flag":"med","note":"Historic RPT counterparty (₹812 Cr cumulative, unidentified); nil in FY24–25. Chandra directorship; Essel-group.","community":1,"betweenness":0,"is_articulation":false,"is_bridge":false,"rptGross":0},{"id":"zee_learn","kind":"entity","hop":2,"name":"Zee Learn Ltd","ident":"Essel group","flag":null,"note":"Historic RPT counterparty (₹67 Cr cumulative, unidentified); nil in FY24–25. Essel-group.","community":2,"betweenness":0,"is_articulation":false,"is_bridge":false,"rptGross":0},{"id":"agrani","kind":"entity","hop":2,"name":"Agrani Satellite Services Ltd","ident":"Amalgamated","flag":null,"note":"Amalgamated. Board interlock (Goenka + Chandra) — no related-party transactions in data.","community":1,"betweenness":0.0032,"is_articulation":false,"is_bridge":false,"rptGross":0},{"id":"essel_media_v","kind":"entity","hop":2,"name":"Essel Media Ventures Pvt Ltd","ident":"Essel group","flag":null,"note":"Essel-group. Goenka directorship — no related-party transactions in data. Also the largest single promoter shareholder (3.45%).","community":1,"betweenness":0,"is_articulation":false,"is_bridge":false,"rptGross":0},{"id":"essel_util","kind":"entity","hop":2,"name":"Essel Utilities Distribution","ident":"Essel group","flag":null,"note":"Historic RPT counterparty (₹19 Cr cumulative); nil in FY24–25. Essel-group.","community":2,"betweenness":0,"is_articulation":false,"is_bridge":false,"rptGross":0},{"id":"public_holders","kind":"group","hop":1,"name":"Public shareholders","ident":"96.02% · FY25","label2":"96.02% · FY25","flag":null,"fullname":"Public, institutional & other shareholders","note":"Public & non-promoter holding 96.02% (FY25): Public 57.18%, FIIs 22.83%, DIIs 15.87%, Government 0.13%. No promoter/individual >5% — control does not follow economic ownership.","publicBreakdown":{"public":57.18,"fii":22.83,"dii":15.87,"govt":0.13,"total":96.02},"community":0,"betweenness":0,"is_articulation":false,"is_bridge":false,"rptGross":0}];
+const links=[{"source":"punit","target":"zee","tier":"deterministic","status":"open","rel":"CEO","key":"DIN 00031263","src":"MCA DIR-12 / MGT-7","short":""},{"source":"galgali","target":"zee","tier":"deterministic","status":"open","rel":"CFO","key":"PAN ACQPG6557Q","src":"MCA DIR-12 / MGT-7","short":""},{"source":"ashish","target":"zee","tier":"deterministic","status":"open","rel":"Company Secretary","key":"MCA MGT-7","src":"MCA DIR-12 / MGT-7","short":""},{"source":"divya","target":"zee","tier":"deterministic","status":"open","rel":"Director (active)","key":"DIN 01829747","src":"MCA DIR-12 / MGT-7","short":""},{"source":"saurav","target":"zee","tier":"deterministic","status":"open","rel":"Director (active)","key":"DIN 08402010","src":"MCA DIR-12 / MGT-7","short":""},{"source":"shishir","target":"zee","tier":"deterministic","status":"open","rel":"Director (active)","key":"DIN 01453410","src":"MCA DIR-12 / MGT-7","short":""},{"source":"subhash","target":"zee","tier":"deterministic","status":"open","rel":"Founder / former director","key":"DIN 00031458","src":"MCA DIR-12 / KMP directorships","short":""},{"source":"subodh","target":"zee","tier":"deterministic","status":"open","rel":"Former director","key":"Annexure B","src":"CDD Annexure B","short":""},{"source":"promoter_grp","target":"zee","tier":"ownership","status":"open","rel":"Promoter holding 3.99%","key":"3.99% · FY25","src":"MCA Annual Return / Shareholding Pattern FY25","short":"3.99%"},{"source":"subhash","target":"promoter_grp","tier":"inferred","status":"open","rel":"Founder / promoter family","key":"disclosed founder","src":"group history","short":""},{"source":"punit","target":"promoter_grp","tier":"inferred","status":"open","rel":"Promoter family (CEO)","key":"Chandra family","src":"PEP + group history","short":""},{"source":"zee","target":"media_pro_enterprise_ind","tier":"ownership","status":"open","rel":"JV 50%","key":"50%","src":"Corp structure (MCA)","short":"50%"},{"source":"zee","target":"margo_networks_private_l","tier":"ownership","status":"open","rel":"Owns 90%","key":"90%","src":"Corp structure (MCA)","short":"90%"},{"source":"zee","target":"zee_studios_limited","tier":"ownership","status":"open","rel":"Owns 100%","key":"100%","src":"Corp structure (MCA)","short":"100%"},{"source":"zee","target":"subs_foreign","tier":"ownership","status":"open","rel":"Owns ~100%% (15 entities)","key":"~100%","src":"Corp structure","short":"100%"},{"source":"zee","target":"rpt_atl_media_limited","tier":"rpt","status":"open","rel":"RPT · subsidiary","rptGross":403.8,"rptDetail":"Expense/Revenue · last 2 FY","key":"₹403.8 Cr (Expense/Revenue)","src":"RPT Note 46 (last 2 FY)","short":"₹404 Cr"},{"source":"zee","target":"subs_foreign","tier":"rpt","status":"open","rel":"RPT · subsidiary","rptGross":339.3,"rptDetail":"Expense/Revenue · last 2 FY","key":"₹339.3 Cr (Expense/Revenue)","src":"RPT Note 46 (last 2 FY)","short":"₹339 Cr"},{"source":"zee","target":"zee_studios_limited","tier":"rpt","status":"open","rel":"RPT · subsidiary","rptGross":203.6,"rptDetail":"Expense · last 2 FY","key":"₹203.6 Cr (Expense)","src":"RPT Note 46 (last 2 FY)","short":"₹204 Cr"},{"source":"zee","target":"subs_foreign","tier":"rpt","status":"open","rel":"RPT · subsidiary","rptGross":161.4,"rptDetail":"Expense/Revenue · last 2 FY","key":"₹161.4 Cr (Expense/Revenue)","src":"RPT Note 46 (last 2 FY)","short":"₹161 Cr"},{"source":"zee","target":"rpt_digital_subscriber_manag","tier":"rpt","status":"open","rel":"RPT · unidentified","rptGross":107.4,"rptDetail":"Expense · last 2 FY","key":"₹107.4 Cr (Expense)","src":"RPT Note 46 (last 2 FY)","short":"₹107 Cr"},{"source":"zee","target":"subs_foreign","tier":"rpt","status":"open","rel":"RPT · unidentified","rptGross":103.2,"rptDetail":"Expense · last 2 FY","key":"₹103.2 Cr (Expense)","src":"RPT Note 46 (last 2 FY)","short":"₹103 Cr"},{"source":"zee","target":"rpt_non_executive_directors","tier":"rpt","status":"open","rel":"RPT · directors","rptGross":5.8,"rptDetail":"Expense · last 2 FY","key":"₹5.8 Cr (Expense)","src":"RPT Note 46 (last 2 FY)","short":"₹6 Cr"},{"source":"zee","target":"margo_networks_private_l","tier":"rpt","status":"open","rel":"RPT · unidentified","rptGross":5.7,"rptDetail":"Others · last 2 FY","key":"₹5.7 Cr (Others)","src":"RPT Note 46 (last 2 FY)","short":"₹6 Cr"},{"source":"zee","target":"rpt_key_management_personnel","tier":"rpt","status":"open","rel":"RPT · directors","rptGross":5,"rptDetail":"Expense · last 2 FY","key":"₹5.0 Cr (Expense)","src":"RPT Note 46 (last 2 FY)","short":"₹5 Cr"},{"source":"zee","target":"rpt_diligent_media_corporati","tier":"rpt","status":"open","rel":"RPT · unidentified","rptGross":0.2,"rptDetail":"Revenue · last 2 FY","key":"₹0.2 Cr (Revenue)","src":"RPT Note 46 (last 2 FY)","short":"₹0.2 Cr"},{"source":"zee","target":"rpt_other","tier":"rpt","status":"open","rel":"RPT · other (clubbed)","rptGross":0.2,"key":"₹0.2 Cr","src":"RPT Note 46","short":"₹0.2 Cr"},{"source":"punit","target":"essel_infra","tier":"deterministic","status":"open","rel":"Director","key":"DIN 00031263","src":"KMP directorships (Probe42)","short":""},{"source":"subhash","target":"essel_infra","tier":"deterministic","status":"open","rel":"Director","key":"DIN 00031458","src":"MCA DIR-12 / KMP directorships","short":""},{"source":"subodh","target":"essel_infra","tier":"deterministic","status":"open","rel":"Director","key":"Annexure B","src":"KMP directorships (Probe42)","short":""},{"source":"punit","target":"dish_tv","tier":"deterministic","status":"open","rel":"Director","key":"DIN 00031263","src":"KMP directorships (Probe42)","short":""},{"source":"subhash","target":"dish_tv","tier":"deterministic","status":"open","rel":"Director","key":"DIN 00031458","src":"MCA DIR-12 / KMP directorships","short":""},{"source":"punit","target":"zee_media","tier":"deterministic","status":"open","rel":"Director","key":"DIN 00031263","src":"KMP directorships (Probe42)","short":""},{"source":"subhash","target":"siti","tier":"deterministic","status":"open","rel":"Director","key":"DIN 00031458","src":"MCA DIR-12 / KMP directorships","short":""},{"source":"subodh","target":"zee_learn","tier":"deterministic","status":"open","rel":"Director","key":"Annexure B","src":"KMP directorships (Probe42)","short":""},{"source":"punit","target":"agrani","tier":"deterministic","status":"open","rel":"Director","key":"DIN 00031263","src":"KMP directorships (Probe42)","short":""},{"source":"subhash","target":"agrani","tier":"deterministic","status":"open","rel":"Director","key":"DIN 00031458","src":"MCA DIR-12 / KMP directorships","short":""},{"source":"punit","target":"essel_media_v","tier":"deterministic","status":"open","rel":"Director","key":"DIN 00031263","src":"KMP directorships (Probe42)","short":""},{"source":"subodh","target":"essel_util","tier":"deterministic","status":"open","rel":"Director","key":"Annexure B","src":"KMP directorships (Probe42)","short":""},{"source":"public_holders","target":"zee","tier":"ownership","status":"open","rel":"Public/institutional holding 96.02%","key":"96.02% · FY25","src":"MCA Annual Return / Shareholding Pattern FY25","short":"96.02%"}];
+const ANALYTICS={"modularity":0.4113,"n_communities":3,"communities":[{"id":0,"size":16,"members":["ashish","divya","galgali","margo_networks_private_l","media_pro_enterprise_ind","rpt_atl_media_limited","rpt_digital_subscriber_manag","rpt_diligent_media_corporati","rpt_key_management_personnel","rpt_non_executive_directors","rpt_other","saurav","shishir","subs_foreign","zee","zee_studios_limited"]},{"id":1,"size":8,"members":["agrani","dish_tv","essel_media_v","promoter_grp","punit","siti","subhash","zee_media"]},{"id":2,"size":4,"members":["essel_infra","essel_util","subodh","zee_learn"]}],"bridges":["zee","punit","subodh","subhash","essel_infra"]};
+function stripId(s){if(!s)return '';
+  // remove CIN/DIN/PAN tokens and any bare identifier-looking codes
+  let parts=String(s).split('·').map(x=>x.trim()).filter(Boolean);
+  parts=parts.filter(p=>{
+    if(/^(CIN|DIN|PAN|LEI|FEINS)\b/i.test(p))return false;                 // labelled identifier
+    if(/^[A-Z]{1,3}[0-9]{4,}[A-Z0-9]*$/.test(p.replace(/\s/g,'')))return false; // bare CIN-like
+    if(/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(p.replace(/\s/g,'')))return false;   // bare PAN
+    if(/^[0-9]{6,}$/.test(p.replace(/\s/g,'')))return false;               // bare DIN digits
+    return true;
+  });
+  return parts.join(' · ');
+}
+// subject gets a compact descriptor instead of its CIN
+nodes.forEach(n=>{ n.label2 = n.subject ? 'Listed · D7 Medium (5.85)' : stripId(n.ident); });
+const nodeById=Object.fromEntries(nodes.map(n=>[n.id,n]));
+links.forEach(l=>{l.id='e'+Math.random().toString(36).slice(2,8);});
+const endp=l=>[l.source.id||l.source,l.target.id||l.target];
+const dname=n=>n.name; const fname=n=>n.fullname||n.name;
+
+// parallel-edge curvature
+(function(){const gr={};links.forEach(l=>{const k=[l.source,l.target].sort().join('~');(gr[k]=gr[k]||[]).push(l);});Object.values(gr).forEach(g=>{if(g.length<2){g[0]._c=0;return;}const sp=16;g.forEach((l,i)=>l._c=(i-(g.length-1)/2)*sp*2);});})();
+
+const svg=d3.select('#g');let W=svg.node().clientWidth,H=svg.node().clientHeight;
+const g=svg.append('g');
+const zoom=d3.zoom().scaleExtent([.3,2.6]).on('zoom',e=>g.attr('transform',e.transform));svg.call(zoom);
+const hullL=g.append('g'),linkL=g.append('g'),nodeL=g.append('g');
+
+// seed positions by community so it starts untangled
+const REG={0:[W*0.24,H*0.52],1:[W*0.68,H*0.34],2:[W*0.74,H*0.72]};
+nodes.forEach(n=>{if(n.subject){n.x=W*0.44;n.y=H*0.50;}else{const r=REG[n.community]||[W/2,H/2];n.x=r[0]+(Math.random()-.5)*300;n.y=r[1]+(Math.random()-.5)*280;}});
+
+const dist=l=>l.tier==='ownership'?175:l.tier==='inferred'?210:l.tier==='rpt'?195:190;
+const sim=d3.forceSimulation(nodes)
+ .force('link',d3.forceLink(links).id(d=>d.id).distance(dist).strength(.5))
+ .force('charge',d3.forceManyBody().strength(-1050).distanceMax(820))
+ .force('collide',d3.forceCollide().radius(d=>d.subject?140:(d.kind==='person'?(d.hop===2?54:64):(d.hop===2?112:128))).strength(.95).iterations(2))
+ .force('x',d3.forceX(d=>{if(d.subject)return W*0.44;const t={0:W*0.23,1:W*0.68,2:W*0.74};return t[d.community]!==undefined?t[d.community]:W/2;}).strength(0.16))
+ .force('y',d3.forceY(d=>{if(d.subject)return H*0.48;const t={0:H*0.48,1:H*0.36,2:H*0.62};return t[d.community]!==undefined?t[d.community]:H*0.5;}).strength(0.30))
+ .force('bound',()=>{for(const n of nodes){const pad=44;n.y=Math.max(pad,Math.min(H-pad,n.y));n.x=Math.max(pad,Math.min(W-pad,n.x));}});
+const subj=nodes.find(n=>n.subject);subj.fx=W/2;subj.fy=H*0.55;setTimeout(()=>{subj.fx=null;subj.fy=null;},1500);
+
+let showH2=true,showHull=true,showBr=true,lens='all',lensSet=null;const tierOff=new Set();
+let activeLenses=[];
+const LAYER_COLOR={base:'#2E5A8A',overlay:'#E65100'};
+const LENS_LABEL={ownership:'Subsidiaries (ownership)',directors:'Board & KMP',related:'Related parties',promoter:'Promoter / Essel web',commondir:'Common directorships'};
+function lensesForLink(l){const s=[];if(l.tier==='ownership')s.push('ownership');if(l.tier==='deterministic'&&endp(l).includes('zee'))s.push('directors');if(l.tier==='rpt')s.push('related');if(l.tier==='deterministic'&&/[Dd]irector/.test(l.rel||'')&&endp(l)[0]!=='ceased_dirs')s.push('commondir');return s;}
+
+const es=linkL.selectAll('g.eg').data(links).join('g').attr('class','eg');
+es.append('path').attr('class','edge').attr('stroke',d=>TIER[d.tier].color).attr('stroke-width',d=>d.tier==='rpt'?rptW(d.rptGross||0):TIER[d.tier].width).attr('stroke-dasharray',d=>TIER[d.tier].dash).attr('stroke-linecap','round');
+es.append('path').attr('class','edge hit').on('click',(e,d)=>{e.stopPropagation();selEdge(d);});
+const elab=es.append('text').attr('class','elabel').attr('text-anchor','middle').attr('fill',d=>TIER[d.tier].color).text(d=>d.short||'');
+const smark=es.append('text').attr('class','smark').attr('text-anchor','middle').text('');
+
+const ns=nodeL.selectAll('g.node').data(nodes).join('g').attr('class','node')
+ .on('click',(e,d)=>{e.stopPropagation();selNode(d);})
+ .call(d3.drag().on('start',(e,d)=>{if(!e.active)sim.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y;}).on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;}).on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}));
+
+function fillFor(d){if(d.flag==='high')return'#FBECEC';if(d.flag==='med')return'#FBF3E6';if(d.kind==='person')return'#EDF2F9';if(d.kind==='group')return'#F0EEF7';return'#fff';}
+ns.each(function(d){const s=d3.select(this);const h2=d.hop===2;
+ if(d.is_bridge&&!d.subject){const r=(d.kind==='person'?30:34)+(h2?-4:0)+9;
+   if(d.kind==='person')s.append('circle').attr('class','bring').attr('r',r).attr('stroke',C.high).attr('stroke-width',d.is_articulation?2:1.3).attr('stroke-dasharray',d.is_articulation?null:'4,3');
+   else{const w=(h2?176:206)+14,hh=(h2?46:52)+14;s.append('rect').attr('class','bring').attr('x',-w/2).attr('y',-hh/2).attr('width',w).attr('height',hh).attr('rx',11).attr('stroke',C.high).attr('stroke-width',d.is_articulation?2:1.3).attr('stroke-dasharray',d.is_articulation?null:'4,3');}}
+ if(d.kind==='person'){const r=d.subject?34:(h2?26:30);
+   s.append('circle').attr('class','shape').attr('r',r).attr('fill',fillFor(d)).attr('stroke',d.flag==='high'?C.critical:(d.flag==='med'?C.high:C.accentDark)).attr('stroke-width',d.flag?1.8:1.5);
+ }else{const w=d.subject?230:(h2?176:206),hh=d.subject?58:(h2?46:52);
+   s.append('rect').attr('class','shape').attr('x',-w/2).attr('y',-hh/2).attr('width',w).attr('height',hh).attr('rx',d.kind==='group'?13:7)
+    .attr('fill',fillFor(d)).attr('stroke',d.subject?C.navy:(d.flag==='high'?C.critical:(d.flag==='med'?C.high:(d.kind==='group'?C.accent:C.navy)))).attr('stroke-width',d.subject?2.6:(d.flag?1.7:1.3)).attr('stroke-dasharray',d.kind==='group'?'5,3':null);}
+ s.append('text').attr('class','nlabel'+(h2?' h2':'')).attr('text-anchor','middle').attr('dy',d.kind==='person'?(d.subject?-3:(h2?-2:-3)):-3).style('font-weight',d.subject?'700':null).text(dname(d));
+ s.append('text').attr('class','nid').attr('text-anchor','middle').attr('dy',d.kind==='person'?(d.subject?13:12):14).text(d.label2);
+ if(d.flag){const cx=(d.kind==='person'?(d.subject?26:(h2?18:22)):(d.subject?88:(h2?61:75)))*0.86,cy=-(d.kind==='person'?(d.subject?26:(h2?18:22)):(d.subject?22:(h2?16:20)))*0.86;
+   s.append('circle').attr('class','fdot').attr('cx',cx).attr('cy',cy).attr('r',4.5).attr('fill',d.flag==='high'?C.critical:C.high).attr('stroke','#fff').attr('stroke-width',1);}
+ if(d.is_articulation&&!d.subject){const yy=d.kind==='person'?((h2?18:22)+15):((h2?16:20)+15);
+   s.append('rect').attr('class','bpill').attr('x',-22).attr('y',yy-8).attr('width',44).attr('height',12).attr('rx',6);
+   s.append('text').attr('class','bpill-t').attr('text-anchor','middle').attr('y',yy+1).text('KEY LINK');}
+});
+
+svg.on('click',()=>{sel=null;clr();overview();setPanel(false);});
+sim.on('tick',()=>{
+ es.select('path.edge').attr('d',path);es.select('path.hit').attr('d',path);
+ elab.attr('transform',d=>{const p=lp(d);return`translate(${p[0]},${p[1]-3})`;});
+ smark.attr('transform',d=>{const p=lp(d);return`translate(${p[0]+24},${p[1]-3})`;});
+ ns.attr('transform',d=>`translate(${d.x},${d.y})`);
+ if(showHull)hulls();
+});
+function path(d){const a=d.source,b=d.target;if(!d._c)return`M${a.x},${a.y}L${b.x},${b.y}`;const mx=(a.x+b.x)/2,my=(a.y+b.y)/2,dx=b.x-a.x,dy=b.y-a.y,ln=Math.hypot(-dy,dx)||1;return`M${a.x},${a.y}Q${mx+(-dy)/ln*d._c},${my+(dx)/ln*d._c} ${b.x},${b.y}`;}
+function lp(d){const a=d.source,b=d.target;if(!d._c)return[(a.x+b.x)/2,(a.y+b.y)/2];const mx=(a.x+b.x)/2,my=(a.y+b.y)/2,dx=b.x-a.x,dy=b.y-a.y,ln=Math.hypot(-dy,dx)||1;const cx=mx+(-dy)/ln*d._c,cy=my+(dx)/ln*d._c;return[.25*a.x+.5*cx+.25*b.x,.25*a.y+.5*cy+.25*b.y];}
+
+const lg=d3.line().curve(d3.curveCatmullRomClosed.alpha(.6));
+function expand(p,pad){const cx=d3.mean(p,d=>d[0]),cy=d3.mean(p,d=>d[1]);return p.map(([x,y])=>{const dx=x-cx,dy=y-cy,ln=Math.hypot(dx,dy)||1;return[x+dx/ln*pad,y+dy/ln*pad];});}
+function hulls(){const vis=id=>{const n=nodeById[id];return n&&n.x!=null&&nodeVisible(n);};
+ const data=ANALYTICS.communities.map(c=>({id:c.id,pts:c.members.filter(vis).map(id=>[nodeById[id].x,nodeById[id].y])})).filter(c=>c.pts.length>1);
+ hullL.selectAll('path.hull').data(data,d=>d.id).join(
+  e=>e.append('path').attr('class','hull').attr('fill',d=>COMM[d.id]).attr('fill-opacity',.08).attr('stroke',d=>COMM[d.id]).attr('stroke-opacity',.32).attr('stroke-width',1.4),
+  u=>u,x=>x.remove()
+ ).attr('d',d=>{let p=d.pts;if(p.length>=3){const h=d3.polygonHull(p);if(h)return lg(expand(h,32));}const cx=d3.mean(p,q=>q[0]),cy=d3.mean(p,q=>q[1]);return lg(d3.range(8).map(i=>{const a=i/8*2*Math.PI;return[cx+Math.cos(a)*46,cy+Math.sin(a)*46];}));});}
+
+// ---------- unified visibility (lens + hop2 + tier filters) ----------
+function nodeVisible(n){if(!showH2&&n.hop===2)return false;if(lensSet&&!lensSet.N.has(n.id))return false;return true;}
+function edgeVisible(l){if(tierOff.has(l.tier))return false;if(!nodeVisible(nodeById[endp(l)[0]])||!nodeVisible(nodeById[endp(l)[1]]))return false;if(lensSet&&!lensSet.E.has(l.id))return false;return true;}
+function edgeLayerColor(l){if(activeLenses.length<2)return null;const belongs=lensesForLink(l);const inBase=belongs.includes(activeLenses[0]);const inOverlay=belongs.includes(activeLenses[1]);if(inBase&&!inOverlay)return LAYER_COLOR.base;if(inOverlay&&!inBase)return LAYER_COLOR.overlay;if(inBase&&inOverlay)return '#111';return null;}
+function refresh(){
+  ns.style('display',n=>nodeVisible(n)?null:'none');
+  es.style('display',l=>edgeVisible(l)?null:'none');
+  es.select('path.edge').attr('stroke',d=>{const c=edgeLayerColor(d);return c||TIER[d.tier].color;}).attr('stroke-width',d=>{const c=edgeLayerColor(d);if(c)return d.tier==='rpt'?rptW(d.rptGross||0):Math.max(2.4,TIER[d.tier].width+0.8);return d.tier==='rpt'?rptW(d.rptGross||0):TIER[d.tier].width;});
+  es.select('.elabel').attr('fill',d=>{const c=edgeLayerColor(d);return c||TIER[d.tier].color;});
+  if(showHull)hulls();
+}
+
+function computeLens(name){if(name==='all')return null;const N=new Set(['zee']),E=new Set();const add=l=>{E.add(l.id);N.add(endp(l)[0]);N.add(endp(l)[1]);};
+ if(name==='ownership')links.filter(l=>l.tier==='ownership').forEach(add);
+ else if(name==='directors')links.filter(l=>l.tier==='deterministic'&&endp(l).includes('zee')).forEach(add);
+ else if(name==='related'){const rpt=links.filter(l=>l.tier==='rpt');rpt.forEach(add);const tg=new Set(rpt.map(l=>endp(l)[1]));links.filter(l=>l.tier==='deterministic'&&tg.has(endp(l)[1])).forEach(add);}
+ else if(name==='promoter'){const m=new Set(['zee','promoter_grp','punit','subhash','subodh']);ANALYTICS.communities.filter(c=>c.id===1||c.id===2).forEach(c=>c.members.forEach(x=>m.add(x)));m.forEach(x=>N.add(x));links.forEach(l=>{if(m.has(endp(l)[0])&&m.has(endp(l)[1]))add(l);});}
+ else if(name==='commondir'){links.filter(l=>l.tier==='deterministic'&&/[Dd]irector/.test(l.rel||'')&&endp(l)[0]!=='ceased_dirs').forEach(add);}
+ return{N,E};}
+function recomputeLensSet(){if(activeLenses.length===0){lensSet=null;lens='all';return;}const N=new Set(),E=new Set();activeLenses.forEach(nm=>{const ls=computeLens(nm);if(ls){ls.N.forEach(x=>N.add(x));ls.E.forEach(x=>E.add(x));}});lensSet={N,E};lens=activeLenses[0];}
+function setLens(name){
+  if(name==='all'){activeLenses=[];}
+  else if(activeLenses.includes(name)){activeLenses=activeLenses.filter(x=>x!==name);}
+  else if(activeLenses.length===0){activeLenses=[name];}
+  else if(activeLenses.length===1){activeLenses.push(name);}
+  else {activeLenses=[activeLenses[0],name];}
+  recomputeLensSet();
+  d3.selectAll('#toplenses button[data-l]').classed('on',function(){const dl=d3.select(this).attr('data-l');return dl==='all'?activeLenses.length===0:activeLenses.includes(dl);}).classed('base',function(){return d3.select(this).attr('data-l')===activeLenses[0];}).classed('overlay',function(){return d3.select(this).attr('data-l')===activeLenses[1];});
+  updateLayerLegend();
+  sel=null;clr();refresh();overview();
+}
+
+let sel=null;
+function clr(){ns.classed('faded',false);es.select('path.edge').style('opacity',null);elab.style('opacity',null);hullL.selectAll('path.hull').style('opacity',null);}
+function hlNode(d){const cs=new Set([d.id]);links.forEach(l=>{if(l.source.id===d.id)cs.add(l.target.id);if(l.target.id===d.id)cs.add(l.source.id);});ns.classed('faded',n=>nodeVisible(n)&&!cs.has(n.id));es.select('path.edge').style('opacity',l=>(l.source.id===d.id||l.target.id===d.id)?1:.08);elab.style('opacity',l=>(l.source.id===d.id||l.target.id===d.id)?1:.08);}
+function hlEdge(d){const k=new Set([d.source.id,d.target.id]);ns.classed('faded',n=>nodeVisible(n)&&!k.has(n.id));es.select('path.edge').style('opacity',l=>l.id===d.id?1:.07);elab.style('opacity',l=>l.id===d.id?1:.07);}
+function hlComm(c){const m=new Set(ANALYTICS.communities[c].members);ns.classed('faded',n=>nodeVisible(n)&&!m.has(n.id));es.select('path.edge').style('opacity',l=>(m.has(l.source.id)&&m.has(l.target.id))?1:.07);elab.style('opacity',l=>(m.has(l.source.id)&&m.has(l.target.id))?1:.07);hullL.selectAll('path.hull').style('opacity',d=>d.id===c?1:.22);}
+function hlSet(nl,el){const nn=new Set(nl),ee=new Set(el||[]);ns.classed('faded',n=>nodeVisible(n)&&(nn.size?!nn.has(n.id):false));es.select('path.edge').style('opacity',l=>ee.size?(ee.has(l.id)?1:.07):(nn.has(l.source.id)&&nn.has(l.target.id)?1:.1));elab.style('opacity',l=>ee.size?(ee.has(l.id)?1:.07):(nn.has(l.source.id)&&nn.has(l.target.id)?1:.1));hullL.selectAll('path.hull').style('opacity',.2);}
+function selEdge(d){sel={t:'e',r:d};hlEdge(d);renderEdge(d);}
+function selNode(d){sel={t:'n',r:d};hlNode(d);renderNode(d);}
+
+const live=()=>links.filter(l=>l.status!=='dismissed');
+// ---------- findings ----------
+function findings(){const L=live(),F=[],nm=id=>fname(nodeById[id]);
+ if(nodeById['promoter_grp'])F.push({lv:'high',w:'REVIEW',h:'Control without economic stake',d:`The promoter group holds 3.99% (FY25) and no individual is above 5% — Punit Goenka holds 0 shares as CEO — yet Goenka (DIN 00031263) and Subhash Chandra (DIN 00031458) sit atop a large Essel/Zee-group web. Control runs through the board, not equity.`,n:['promoter_grp','zee','punit','subhash','essel_infra','dish_tv'],e:L.filter(l=>(l.source==='promoter_grp'||l.target==='promoter_grp')).map(l=>l.id)});
+ if(nodeById['punit'].flag==='high')F.push({lv:'high',w:'REVIEW',h:'CEO and founder under active SEBI fund-diversion proceedings',d:`Punit Goenka (PEP, FAM 100%; adverse media 9/10) and Subhash Chandra are both named in the Feb-2026 SEBI show-cause notice. The two interlock across Essel Infraprojects (Under CIRP), Dish TV and Agrani.`,n:['punit','subhash','essel_infra','dish_tv','agrani'],e:[]});
+ const un=L.filter(l=>l.tier==='rpt'&&/unidentified/i.test(l.rel));
+ if(un.length){let parts=[];const ev=[];un.forEach(l=>{const t=endp(l)[1];ev.push(l.id);const isSub=L.some(x=>x.tier==='ownership'&&endp(x)[1]===t);const via=L.filter(x=>x.tier==='deterministic'&&endp(x)[1]===t).map(x=>nm(endp(x)[0]));if(isSub)parts.push(`${nm(t)} is actually a 100% subsidiary (an engine inconsistency)`);else if(via.length)parts.push(`${nm(t)} resolves to ${via.join(', ')}'s directorship`);else parts.push(`${nm(t)} has no connection anywhere in the data — genuinely unexplained`);});F.push({lv:'high',w:'REVIEW',h:`${un.length} related parties the report itself couldn't classify`,d:'Flagged "could not identify relationship": '+parts.join('; ')+'.',n:un.map(l=>endp(l)[1]).concat(['punit']),e:ev});}
+ F.push({lv:'high',w:'REVIEW',h:'Active insolvency and a regulatory freeze on the entity itself',d:'Eight IBC petitions (IDBI Bank, IndusInd Bank, IPRS) plus an active NSDL ISIN-level freeze under a SEBI WTM order sit on ZEE directly — not just its group.',n:['zee'],e:[]});
+ if(nodeById['galgali'].flag)F.push({lv:'high',w:'REVIEW',h:'Serving CFO is a confirmed NSDL freeze-list match',d:'Mukund Galgali (CFO) is a TRUE POSITIVE (100%) on the NSDL account-freeze list under a SEBI WTM order, and carries MCA penalties. Material for a serving KMP regardless of origin.',n:['galgali'],e:[]});
+ if(nodeById['subs_foreign'])F.push({lv:'med',w:'VERIFY',h:'Overseas subsidiary footprint incl. Russia',d:'The foreign-subsidiary cluster (16 wholly-owned arms) includes OOO Zee CIS (Russia-domiciled) — an EU/OFAC sanctions-screening obligation — alongside Middle East, UK, Africa and Mauritius entities.',n:['subs_foreign'],e:[]});
+ F.push({lv:'low',w:'CONTEXT',h:'The current board is independent of the promoter web',d:'Active directors hold 0% and appear only on unrelated boards (not expanded here). The Essel web runs through the promoter family, not the sitting independents.',n:['divya','saurav','shishir'],e:[]});
+ F.sort((a,b)=>({high:0,med:1,low:2}[a.lv]-{high:0,med:1,low:2}[b.lv]));
+ const hh=F.some(f=>f.lv==='high');
+ return{head:hh?{lv:'high',w:'WORTH A CLOSER LOOK',l:'Overall D7 score is Medium (5.85), but governance and enforcement risk is concentrated in the promoter family and several unidentified related parties — review before proceeding.'}:{lv:'med',w:'A FEW THINGS TO VERIFY',l:''},F};}
+
+const LEVELC={high:C.critical,med:'#C9971A',low:C.green};
+const ik=document.getElementById('ik'),it=document.getElementById('it'),ib=document.getElementById('ib'),back=document.getElementById('back');
+back.onclick=()=>{sel=null;clr();overview();};
+function updateLayerLegend(){
+  const el=document.getElementById('layerkey');
+  if(activeLenses.length<2){el.style.display='none';return;}
+  const base=activeLenses[0],ov=activeLenses[1];
+  el.style.display='block';
+  el.innerHTML='<div class="lk-h">Two networks overlaid</div>'
+    +'<div class="lk-row"><span class="lk-sw" style="border-top-color:'+LAYER_COLOR.base+'"></span><span class="lk-t">'+LENS_LABEL[base]+'</span><span class="lk-tag" style="background:'+LAYER_COLOR.base+'">BASE</span></div>'
+    +'<div class="lk-row"><span class="lk-sw" style="border-top-color:'+LAYER_COLOR.overlay+'"></span><span class="lk-t">'+LENS_LABEL[ov]+'</span><span class="lk-tag" style="background:'+LAYER_COLOR.overlay+'">OVERLAY</span></div>'
+    +'<div class="lk-row"><span class="lk-sw" style="border-top-color:#111"></span><span class="lk-t">Present in both</span></div>';
+}
+function updateTally(){const c=links.filter(l=>l.status==='confirmed').length,f=links.filter(l=>l.status==='flagged').length,d=links.filter(l=>l.status==='dismissed').length;document.getElementById('tally').textContent=(c+f+d)?`Reviewed — ✓ ${c} confirmed · ⚑ ${f} flagged · ✕ ${d} dismissed`:'No links reviewed yet';}
+
+function renderVerdictMini(){
+  const {head}=findings();
+  const vm=document.getElementById('verdictmini');
+  vm.innerHTML='<div class="vm-k">Network read</div>'
+    +'<div class="vm-w">'+head.w+'</div>'
+    +'<div class="vm-l">'+(head.l||'')+'</div>'
+    +'<div class="vm-cta" id="vmcta">Expand for detail ›</div>';
+  const c=document.getElementById('vmcta');if(c)c.onclick=()=>setPanel(true);
+}
+function setPanel(expanded){
+  const a=document.getElementById('aside');
+  a.classList.toggle('collapsed',!expanded);
+  document.getElementById('ptoggle').textContent=expanded?'›':'‹';
+  if(!expanded)renderVerdictMini();
+}
+function overview(){back.style.display='none';ik.textContent=activeLenses.length===0?'Network read':(activeLenses.length===1?'Isolated view · '+LENS_LABEL[activeLenses[0]]:'Overlay · '+LENS_LABEL[activeLenses[0]]+' + '+LENS_LABEL[activeLenses[1]]);it.textContent='What this map indicates';
+ // --- Common-directorships (DIN) lens explainer + interlock detection ---
+ let cdBanner='';
+ if(activeLenses.includes('commondir')){
+   it.textContent='Common directorships (DIN linkage)';
+   const dEdges=links.filter(l=>l.tier==='deterministic'&&/[Dd]irector/.test(l.rel||'')&&endp(l)[0]!=='ceased_dirs');
+   const byTarget={};dEdges.forEach(l=>{const [s,t]=endp(l);(byTarget[t]=byTarget[t]||new Set()).add(s);});
+   const interlocks=Object.entries(byTarget).filter(([t,set])=>set.size>=2&&t!=='zee')
+     .map(([t,set])=>({t,people:[...set]})).sort((a,b)=>b.people.length-a.people.length);
+   const ilRows=interlocks.map(o=>`<div class=\"finding high\"><div class=\"ft\"><span class=\"fw\" style=\"color:${C.high}\">INTERLOCK</span><span class=\"fh\">${dname(nodeById[o.t])}</span></div><div class=\"fd\">${o.people.map(id=>dname(nodeById[id])).join(' + ')} — ${o.people.length} of the target's directors co-direct this entity.</div></div>`).join('');
+   const distinctDirs=new Set();dEdges.forEach(l=>distinctDirs.add(endp(l)[0]));
+   const dinCount=dEdges.filter(l=>(l.key||'').startsWith('DIN')).length;
+   cdBanner=`<div class=\"headline high\"><div class=\"w\">SHADOW GROUP PERIMETER</div><div class=\"l\">Following directors' identity numbers (DIN) into their other directorships surfaces the group's real perimeter — entities linked by common people, not by disclosed ownership.</div><div class=\"s\">${distinctDirs.size} directors · ${dEdges.length} directorship edges · ${dinCount} DIN-sourced · ${interlocks.length} interlocked entities.</div></div>`+
+   (interlocks.length?`<div class=\"sec\">Interlocking directorates</div><div class=\"ph\">Entities where two or more of the target's directors sit together — a classic marker of a controlled group and a governance / round-tripping flag.</div>${ilRows}`:'');
+ }
+ const{head,F}=findings();
+ const hh=`<div class="headline ${head.lv}"><div class="w">${head.w}</div><div class="l">${head.l}</div><div class="s">A reading of the connections — an investigative aid, not the D7 composite verdict.</div></div>`;
+ const fh=F.map((f,i)=>`<div class="finding ${f.lv}"><div class="ft"><span class="fw" style="color:${LEVELC[f.lv]}">${f.w}</span><span class="fh">${f.h}</span></div><div class="fd">${f.d}</div><button class="fs" data-i="${i}">Show on map ›</button></div>`).join('');
+ const An=ANALYTICS;const comm=An.communities.map(c=>{const hasS=c.members.some(id=>nodeById[id].subject);return`<div class="crow" data-c="${c.id}"><span class="sw" style="background:${COMM[c.id]}"></span><span class="t">${commName[c.id]}${hasS?'<span class="subj-tag">SUBJECT</span>':''}</span><span class="z">${c.size}</span></div>`;}).join('');
+ const mb=Math.max(...An.bridges.map(id=>nodeById[id].betweenness))||1;
+ const brg=An.bridges.map(id=>{const n=nodeById[id];return`<div class="brow" data-id="${id}"><span class="nm">${dname(n)}</span>${n.is_articulation?'<span class="art">KEY LINK</span>':''}<span class="bw"><span class="bf" style="width:${Math.round(n.betweenness*100/mb)}%"></span></span></div>`;}).join('');
+ const c=links.filter(l=>l.status==='confirmed').length,f=links.filter(l=>l.status==='flagged').length,dd=links.filter(l=>l.status==='dismissed').length;
+ const revline=(c+f+dd)?`<div class="rev">Analyst review so far: <b>${c}</b> confirmed · <b>${f}</b> flagged · <b>${dd}</b> dismissed (saved for this session).</div>`:'';
+ ib.innerHTML=(cdBanner||'')+ (activeLenses.includes('commondir')?'' : hh) +fh+`<div class="sec">Supporting detail</div><div class="metricrow"><div class="metric"><div class="n">${nodes.length}</div><div class="l">Nodes</div></div><div class="metric"><div class="n">${An.n_communities}</div><div class="l">Groups</div></div><div class="metric"><div class="n" style="color:${C.high}">${An.bridges.length}</div><div class="l">Key links</div></div></div><div class="sec">Groups that move together</div>${comm}<div class="sec">People holding the network together</div>${brg}${revline}<div class="sec">About this map</div><div class="ph">Built from the D7 CDD (FORT10085-202607-01); every node and edge traces to a sourced record. Promoter holding (3.99%, FY25) is documented from the MCA Annual Return; the family attribution into the promoter block is <b>inferred</b> (dashed). A reading aid, not the D7 composite verdict.</div>`;
+ ib.querySelectorAll('.fs').forEach(el=>el.onclick=e=>{e.stopPropagation();const f=findings().F[+el.dataset.i];hlSet(f.n,f.e);});
+ ib.querySelectorAll('.crow').forEach(el=>el.onclick=()=>hlComm(+el.dataset.c));
+ ib.querySelectorAll('.brow').forEach(el=>el.onclick=()=>selNode(nodeById[el.dataset.id]));}
+
+function memberBlock(node){if(!node.members_list)return'';return`<div class="note blue"><b>Comprises ${node.members_list.length} entities</b> (all 100%-owned):<ul class="memlist">${node.members_list.map(m=>`<li>${m}</li>`).join('')}</ul></div>`;}
+
+function renderEdge(d){setPanel(true);back.style.display='block';const t=TIER[d.tier],s=nodeById[endp(d)[0]],tg=nodeById[endp(d)[1]];ik.textContent=t.label;it.textContent=d.rel;
+ const own=d.tier==='ownership',inf=d.tier==='inferred';
+ const note=inf?`<div class="note">This is an <b>inferred / association</b> link, not a documented ownership edge — the 3.99% promoter holders are not individually disclosed in the filing.</div>`:(own?`<div class="note green">Documented ownership — the only class that could feed a verdict. Sourced to ${d.src}.</div>`:'');
+ const mem=(s.members_list?memberBlock(s):'')+(tg.members_list?memberBlock(tg):'');
+ ib.innerHTML=`<div class="ttag" style="background:${t.color}18;color:${t.color}"><span class="sw" style="border-color:${t.color}"></span>${t.label}</div>
+ <div class="eep"><div class="ep">${fname(s)}<small>${s.ident}</small></div><div class="ar">${own?'⇒':(inf?'⇢':'→')}</div><div class="ep">${fname(tg)}<small>${tg.ident}</small></div></div>
+ <div class="erow"><span class="lab">Relationship</span><span class="val">${d.rel}</span></div>
+ <div class="erow"><span class="lab">Detail</span><span class="val mono">${d.key}</span></div>
+ <div class="erow"><span class="lab">Source</span><span class="val">${d.src}</span></div>
+ <div class="erow"><span class="lab">Class</span><span class="val">${t.desc}</span></div>${note}${mem}
+ <div class="sec">Analyst review</div><div class="ph">Mark this link as <b>verified</b>, <b>flag</b> it for follow-up, or <b>dismiss</b> it as noise. Your choice is saved for this session, shown on the map (✓ / ⚑ / greyed), and — in production — feeds the audit trail and labelled training data.</div>
+ <div class="actions"><button id="bc" class="${d.status==='confirmed'?'on-confirm':''}">Confirm</button><button id="bf" class="${d.status==='flagged'?'on-flag':''}">Flag</button><button id="bd" class="${d.status==='dismissed'?'on-dismiss':''}">Dismiss</button></div>
+ <div class="cstat" id="cst"></div>`;
+ const cst=document.getElementById('cst');
+ const paint=()=>{cst.textContent=d.status==='confirmed'?'✓ Confirmed — marked verified for this session':d.status==='flagged'?'⚑ Flagged for follow-up':d.status==='dismissed'?'✕ Dismissed — hidden from the network read':'';cst.style.color=d.status==='confirmed'?C.green:d.status==='flagged'?'#B07d10':d.status==='dismissed'?'#5B6674':'';};
+ const set=v=>{d.status=(d.status===v)?'open':v;applyStat(d);['bc','bf','bd'].forEach((x,i)=>{const btn=document.getElementById(x);btn.className=(d.status===['confirmed','flagged','dismissed'][i])?'on-'+['confirm','flag','dismiss'][i]:'';});paint();};
+ document.getElementById('bc').onclick=()=>set('confirmed');document.getElementById('bf').onclick=()=>set('flagged');document.getElementById('bd').onclick=()=>set('dismissed');paint();}
+
+function breakdownBlock(d){
+  if(d.promoBreakdown){
+    const b=d.promoBreakdown;
+    let rows=b.entities.map(e=>'<div class="erow"><span class="lab">'+e.name+'</span><span class="val mono">'+e.pct.toFixed(2)+'%</span></div>').join('');
+    const others=b.listed-b.entities.length;
+    return '<div class="sec">Promoter shareholders (FY25)</div>'
+      +'<div class="ph">The 3.99% promoter block is held across a web of Essel-group entities — no single holder exceeds 5%.</div>'
+      +rows
+      +(others>0?'<div class="erow"><span class="lab">+ '+others+' further promoter entities</span><span class="val mono">0.00%</span></div>':'')
+      +'<div class="erow" style="border-top:2px solid var(--line);font-weight:700"><span class="lab">Total promoter</span><span class="val mono">'+b.total.toFixed(2)+'%</span></div>';
+  }
+  if(d.publicBreakdown){
+    const b=d.publicBreakdown;
+    const r=(lab,v)=>'<div class="erow"><span class="lab">'+lab+'</span><span class="val mono">'+v.toFixed(2)+'%</span></div>';
+    return '<div class="sec">Public & institutional (FY25)</div>'
+      +'<div class="ph">96.02% sits with public, institutional and other holders — the economic counterweight to the 3.99% promoter block.</div>'
+      +r('Public',b.public)+r('FIIs (foreign institutional)',b.fii)+r('DIIs (domestic institutional)',b.dii)+r('Government',b.govt)
+      +'<div class="erow" style="border-top:2px solid var(--line);font-weight:700"><span class="lab">Total public/non-promoter</span><span class="val mono">'+b.total.toFixed(2)+'%</span></div>';
+  }
+  return '';
+}
+function renderNode(d){setPanel(true);back.style.display='block';ik.textContent=(d.subject?'Subject entity':(d.kind==='person'?'Person':(d.kind==='group'?'Group':'Entity')))+(d.hop===2?' · hop-2':'');it.textContent=fname(d);
+ const mine=links.filter(l=>endp(l).includes(d.id));
+ const role=d.is_articulation?'Articulation point — removing it splits the network':(d.is_bridge?'High-betweenness bridge':'—');
+ const fl=d.flag?`<div class="note ${d.flag==='high'?'red':''}"><b>${d.flag==='high'?'High':'Watch'} flag.</b> ${d.note||''}</div>`:(d.note?`<div class="note">${d.note}</div>`:'');
+ const mem=memberBlock(d);
+ let rows='';mine.forEach(l=>{const t=TIER[l.tier],o=nodeById[endp(l)[0]===d.id?endp(l)[1]:endp(l)[0]];rows+=`<div class="crow" data-e="${l.id}"><span class="sw" style="border:none;border-top:3px solid ${t.color};height:0;width:16px;border-radius:2px;${t.dash?'border-top-style:dashed;':''}"></span><span class="t">${l.rel} — <b>${dname(o)}</b><br><small>${l.key} · ${l.src}</small></span></div>`;});
+ ib.innerHTML=`<div class="erow"><span class="lab">Identifier</span><span class="val mono">${d.ident}</span></div>
+ <div class="erow"><span class="lab">Group</span><span class="val"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${COMM[d.community]||'#ccc'};vertical-align:middle;margin-right:5px"></span>${commLetter(d.community)}</span></div>
+ <div class="erow"><span class="lab">Betweenness</span><span class="val mono">${(d.betweenness||0).toFixed(3)}</span></div>
+ <div class="erow"><span class="lab">Bridge role</span><span class="val" style="max-width:180px;${d.is_articulation?'color:'+C.high:''}">${role}</span></div>${fl}${breakdownBlock(d)}${mem}
+ <div class="sec">Links · ${mine.length}</div>${rows}`;
+ ib.querySelectorAll('.crow').forEach(el=>el.onclick=()=>selEdge(links.find(x=>x.id===el.dataset.e)));}
+
+function applyStat(d){const grp=es.filter(x=>x.id===d.id);grp.select('path.edge').classed('dismissed',d.status==='dismissed').classed('confirmed',d.status==='confirmed');grp.select('.elabel').classed('dismissed',d.status==='dismissed');const m=grp.select('.smark');if(d.status==='confirmed')m.text('✓').attr('fill',C.green);else if(d.status==='flagged')m.text('⚑').attr('fill','#E0A020');else m.text('');updateTally();}
+
+// controls
+const fw=d3.select('#filters');Object.entries(TIER).forEach(([k,t])=>{const c=fw.append('div').attr('class','chip').on('click',function(){const off=!d3.select(this).classed('off');d3.select(this).classed('off',off);if(off)tierOff.add(k);else tierOff.delete(k);refresh();});c.append('span').attr('class','sw').style('border-top-color',t.color).style('border-top-style',t.dash?'dashed':'solid');c.append('span').text(t.label);});
+d3.selectAll('#toplenses button[data-l]').on('click',function(){setLens(d3.select(this).attr('data-l'));});
+document.getElementById('tg-hop2').onclick=function(){showH2=!showH2;d3.select(this).classed('off',!showH2);refresh();};
+document.getElementById('tg-comm').onclick=function(){showHull=!showHull;d3.select(this).classed('off',!showHull);hullL.style('display',showHull?null:'none');if(showHull)hulls();};
+document.getElementById('tg-bridge').onclick=function(){showBr=!showBr;d3.select(this).classed('off',!showBr);ns.selectAll('.bring,.bpill,.bpill-t').style('display',showBr?null:'none');};
+document.getElementById('reset').onclick=()=>{
+ svg.transition().duration(500).call(zoom.transform,d3.zoomIdentity);
+ activeLenses=[];lens='all';lensSet=null;d3.selectAll('#toplenses button[data-l]').classed('on',function(){return d3.select(this).attr('data-l')==='all';}).classed('base',false).classed('overlay',false);updateLayerLegend();
+ tierOff.clear();d3.select('#filters').selectAll('.chip').classed('off',false);
+ showH2=true;d3.select('#tg-hop2').classed('off',false);showHull=true;d3.select('#tg-comm').classed('off',false);hullL.style('display',null);showBr=true;d3.select('#tg-bridge').classed('off',false);ns.selectAll('.bring,.bpill,.bpill-t').style('display',null);
+ sel=null;clr();refresh();overview();
+ nodes.forEach(n=>{n.fx=null;n.fy=null;});subj.fx=W/2;subj.fy=H*0.55;sim.alpha(.7).restart();setTimeout(()=>{subj.fx=null;subj.fy=null;},1100);
+};
+window.addEventListener('resize',()=>{W=svg.node().clientWidth;H=svg.node().clientHeight;sim.force('center',d3.forceCenter(W/2,H*0.55)).alpha(.3).restart();});
+document.getElementById('ptoggle').onclick=()=>{const a=document.getElementById('aside');setPanel(a.classList.contains('collapsed'));};
+document.getElementById('reset2').onclick=()=>document.getElementById('reset').click();
+overview();updateTally();renderVerdictMini();setPanel(false);setTimeout(()=>sim.alpha(.95).restart(),60);
+</script><div class="sample-wm"><span>SAMPLE</span></div>
+<div id="mobile-guard"><div class="mg-wrap">
+  <div class="mg-head">
+    <svg width="34" height="34" viewBox="0 0 80 80" aria-hidden="true">
+      <line x1="18" y1="20" x2="60" y2="12" stroke="#6699CC" stroke-width="3"/><line x1="18" y1="20" x2="36" y2="62" stroke="#98AA3A" stroke-width="3"/><line x1="60" y1="12" x2="72" y2="52" stroke="#6699CC" stroke-width="3"/><line x1="36" y1="62" x2="72" y2="52" stroke="#98AA3A" stroke-width="3"/><line x1="60" y1="12" x2="36" y2="62" stroke="#98AA3A" stroke-width="3"/>
+      <circle cx="18" cy="20" r="8" fill="#2E5A8A"/><circle cx="60" cy="12" r="10" fill="#6699CC"/><circle cx="36" cy="62" r="7" fill="#98AA3A"/><circle cx="72" cy="52" r="8.5" fill="#E65100"/>
+    </svg>
+    <div><span class="mg-word">Quantum <span class="hi">Graph</span></span> <span class="mg-by">by D7</span></div>
+  </div>
+  <div class="mg-note">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E65100" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16.5v.5"/></svg>
+    <div>The full interactive network is optimised for desktop. Open this link on a larger screen to explore the graph, filters and per-node detail. A summary is shown below.</div>
+  </div>
+  <div class="mg-subj">Subject: <b>Zee Entertainment Enterprises Ltd</b> · FORT10085-202607-01</div>
+  <div class="mg-verdict" id="mg-verdict"></div>
+  <div class="mg-sec">Key findings to review</div>
+  <div id="mg-findings"></div>
+  <div class="mg-foot">Quantum Graph is a relationship-mapping reading aid built from the D7 CDD (FORT10085-202607-01). Every finding traces to a sourced record. This is an input to the bank's credit appraisal, not a lending decision.</div>
+</div></div>
+<script>
+(function(){
+  function fillGuard(){
+    try{
+      if(typeof findings!=='function')return;
+      var r=findings(); var head=r.head, F=r.F;
+      var mgv=document.getElementById('mg-verdict');
+      if(mgv&&head){mgv.innerHTML='<div class="k">Network read</div><div class="w">'+head.w+'</div><div class="l">'+(head.l||'')+'</div>';}
+      var mgf=document.getElementById('mg-findings');
+      if(mgf&&F){mgf.innerHTML=F.map(function(x){return '<div class="mg-find '+(x.lv==='high'?'high':'')+'"><div class="ft">'+x.w+'</div><div class="fh">'+x.h+'</div><div class="fd">'+x.d+'</div></div>';}).join('');}
+    }catch(e){}
+  }
+  if(document.readyState!=='loading')setTimeout(fillGuard,50);
+  else document.addEventListener('DOMContentLoaded',function(){setTimeout(fillGuard,50);});
+})();
+</script>
+</body></html>

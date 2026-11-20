@@ -1,0 +1,700 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Governance &amp; Forensic Accounting Review — Zee Entertainment Enterprises Ltd</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500&display=swap');
+:root{
+  --bg:#F4F6FA;
+  --surface:#FFFFFF;
+  --surface-alt:#F8FAFC;
+  --border:#E2E8F0;
+  --border-lt:#EEF2F6;
+  --text:#0F172A;
+  --text-s:#334155;
+  --text-m:#64748B;
+  --text-lt:#94A3B8;
+  --navy:#1A2330;
+  --navy-border:#2A374B;
+  --accent:#2E5A8A;
+  --accent-mid:#6699CC;
+  --accent-lt:#EFF6FF;
+  --accent-bd:#BFDBFE;
+  --accent-dk:#1E40AF;
+  --critical:#DC2626;
+  --critical-bg:#FEF2F2;
+  --critical-bd:#FECACA;
+  --critical-text:#991B1B;
+  --high:#EA580C;
+  --high-bg:#FFF7ED;
+  --high-bd:#FED7AA;
+  --high-text:#9A3412;
+  --med:#7C8B2B;
+  --med-bg:#F7FEE7;
+  --med-bd:#D9F99D;
+  --med-text:#3F6212;
+  --low:#2E5A8A;
+  --low-bg:#EFF6FF;
+  --low-bd:#BFDBFE;
+  --low-text:#1E3A8A;
+  --green:#16A34A;
+  --green-bg:#F0FDF4;
+  --green-bd:#BBF7D0;
+  --green-text:#166534;
+  --slate:#94A3B8;
+  --font:'DM Sans',system-ui,-apple-system,sans-serif;
+  --brand:'Playfair Display',Georgia,serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
+  --r:10px;
+  --r-sm:7px;
+  --sh:0 1px 2px rgba(15,23,42,.035);
+}
+html.dark{
+  --bg:#020617;
+  --surface:#0F172A;
+  --surface-alt:#162033;
+  --border:#1E293B;
+  --border-lt:#1E293B;
+  --text:#F1F5F9;
+  --text-s:#CBD5E1;
+  --text-m:#94A3B8;
+  --text-lt:#64748B;
+  --accent:#60A5FA;
+  --accent-lt:rgba(37,99,235,.14);
+  --accent-bd:rgba(59,130,246,.3);
+  --accent-dk:#93C5FD;
+  --critical:#F87171;
+  --critical-bg:rgba(220,38,38,.14);
+  --critical-bd:rgba(248,113,113,.3);
+  --critical-text:#FCA5A5;
+  --high:#FB923C;
+  --high-bg:rgba(234,88,12,.14);
+  --high-bd:rgba(251,146,60,.3);
+  --high-text:#FDBA74;
+  --med:#A3E635;
+  --med-bg:rgba(132,204,22,.12);
+  --med-bd:rgba(163,230,53,.28);
+  --med-text:#D9F99D;
+  --low:#60A5FA;
+  --low-bg:rgba(37,99,235,.14);
+  --low-bd:rgba(96,165,250,.3);
+  --low-text:#BFDBFE;
+  --green:#4ADE80;
+  --green-bg:rgba(22,163,74,.14);
+  --green-bd:rgba(74,222,128,.28);
+  --green-text:#86EFAC;
+  --sh:none;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.52;
+  font-size:12.25px;
+  font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(100,116,139,.25);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(100,116,139,.45)}
+
+.wrap{max-width:1020px;margin:0 auto;padding:12px 14px 44px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.r{text-align:right}
+
+.banner{
+  background:var(--navy);
+  color:#FFFFFF;
+  border:1px solid var(--navy-border);
+  border-radius:var(--r);
+  padding:10px 14px;
+  margin-bottom:10px;
+}
+.banner-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.banner h1{
+  font-size:14.5px;
+  font-weight:700;
+  margin:0;
+  line-height:1.25;
+  letter-spacing:-.01em;
+  color:#FFFFFF;
+}
+.banner .sub{
+  font-size:11px;
+  color:#C7D0DB;
+  line-height:1.4;
+  margin-top:2px;
+}
+.banner-pill{
+  display:inline-flex;
+  align-items:center;
+  height:22px;
+  padding:0 8px;
+  border-radius:5px;
+  background:rgba(230,81,0,.22);
+  border:1px solid rgba(230,81,0,.7);
+  color:#FFB74D;
+  font-family:var(--mono);
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:-.01em;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.banner .meta{
+  margin-top:7px;
+  padding-top:7px;
+  border-top:1px solid #2A374B;
+  display:flex;
+  flex-wrap:wrap;
+  gap:3px 12px;
+  font-size:10px;
+  color:#94A3B8;
+  font-family:var(--mono);
+}
+.banner .meta b{color:#E2E8F0;font-weight:600;font-family:var(--font)}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  box-shadow:var(--sh);
+  padding:14px 16px;
+  margin-bottom:12px;
+}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.sec-title-grp{display:flex;align-items:center;gap:9px}
+.sec-num{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:26px;
+  height:24px;
+  padding:0 6px;
+  border-radius:6px;
+  background:var(--navy);
+  color:#FFFFFF;
+  font-weight:700;
+  font-size:11px;
+  font-family:var(--mono);
+}
+html.dark .sec-num{background:#1E293B;border:1px solid #334155;color:#93C5FD}
+.sec-title{font-size:14px;font-weight:700;letter-spacing:-.01em;color:var(--text)}
+.sub-title{
+  font-size:10.5px;
+  font-weight:700;
+  color:var(--text-m);
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  margin:14px 0 8px;
+  padding-bottom:5px;
+  border-bottom:1px solid var(--border-lt);
+}
+.sub-title:first-of-type{margin-top:2px}
+.prose{color:var(--text-s);font-size:12.25px;line-height:1.55}
+.prose p{margin-bottom:8px}
+.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--text);font-weight:600}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:2.5px 8px;
+  border-radius:5px;
+  font-size:10.5px;
+  font-weight:600;
+  white-space:nowrap;
+  border:1px solid transparent;
+  font-family:var(--mono);
+}
+.badge.crit{background:var(--critical-bg);color:var(--critical-text);border-color:var(--critical-bd)}
+.badge.high{background:var(--high-bg);color:var(--high-text);border-color:var(--high-bd)}
+.badge.med{background:var(--med-bg);color:var(--med-text);border-color:var(--med-bd)}
+.badge.low{background:var(--low-bg);color:var(--low-text);border-color:var(--low-bd)}
+.badge.green{background:var(--green-bg);color:var(--green-text);border-color:var(--green-bd)}
+.dot{display:none}
+
+.tbl{width:100%;border-collapse:collapse;font-size:11.5px;font-variant-numeric:tabular-nums}
+.tbl th{
+  text-align:left;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  color:var(--text-m);
+  font-weight:600;
+  padding:6px 8px;
+  border-bottom:1px solid var(--border);
+  background:var(--surface-alt);
+}
+.tbl th.r{text-align:right}
+.tbl td{padding:6.5px 8px;border-bottom:1px solid var(--border-lt);vertical-align:top;color:var(--text-s);line-height:1.45}
+.tbl td strong{color:var(--text)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover{background:var(--surface-alt)}
+.tbl .hl td{background:var(--accent-lt);color:var(--text)}
+
+.kpi-row{display:grid;gap:8px;margin-bottom:6px}
+.kpi-row.c4{grid-template-columns:repeat(4,1fr)}
+.kpi-row.c5{grid-template-columns:repeat(5,1fr)}
+.kpi-row.c6{grid-template-columns:repeat(6,1fr)}
+.kpi{
+  background:var(--surface-alt);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:9px 10px;
+}
+.kpi.t-high{border-color:var(--high-bd)}
+.kpi.t-crit{border-color:var(--critical-bd)}
+.kpi.t-green{border-color:var(--green-bd)}
+.kpi-lbl{font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-m);font-weight:600}
+.kpi-val{font-size:15px;font-weight:700;font-family:var(--mono);margin:2px 0;color:var(--text);font-variant-numeric:tabular-nums}
+.kpi-sub{font-size:10px;color:var(--text-m);line-height:1.35}
+
+.callout{
+  border-radius:var(--r-sm);
+  padding:9px 12px;
+  font-size:11.5px;
+  line-height:1.48;
+  border:1px solid var(--accent-bd);
+  background:var(--accent-lt);
+  color:var(--low-text);
+  margin-bottom:8px;
+}
+.callout.info{border-color:var(--accent-bd);background:var(--accent-lt);color:var(--low-text)}
+.callout.warn{border-color:var(--critical-bd);background:var(--critical-bg);color:var(--critical-text)}
+.callout.pos{border-color:var(--green-bd);background:var(--green-bg);color:var(--green-text)}
+.callout.amber{border-color:var(--high-bd);background:var(--high-bg);color:var(--high-text)}
+.callout strong{font-weight:700}
+
+.ev-list{list-style:none;font-size:11.75px}
+.ev-list li{padding:6px 0 6px 16px;border-bottom:1px solid var(--border-lt);position:relative;color:var(--text-s);line-height:1.48}
+.ev-list li:last-child{border-bottom:none}
+.ev-list li::before{content:"";position:absolute;left:2px;top:12px;width:5px;height:5px;border-radius:50%;background:var(--accent-mid)}
+.ev-list li.f-crit::before{background:var(--critical)}
+.ev-list li.f-high::before{background:var(--high)}
+.ev-list li.f-med::before{background:var(--med)}
+.ev-list li.f-low::before{background:var(--low)}
+.ev-list li.f-pos::before{background:var(--green)}
+
+.gauge-wrap{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:6px;padding:8px 12px;background:var(--surface-alt);border:1px solid var(--border-lt);border-radius:var(--r-sm)}
+.gauge-score{flex:0 0 auto;text-align:center;padding:2px 16px 2px 6px;border-right:1px solid var(--border)}
+.gauge-score .num{font-size:28px;font-weight:700;font-family:var(--mono);line-height:1;color:var(--high-text)}
+.gauge-score .den{font-size:13px;color:var(--text-lt);font-weight:600;font-family:var(--mono)}
+.gauge-score .lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--high-text);margin-top:3px}
+.gauge-score .cap{font-size:9.5px;color:var(--text-m);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.gauge-bar{flex:1 1 280px;min-width:220px}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.split .panel{border:1px solid var(--border);border-radius:var(--r-sm);overflow:hidden;background:var(--surface)}
+.split .panel h4{font-size:10.5px;font-weight:700;padding:6.5px 11px;text-transform:uppercase;letter-spacing:.05em;margin:0;border-bottom:1px solid var(--border-lt)}
+.panel.confirmed h4{background:var(--high-bg);color:var(--high-text)}
+.panel.probe h4{background:var(--accent-lt);color:var(--accent-dk)}
+.split .panel ul{list-style:none;padding:4px 11px 8px;margin:0}
+.split .panel li{font-size:11.5px;color:var(--text-s);padding:5px 0;border-bottom:1px solid var(--border-lt);line-height:1.45}
+.split .panel li:last-child{border-bottom:none}
+
+.annex-divider{margin:18px 0 12px;text-align:center;position:relative}
+.annex-divider span{background:var(--bg);padding:0 12px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);position:relative;z-index:1}
+.annex-divider::before{content:"";position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border)}
+.annex-banner{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;margin-bottom:12px}
+.annex-banner h2{font-size:13.5px;font-weight:700;color:var(--text)}
+.annex-banner p{font-size:11.5px;color:var(--text-m);margin-top:3px;line-height:1.45}
+
+.pillar-card .card-hdr{margin-bottom:6px}
+.pillar-eyebrow{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-m);font-weight:600;margin-bottom:1px}
+.assess{font-size:11.5px;color:var(--text-m);margin:2px 0 10px;padding:7px 10px;background:var(--surface-alt);border:1px solid var(--border-lt);border-radius:6px;line-height:1.45}
+.finding-h{font-size:12px;font-weight:700;color:var(--text);margin:12px 0 6px}
+.finding-h .fnum{font-family:var(--mono);color:var(--accent-dk);margin-right:5px}
+.verdict-box{margin-top:11px;border-radius:var(--r-sm);padding:10px 12px;border:1px solid var(--border);background:var(--surface-alt);display:flex;gap:12px;align-items:flex-start}
+.verdict-box .vscore{flex:0 0 auto;text-align:center;font-family:var(--mono);min-width:36px}
+.verdict-box .vscore .n{font-size:20px;font-weight:700;line-height:1}
+.verdict-box .vscore .d{font-size:10px;color:var(--text-lt)}
+.verdict-box .vtext{font-size:11.5px;color:var(--text-s);line-height:1.48}
+.verdict-box .vtext b{color:var(--text)}
+.xref{margin-top:8px;font-size:10.5px;color:var(--text-m);background:var(--surface-alt);border:1px solid var(--border-lt);border-radius:6px;padding:7px 10px;line-height:1.45}
+.xref b{color:var(--text)}
+.xref .tag{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:600;color:var(--accent-dk);background:var(--surface);border:1px solid var(--border);padding:1px 6px;border-radius:4px;margin:3px 4px 1px 0}
+.a-tag{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--accent-dk);background:var(--accent-lt);border:1px solid var(--accent-bd);padding:1px 6px;border-radius:4px;margin-right:6px}
+.note{font-size:10.5px;color:var(--text-m);margin-top:7px;line-height:1.45}
+.src{font-family:var(--mono);font-size:10px;color:var(--text-lt)}
+.footer{font-size:10.5px;color:var(--text-m);border-top:1px solid var(--border);margin-top:18px;padding-top:12px;line-height:1.55}
+.chk{width:100%;border-collapse:collapse;font-size:11.5px}
+.chk td{padding:5.5px 8px;border-bottom:1px solid var(--border-lt);color:var(--text-s)}
+.chk tr:last-child td{border-bottom:none}
+.chk td:first-child{font-weight:600;width:40%;color:var(--text)}
+.chk .ok{color:var(--green);font-weight:600;font-family:var(--mono);font-size:10.5px}
+.chk .watch{color:var(--high);font-weight:600;font-family:var(--mono);font-size:10.5px}
+
+.override-note{font-size:11.5px;color:var(--text-s);background:var(--surface-alt);border:1px solid var(--border);padding:8px 11px;border-radius:var(--r-sm);margin-top:6px}
+.glance{list-style:none;padding:0;margin:4px 0;display:grid;gap:6px}
+.glance li{font-size:11.75px;color:var(--text-s);padding:7px 11px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface-alt);line-height:1.45}
+.glance li strong{color:var(--text)}
+.glance .g-ptr{display:block;font-size:10px;color:var(--text-m);margin-top:2px;font-family:var(--mono)}
+.glance li.g-crit{border-color:var(--critical-bd);background:var(--critical-bg)}
+.glance li.g-high{border-color:var(--high-bd);background:var(--high-bg)}
+.glance li.g-med{border-color:var(--med-bd);background:var(--med-bg)}
+.glance li.g-low{border-color:var(--green-bd);background:var(--green-bg)}
+.xref-s1{font-size:11px;color:var(--text-s);background:var(--surface-alt);border:1px solid var(--border);border-radius:6px;padding:6px 10px;margin-top:8px;line-height:1.45}
+.xref-s1 strong{color:var(--accent-dk)}
+
+.chart{margin:10px 0;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface-alt);padding:10px 12px}
+.chart-t{font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:1px}
+.chart-s{font-size:10.5px;color:var(--text-m);margin-bottom:8px}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+html.dark .chart svg{background:#F8FAFC;border-radius:6px;padding:6px}
+.chart-cap{font-size:10.5px;color:var(--text-m);margin-top:7px;line-height:1.45}
+
+.disc-card ol{padding-left:18px;margin:2px 0}
+.disc-card li{font-size:11px;color:var(--text-m);margin-bottom:7px;line-height:1.5}
+.disc-card li:last-child{margin-bottom:0}
+.disc-card li b{color:var(--text-s)}
+
+.hdr-actions{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.graph-btn{
+  appearance:none;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:2.5px 8px;
+  border-radius:5px;
+  font-family:var(--font);
+  font-size:10.5px;
+  font-weight:600;
+  color:var(--accent-dk);
+  background:var(--accent-lt);
+  border:1px solid var(--accent-bd);
+  cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s;
+  white-space:nowrap;
+}
+.graph-btn:hover{background:#DBEAFE;border-color:#93C5FD;color:#1E3A8A}
+html.dark .graph-btn:hover{background:rgba(59,130,246,.28);border-color:#60A5FA;color:#EFF6FF}
+@keyframes cardFlashRing{
+  0%{box-shadow:0 0 0 2px #E65100}
+  100%{box-shadow:var(--sh)}
+}
+.card-flash{animation:cardFlashRing 1.5s ease-out}
+
+@media print{.graph-btn{display:none!important}}
+@media(max-width:760px){
+  .kpi-row.c4{grid-template-columns:repeat(2,1fr)}
+  .kpi-row.c5,.kpi-row.c6{grid-template-columns:repeat(3,1fr)}
+  .split{grid-template-columns:1fr}
+  .gauge-score{border-right:none;border-bottom:1px solid var(--border);padding-bottom:8px;width:100%}
+}
+</style>
+<script>
+function focusGraph(sectionId){
+  if(window.parent&&window.parent!==window){
+    window.parent.postMessage({type:'GFA_FOCUS_GRAPH',sectionId:sectionId},'*');
+  }
+}
+</script>
+</head><body><div class="wrap">
+<div class="banner">
+<div class="banner-top">
+<div>
+<h1>Governance &amp; Forensic Accounting Review</h1>
+<div class="sub">Zee Entertainment Enterprises Limited · <span class="mono">NSE: ZEEL · CIN L92132MH1982PLC028767</span> · Six-Pillar GFA Lens</div>
+</div>
+<span class="banner-pill">GFA 7.0/10 · HIGH</span>
+</div>
+<div class="meta">
+<span><b>Basis:</b> FY2025 Ind AS (Walker Chandiok &amp; Co LLP)</span>
+<span><b>Window:</b> FY2023–FY2025</span>
+<span><b>Jurisdiction:</b> India (MH)</span>
+<span><b>Sources:</b> FY25 AR · D7 CDD FORT10070</span>
+</div>
+</div>
+<div class="card" id="sec3b">
+<div class="card-hdr"><div class="sec-title-grp"><span class="sec-num">GFA</span><span class="sec-title">Outside In Forensic Review</span></div>
+<div class="hdr-actions"><button type="button" class="graph-btn" onclick="focusGraph('sec3b')">Focus in 3D &rarr;</button><span class="badge high">Investment Risk 7.0 / 10 · High</span></div></div>
+<div class="gauge-wrap"><div class="gauge-score"><div class="cap">Investment Risk</div><div><span class="num">7.0</span><span class="den">/10</span></div><div class="lbl">High</div></div>
+<div class="gauge-bar"><svg viewBox="0 0 520 82" style="width:100%;display:block"><rect x="8.0" y="34" width="201.6" height="16" rx="3" fill="#6699CC" opacity="0.92"/><text x="108.8" y="66" font-size="9.5" font-family="DM Sans" fill="#64748B" text-anchor="middle" font-weight="600">CLEAN / LOW</text><rect x="209.6" y="34" width="151.2" height="16" rx="3" fill="#98AA3A" opacity="0.92"/><text x="285.2" y="66" font-size="9.5" font-family="DM Sans" fill="#64748B" text-anchor="middle" font-weight="600">ELEVATED</text><rect x="360.8" y="34" width="100.8" height="16" rx="3" fill="#EA580C" opacity="0.92"/><text x="411.2" y="66" font-size="9.5" font-family="DM Sans" fill="#64748B" text-anchor="middle" font-weight="600">HIGH</text><rect x="461.6" y="34" width="50.4" height="16" rx="3" fill="#DC2626" opacity="0.92"/><text x="486.8" y="66" font-size="9.5" font-family="DM Sans" fill="#64748B" text-anchor="middle" font-weight="600">SEVERE</text><polygon points="360.8,23 355.5,13 366.1,13" fill="#1A2330"/><rect x="359.5" y="23" width="2.6" height="32" fill="#1A2330"/><text x="360.8" y="10" font-size="10.5" font-family="JetBrains Mono" fill="#1A2330" text-anchor="middle" font-weight="700">7.0</text></svg></div></div>
+<div class="prose" style="margin-top:6px">
+<p><strong>Verdict &mdash; High (7 / 10), and the shape of it is the point.</strong> Zee is <em>not</em> an earnings-manipulation case: the financial-statement core is clean &mdash; an unqualified audit, a clean CARO 2020, no restatement, and forensic screens that all read benign (detail in Pillar 5 and Annexure A3). The High rating is set entirely by the <strong>governance wrapper</strong> around those clean numbers &mdash; active regulatory enforcement, a control-without-ownership promoter structure, related-party value-leakage, and a heavy litigation load. On the financials alone Zee would sit in the Low band; it is the governance, related-party and enforcement layer that lifts it to High.</p>
+<p class="override-note"><strong>Why 7 and not lower:</strong> an enforcement-tier override floors the composite at 7 on the active securities-account freeze plus the live SEBI proceeding; the confirmed-fraud tier does <em>not</em> fire, because those matters remain sub judice. The override sets a floor, not a ceiling &mdash; derivation in Annexure A4.</p>
+</div>
+<div class="sub-title">Key Issues at a Glance</div>
+<ul class="glance">
+<li class="g-crit"><strong>Regulatory enforcement</strong> &mdash; an active securities-account freeze and a live fund-diversion show-cause notice reaching the entity and its leadership.<span class="g-ptr">Pillar 6 &middot; corroborated in the post-period addendum (S1)</span></li>
+<li class="g-high"><strong>Ownership &amp; control</strong> &mdash; promoter economic stake collapsed to a sliver while board and voting control persist: control without economic alignment.<span class="g-ptr">Pillar 2</span></li>
+<li class="g-high"><strong>Related-party leakage</strong> &mdash; recurring value-leakage through a dense affiliate web, several events flagged in the auditor's Key Audit Matters.<span class="g-ptr">Pillar 3</span></li>
+<li class="g-high"><strong>Litigation load</strong> &mdash; a large international arbitration and multiple insolvency petitions against the company.<span class="g-ptr">Pillar 6</span></li>
+<li class="g-med"><strong>Board &amp; management stability</strong> &mdash; leadership transition and elevated director churn through the enforcement period.<span class="g-ptr">Pillars 1 &amp; 4</span></li>
+<li class="g-low"><strong>Financials &amp; earnings quality &mdash; clean</strong> &mdash; benign forensic models, unqualified audit, cash-backed earnings; the sole watch is content-inventory valuation.<span class="g-ptr">Pillar 5</span></li>
+</ul>
+<div class="sub-title">Governance-Issue Sub-Scores</div>
+<div class="kpi-row c4">
+<div class="kpi t-med"><div class="kpi-lbl">Reliability</div><div class="kpi-val" style="font-size:13.5px;color:var(--med-text)">Elevated · 5</div><div class="kpi-sub">CEO named in live SEBI fund-diversion SCN (alleged); recurring CSR shortfalls; clean guidance &amp; auditor otherwise</div></div>
+<div class="kpi t-high"><div class="kpi-lbl">Fairness</div><div class="kpi-val" style="font-size:13.5px;color:var(--high-text)">High · 7</div><div class="kpi-sub">Promoter 3.99% (control w/o stake); dense RPT network with documented value-leakage &amp; ICD arbitration</div></div>
+<div class="kpi t-med"><div class="kpi-lbl">Effective Supervision</div><div class="kpi-val" style="font-size:13.5px;color:var(--med-text)">Mixed · 4–5</div><div class="kpi-sub">Board independent &amp; refreshed, but 25 director exits (2.5:1); forensic accounting sound (4)</div></div>
+<div class="kpi t-high"><div class="kpi-lbl">Transparency</div><div class="kpi-val" style="font-size:13.5px;color:var(--high-text)">High · 8</div><div class="kpi-sub">Active NSDL freeze; live SEBI SCN; US$940 M arbitration; 8 insolvency petitions</div></div>
+</div>
+<div class="sub-title">GFA Six-Pillar Summary (Annexure P1 to P6)</div>
+<table class="tbl"><thead><tr><th style="width:30px">#</th><th>Pillar</th><th style="width:150px">Rating</th><th>Headline &amp; sources</th></tr></thead><tbody>
+<tr><td class="mono">1</td><td>Management practices</td><td><span class="badge med"><span class="dot med"></span>Elevated · 5</span></td><td>CEO Punit Goenka named in live SEBI fund-diversion SCN (12 Feb 2026) &amp; the set-aside 2023 interim bar — <strong>alleged, sub judice</strong>; FAM-PEP match. Recurring CSR shortfalls. Mitigants: unqualified audits, delivered filings, clean GST</td></tr>
+<tr><td class="mono">2</td><td>Ownership &amp; history</td><td><span class="badge high"><span class="dot high"></span>High · 7</span></td><td>Promoter holding <strong>3.99%</strong> — control without economic stake; 100+ subsidiaries incl. Russia (OOO Zee CIS) &amp; multiple FZ-LLCs; back-history of Essel-group restructurings</td></tr>
+<tr><td class="mono">3</td><td><strong>Related parties</strong></td><td><span class="badge high"><span class="dot high"></span>High · 7</span></td><td><strong>Core finding — governance pattern.</strong> Controlling family at 3.99% over a 100+ entity web; recurring affiliate value-leakage — a <strong>₹80.9 Cr Margo exceptional charge</strong> (₹37.2 Cr write-off + ₹43.7 Cr diminution) on an unfavourable guarantee arbitration, <strong>₹170.6 Cr ICDs in arbitration</strong>; ₹93.1 Cr ATL Media dividend supports standalone profit. Same channels feature in the SEBI fund-diversion allegations. Management asserts arm’s length (Ind AS 24)</td></tr>
+<tr><td class="mono">4</td><td>Board structure</td><td><span class="badge med"><span class="dot med"></span>Elevated · 5</span></td><td>Board refreshed Dec 2023 with independent directors &amp; audit-committee expertise, woman directors present; but <strong>25 director cessations vs 10 active (2.5:1)</strong> amid enforcement scrutiny signals instability</td></tr>
+<tr class="hl"><td class="mono">5</td><td><strong>Forensic accounting &amp; audit</strong></td><td><span class="badge med"><span class="dot med"></span>Low · 4</span></td><td><strong>Core forensic pillar — sound.</strong> All six models benign (Beneish −2.82, Altman ~15, Sloan −3.7%, Montier 2/6); unqualified opinion + clean CARO (no fraud); no restatement. Watch items: ₹6,412 Cr content inventory / ₹336.8 Cr NRV write-down and recoverability of investment in subsidiaries — both auditor KAMs — plus the RPT value-leakage above</td></tr>
+<tr><td class="mono">6</td><td><strong>Legal &amp; regulatory</strong></td><td><span class="badge high"><span class="dot high"></span>High · 8</span></td><td><strong>Active</strong> SEBI WTM-directed NSDL ISIN-level freeze (entity + CFO); live SEBI SCN; US$940 M LCIA arbitration (JioStar); 8 insolvency petitions (IDBI, IndusInd, IPRS); CCI/NCLT matters disposed</td></tr>
+</tbody></table>
+<div class="sub-title">Top Risk Flags</div>
+<ul class="ev-list">
+<li class="f-crit">Active SEBI WTM-directed NSDL ISIN-level account freeze on ZEEL and CFO M. V. Galgali; PAN debarred for new accounts — operative as at screening date (D7 CDD §7, TRUE_POSITIVE).</li>
+<li class="f-high">Live SEBI show-cause notice (12 Feb 2026) alleging fund diversion, naming CEO Punit Goenka &amp; founder Subhash Chandra — at SCN stage, denied, no final order (D7 CDD §6).</li>
+<li class="f-high">Related-party value-leakage: a ₹80.9 Cr Margo exceptional charge (₹37.2 Cr write-off + ₹43.7 Cr diminution) on an unfavourable guarantee arbitration; ₹170.6 Cr inter-corporate deposits to related parties in arbitration (FY25 AR, Note 46 &amp; Note 30/32; auditor KAM).</li>
+<li class="f-high">₹93.1 Cr dividend from subsidiary ATL Media materially supports standalone profit and operating cash — a related-party inflow, disclosed (FY25 AR, Note 46).</li>
+<li class="f-med">Promoter holding 3.99% — control retained without economic alignment; 25 director cessations vs 10 active.</li>
+<li class="f-med">US$940 M LCIA arbitration (JioStar; plus costs/interest) and 8 active insolvency petitions — large contingent &amp; counterparty-solvency exposure (D7 CDD §8).</li>
+<li class="f-pos">Disconfirming: unqualified audit opinions FY23–FY25, clean CARO (no fraud), no restatement, all six forensic models benign, negative accruals.</li>
+</ul>
+<div class="sub-title">Confirmed vs To-Probe</div>
+<div class="split">
+<div class="panel confirmed"><h4>Confirmed (sourced)</h4><ul>
+<li>Unqualified audit + clean CARO 2020 (no fraud by/on Company), FY23–FY25 — FY25 AR.</li>
+<li>All six forensic models benign; Sloan accruals negative — computed from FY25 consolidated statements.</li>
+<li>Active NSDL ISIN-level freeze (SEBI WTM order WTM/AB/CFID/CFID_4/25884/2023-24) — D7 CDD §7.</li>
+<li>RPT flows &amp; value-leakage events (₹93.1 Cr dividend; ₹80.9 Cr Margo charge = ₹37.2 Cr write-off + ₹43.7 Cr diminution; ₹170.6 Cr ICD arbitration) — FY25 AR Note 46 &amp; Note 30/32.</li>
+<li>Promoter holding 3.99%; consolidated PAT (₹680 Cr) below standalone (₹701 Cr).</li>
+</ul></div>
+<div class="panel probe"><h4>To probe (analyst review)</h4><ul>
+<li>Outcome of SEBI SCN (12 Feb 2026) — allegation under process; reassess on adjudication (could escalate to F-1).</li>
+<li>Arm’s-length substantiation of the ₹320.6 Cr related-party services cost base and the ₹170.6 Cr ICDs — transfer-pricing / commercial rationale.</li>
+<li>Recoverability of the ₹6,412 Cr content inventory beyond the ₹336.8 Cr NRV provision — amortisation policy &amp; viewing-pattern assumptions (auditor KAM).</li>
+<li>Status of the US$940 M LCIA claim and the 8 insolvency petitions — admission risk, interim orders.</li>
+<li>Whether subsidiary drag (consolidated &lt; standalone PAT) reflects genuine operating losses or intra-group transfer effects.</li>
+</ul></div>
+</div>
+<div class="callout warn" style="margin-top:14px"><strong>Mandatory human review.</strong> This section meets the GFA mandatory-review trigger: an enforcement-tier override has fired (active SEBI/NSDL action), the composite is in the High band, and the related-party findings turn on judgement about flows that management asserts are arm’s length. The override sets a floor, not a ceiling; the F-1 (confirmed-fraud) tier is explicitly <em>not</em> invoked because the SEBI fund-diversion matters remain allegations under process. Senior analyst sign-off required before reliance.</div>
+<div class="callout info" style="margin-top:8px"><strong>Cross-section integration.</strong> Pillar 5 reads the FY2025 audited statements (financial-statement integrity); Pillar 3 reads Note 46 related-party disclosures; Pillar 6 is fed by D7 CDD §5 (screening), §6 (adverse media), §7 (regulatory) and §8 (litigation). The GFA verdict (7/10, governance-driven) is consistent with — and sharpens — the parent CDD composite of 6.24, which blended a Low financial dimension (2.9) against High adverse-media (8.5), regulatory (8.0) and litigation (9.0) scores.</div>
+</div>
+<div class="annex-divider"><span>Annexure — Full Per-Pillar Report</span></div>
+<div class="annex-banner"><h2>Forensic Annexure — Zee Entertainment Enterprises Limited</h2>
+<p>Per-pillar findings with verdict boxes and cross-references, the fraud-pattern screen (A2), the earnings-quality scorecard (A3) and the investment-risk score derivation (A4). Internal scoring machinery (model formulae, thresholds, weights) is disclosed here as a methodology exhibit for the recipient’s verification; the GFA summary above carries only verdicts, findings and evidence.</p></div>
+<div class="card"><div class="sub-title" style="margin-top:0"><span class="a-tag" id="a1">A1</span>Methodology &amp; Sources</div>
+<div class="prose">
+<p>This review applies the D7 Governance &amp; Forensic Accounting (GFA) framework — a six-pillar forensic model operationalised for D7 due diligence — adapted for an Indian listed issuer. The composite is the higher of three independent readings: <strong>max(weighted blend, Pillar-5 floor, override floor)</strong>. Pillar 5 (forensic accounting) carries the dominant weight; an override sets a floor, never a ceiling, and forces human review.</p>
+<p><strong>India adaptations applied:</strong> the auditor’s report &amp; <strong>CARO 2020</strong> replace the 10-K/ICFR spine (here the CARO is clean — no fraud reported — which is disconfirming evidence, recorded as such); a <strong>standalone-versus-consolidated reconciliation</strong> lens is used to surface subsidiary drag and intra-group flows; the <strong>Dechow F-Score is treated as directional only</strong>, as it is calibrated on US SEC (AAER) enforcement with no Indian equivalent — Indian forums (SEBI adjudication, NCLT/NCLAT, SAT) are the local analogue; litigation is read from Indian forums (no PACER). The <strong>generic revenue-integrity assessment</strong> is applied (not the retail protocol), centred on whether related-party transactions affect revenue, profit or cash flow.</p>
+<p><strong>Sources:</strong> Zee Entertainment FY2024-25 Annual Report (Ind AS standalone &amp; consolidated, auditor’s report, CARO, Key Audit Matters, Note 46 related-party disclosures, segment Note 40); D7 CDD report FORT10070 (§5 screening, §6 adverse media, §7 regulatory, §8 litigation), data fetched 19 May 2026. The audited annual filing is the authoritative source for financial-statement data; secondary sources do not override it. Peer benchmarking is not applied in this review.</p>
+</div></div>
+<div class="card pillar-card">
+<div class="card-hdr"><div class="sec-title-grp"><span class="sec-num" id="p1">P1</span><div><div class="pillar-eyebrow">Governance issue · Reliability</div><span class="sec-title">Management Practices &amp; Background</span></div></div><div class="hdr-actions"><button type="button" class="graph-btn" onclick="focusGraph('p1')">Focus in 3D &rarr;</button><span class="badge med"><span class="dot med"></span>Elevated · 5 / 10</span></div></div>
+<div class="assess">Is management honest and is the business built on fair practices? P1 reads the person-level integrity signal (management background, outside interests, treatment of minorities, reliability of the results narrative, and live screening / adverse media on principals). Entity-level standing is scored in P6.</div>
+<div class="prose">
+<p><strong>1.1 / 1.6 Management integrity &amp; live screening.</strong> CEO Punit Goenka is named in a <strong>live SEBI show-cause notice (12 Feb 2026)</strong> alleging fund diversion linked to the 2019 Yes Bank/FD matter, and in a June 2023 SEBI interim order that barred him from director/KMP roles for alleged siphoning via layered transactions. The interim bar was <strong>set aside by the SAT</strong>; the underlying investigation continued and culminated in the 2026 SCN. These are <strong>allegations under process, not adjudicated findings</strong> — the framework scores them as a reliability concern, not as confirmed misconduct (which would move P1 to 7–8 and trigger F-1). The Global Screening section returns a <strong>FAM-category PEP match</strong> on Goenka (100% name match), consistent with the Essel founding family; no sanctions or AML hits on the entity or principals.</p>
+<p><strong>1.5 Reliability of the results narrative.</strong> Disconfirming the integrity concern: auditor opinions are unqualified across FY23–FY25, GST filing is fully compliant (3,464 records, nil delays), and there is no restatement or late-filing pattern. The reliability concern is <strong>governance-allegation-driven, not accounting-driven</strong>. Recurring CSR shortfalls (FY18–FY20, FY25; FY25 spend ₹11.4 Cr vs ₹22.7 Cr prescribed) are a statutory-discipline signal weighed here.</p>
+</div>
+<div class="verdict-box"><div class="vscore"><div class="n" style="color:var(--med-text)">5</div><div class="d">/10</div></div><div class="vtext"><b>Elevated · 5.</b> A genuine reliability concern — the CEO is named in live SEBI fund-diversion proceedings (alleged, sub judice) and a set-aside interim bar, plus recurring CSR non-compliance — held below the integrity-finding band (7–8) because the matters are not adjudicated and the audit/disclosure record is clean. Re-rate on SEBI adjudication.</div></div>
+<div class="xref-s1"><strong>Addendum (S1):</strong> the CEO (appointed Nov 2024) is not on the board &mdash; a governance gap corroborated in the post-period findings.</div>
+<div class="xref"><b>Cross-reference:</b> Person-level integrity signal; entity-level enforcement is scored in P6 to avoid double-counting.<br><span class="tag">D7 CDD §6 Adverse Media</span><span class="tag">D7 CDD §5 Screening (PEP)</span><span class="tag">FY25 AR — auditor report</span></div>
+</div>
+<div class="card pillar-card">
+<div class="card-hdr"><div class="sec-title-grp"><span class="sec-num" id="p2">P2</span><div><div class="pillar-eyebrow">Governance issue · Fairness</div><span class="sec-title">Ownership Structure &amp; History</span></div></div><div class="hdr-actions"><button type="button" class="graph-btn" onclick="focusGraph('p2')">Focus in 3D &rarr;</button><span class="badge high"><span class="dot high"></span>High · 7 / 10</span></div></div>
+<div class="assess">Does the ownership structure allow inappropriate influence or avenues to conceal/manipulate, and are minorities treated equally? P2 reads share/holding structure, ownership concentration and control, company history, and insider transactions.</div>
+<div class="prose">
+<p><strong>2.2 Ownership concentration and control.</strong> The defining feature is a <strong>promoter holding of 3.99%</strong> (3.83 Cr of 96.05 Cr shares) against 96.02% public float. For a founder-controlled media group this is <strong>structurally anomalous</strong>: the promoter family retains practical control and naming association while holding almost no economic stake — the alignment that normally disciplines a controlling shareholder is largely absent. This is the inverse of the usual Indian promoter-pledge risk (there is little stake left to pledge), but it raises the same governance question: control without proportionate economic exposure.</p>
+<p><strong>2.3 Company history &amp; structure.</strong> Over 100 subsidiaries and step-downs across jurisdictions, including <strong>Russia-domiciled OOO Zee CIS Holding LLC / OOO Zee CIS LLC</strong> and multiple UAE FZ-LLCs (ATL Media FZ-LLC, Z5X Global FZ-LLC), within the legacy Essel-group lineage. The breadth of the consolidation perimeter and the related-party density (P3) are the avenues the framework is concerned with; the FY25 consolidated PAT (₹680 Cr) sitting below standalone PAT (₹701 Cr) confirms net subsidiary drag.</p>
+</div>
+<div class="verdict-box"><div class="vscore"><div class="n" style="color:var(--high-text)">7</div><div class="d">/10</div></div><div class="vtext"><b>High · 7.</b> A controlling-family structure with a minority-disadvantage backdrop: promoter economic stake near-eliminated (3.99%) while control persists, a sprawling cross-border subsidiary web, and live allegations of intra-group fund movement. Not scored 9–10 (no <em>adjudicated</em> expropriation), but well above a routine concentration concern.</div></div>
+<div class="xref-s1"><strong>Addendum (S1):</strong> the Feb-2026 SEBI SAST adjudication order on encumbrance, pledge-invocation and share-transfer disclosures explains the mechanism behind the promoter stake collapse.</div>
+<div class="xref"><b>Cross-reference:</b> Structure feeds the related-party assessment in P3; insider-transaction conduct cross-read with P1.<br><span class="tag">FY25 AR — shareholding pattern</span><span class="tag">FY25 AR — Note 46 / consolidation</span><span class="tag">D7 CDD §2 Entity</span></div>
+</div>
+<div class="card pillar-card">
+<div class="card-hdr"><div class="sec-title-grp"><span class="sec-num" id="p3">P3</span><div><div class="pillar-eyebrow">Governance issue · Fairness · Related-party focus</div><span class="sec-title">Related Parties &amp; Conflicts of Interest</span></div></div><div class="hdr-actions"><button type="button" class="graph-btn" onclick="focusGraph('p3')">Focus in 3D &rarr;</button><span class="badge high"><span class="dot high"></span>High · 7 / 10</span></div></div>
+<div class="assess">The central forensic lens of this review: do related-party transactions affect revenue, profit or cash flow, and is value being routed to insiders or affiliates? Read from FY2025 standalone Note 46 (related-party disclosures) and the auditor’s Key Audit Matters.</div>
+<div class="chart"><div class="chart-t">Related-party flows touching revenue, profit &amp; cash flow</div><div class="chart-s">FY25 standalone, ₹ Cr — green = inflows supporting profit/CF; amber/red = value-leakage &amp; disputed flows</div><svg viewBox="0 0 680 300"><rect x="270.0" y="134" width="140" height="52" rx="9" fill="#1A1F2E"/><text x="340.0" y="156.0" font-size="11" font-family="DM Sans" fill="#fff" text-anchor="middle" font-weight="700">ZEEL standalone</text><text x="340.0" y="172.0" font-size="9" font-family="DM Sans" fill="#9DC3E6" text-anchor="middle">PAT ₹701 Cr</text><rect x="14" y="70" width="150" height="38" rx="7" fill="#16a34a" opacity="0.10" stroke="#16a34a"/><text x="22" y="85.0" font-size="9.5" font-family="DM Sans" fill="#16a34a" font-weight="700">Dividend — ATL Media</text><text x="22" y="99.0" font-size="9" font-family="JetBrains Mono" fill="#374151">+₹93.1 Cr · profit & CF</text><line x1="164" y1="89.0" x2="268.0" y2="154.0" stroke="#16a34a" stroke-width="2" marker-end="url(#ar)"/><rect x="14" y="116" width="150" height="38" rx="7" fill="#16a34a" opacity="0.10" stroke="#16a34a"/><text x="22" y="131.0" font-size="9.5" font-family="DM Sans" fill="#16a34a" font-weight="700">Recoveries — Z5X Global</text><text x="22" y="145.0" font-size="9" font-family="JetBrains Mono" fill="#374151">+₹32.4 Cr · CF</text><line x1="164" y1="135.0" x2="268.0" y2="154.0" stroke="#16a34a" stroke-width="2" marker-end="url(#ar)"/><rect x="482" y="40" width="184" height="44" rx="7" fill="#E65100" opacity="0.10" stroke="#E65100"/><text x="490" y="54.0" font-size="9.5" font-family="DM Sans" fill="#E65100" font-weight="700">Purchase of services</text><text x="490" y="67.0" font-size="9" font-family="JetBrains Mono" fill="#374151">−₹320.6 Cr · cost base</text><text x="490" y="79.0" font-size="7.5" font-family="DM Sans" fill="#6B7280">ATL Media FZ-LLC · Asia Today · Z5X Global</text><line x1="412.0" y1="154.0" x2="482.0" y2="62.0" stroke="#E65100" stroke-width="2"/><rect x="482" y="90" width="184" height="44" rx="7" fill="#C62828" opacity="0.10" stroke="#C62828"/><text x="490" y="104.0" font-size="9.5" font-family="DM Sans" fill="#C62828" font-weight="700">Margo charge (write-off + dimin.)</text><text x="490" y="117.0" font-size="9" font-family="JetBrains Mono" fill="#374151">−₹80.9 Cr · exceptional</text><text x="490" y="129.0" font-size="7.5" font-family="DM Sans" fill="#6B7280">Margo Networks Pvt Ltd</text><line x1="412.0" y1="154.0" x2="482.0" y2="112.0" stroke="#C62828" stroke-width="2"/><rect x="482" y="140" width="184" height="44" rx="7" fill="#C62828" opacity="0.10" stroke="#C62828"/><text x="490" y="154.0" font-size="9.5" font-family="DM Sans" fill="#C62828" font-weight="700">ICDs in arbitration</text><text x="490" y="167.0" font-size="9" font-family="JetBrains Mono" fill="#374151">−₹170.6 Cr · disputed</text><text x="490" y="179.0" font-size="7.5" font-family="DM Sans" fill="#6B7280">assigned to certain related parties</text><line x1="412.0" y1="154.0" x2="482.0" y2="162.0" stroke="#C62828" stroke-width="2"/><defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#16a34a"/></marker></defs></svg><div class="chart-cap">Management asserts all RPTs are in the ordinary course and at arm’s length under Ind AS 24, and CARO confirms RPTs are compliant. The forensic concern is not a disclosure breach but the <strong>materiality of the flows to reported profit and cash</strong>, and the cluster of disputed/written-off affiliate exposures.</div></div>
+<div class="prose">
+<p><strong>3.2 Affiliate flows — impact on profit and cash.</strong> The single most material item is a <strong>₹93.1 Cr dividend received from subsidiary ATL Media Limited</strong> in FY25 (nil in FY24). Standalone profit before tax was ₹906 Cr, so this related-party dividend is equivalent to <strong>roughly 10% of PBT</strong> — not the dominant driver, but a non-trivial intra-group contribution. It is properly disclosed; the point for a reader assessing earnings durability is that a portion of standalone profit is an <strong>intra-group distribution rather than third-party operating income</strong>.</p>
+<p><strong>3.2 Value-leakage events.</strong> Two corroborated clusters, flagged in the auditor’s Key Audit Matters: (a) a single <strong>₹80.9 Cr Margo exceptional charge</strong>, recognised on an unfavourable arbitration over a guarantee invoked by a customer of subsidiary Margo Networks. Per Note 30 read with Note 32, this ₹809 M provision comprises <strong>₹37.2 Cr of balances written off</strong> plus a <strong>₹43.7 Cr provision for diminution</strong> in the Margo investment (₹372 M + ₹437 M = ₹809 M) — a single charge, not three separate ones; (b) <strong>₹170.6 Cr of inter-corporate deposits given to related parties, now the subject of arbitration</strong> for recovery. A second auditor KAM — recoverability of investment in subsidiaries carried at cost — reinforces the same affiliate-exposure concern. Together these are the documented channel through which affiliate exposure has crystallised into charges and disputes — the forensic substance behind the broader fund-diversion allegations, distinct from those allegations themselves.</p>
+<p><strong>3.1 / 3.3 Recurring related-party cost base.</strong> Purchase of services from related parties runs ~<strong>₹320.6 Cr</strong> (ATL Media FZ-LLC ₹146.7 Cr, Asia Today ₹67.5 Cr, DSMCS ₹52.4 Cr, Z5X Global ₹54.8 Cr) plus purchase of media content from Zee Studios (₹71.9 Cr). These are recurring and material; the framework records them as a related-party dependency requiring arm’s-length substantiation (routed to analyst probe), not as confirmed extraction.</p>
+</div>
+<div class="verdict-box"><div class="vscore"><div class="n" style="color:var(--high-text)">7</div><div class="d">/10</div></div><div class="vtext"><b>High · 7.</b> The score reflects the <em>governance pattern</em>, not the rupee magnitude alone: a controlling family at 3.99% directing a 100+ entity cross-border web, a recurring affiliate value-leakage signature (write-offs, rising diminution, ICDs pushed into arbitration, an invoked guarantee), and an affiliate dividend supporting standalone profit — all set against the live SEBI fund-diversion allegations the same related-party channels feature in. The individual amounts are modest against a ₹7,712 Cr base, but the <em>direction and recurrence</em> of value moving through related parties, during active enforcement, is the concern. Held below 9–10 because transactions are disclosed and auditor-confirmed Ind AS 24-compliant, and expropriation is alleged, not adjudicated.</div></div>
+<div class="xref-s1"><strong>Addendum (S1):</strong> the RPT materiality policy was filed late (Reg 23(1)); Zee Learn NCDs are fully impaired; and the Dish TV / Siti Networks distress pattern traces the origin of the IndusInd insolvency petition.</div>
+<div class="xref"><b>Cross-reference:</b> RPT flows are the bridge between the clean financial statements (P5) and the governance/enforcement concerns (P1, P6).<br><span class="tag">FY25 AR — Note 46 RPT</span><span class="tag">FY25 AR — Note 30/32 exceptional</span><span class="tag">FY25 AR — KAM (d),(e)</span><span class="tag">D7 CDD §6 (Yes Bank/FD)</span></div>
+</div>
+<div class="card pillar-card">
+<div class="card-hdr"><div class="sec-title-grp"><span class="sec-num" id="p4">P4</span><div><div class="pillar-eyebrow">Governance issue · Effective Supervision</div><span class="sec-title">Board Structure &amp; Practices</span></div></div><div class="hdr-actions"><button type="button" class="graph-btn" onclick="focusGraph('p4')">Focus in 3D &rarr;</button><span class="badge med"><span class="dot med"></span>Elevated · 5 / 10</span></div></div>
+<div class="assess">Is the board independent and effective, with sufficient checks to safeguard shareholder interests? P4 reads independence and structure, committees and financial expertise, compensation governance, and conflicts.</div>
+<div class="prose">
+<p><strong>4.1 Independence and refreshment.</strong> The board was substantially refreshed from December 2023, bringing in independent directors (Uttam Prakash Agarwal, Shishir Desai, V. R. M. Pinisetti, Saurav Adhikari, Divya Karani) with an independent-director Chairman (R. Gopalan) and women directors present (Companies Act Schedule IV met). On a static read the structure is reasonable.</p>
+<p><strong>4.4 Board stability — the concern.</strong> Against 10 currently active directors, <strong>25 directors have ceased association</strong> (a 2.5:1 cessation-to-active ratio), including several independent-director departures clustered in 2023–24 (Mehra, Mirchandani, Yi, Pandey). High churn is not inherently adverse for a 40-year listed entity, but <strong>concentrated independent-director turnover during active SEBI enforcement and the failed Sony merger</strong> is a board-effectiveness signal: it weakens the continuity and institutional memory that oversight depends on precisely when scrutiny is highest.</p>
+</div>
+<div class="verdict-box"><div class="vscore"><div class="n" style="color:var(--med-text)">5</div><div class="d">/10</div></div><div class="vtext"><b>Elevated · 5.</b> Structurally the board is independent, refreshed and committee-equipped; but a 2.5:1 director-cessation ratio concentrated during the enforcement period is an oversight-continuity concern. Not a captured board (which would be 7–8); not clean (which the churn precludes).</div></div>
+<div class="xref-s1"><strong>Addendum (S1):</strong> no director disqualification is recorded despite the elevated cessation ratio.</div>
+<div class="xref"><b>Cross-reference:</b> Board independence (P4) and the forensic pillar (P5) jointly form the Effective-Supervision sub-score.<br><span class="tag">D7 CDD §2 KMP</span><span class="tag">D7 CDD §11 Behavioural</span><span class="tag">FY25 AR — board report</span></div>
+</div>
+<div class="card pillar-card">
+<div class="card-hdr"><div class="sec-title-grp"><span class="sec-num" id="p5">P5</span><div><div class="pillar-eyebrow">Governance issue · Effective Supervision · Core forensic pillar</div><span class="sec-title">Forensic Accounting &amp; Audit</span></div></div><div class="hdr-actions"><button type="button" class="graph-btn" onclick="focusGraph('p5')">Focus in 3D &rarr;</button><span class="badge med"><span class="dot med"></span>Low · 4 / 10</span></div></div>
+<div class="assess">Do the financial statements present a true and fair view? P5 runs as a funnel: the six quantitative models (5.1) feed a top-down revenue screen (5.3) and an automated anomaly sweep (5.4); flagged items drop into the diagnostic layer (5.5), the manipulation-pattern map (5.6) and the generic revenue-integrity assessment (5.7), before the override engine and the composite. Peer benchmarking is not applied in this review.</div>
+<div class="callout info"><strong>Basis of this section &mdash; consolidated.</strong> The forensic models and the capital-flow analysis below are computed on the <strong>consolidated</strong> financial statements (FY25, with FY24 comparative): Beneish M &minus;2.82, Altman Z&Prime; ~15, Sloan accruals &minus;3.7%, operating cash 1.75&times; net profit. Related-party analysis (Pillar 3) is necessarily on the <strong>standalone</strong> statements, because intra-group transactions are eliminated on consolidation &mdash; so <em>accounting = consolidated, related-party = standalone</em>, by design. Content/programming inventory is quoted at its standalone carrying value (&#8377;6,412 Cr; &#8377;6,775 Cr consolidated); the &#8377;336.8 Cr NRV write-down (auditor KAM) and the content-valuation watch are unchanged in substance.</div>
+<div class="sub-title">5.1 · Quantitative Forensic Models<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-m)"> — six screens, all benign</span></div>
+<div class="kpi-row c6">
+<div class="kpi t-green"><div class="kpi-lbl">Beneish M</div><div class="kpi-val">−2.82</div><div class="kpi-sub">&lt; −2.22 → non-manip</div></div>
+<div class="kpi t-green"><div class="kpi-lbl">Altman Z″</div><div class="kpi-val">15</div><div class="kpi-sub">safe (&gt;2.6)</div></div>
+<div class="kpi t-med"><div class="kpi-lbl">Piotroski F</div><div class="kpi-val">6 / 9</div><div class="kpi-sub">mid</div></div>
+<div class="kpi t-green"><div class="kpi-lbl">Montier C</div><div class="kpi-val">2 / 6</div><div class="kpi-sub">low</div></div>
+<div class="kpi t-green"><div class="kpi-lbl">Sloan / TATA</div><div class="kpi-val">−3.7%</div><div class="kpi-sub">negative — cash-backed</div></div>
+<div class="kpi t-green"><div class="kpi-lbl">Dechow F</div><div class="kpi-val">≈0.9</div><div class="kpi-sub">≈ avg firm (directional)</div></div>
+</div>
+<div class="chart"><div class="chart-t">Six forensic models — all benign; no manipulation signal</div><div class="chart-s">Computed deterministically from FY25 consolidated statements</div><svg viewBox="0 0 680 188"><rect x="6.0" y="34" width="101.3" height="120" rx="7" fill="#fff" stroke="#E5E7EB"/><rect x="6.0" y="34" width="101.3" height="4" rx="2" fill="#16a34a"/><text x="56.7" y="60" font-size="10.5" font-family="DM Sans" fill="#6B7280" text-anchor="middle" font-weight="600">Beneish M</text><text x="56.7" y="92" font-size="20" font-family="JetBrains Mono" fill="#374151" text-anchor="middle" font-weight="700">-2.82</text><text x="56.7" y="118" font-size="9" font-family="DM Sans" fill="#16a34a" text-anchor="middle" font-weight="600">non-manip</text><text x="56.7" y="131" font-size="9" font-family="DM Sans" fill="#16a34a" text-anchor="middle">(<-2.22)</text><rect x="119.3" y="34" width="101.3" height="120" rx="7" fill="#fff" stroke="#E5E7EB"/><rect x="119.3" y="34" width="101.3" height="4" rx="2" fill="#16a34a"/><text x="170.0" y="60" font-size="10.5" font-family="DM Sans" fill="#6B7280" text-anchor="middle" font-weight="600">Altman Z″</text><text x="170.0" y="92" font-size="20" font-family="JetBrains Mono" fill="#374151" text-anchor="middle" font-weight="700">15</text><text x="170.0" y="118" font-size="9" font-family="DM Sans" fill="#16a34a" text-anchor="middle" font-weight="600">safe</text><text x="170.0" y="131" font-size="9" font-family="DM Sans" fill="#16a34a" text-anchor="middle">(>2.6)</text><rect x="232.7" y="34" width="101.3" height="120" rx="7" fill="#fff" stroke="#E5E7EB"/><rect x="232.7" y="34" width="101.3" height="4" rx="2" fill="#98AA3A"/><text x="283.3" y="60" font-size="10.5" font-family="DM Sans" fill="#6B7280" text-anchor="middle" font-weight="600">Piotroski F</text><text x="283.3" y="92" font-size="20" font-family="JetBrains Mono" fill="#374151" text-anchor="middle" font-weight="700">6/9</text><text x="283.3" y="118" font-size="9" font-family="DM Sans" fill="#98AA3A" text-anchor="middle" font-weight="600">mid</text><text x="283.3" y="131" font-size="9" font-family="DM Sans" fill="#98AA3A" text-anchor="middle">(acq-neutral)</text><rect x="346.0" y="34" width="101.3" height="120" rx="7" fill="#fff" stroke="#E5E7EB"/><rect x="346.0" y="34" width="101.3" height="4" rx="2" fill="#16a34a"/><text x="396.7" y="60" font-size="10.5" font-family="DM Sans" fill="#6B7280" text-anchor="middle" font-weight="600">Montier C</text><text x="396.7" y="92" font-size="20" font-family="JetBrains Mono" fill="#374151" text-anchor="middle" font-weight="700">2/6</text><text x="396.7" y="118" font-size="9" font-family="DM Sans" fill="#16a34a" text-anchor="middle" font-weight="600">low</text><rect x="459.3" y="34" width="101.3" height="120" rx="7" fill="#fff" stroke="#E5E7EB"/><rect x="459.3" y="34" width="101.3" height="4" rx="2" fill="#16a34a"/><text x="510.0" y="60" font-size="10.5" font-family="DM Sans" fill="#6B7280" text-anchor="middle" font-weight="600">Sloan accr.</text><text x="510.0" y="92" font-size="20" font-family="JetBrains Mono" fill="#374151" text-anchor="middle" font-weight="700">-3.7%</text><text x="510.0" y="118" font-size="9" font-family="DM Sans" fill="#16a34a" text-anchor="middle" font-weight="600">negative</text><text x="510.0" y="131" font-size="9" font-family="DM Sans" fill="#16a34a" text-anchor="middle">(cash-backed)</text><rect x="572.7" y="34" width="101.3" height="120" rx="7" fill="#fff" stroke="#E5E7EB"/><rect x="572.7" y="34" width="101.3" height="4" rx="2" fill="#16a34a"/><text x="623.3" y="60" font-size="10.5" font-family="DM Sans" fill="#6B7280" text-anchor="middle" font-weight="600">Dechow F</text><text x="623.3" y="92" font-size="20" font-family="JetBrains Mono" fill="#374151" text-anchor="middle" font-weight="700">~0.9</text><text x="623.3" y="118" font-size="9" font-family="DM Sans" fill="#16a34a" text-anchor="middle" font-weight="600">≈</text><text x="623.3" y="131" font-size="9" font-family="DM Sans" fill="#16a34a" text-anchor="middle">avg firm</text><text x="0" y="178" font-size="10" font-family="DM Sans" fill="#99AFBC" font-style="italic">Beneish/Montier/Dechow (manipulation), Altman (distress), Piotroski (strength), Sloan (earnings quality) — deterministic, FY25 consolidated.</text></svg><div class="chart-cap">Unlike a high-growth or acquisitive firm (where these models over-flag), Zee’s revenue is flat-to-declining and the balance sheet is cash-rich and low-leverage — so the screens read clean on their own terms. Dechow is directional only (US-AAER calibrated; no Indian equivalent).</div></div>
+<div class="callout pos"><strong>All six screens are benign — and that is itself the finding.</strong> Beneish M at −2.82 sits below the −2.22 non-manipulator line; Sloan accruals are <strong>negative</strong> (−3.7% of assets), meaning reported earnings are <em>more</em> than covered by operating cash — the opposite of an accruals-manipulation profile; Altman Z″ of 15 reflects a near-debt-free, cash-heavy balance sheet. Nobody manipulates revenue downward, and Zee’s revenue fell 4.5%. The forensic risk in this pillar is therefore <em>not</em> manipulation — it is two corroborated watch items: content-inventory valuation and the related-party value-leakage carried in P3.</div>
+<div class="sub-title">5.3 · Overall Revenue Analysis</div>
+<div class="chart"><div class="chart-t">Revenue trajectory — standalone vs consolidated</div><div class="chart-s">₹ Cr; own-trend and sector-market frame (no peer panel in this review)</div><svg viewBox="0 0 680 300"><line x1="70" y1="240.0" x2="660" y2="240.0" stroke="#E5E7EB" stroke-width="1"/><text x="62" y="243.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">0</text><line x1="70" y1="190.0" x2="660" y2="190.0" stroke="#E5E7EB" stroke-width="1"/><text x="62" y="193.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">2250</text><line x1="70" y1="140.0" x2="660" y2="140.0" stroke="#E5E7EB" stroke-width="1"/><text x="62" y="143.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">4500</text><line x1="70" y1="90.0" x2="660" y2="90.0" stroke="#E5E7EB" stroke-width="1"/><text x="62" y="93.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">6750</text><line x1="70" y1="40.0" x2="660" y2="40.0" stroke="#E5E7EB" stroke-width="1"/><text x="62" y="43.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">9000</text><rect x="131.3" y="75.1" width="34" height="164.9" rx="3" fill="#6699CC"/><rect x="171.3" y="60.3" width="34" height="179.7" rx="3" fill="#99AFBC"/><text x="148.3" y="70.1" font-size="9" font-family="JetBrains Mono" fill="#2E5A8A" text-anchor="middle" font-weight="700">7422</text><text x="188.3" y="55.3" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="middle">8088</text><text x="168.3" y="256.0" font-size="10" font-family="DM Sans" fill="#374151" text-anchor="middle" font-weight="600">FY23</text><rect x="328.0" y="60.6" width="34" height="179.4" rx="3" fill="#6699CC"/><rect x="368.0" y="48.1" width="34" height="191.9" rx="3" fill="#99AFBC"/><text x="345.0" y="55.6" font-size="9" font-family="JetBrains Mono" fill="#2E5A8A" text-anchor="middle" font-weight="700">8075</text><text x="385.0" y="43.1" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="middle">8637</text><text x="365.0" y="256.0" font-size="10" font-family="DM Sans" fill="#374151" text-anchor="middle" font-weight="600">FY24</text><rect x="524.7" y="68.6" width="34" height="171.4" rx="3" fill="#6699CC"/><rect x="564.7" y="55.7" width="34" height="184.3" rx="3" fill="#99AFBC"/><text x="541.7" y="63.6" font-size="9" font-family="JetBrains Mono" fill="#2E5A8A" text-anchor="middle" font-weight="700">7712</text><text x="581.7" y="50.7" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="middle">8294</text><text x="561.7" y="256.0" font-size="10" font-family="DM Sans" fill="#374151" text-anchor="middle" font-weight="600">FY25</text><text x="70" y="278.0" font-size="10" font-family="DM Sans" fill="#E65100" font-weight="600">Standalone revenue −4.5% in FY25 (₹8,075 → ₹7,712 Cr); consolidated −4.0%.</text><text x="70" y="292.0" font-size="10" font-family="DM Sans" fill="#6B7280">Consolidated PAT (₹680 Cr) sits below standalone PAT (₹701 Cr) — subsidiary drag, see Lever 6.</text><rect x="70" y="8" width="10" height="10" rx="2" fill="#6699CC"/><text x="85" y="17" font-size="9.5" font-family="DM Sans" fill="#6B7280">Standalone</text><rect x="165" y="8" width="10" height="10" rx="2" fill="#99AFBC"/><text x="180" y="17" font-size="9.5" font-family="DM Sans" fill="#6B7280">Consolidated</text></svg><div class="chart-cap">Revenue is flat-to-declining, against an Indian linear-TV market where advertising fell ~10% and subscription ~8% in 2025 (FICCI-EY, cited in D7 CDD §10). The read is one of <strong>revenue durability/structural decline</strong> — a forward-reliability concern — not revenue inflation. Internal coherence holds: receivables fell (DSO 75→66d) as revenue softened, the opposite of channel-stuffing.</div></div>
+<div class="prose"><p>The top-down screen finds <strong>no internal incoherence</strong> of the manipulation type: revenue is not rising while cash falls (CFO/NI &gt; 1.0× throughout), receivables are not outrunning sales (DSO declining), and gross margin moved with, not against, the revenue trend. The only divergence is <strong>external and benign-directional</strong>: revenue below the sector trend, consistent with documented OTT migration and the Reliance–Disney/JioStar competitive shift. This routes to a forward-durability watch, not a forensic finding.</p></div>
+<div class="sub-title">5.4 · Automated Anomaly &amp; Spike Detection</div>
+<div class="chart"><div class="chart-t">Anomaly register — deterministic sweep → AI classification</div><div class="chart-s">Every material line item swept across FY23–FY25; ranked by magnitude × materiality</div><svg viewBox="0 0 680 244"><rect x="0" y="30" width="680" height="29" rx="6" fill="#fff" stroke="#E5E7EB"/><rect x="0" y="30" width="5" height="29" rx="2" fill="#E65100"/><text x="16" y="49.0" font-size="10.5" font-family="DM Sans" fill="#374151">Inventory / content NRV — ₹6,412 Cr inventory, ₹336.8 Cr NRV write-down</text><rect x="588" y="35.0" width="82" height="18" rx="9" fill="#E65100" opacity="0.14"/><text x="629" y="48.0" font-size="9.5" font-family="DM Sans" fill="#E65100" text-anchor="middle" font-weight="700">WATCH</text><rect x="0" y="64" width="680" height="29" rx="6" fill="#fff" stroke="#E5E7EB"/><rect x="0" y="64" width="5" height="29" rx="2" fill="#E65100"/><text x="16" y="83.0" font-size="10.5" font-family="DM Sans" fill="#374151">RPT cash-in — ₹93.1 Cr dividend from ATL Media supports standalone profit/CF</text><rect x="588" y="69.0" width="82" height="18" rx="9" fill="#E65100" opacity="0.14"/><text x="629" y="82.0" font-size="9.5" font-family="DM Sans" fill="#E65100" text-anchor="middle" font-weight="700">FINDING</text><rect x="0" y="98" width="680" height="29" rx="6" fill="#fff" stroke="#E5E7EB"/><rect x="0" y="98" width="5" height="29" rx="2" fill="#E65100"/><text x="16" y="117.0" font-size="10.5" font-family="DM Sans" fill="#374151">RPT value-leak — ₹80.9 Cr Margo exceptional charge (write-off + diminution)</text><rect x="588" y="103.0" width="82" height="18" rx="9" fill="#E65100" opacity="0.14"/><text x="629" y="116.0" font-size="9.5" font-family="DM Sans" fill="#E65100" text-anchor="middle" font-weight="700">FINDING</text><rect x="0" y="132" width="680" height="29" rx="6" fill="#fff" stroke="#E5E7EB"/><rect x="0" y="132" width="5" height="29" rx="2" fill="#C62828"/><text x="16" y="151.0" font-size="10.5" font-family="DM Sans" fill="#374151">ICDs to related parties ₹170.6 Cr — now in arbitration (auditor KAM)</text><rect x="588" y="137.0" width="82" height="18" rx="9" fill="#C62828" opacity="0.14"/><text x="629" y="150.0" font-size="9.5" font-family="DM Sans" fill="#C62828" text-anchor="middle" font-weight="700">FINDING</text><rect x="0" y="166" width="680" height="29" rx="6" fill="#fff" stroke="#E5E7EB"/><rect x="0" y="166" width="5" height="29" rx="2" fill="#99AFBC"/><text x="16" y="185.0" font-size="10.5" font-family="DM Sans" fill="#374151">Revenue −4.5% vs flat market-share — durability, not inflation</text><rect x="588" y="171.0" width="82" height="18" rx="9" fill="#99AFBC" opacity="0.14"/><text x="629" y="184.0" font-size="9.5" font-family="DM Sans" fill="#99AFBC" text-anchor="middle" font-weight="700">disclosed</text><rect x="0" y="200" width="680" height="29" rx="6" fill="#fff" stroke="#E5E7EB"/><rect x="0" y="200" width="5" height="29" rx="2" fill="#16a34a"/><text x="16" y="219.0" font-size="10.5" font-family="DM Sans" fill="#374151">Six manipulation/quality models — all benign</text><rect x="588" y="205.0" width="82" height="18" rx="9" fill="#16a34a" opacity="0.14"/><text x="629" y="218.0" font-size="9.5" font-family="DM Sans" fill="#16a34a" text-anchor="middle" font-weight="700">clear</text></svg><div class="chart-cap">The sweep surfaces the content-inventory build and the related-party flows; the six models clear. No spike decomposes to revenue manipulation. Two items are classed FINDING (RPT value-leakage) and routed to P3; the inventory NRV item is a WATCH.</div></div>
+<div class="sub-title">5.5–5.6 · Diagnostic Layer &amp; Manipulation-Pattern Map</div>
+<div class="chart"><div class="chart-t">Cash-conversion &amp; accruals — earnings quality</div><div class="chart-s">CFO / net income, FY23–FY25 (standalone entity trend)</div><svg viewBox="0 0 680 260"><line x1="60" y1="206.0" x2="650" y2="206.0" stroke="#E5E7EB"/><text x="52" y="209.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">0.0x</text><line x1="60" y1="163.5" x2="650" y2="163.5" stroke="#E5E7EB"/><text x="52" y="166.5" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">0.7x</text><line x1="60" y1="121.0" x2="650" y2="121.0" stroke="#E5E7EB"/><text x="52" y="124.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">1.3x</text><line x1="60" y1="78.5" x2="650" y2="78.5" stroke="#E5E7EB"/><text x="52" y="81.5" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">2.0x</text><line x1="60" y1="36.0" x2="650" y2="36.0" stroke="#E5E7EB"/><text x="52" y="39.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">2.6x</text><line x1="60" y1="140.6" x2="650" y2="140.6" stroke="#E65100" stroke-dasharray="4 3" stroke-width="1.5"/><text x="650" y="136.6" font-size="9" font-family="DM Sans" fill="#E65100" text-anchor="end" font-weight="600">1.0× floor</text><text x="60.0" y="222.0" font-size="10" font-family="DM Sans" fill="#374151" text-anchor="middle" font-weight="600">FY23</text><text x="355.0" y="222.0" font-size="10" font-family="DM Sans" fill="#374151" text-anchor="middle" font-weight="600">FY24</text><text x="650.0" y="222.0" font-size="10" font-family="DM Sans" fill="#374151" text-anchor="middle" font-weight="600">FY25</text><polyline points="60.0,135.4 355.0,59.5 650.0,118.4" fill="none" stroke="#6699CC" stroke-width="2.5"/><circle cx="60.0" cy="135.4" r="5" fill="#6699CC"/><text x="60.0" y="125.4" font-size="10" font-family="JetBrains Mono" fill="#2E5A8A" text-anchor="middle" font-weight="700">1.08x</text><circle cx="355.0" cy="59.5" r="5" fill="#6699CC"/><text x="355.0" y="49.5" font-size="10" font-family="JetBrains Mono" fill="#2E5A8A" text-anchor="middle" font-weight="700">2.24x</text><circle cx="650.0" cy="118.4" r="5" fill="#6699CC"/><text x="650.0" y="108.4" font-size="10" font-family="JetBrains Mono" fill="#2E5A8A" text-anchor="middle" font-weight="700">1.34x</text><text x="60" y="244.0" font-size="10" font-family="DM Sans" fill="#6B7280">Sloan accruals negative (−3.7% of assets): net income is fully covered by operating cash — disconfirms accrual-based manipulation.</text></svg><div class="chart-cap">Cash conversion above 1.0× in every year and negative Sloan accruals are primary disconfirming evidence against earnings management. The FY24 spike (2.24×) reflects working-capital release; the trend is healthy.</div></div>
+<div class="prose">
+<p><strong>Content inventory &amp; NRV (auditor KAM).</strong> The one genuine accounting-judgement area is the <strong>₹6,412 Cr (standalone) content/programming inventory</strong>, amortised on management’s estimate of future revenue potential, with a <strong>₹336.8 Cr net-realisable-value write-down</strong> recognised. The auditor flagged <strong>two</strong> Key Audit Matters bearing on asset recoverability: recoverability of content advances and inventory valuation, and separately the recoverability of investment in subsidiaries carried at cost — the latter a direct related-party signal carried in P3. This is a real estimate-sensitivity (changing viewing patterns, content performance), driving the long inventory days (DIO ~530), and is recorded as a corroborated <strong>watch</strong> — not a misstatement, as the auditor was satisfied with the provision.</p>
+<p><strong>Manipulation-pattern map (Schilit).</strong> Of the patterns tested, the revenue families (recording revenue too soon / bogus revenue / channel-stuffing) are <strong>clear</strong> — contradicted by declining receivables and clean DSRI. The live pattern is <strong>related-party / round-tripping risk</strong> (the FD/ICD/affiliate flows), assessed in P3 as a finding on value-leakage but <em>not</em> rising to confirmed misstatement (no auditor exception, clean CARO). Cookie-jar / smoothing: not evidenced — exceptional charges moderated transparently (FY23 ₹667 Cr → FY25 ₹106 Cr) and were disclosed.</p>
+</div>
+<div class="sub-title">5.7 · Generic Revenue-Integrity Assessment<span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-m)"> — incl. RPT impact on revenue / profit / cash</span></div>
+<table class="chk"><tbody>
+<tr><td>Sales-to-cash conversion</td><td><span class="ok">Clear</span> — CFO/NI &gt; 1.0× every year; negative accruals</td></tr>
+<tr><td>Receivables quality / channel-stuffing</td><td><span class="ok">Clear</span> — DSO 75→66d, DSRI 0.92 (declining); contradicts stuffing</td></tr>
+<tr><td>Inventory &amp; markdown risk (content NRV)</td><td><span class="watch">Watch</span> — ₹6,412 Cr inventory, ₹336.8 Cr NRV write-down (KAM)</td></tr>
+<tr><td>Revenue durability / segment (Lever 6)</td><td><span class="watch">Watch</span> — single segment; revenue −4.5% &amp; below sector; consolidated &lt; standalone PAT (subsidiary drag)</td></tr>
+<tr><td>RPT impact on <b>revenue</b></td><td><span class="ok">Limited</span> — subsidiary revenue (subscription/transmission/content) ~₹136 Cr, ordinary intra-group</td></tr>
+<tr><td>RPT impact on <b>profit</b></td><td><span class="watch">Moderate</span> — ₹93.1 Cr ATL Media dividend (~10% of ₹906 Cr PBT); ₹80.9 Cr Margo exceptional charge (write-off + diminution)</td></tr>
+<tr><td>RPT impact on <b>cash flow</b></td><td><span class="watch">Material</span> — ₹93.1 Cr dividend &amp; ₹32.4 Cr recoveries are RP inflows; ₹170.6 Cr ICDs to RPs disputed (cash at risk)</td></tr>
+</tbody></table>
+<div class="callout amber" style="margin-top:12px"><strong>RPT verdict on the revenue/profit/cash question.</strong> Related parties have <strong>limited effect on reported revenue</strong> (intra-group subscription/content flows are ordinary and modest relative to ₹7,712 Cr group revenue), but a <strong>material effect on profit and cash</strong>: the ₹93.1 Cr ATL Media dividend supports standalone profit and the affiliate write-offs/diminution/ICD-arbitration cluster represents value and cash crystallising adversely through related parties. This is the forensic core of the Zee case — carried as the P3 finding — and is why the verdict is governance-driven rather than statement-driven.</div>
+<div class="sub-title">Scoring (P5)</div>
+<div class="prose"><p>Models clean-to-benign; unqualified audit opinion on the statements; clean CARO 2020 (no fraud by or on the Company); no restatement, going-concern or ICFR weakness; favourable (negative) accruals. Against this, two corroborated <strong>watch</strong> items — content-inventory NRV (auditor KAM) and the related-party value-leakage — hold the pillar at the top of the Low band rather than in the Clean band. Under §3.6 the pillar earns risk only from corroborated findings; there is no confirmed misstatement to take it to 5–6 or above.</p></div>
+<div class="verdict-box"><div class="vscore"><div class="n" style="color:var(--med-text)">4</div><div class="d">/10</div></div><div class="vtext"><b>Low · 4.</b> The financial statements present a true and fair view: six benign models, unqualified opinion, clean CARO, no restatement, negative accruals. Two corroborated watch items (content NRV; related-party value-leakage) keep it at 4 rather than 2–3. The 4-vs-5 call is shown transparently — the case for Elevated (5) would weight the RPT value-leakage as a corroborated P5 earnings-quality finding rather than routing it to P3; held at 4 because the auditor took no exception and the statements are clean — flagged for analyst confirmation.</div></div>
+<div class="xref-s1"><strong>Addendum (S1):</strong> the FY26 content-amortisation change (front-loading; ~&#8377;300 Cr) crystallises the content-NRV watch; no statutory-auditor resignation is recorded.</div>
+<div class="xref"><b>Cross-reference:</b> P5 sets the Pillar-5 floor in the composite; the related-party finding is carried in P3, not double-counted here.<br><span class="tag">FY25 AR — auditor report &amp; CARO</span><span class="tag">FY25 AR — KAM &amp; Note 46</span><span class="tag">Computed models (consolidated)</span></div>
+</div>
+<div class="card pillar-card">
+<div class="card-hdr"><div class="sec-title-grp"><span class="sec-num" id="p6">P6</span><div><div class="pillar-eyebrow">Governance issue · Transparency</div><span class="sec-title">Legal &amp; Regulatory</span></div></div><div class="hdr-actions"><button type="button" class="graph-btn" onclick="focusGraph('p6')">Focus in 3D &rarr;</button><span class="badge high"><span class="dot high"></span>High · 8 / 10</span></div></div>
+<div class="assess">Stakeholder interests with hidden ramifications for shareholder capital: regulatory disputes, legal and tax issues, contingent liabilities, and sanctions/enforcement exposure. Fed by D7 CDD §5 (screening), §6 (adverse media), §7 (regulatory) and §8 (litigation).</div>
+<div class="prose">
+<p><strong>6.2 Regulatory &amp; enforcement — active.</strong> The decisive matter is an <strong>active SEBI Whole-Time-Member-directed NSDL ISIN-level freeze</strong> (order WTM/AB/CFID/CFID_4/25884/2023-24) on the entity and on CFO M. V. Galgali, with PAN debarred for new accounts, returned TRUE_POSITIVE and operative as at the 19 May 2026 screening date — a current restriction, not a closed matter. Running alongside is the <strong>live SEBI show-cause notice (12 Feb 2026)</strong> alleging fund diversion (CEO and founder named), and a concluded SEBI <strong>settlement</strong> (₹7 lakh, 2019 pledged-share disclosure under PIT/SAST). The 2023 interim bar against the CEO was set aside by SAT. A SEBI insider-trading order (Mar 2023) implicated a senior employee in UPSI communication — an information-barrier control concern.</p>
+<p><strong>6.1 Litigation &amp; contingencies.</strong> A <strong>US$940 M LCIA arbitration claim from Star/JioStar</strong> (Alliance Agreement terminated 20 Jun 2024; damages quantified at the 31 Aug 2024 proxy-award date at US$940 M plus costs and interest; Zee denies default, counterclaim US$8 m) is a material contingent exposure relative to a ~₹7,700 Cr revenue base. <strong>Eight active insolvency petitions</strong> (IDBI Bank 1071(MB)2025 &amp; Company Appeal(AT)(Ins)-939/2023; IndusInd C.P.(IB)-221/2022; IPRS C.P.(IB)-1279/2022) sit in NCLT/NCLAT; litigation dimension scored 9.0 in the CDD. Disputed indirect taxes aggregate ~₹273.5 Cr (including a ~₹173.6 Cr GST inadmissible-input-credit show-cause) and disputed direct taxes ~₹87.9 Cr (Note 35). CCI and an Invesco/OFI NCLT matter are <strong>disposed</strong> (recorded for completeness, low forward weight per §3.8).</p>
+<p><strong>6.2 Sanctions/structural.</strong> No sanctions or AML hits on the entity or principals; however the <strong>Russia-domiciled OOO Zee CIS subsidiaries</strong> sit within an active EU/OFAC sanctions environment — a screening-and-compliance watch (D7 CDD §9), not a current hit. Zee is not a financial institution, limiting structural AML exposure.</p>
+</div>
+<div class="verdict-box"><div class="vscore"><div class="n" style="color:var(--high-text)">8</div><div class="d">/10</div></div><div class="vtext"><b>High · 8.</b> Serious, active enforcement and contingency exposure: an operative SEBI-directed NSDL freeze, a live fund-diversion SCN, a US$940 M arbitration and eight insolvency petitions. Not 9–10 — the SEBI fraud matters are sub judice (no adjudicated finding; interim bar set aside), and the largest litigation items are contingent or disposed rather than crystallised penalties.</div></div>
+<div class="xref-s1"><strong>Addendum (S1):</strong> the fund-diversion SCN is independently corroborated by the FY26 secretarial compliance report and the FY25 auditor KAM; a fresh SEBI SAST adjudication order (Feb 2026) and the withdrawn 2022 external credit rating reinforce the enforcement picture.</div>
+<div class="xref"><b>Cross-reference:</b> P6 carries entity-level enforcement; person-level integrity is in P1. The active NSDL freeze + live SEBI proceeding are the override trigger (A4).<br><span class="tag">D7 CDD §7 Regulatory</span><span class="tag">D7 CDD §8 Litigation</span><span class="tag">D7 CDD §6 Adverse Media</span><span class="tag">D7 CDD §9 Geopolitical</span></div>
+</div>
+<div class="card"><div class="sub-title" style="margin-top:0"><span class="a-tag" id="a2">A2</span>Fraud-Pattern Screen (Schilit archetypes)</div>
+<table class="chk"><tbody>
+<tr><td>Recording revenue too soon</td><td><span class="ok">Clear</span> — CFO/NI &gt;1.0×; DSO declining; over-time recognition disclosed</td></tr>
+<tr><td>Recording bogus / fictitious revenue</td><td><span class="ok">Clear</span> — Unqualified audit; no revenue KAM exception; clean CARO</td></tr>
+<tr><td>Channel-stuffing / sell-in inflation</td><td><span class="ok">Clear</span> — Receivables falling as revenue softens — contradicts the pattern</td></tr>
+<tr><td>Round-tripping / related-party revenue</td><td><span class="watch">Watch</span> — RPT revenue modest; but FD/ICD affiliate flows &amp; ₹170.6 Cr ICD arbitration warrant scrutiny (P3)</td></tr>
+<tr><td>Boosting income with one-time gains</td><td><span class="ok">Clear</span> — Exceptional charges moderated transparently (₹667→₹106 Cr), disclosed</td></tr>
+<tr><td>Cookie-jar / income smoothing</td><td><span class="ok">Clear</span> — No reserve-release pattern evidenced; provisions built (Margo diminution ↑)</td></tr>
+<tr><td>Shifting expenses / capitalising opex</td><td><span class="watch">Watch</span> — Content capitalisation is sector-standard but NRV-sensitive (₹336.8 Cr write-down; KAM)</td></tr>
+<tr><td>Inflating cash flow via affiliate inflows</td><td><span class="watch">Watch</span> — ₹93.1 Cr ATL Media dividend in operating context; intra-group, disclosed</td></tr>
+<tr><td>Auditor delay / qualification</td><td><span class="ok">Clear</span> — Unqualified FY23–FY25; auditor rotated (no dispute); CARO clean</td></tr>
+<tr><td>Promoter share pledging</td><td><span class="ok">Clear</span> — Promoter stake 3.99% — negligible pledge surface (distinct structural concern in P2)</td></tr>
+<tr><td>Regulator / short-seller allegation</td><td><span class="watch">Watch</span> — Live SEBI fund-diversion SCN — alleged, sub judice (P1/P6)</td></tr>
+</tbody></table>
+<div class="note">Each archetype tested and marked Clear / Watch / Finding with evidence. The revenue-inflation family is clear; the live concerns cluster around related-party flows and enforcement, consistent with a governance-and-enforcement profile rather than a financial-statement-fraud profile.</div></div>
+<div class="card"><div class="sub-title" style="margin-top:0"><span class="a-tag" id="a3">A3</span>Earnings-Quality &amp; Liquidity Scorecard</div>
+<table class="tbl"><thead><tr><th>Metric (standalone)</th><th class="r">FY23</th><th class="r">FY24</th><th class="r">FY25</th><th>Read</th></tr></thead><tbody>
+<tr><td>Revenue (₹ Cr)</td><td class="r mono">7,421.9</td><td class="r mono">8,075.0</td><td class="r mono">7,712.4</td><td>Flat-to-declining (−4.5%)</td></tr>
+<tr><td>Net profit (₹ Cr)</td><td class="r mono">163.9</td><td class="r mono">301.5</td><td class="r mono">701.3</td><td>Recovering as exceptionals moderate</td></tr>
+<tr><td>Operating cash flow (₹ Cr)</td><td class="r mono">177.8</td><td class="r mono">675.1</td><td class="r mono">936.4</td><td>Strong, rising</td></tr>
+<tr><td>Cash conversion CFO/NI</td><td class="r mono">1.08×</td><td class="r mono">2.24×</td><td class="r mono">1.34×</td><td>&gt;1.0× throughout — cash-backed</td></tr>
+<tr><td>Sloan accruals (TATA)</td><td class="r mono">−0.1%</td><td class="r mono">−3.0%</td><td class="r mono">−1.9%</td><td>Negative — disconfirms manipulation</td></tr>
+<tr><td>Beneish M-Score</td><td class="r mono">—</td><td class="r mono">—</td><td class="r mono">−2.73</td><td>Non-manipulator (&lt;−2.22)</td></tr>
+<tr><td>Current ratio</td><td class="r mono">3.97×</td><td class="r mono">4.57×</td><td class="r mono">6.28×</td><td>Strengthening liquidity</td></tr>
+<tr><td>Net long-term debt (₹ Cr)</td><td class="r mono">4.0</td><td class="r mono">3.2</td><td class="r mono">158.0</td><td>Near debt-free (D/E 0.02×)</td></tr>
+<tr><td>Content inventory (₹ Cr)</td><td class="r mono">6,954.8</td><td class="r mono">6,584.1</td><td class="r mono">6,412.2</td><td>Large; NRV-sensitive (KAM)</td></tr>
+<tr><td>Exceptional charges (₹ Cr)</td><td class="r mono">666.8</td><td class="r mono">312.9</td><td class="r mono">106.1</td><td>Moderating &amp; disclosed</td></tr>
+</tbody></table>
+<div class="sub-title">Sources vs Uses of Capital &mdash; Consolidated (&#8377; Cr)</div>
+<table class="tbl"><thead><tr><th>Flow (consolidated cash-flow statement)</th><th class="r">FY25</th><th class="r">FY24</th></tr></thead><tbody>
+<tr><td><strong>Sources</strong></td><td></td><td></td></tr>
+<tr><td>Operating cash flow</td><td class="r mono">1,186</td><td class="r mono">714</td></tr>
+<tr><td>Long-term borrowings raised</td><td class="r mono">203</td><td class="r mono">2</td></tr>
+<tr><td>Asset &amp; business disposals</td><td class="r mono">6</td><td class="r mono">29</td></tr>
+<tr><td><strong>Uses</strong></td><td></td><td></td></tr>
+<tr><td>Capex (PP&amp;E + intangibles)</td><td class="r mono">(92)</td><td class="r mono">(131)</td></tr>
+<tr><td>Net deployed into treasury (mutual funds / deposits)</td><td class="r mono">(1,575)</td><td class="r mono">~7 rel.</td></tr>
+<tr><td>Dividend paid (first in years)</td><td class="r mono">(96)</td><td class="r mono">&mdash;</td></tr>
+<tr><td>Lease, interest &amp; commitment settlements</td><td class="r mono">(106)</td><td class="r mono">(296)</td></tr>
+<tr class="hl"><td><strong>Net change in cash</strong></td><td class="r mono">(395)</td><td class="r mono">+393</td></tr>
+</tbody></table>
+<div class="note">Read: FY25 operating cash of &#8377;1,186 Cr comfortably covered capex (&#8377;92 Cr) and the first dividend in years (&#8377;96 Cr); the surplus, plus an opening-cash drawdown, was parked in mutual funds and deposits (&#8377;1,575 Cr) &mdash; conserved, not deployed or diverted. One flag: &#8377;203 Cr of new long-term borrowing in an otherwise near-debt-free, cash-rich company (small against &#8377;11,533 Cr equity; purpose to confirm). Two-year view; a 3&ndash;5-year series follows once prior-year annual reports are loaded.</div>
+<div class="sub-title">Off-Balance-Sheet &mdash; Contingent Liabilities</div>
+<div class="note">Holding-company-level contingent items (which carry through to consolidated): disputed indirect tax ~&#8377;273.5 Cr &mdash; including a &#8377;173.6 Cr GST inadmissible-ITC show-cause notice &mdash; and disputed direct tax ~&#8377;87.9 Cr; the US$940 M LCIA arbitration (Star / JioStar); plus corporate guarantees and letters of comfort to group entities. These are contingent and largely unprovided; none is an admitted liability. The full consolidated Note-35 breakdown and a FY24&rarr;FY25 trend attach once the consolidated contingent-liabilities schedule is parsed.</div>
+<div class="note">The multi-year earnings-quality trend above is on the <strong>standalone</strong> entity (FY23&ndash;FY25); the headline forensic models and the capital-flow analysis are on <strong>consolidated</strong> FY25 (FY24 comparative), which is why the trend table's FY25 Beneish differs from the headline. A full consolidated multi-year series follows once prior-year annual reports are loaded. Figures from the FY2025 Annual Report (Ind AS) and the D7 CDD financial section.</div></div>
+<div class="card"><div class="sub-title" style="margin-top:0"><span class="a-tag" id="a4">A4</span>Investment-Risk Score Derivation</div>
+<table class="tbl"><thead><tr><th>Governance issue</th><th>Pillar(s)</th><th class="r" style="width:90px">Score</th><th>Basis</th></tr></thead><tbody>
+<tr><td>Reliability</td><td class="mono">P1</td><td class="r mono">5</td><td>CEO named in live SEBI fund-diversion SCN (alleged, sub judice) + set-aside interim bar; recurring CSR shortfalls; clean audit/disclosure otherwise</td></tr>
+<tr><td>Fairness</td><td class="mono">P2, P3</td><td class="r mono">7</td><td>Promoter 3.99% (control w/o stake); RPT value-leakage — ₹93.1 Cr affiliate dividend, ₹80.9 Cr Margo charge (write-off + diminution), ₹170.6 Cr ICD arbitration</td></tr>
+<tr><td>Effective supervision</td><td class="mono">P4, P5</td><td class="r mono">4–5</td><td>Forensic accounting sound (4); board independent but 2.5:1 director-cessation churn (5)</td></tr>
+<tr><td>Transparency</td><td class="mono">P6</td><td class="r mono">8</td><td>Active SEBI-directed NSDL freeze; live SCN; US$940 M arbitration; 8 insolvency petitions</td></tr>
+<tr class="hl"><td><strong>Composite</strong></td><td class="mono">—</td><td class="r mono" style="font-weight:700;font-size:15px">7.0</td><td><strong>High</strong> — max(weighted blend 5.6, P5 floor 4.0, override 7.0)</td></tr>
+</tbody></table>
+<div class="chart" style="margin-top:14px"><div class="chart-t">Composite roll-up — max(), not an average</div><div class="chart-s">The override floor binds; the forensic floor and the blend sit below it</div><svg viewBox="0 0 680 300"><line x1="20" y1="224.0" x2="660" y2="224.0" stroke="#E5E7EB"/><text x="14" y="227.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">0</text><line x1="20" y1="188.0" x2="660" y2="188.0" stroke="#E5E7EB"/><text x="14" y="191.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">2</text><line x1="20" y1="152.0" x2="660" y2="152.0" stroke="#E5E7EB"/><text x="14" y="155.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">4</text><line x1="20" y1="116.0" x2="660" y2="116.0" stroke="#E5E7EB"/><text x="14" y="119.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">6</text><line x1="20" y1="80.0" x2="660" y2="80.0" stroke="#E5E7EB"/><text x="14" y="83.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">8</text><line x1="20" y1="44.0" x2="660" y2="44.0" stroke="#E5E7EB"/><text x="14" y="47.0" font-size="9" font-family="JetBrains Mono" fill="#6B7280" text-anchor="end">10</text><line x1="20" y1="152.0" x2="660" y2="152.0" stroke="#6699CC" stroke-dasharray="3 3" stroke-width="1"/><line x1="20" y1="98.0" x2="660" y2="98.0" stroke="#E65100" stroke-dasharray="3 3" stroke-width="1"/><rect x="68.0" y="123.2" width="64" height="100.8" rx="4" fill="#99AFBC" opacity="0.65"/><text x="100.0" y="117.2" font-size="14" font-family="JetBrains Mono" fill="#99AFBC" text-anchor="middle" font-weight="700">5.6</text><text x="100.0" y="239.0" font-size="10" font-family="DM Sans" fill="#374151" text-anchor="middle" font-weight="600">Weighted blend</text><text x="100.0" y="252.0" font-size="8.5" font-family="DM Sans" fill="#6B7280" text-anchor="middle">P5 60% + P6</text><text x="100.0" y="263.0" font-size="8.5" font-family="DM Sans" fill="#6B7280" text-anchor="middle">12% + P4/P1/P2/P3</text><rect x="228.0" y="152.0" width="64" height="72.0" rx="4" fill="#98AA3A" opacity="1"/><text x="260.0" y="146.0" font-size="14" font-family="JetBrains Mono" fill="#98AA3A" text-anchor="middle" font-weight="700">4.0</text><text x="260.0" y="239.0" font-size="10" font-family="DM Sans" fill="#374151" text-anchor="middle" font-weight="600">P5 floor</text><text x="260.0" y="252.0" font-size="8.5" font-family="DM Sans" fill="#6B7280" text-anchor="middle">forensic core</text><rect x="388.0" y="98.0" width="64" height="126.0" rx="4" fill="#C62828" opacity="1"/><text x="420.0" y="92.0" font-size="14" font-family="JetBrains Mono" fill="#C62828" text-anchor="middle" font-weight="700">7.0</text><text x="420.0" y="239.0" font-size="10" font-family="DM Sans" fill="#374151" text-anchor="middle" font-weight="600">Override floor</text><text x="420.0" y="252.0" font-size="8.5" font-family="DM Sans" fill="#6B7280" text-anchor="middle">F-2 analogue: active NSDL freeze</text><text x="420.0" y="263.0" font-size="8.5" font-family="DM Sans" fill="#6B7280" text-anchor="middle">+ live SEBI</text><rect x="548.0" y="98.0" width="64" height="126.0" rx="4" fill="#E65100" opacity="1"/><text x="580.0" y="92.0" font-size="14" font-family="JetBrains Mono" fill="#E65100" text-anchor="middle" font-weight="700">7.0</text><text x="580.0" y="239.0" font-size="10" font-family="DM Sans" fill="#374151" text-anchor="middle" font-weight="600">Composite</text><text x="580.0" y="252.0" font-size="8.5" font-family="DM Sans" fill="#6B7280" text-anchor="middle">max() selects</text><text x="580.0" y="263.0" font-size="8.5" font-family="DM Sans" fill="#6B7280" text-anchor="middle">override</text></svg><div class="chart-cap">Band guides at 4 (Low/Elevated) and 7 (High). The override selects the composite — the deliberate design property that a corroborated enforcement signal lands the entity in the correct band even though the forensic core (P5=4) is sound.</div></div>
+<div class="callout warn" style="margin-top:12px"><strong>Roll-up logic — the override binds.</strong> The composite is <strong>max(weighted blend, Pillar-5 floor, override floor)</strong>. The weighted blend (P5 60%, P6 12%, P4 10%, P1 8%, P2 5%, P3 5%) is <strong>≈5.6</strong> — dominated by the sound forensic pillar at 60%, which on its own would understate a governance-and-enforcement case. The Pillar-5 floor (4.0) is below that. The <strong>enforcement-tier override (F-2 analogue) fires at 7.0</strong> on the <strong>active SEBI-directed NSDL ISIN-level freeze plus the live SEBI fund-diversion proceeding</strong> — the India analogue of the §3.7 F-2 trigger (regulatory enforcement action / control concern). It binds, so the composite is <strong>7.0</strong>. <strong>F-1 (confirmed fraud, floor 9) does not fire:</strong> the SEBI fund-diversion matters are allegations under process, the 2023 interim bar was set aside by SAT, and the auditor reports no fraud — the framework scores allegation as risk, not as proof. Re-rate to F-1 only on an adjudicated SEBI/SFIO/NFRA fraud finding.</div>
+<div class="note">The 60% Pillar-5 weight is intentional: it prevents a clean-board / clean-ownership profile from diluting a forensic finding. Here the inverse holds — a <em>sound</em> forensic core does not dilute a governance/enforcement finding, because the override floor operates independently of the blend.</div>
+</div>
+<div class="annex-divider"><span>Addendum — Post-Period &amp; Supplementary Findings</span></div>
+<div class="card">
+<div class="sub-title" style="margin-top:0;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><span><span class="a-tag" id="s1">S1</span>Post-Period &amp; Supplementary Findings (FY26 documents)</span><button type="button" class="graph-btn" style="text-transform:none;letter-spacing:0" onclick="focusGraph('s1')">Focus in 3D &rarr;</button></div>
+<div class="callout info"><strong>Provenance and status.</strong> The findings below are drawn from documents that post-date the FY2025 audited financials on which the body of this review is based: the FY26 quarterly earnings-call transcripts (Q1, Q3 and Q4 FY26), the FY26 Annual Secretarial Compliance Report (Vinod Kothari &amp; Co, Practising Company Secretaries, dated 28 May 2026, for the year ended 31 March 2026), and a Brickwork Ratings rationale dated 22 April 2022. They are recorded as analyst flags. The financial figures and pillar scores in the body are unchanged, and this addendum does not alter the composite of 7.0 — the enforcement-tier override already binds, and none of the new matter is an adjudicated fraud finding that would trigger the confirmed-fraud tier.</div>
+
+<div class="sub-title">Legal &amp; Regulatory</div>
+<ul class="ev-list">
+<li class="f-high">SEBI fund-diversion show-cause notice independently corroborated. The FY26 secretarial compliance report examined SEBI (Prohibition of Fraudulent and Unfair Trade Practices) Regulations, 2003 specifically in relation to the show-cause notice issued by SEBI during the review period, confirming the SCN is live in FY26; the FY25 auditor likewise referenced SEBI enquiry/summons within the litigation KAM. Two independent sources thus support the override basis (P6).</li>
+<li class="f-high">New — a concluded SEBI adjudication order dated 10 February 2026 against a promoter for violations of SEBI (SAST) Regulations: Reg 31(1) r/w 31(3) (creation of encumbrance), Reg 31(2) r/w 31(3) (invocation of pledge) and Reg 29(2) (transfer of shares). This is crystallised enforcement — a penalty order, distinct from the 2019 settlement already noted — and connects to the promoter stake collapse (P2): the holding fell to 3.99% via pledge invocations that carried the disclosure breaches now penalised.</li>
+<li class="f-med">SCN respondent set is broader than the body states. Per the secretarial report, the SCN was issued against the listed entity, its promoters, the erstwhile managing director and certain subsidiaries — i.e. the company itself and group entities, not only the named individuals.</li>
+<li class="f-med">Credit-rating gap. The latest credit-rating document on file is a Brickwork Ratings rationale (22 April 2022) that downgraded the issuer rating to BWR A-/Stable and simultaneously withdrew it at the company’s request, after a six-notch slide from BWR AAA (2019). No current public rating appears to be on record — a coverage gap the body omits. The 2022 downgrade was itself driven by uncertainties over the MCA Section 206(5) inspection, the same thread that runs into the present SEBI matters.</li>
+</ul>
+
+<div class="sub-title">Governance</div>
+<ul class="ev-list">
+<li class="f-med">Board composition (FY26 secretarial report): the board is constituted of Non-Executive and Independent Directors only. Punit Goenka was appointed CEO with effect from 18 November 2024 and is described as focused on operational responsibilities, with no Manager in the company — i.e. the founder-family CEO runs operations but does not sit on the board. Part mitigant (CEO separated from the board), part structural oddity (the CEO is not accountable as a director).</li>
+<li class="f-pos">Confirmations from the secretarial report: no resignation of statutory auditors and no director disqualified under Section 164 during FY26 — both relevant to the P5 read (audit continuity is a methodology override trigger that did not fire) and to P1/P4.</li>
+</ul>
+
+<div class="sub-title">Accounting</div>
+<ul class="ev-list">
+<li class="f-high">Content-amortisation policy change (FY26) — the content-NRV watch crystallising. In Q4 FY26 the company moved movie amortisation from straight-line over 60 months to a front-loaded basis (50% in the first two years), taking a ~₹300 Cr charge. The FY25 policy (Note 2) confirms the prior straight-line / five-year basis, which deferred content cost relative to consumption and flattered FY23–FY25; the FY26 change is the correction. This converts the P5 content-NRV watch into a realised charge in the subsequent year.</li>
+<li class="f-med">The FY26 secretarial compliance report provides no accounting assurance: it expressly states it has not verified the correctness of the financial records and is neither an audit nor an expression of opinion. It should not be cited as accounting comfort; the accounting flags remain sourced to the FY25 annual report and the FY26 transcript disclosure above.</li>
+</ul>
+
+<div class="sub-title">Related Party</div>
+<ul class="ev-list">
+<li class="f-high">RPT materiality policy updated late. The secretarial report flags that the Policy on materiality of and dealing with related-party transactions was updated beyond the time prescribed under Reg. 23(1) of the Listing Regulations — a governance deviation on the RPT framework itself — against the mitigant that prior Audit Committee approval was obtained for all RPTs in the period.</li>
+<li class="f-med">Additional related-party impairment: Zee Learn Limited non-convertible debentures (₹25.5 Cr) are fully provided (100% diminution) — a further Essel-group value-leakage data point not in the body.</li>
+<li class="f-med">Long-standing pattern corroborated. The 2022 Brickwork rationale documented related-party receivables from weak group entities (Dish TV) and a DSRA corporate guarantee to Siti Networks Ltd (₹200.9 Cr) whose default triggered the IndusInd insolvency petition (C.P.(IB)-221/2022) carried in P6 — i.e. the affiliate value-leakage pattern predates FY25 and traces one of the body’s litigation items to its origin.</li>
+</ul>
+
+<div class="sub-title">Confirmations — body watch-items reinforced</div>
+<div class="callout pos"><strong>Where the FY26 documents confirm the review.</strong> Revenue-durability watch reinforced — FY26 nine-month advertising revenue down ~12% (vs −4.5% in FY25), with management guiding a similar full-year decline. Liquidity strength confirmed — cash and treasury investments of ₹2,760 Cr at March 2026, consistent with the near-debt-free balance sheet in the body. ZEE5 reached EBITDA breakeven in FY26, consistent with the OTT-migration narrative.</div>
+
+<div class="callout amber" style="margin-top:8px"><strong>Corrections applied in this revision.</strong> Two figure corrections were made in the body and are noted here for transparency: (i) the Margo related-party charge is now stated as a single ₹80.9 Cr exceptional item comprising ₹37.2 Cr of balances written off plus ₹43.7 Cr of investment diminution (Note 30 read with Note 32: ₹372 M + ₹437 M = ₹809 M), correcting an earlier presentation that counted the components and their sum separately; and (ii) the Star/JioStar LCIA arbitration claim is now stated at US$940 M as disclosed in Note 35 (quantified at the 31 August 2024 proxy-award date, plus costs and interest), correcting an earlier figure of USD 1.003 bn.</div>
+</div>
+
+<div class="annex-divider"><span>Legal Disclaimer &amp; Terms of Reliance</span></div>
+<div class="card disc-card">
+<ol>
+<li><b>Source basis.</b> This Governance &amp; Forensic Accounting (GFA) report is compiled from external, third-party and publicly available information — including regulatory filings, financial statements, court and tribunal records, credit-bureau and watchlist data, news and other secondary sources — together with information supplied to Fortifai. Fortifai has not independently audited, verified or authenticated this information and does not warrant its accuracy, completeness, currency or fitness for any purpose.</li>
+<li><b>Nature of the assessment.</b> The scores, severities, classifications and narratives are analytical opinions and risk indicators generated by D7's methodology. They are probabilistic screens — not statements of fact, audit opinions, legal advice, investment advice, or determinations of fraud, default, wrongdoing or guilt. References to investigations, show-cause notices, allegations or litigation describe matters that are unproven and/or sub judice; nothing herein is an adverse finding against, or an imputation of liability to, any named entity or individual.</li>
+<li><b>Point in time.</b> The assessment reflects information available as at the data-fetch / screening date and is liable to change. Fortifai is under no obligation to update it.</li>
+<li><b>No reliance / no liability.</b> This report is provided for the recipient's internal credit and risk-monitoring use only. It is not a recommendation to grant, decline, continue, restructure or recall any facility. The recipient must exercise its own independent judgment, make its own enquiries and obtain its own professional (legal, financial and tax) advice before taking or refraining from any action. To the fullest extent permitted by law, Fortifai accepts no liability whatsoever for any loss or damage arising from any use of, or reliance on, this report.</li>
+<li><b>Confidentiality.</b> This report is confidential and proprietary to Fortifai and the commissioning organisation, and may not be reproduced, distributed or relied upon by any third party without Fortifai's prior written consent.</li>
+</ol>
+</div>
+<div class="footer">
+<strong>Governance &amp; Forensic Accounting Review.</strong> Prepared by Fortifai · D7 Due Diligence Platform, as a module of D7 CDD report FORT10070 (Zee Entertainment Enterprises Limited). This deliverable flags risk and probability, not fraud; it is not an audit, a legal opinion or investment advice. Findings are conditional on the cited filings (FY2024-25 Annual Report, Ind AS) and the D7 CDD sections (data fetched 19 May 2026), and should be revisited on release of newer filings or following a fresh media, litigation or regulatory pull. SEBI fund-diversion matters referenced herein are allegations under process and are framed as such; no adverse finding against any named individual is asserted. Quantitative model outputs are computed deterministically from the audited financial statements and are screens, not verdicts. Confidential and proprietary to Fortifai and the commissioning organisation.
+</div>
+</div></body></html>
