@@ -91,10 +91,10 @@ reports:
     priority: 3
     active: false
 
-- file: Counterparty_Risk_Monitoring.html
+  - file: Counterparty_Risk_Monitoring.html
     title: Counterparty Risk Monitoring
     component_key: counterparty-risk-monitoring
-    subtitle: Continuous Counterparty Surveillance
+    subtitle: Counterparty Risk
     level: compliance
     priority: 2
     active: true
