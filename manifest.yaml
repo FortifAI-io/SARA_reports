@@ -1,4 +1,4 @@
-# reports/manifest.yaml
+# reports/manifest.yaml 
 # Source of truth for HTML reports shown in Governance & Reporting.
 # Required: file, title, component_key, level (a level_key from report_level_master, or a list of them).
 # Optional: report_code (default: component_key), subtitle (default: title),
