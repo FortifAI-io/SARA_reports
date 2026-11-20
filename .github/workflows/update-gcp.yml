@@ -1,0 +1,71 @@
+
+name: Update Repository to GCP
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gcp-repository-update
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    name: Sync Git repository
+    runs-on:
+      - self-hosted
+      - linux
+      - x64
+      - fortifai-prod
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Update local backup
+        shell: bash
+        env:
+          BACKUP_DIR: /opt/fortifai/sara/SARA_reports
+        run: |
+          set -euo pipefail
+
+          mkdir -p "$(dirname "$BACKUP_DIR")"
+
+          if [ ! -d "$BACKUP_DIR/.git" ]; then
+            echo "Creating initial reports..."
+
+            git clone --no-local \
+              "$GITHUB_WORKSPACE" \
+              "$BACKUP_DIR"
+
+          else
+            echo "Updating existing reports..."
+
+            cd "$BACKUP_DIR"
+
+            if [ -n "$(git status --porcelain)" ]; then
+              echo "Reports contains local modifications."
+              echo "Refusing to overwrite."
+              exit 1
+            fi
+
+            git fetch "$GITHUB_WORKSPACE" \
+              "+refs/heads/*:refs/remotes/origin/*"
+          fi
+
+          cd "$BACKUP_DIR"
+
+          git switch main
+          git merge --ff-only origin/main
+
+          echo "Reports updated:"
+          git log -1 --oneline
