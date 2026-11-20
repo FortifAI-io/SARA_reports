@@ -72,7 +72,7 @@ reports:
     component_key: Ta_Agent_Prototype_v5
     subtitle: Export Control Monitoring
     level: compliance
-    priority: 2
+    priority: 5
     active: false
 
   - file: FCPA_PROC0460_Module_v9.html
@@ -80,7 +80,7 @@ reports:
     component_key: proc0460-bc-report-ui-v4
     subtitle: Bribery & Corruption Monitoring
     level: compliance
-    priority: 3
+    priority: 4
     active: true
     
   - file: D7-custos-v2.html
@@ -89,8 +89,15 @@ reports:
     subtitle: Third Party Risk Assessment
     level: compliance
     priority: 3
-    active: true
+    active: false
 
+- file: Counterparty_Risk_Monitoring.html
+    title: Counterparty Risk Monitoring
+    component_key: counterparty-risk-monitoring
+    subtitle: Continuous Counterparty Surveillance
+    level: compliance
+    priority: 2
+    active: true
 ############## Finance
   - file: Crystal_v14.html
     title: Crystal
