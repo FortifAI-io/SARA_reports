@@ -7,25 +7,25 @@
 reports:
 ############## Procurement
   - file: Kuber-Procurement-Cost-Optimisation-v2.html
-    title: Kuber
+    title: Procurement Cost Optimisation
     component_key: kuber-procurement-risk-monitoring
-    subtitle: Procurement Cost Saving
+    subtitle: Margin & Spend Intelligence
     level: procurement
     priority: 1
     active: true
 
   - file: AEWAC-procurement-risk-monitoring-v2.html
-    title: Aewac
+    title: Contract & Spend Leakage
     component_key: AEWAC-procurement-risk-monitoring
-    subtitle: Procurement Abuse Monitoring
+    subtitle: PO & Rate Variance Control
     level: procurement
     priority: 2
     active: true
 
   - file: manifest-v3.html
-    title: Manifest
+    title: Logistics & Freight Intelligence
     component_key: manifest-logistics-cost-saving
-    subtitle: Logistics Cost Optimisation
+    subtitle: Freight & Carrier Optimisation
     level: procurement
     priority: 3
     active: true
@@ -60,9 +60,9 @@ reports:
 
 ############## Compliance
   - file: Aegis_Prototype_v30.html
-    title: Aegis
+    title: Trade Diversion Monitoring
     component_key: Aegis-Prototype-v30
-    subtitle: Trade Diversion Monitoring
+    subtitle: Sanctions, Diversion & Vendor Risk
     level: compliance
     priority: 1
     active: true
@@ -76,17 +76,17 @@ reports:
     active: false
 
   - file: FCPA_PROC0460_Module_v9.html
-    title: Veritas
+    title: Anti-Bribery & FCPA Monitor
     component_key: proc0460-bc-report-ui-v4
-    subtitle: Bribery & Corruption Monitoring
+    subtitle: Third-Party & ABAC Compliance
     level: compliance
     priority: 4
     active: true
     
   - file: D7-custos-v2.html
-    title: D7 Custos
+    title: Counterparty Risk & Screening
     component_key: d7-custos-v2
-    subtitle: Third Party Risk Assessment
+    subtitle: Entity Due Diligence & Watchlists
     level: compliance
     priority: 3
     active: false
@@ -100,25 +100,25 @@ reports:
     active: true
 ############## Finance
   - file: Crystal_v14.html
-    title: Crystal
+    title: Financial Close & R2R Assurance
     component_key: Crystal_v14
-    subtitle: Balance Sheet Close Risk
+    subtitle: GL Reconciliation & Period Close
     level: finance
     priority: 2
     active: true
 
   - file: Moneta_Working_Capital_Command_Centre.html
-    title: Moneta
+    title: Working Capital Command
     component_key: Moneta_Working_Capital_Command_Centre
-    subtitle: Working Capital Optimisation Agent
+    subtitle: Cash Conversion & DPO/DSO
     level: finance
     priority: 1
     active: true
 
   - file: FRP005_Early_Payment_Report_v3.html
-    title: Supplier Early Payments
+    title: Early Payment & DPO Recovery
     component_key: FRP005_Early_Payment_Report_v3
-    subtitle: Working Capital Leakages
+    subtitle: WACC Carry & Discount Leakage
     level: finance
     priority: 3
     active: true
@@ -143,9 +143,9 @@ reports:
 
 ############## Sales
   - file: Surge_Channel_Stuffing.html
-    title: Surge
+    title: Channel Stuffing & Revenue Integrity
     component_key: Surge_Channel_Stuffing
-    subtitle: Channel Stuffing Monitoring
+    subtitle: Period-End Cut-Off & Rebate Risk
     level: sales
     priority: 1
     active: true
