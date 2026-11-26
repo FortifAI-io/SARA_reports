@@ -7,7 +7,7 @@
 reports:
 ############## Procurement
   - file: Kuber-Procurement-Cost-Optimisation-v2.html
-    title: Procurement Cost Optimisation
+    title: Cost Optimisation & Saving Pipe
     component_key: kuber-procurement-risk-monitoring
     subtitle: Margin & Spend Intelligence
     level: procurement
@@ -15,7 +15,7 @@ reports:
     active: true
 
   - file: AEWAC-procurement-risk-monitoring-v2.html
-    title: Contract & Spend Leakage
+    title: Cost Leakges
     component_key: AEWAC-procurement-risk-monitoring
     subtitle: PO & Rate Variance Control
     level: procurement
@@ -23,7 +23,7 @@ reports:
     active: true
 
   - file: manifest-v3.html
-    title: Logistics & Freight Intelligence
+    title: Logistics Cost Optimisation
     component_key: manifest-logistics-cost-saving
     subtitle: Freight & Carrier Optimisation
     level: procurement
@@ -42,7 +42,7 @@ reports:
 ############## Audit
   - file: Argus_Investigation_Agent.html
     title: Argus
-    subtitle: Internal Investigation Agent
+    subtitle: Internal Investigation
     component_key: Argus_Investigation_Agent
     level: audit
     priority: 1
@@ -55,7 +55,7 @@ reports:
     component_key: vigil-audit-report
     level: audit
     priority: 2
-    active: true
+    active: False
 
 
 ############## Compliance
@@ -76,7 +76,7 @@ reports:
     active: false
 
   - file: FCPA_PROC0460_Module_v9.html
-    title: Anti-Bribery & FCPA Monitor
+    title: Anti-Bribery Monitoring
     component_key: proc0460-bc-report-ui-v4
     subtitle: Third-Party & ABAC Compliance
     level: compliance
@@ -108,7 +108,7 @@ reports:
     active: true
 
   - file: Moneta_Working_Capital_Command_Centre.html
-    title: Working Capital Command
+    title: Working Capital OPtimisation
     component_key: Moneta_Working_Capital_Command_Centre
     subtitle: Cash Conversion & DPO/DSO
     level: finance
@@ -116,7 +116,7 @@ reports:
     active: true
 
   - file: FRP005_Early_Payment_Report_v3.html
-    title: Early Payment & DPO Recovery
+    title: Early Payment Monitoring
     component_key: FRP005_Early_Payment_Report_v3
     subtitle: WACC Carry & Discount Leakage
     level: finance
@@ -143,7 +143,7 @@ reports:
 
 ############## Sales
   - file: Surge_Channel_Stuffing.html
-    title: Channel Stuffing & Revenue Integrity
+    title: Channel Stuffing Monitoring
     component_key: Surge_Channel_Stuffing
     subtitle: Period-End Cut-Off & Rebate Risk
     level: sales
