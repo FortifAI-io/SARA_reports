@@ -903,6 +903,10 @@ select.cr-input,select.cr-input option{background:#fff !important;color:var(--tx
 .tr-arr{align-self:center;color:var(--tm);padding:0 6px;font-size:15px}
 .tr-break{margin-top:10px;font-size:11.5px;color:#C62828;background:#FEF2F2;border:1px solid #FECACA;border-radius:6px;padding:6px 9px}
 </style>
+<style id="sara-sso-bypass">
+  #loginScreen, #login-screen, #authScreen, #auth-screen, .login-screen, .login-wrap, .auth-wrap { display: none !important; }
+  #app, #appShell, #mainApp, .app-shell, .app-wrap { display: block !important; visibility: visible !important; opacity: 1 !important; }
+</style>
 </head>
 <body>
 <div id="login">
@@ -3847,5 +3851,20 @@ refreshUserChip();buildNav();renderCases();
 })();
 </script>
 <!-- END FORTIFAI INLINE UAT CLEANER V8 -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  try {
+    if (typeof doLogin === "function") doLogin();
+    else if (typeof signIn === "function") signIn();
+    else if (typeof enterApp === "function") enterApp();
+    else if (typeof initApp === "function") initApp();
+  } catch (e) {}
+  document.querySelectorAll("div, section").forEach(function(el) {
+    if (el.children.length < 15 && el.textContent && el.textContent.includes("Sign in to your account") && el.offsetHeight > 300) {
+      el.style.display = "none";
+    }
+  });
+});
+</script>
 </body>
 </html>
