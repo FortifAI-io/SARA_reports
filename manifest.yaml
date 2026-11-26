@@ -116,7 +116,7 @@ reports:
     active: true
 
   - file: FRP005_Early_Payment_Report_v3.html
-    title: Early Payment Monitoring
+    title: AP Early Payment Monitoring
     component_key: FRP005_Early_Payment_Report_v3
     subtitle: WACC Carry & Discount Leakage
     level: finance
