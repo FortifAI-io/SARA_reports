@@ -41,7 +41,7 @@ reports:
 
 ############## Audit
   - file: Argus_Investigation_Agent.html
-    title: Argus
+    title: Internal Investigation Pipeline
     subtitle: Internal Investigation
     component_key: Argus_Investigation_Agent
     level: audit
@@ -100,7 +100,7 @@ reports:
     active: true
 ############## Finance
   - file: Crystal_v14.html
-    title: Financial Close & R2R Assurance
+    title: Financial Close Assurance
     component_key: Crystal_v14
     subtitle: GL Reconciliation & Period Close
     level: finance
