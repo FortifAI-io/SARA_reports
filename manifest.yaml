@@ -181,3 +181,11 @@ reports:
     subtitle: Pre-Award Bid Integrity
     level: cross
     active: false
+
+  - file: Kuber-Procurement-Cost-Optimisation-Acme-v2.html
+    title: "Procurement Cost Optimisation (Acme Inc.)"
+    subtitle: "Live Supabase Extract - ₹452.48 Cr Spend"
+    component_key: kuber-procurement-cost-optimisation-acme
+    level: procurement
+    priority: 2
+    active: true
