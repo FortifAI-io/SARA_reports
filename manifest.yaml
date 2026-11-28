@@ -50,12 +50,12 @@ reports:
 
   - file: Vigil_Comprehensive.html
   # report_master.id 20
-    title: "Vigil - Continuous Audit Monitoring"
-    subtitle: Audit Automation
+    title: "Continuous Audit Risk Monitoring (CAM)"
+    subtitle: Continuous Audit Risk Monitoring
     component_key: vigil-audit-report
     level: audit
     priority: 2
-    active: False
+    active: True
 
 
 ############## Compliance
